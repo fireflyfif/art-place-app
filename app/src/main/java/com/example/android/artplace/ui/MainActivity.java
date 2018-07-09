@@ -85,21 +85,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadArtworks() {
 
-        MainApplication.sManager.getEmbedded(new Callback<ArtsyResponse>() {
+        MainApplication.sManager.getEmbedded(new Callback<Embedded>() {
 
             @Override
-            public void onResponse(Call<ArtsyResponse> call, Response<ArtsyResponse> response) {
+            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
                 if (response.isSuccessful()) {
 
-                    ArtsyResponse artsyResponse = response.body();
+                    mEmbeddedObject = response.body();
 
-                    if (artsyResponse != null) { // gets non null response
-                        mEmbeddedObject = artsyResponse.getEmbedded(); // getting null for the Embedded object if I use the CustomDeserializer
+                    if (mEmbeddedObject != null) { // gets non null response
 
-                        if (mEmbeddedObject != null) {
-                            mArtworkList = mEmbeddedObject.getArtworks();
-                            Log.d(TAG, "List of Artworks: " + mArtworkList.size());
-                        }
+                        mArtworkList = mEmbeddedObject.getArtworks();
+                        Log.d(TAG, "List of Artworks: " + mArtworkList.size());
+
                     }
 
                     if (mArtworkAdapter == null) {
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArtsyResponse> call, Throwable t) {
+            public void onFailure(Call<Embedded> call, Throwable t) {
 
                 Log.e(TAG, "onFailure called with msg: " + t.toString());
             }

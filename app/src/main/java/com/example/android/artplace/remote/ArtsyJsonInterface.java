@@ -54,5 +54,5 @@ public interface ArtsyJsonInterface {
 
     // Endpoint for fetching Artworks
     @GET("/api/artworks")
-    Call<ArtsyResponse> getEmbedded(@Header("X-XAPP-Token") String token);
+    Call<Embedded> getEmbedded(@Header("X-XAPP-Token") String token);
 }

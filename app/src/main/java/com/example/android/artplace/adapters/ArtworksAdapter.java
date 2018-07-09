@@ -47,7 +47,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.model.ImageLinks;
@@ -67,7 +66,7 @@ public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksAdapter.Artwor
     public ArtworksAdapter(List<Artwork> artworkList, Embedded embedded) {
         //mContext = context;
         mEmbedded = embedded;
-        mArtworkList = artworkList;
+        mArtworkList = artworkList; // get the proper amount of the size of this list
     }
 
     @NonNull
@@ -83,14 +82,7 @@ public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksAdapter.Artwor
     @Override
     public void onBindViewHolder(@NonNull ArtworkViewHolder holder, int position) {
 
-        ArtsyResponse artsyResponse = new ArtsyResponse();
-
         if (mEmbedded != null) { // mEmbedded is always null if there is no Embedded parameter in the Adapter's constructor!!!
-            mEmbedded = artsyResponse.getEmbedded();
-
-            if (mEmbedded != null) {
-                mArtworkList = mEmbedded.getArtworks(); // mEmbedded is always null?
-            }
 
             Artwork currentArtwork = mArtworkList.get(position);
 
