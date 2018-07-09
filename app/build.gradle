@@ -9,6 +9,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // TODO: Always hide the TOKEN; Has to be refreshed every 6 days!!!
+        def apiToken = project.hasProperty('token') ? apiToken:
+                (System.getenv('TOKEN') ?: "\"your_token\"")
+        buildConfigField "String", "TOKEN", apiToken
+
     }
     buildTypes {
         release {
@@ -21,12 +27,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     // Retrofit library dependencies
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    // Logging for Retrofit
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+    // Picasso Library dependency
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

@@ -204,6 +204,9 @@ public class Artwork {
     @Expose
     private List<String> imageVersions = null;
 
+    /*
+    Links to the images for the current artwork
+     */
     @SerializedName("_links")
     @Expose
     private ImageLinks links;

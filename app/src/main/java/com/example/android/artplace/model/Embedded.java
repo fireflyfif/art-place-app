@@ -40,7 +40,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-class Embedded {
+public class Embedded {
 
     @SerializedName("artworks")
     @Expose

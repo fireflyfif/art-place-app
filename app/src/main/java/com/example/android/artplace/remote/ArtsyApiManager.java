@@ -35,24 +35,66 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.BuildConfig;
+import android.util.Log;
+
+import com.example.android.artplace.Utils;
 import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.model.CustomDeserializer;
 import com.example.android.artplace.model.Embedded;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public interface ArtsyJsonInterface {
+public class ArtsyApiManager {
 
-    // Endpoint for fetching Artists
+    private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
-//    @GET("/artists")
-//    Call<>
+    private static Retrofit sRetrofit = null;
+    private static ArtsyApiManager sApiManager;
+    private static ArtsyJsonInterface sArtsyJsonInterface;
 
-    // Endpoint for fetching Artworks
-    @GET("/api/artworks")
-    Call<Embedded> getEmbedded(@Header("X-XAPP-Token") String token);
+    private ArtsyApiManager() {
+
+        if (sRetrofit == null) {
+
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(interceptor).build();
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Embedded.class, new CustomDeserializer())
+                    .create();
+
+            sRetrofit = new Retrofit.Builder()
+                    .baseUrl(Utils.BASE_ARTSY_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+
+        }
+
+        sArtsyJsonInterface = sRetrofit.create(ArtsyJsonInterface.class);
+
+    }
+
+    public static ArtsyApiManager getInstance() {
+        if (sApiManager == null) {
+            sApiManager = new ArtsyApiManager();
+        }
+        return sApiManager;
+    }
+
+    public void getEmbedded(Callback<Embedded> callback, String token) {
+        Call<Embedded> artsyResponseCall = sArtsyJsonInterface.getEmbedded(token);
+        artsyResponseCall.enqueue(callback);
+    }
+
 }

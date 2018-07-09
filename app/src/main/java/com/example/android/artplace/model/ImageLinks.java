@@ -38,7 +38,7 @@ package com.example.android.artplace.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class ImageLinks {
+public class ImageLinks {
 
     /*
     Default image thumbnail.

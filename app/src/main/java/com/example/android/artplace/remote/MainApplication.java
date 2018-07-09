@@ -39,9 +39,12 @@ import android.app.Application;
 
 public class MainApplication extends Application {
 
+    public static ArtsyApiManager sManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        sManager = ArtsyApiManager.getInstance();
     }
 }

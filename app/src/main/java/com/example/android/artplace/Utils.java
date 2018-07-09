@@ -37,5 +37,5 @@ package com.example.android.artplace;
 
 public class Utils {
 
-    public static final String BASE_ARTSY_URL = "https://api.artsy.net/api";
+    public static final String BASE_ARTSY_URL = "https://api.artsy.net/";
 }
