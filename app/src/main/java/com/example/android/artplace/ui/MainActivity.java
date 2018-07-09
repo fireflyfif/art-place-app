@@ -35,15 +35,15 @@
 
 package com.example.android.artplace.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.R;
 import com.example.android.artplace.adapters.ArtworksAdapter;
+import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.remote.MainApplication;
@@ -85,17 +85,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadArtworks() {
 
-        MainApplication.sManager.getEmbedded(new Callback<Embedded>() {
+        MainApplication.sManager.getEmbedded(new Callback<ArtsyResponse>() {
 
             @Override
-            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
+            public void onResponse(Call<ArtsyResponse> call, Response<ArtsyResponse> response) {
                 if (response.isSuccessful()) {
 
-                    mArtworkList = mEmbeddedObject.getArtworks();
-                    //Log.d(TAG, "List of Artworks: " + mArtworkList.size());
+                    ArtsyResponse artsyResponse = response.body();
+
+                    if (artsyResponse != null) { // gets non null response
+                        mEmbeddedObject = artsyResponse.getEmbedded(); // getting null for the Embedded object if I use the CustomDeserializer
+
+                        if (mEmbeddedObject != null) {
+                            mArtworkList = mEmbeddedObject.getArtworks();
+                            Log.d(TAG, "List of Artworks: " + mArtworkList.size());
+                        }
+                    }
 
                     if (mArtworkAdapter == null) {
-                        mArtworkAdapter = new ArtworksAdapter(this, mEmbeddedObject, mArtworkList);
+                        mArtworkAdapter = new ArtworksAdapter(mArtworkList, mEmbeddedObject);
                         mArtworkRv.setAdapter(mArtworkAdapter);
                         mArtworkRv.setHasFixedSize(true);
                     }
@@ -110,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Embedded> call, Throwable t) {
+            public void onFailure(Call<ArtsyResponse> call, Throwable t) {
 
                 Log.e(TAG, "onFailure called with msg: " + t.toString());
             }

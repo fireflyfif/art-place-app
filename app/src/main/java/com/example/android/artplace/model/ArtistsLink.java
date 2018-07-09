@@ -38,7 +38,7 @@ package com.example.android.artplace.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class ArtistsLink {
+public class ArtistsLink {
 
     /*
     Link to the artists endpoint, e.g.:

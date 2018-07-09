@@ -76,7 +76,7 @@ public class ArtsyApiManager {
             sRetrofit = new Retrofit.Builder()
                     .baseUrl(Utils.BASE_ARTSY_URL)
                     .client(client)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
         }
@@ -92,8 +92,8 @@ public class ArtsyApiManager {
         return sApiManager;
     }
 
-    public void getEmbedded(Callback<Embedded> callback, String token) {
-        Call<Embedded> artsyResponseCall = sArtsyJsonInterface.getEmbedded(token);
+    public void getEmbedded(Callback<ArtsyResponse> callback, String token) {
+        Call<ArtsyResponse> artsyResponseCall = sArtsyJsonInterface.getEmbedded(token);
         artsyResponseCall.enqueue(callback);
     }
 

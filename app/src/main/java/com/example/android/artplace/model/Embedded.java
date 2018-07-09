@@ -44,7 +44,7 @@ public class Embedded {
 
     @SerializedName("artworks")
     @Expose
-    private List<Artwork> artworks = null;
+    private List<Artwork> artworks;
 
     public List<Artwork> getArtworks() {
         return artworks;

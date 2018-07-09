@@ -47,27 +47,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
-import com.example.android.artplace.ui.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import retrofit2.Callback;
 
 public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksAdapter.ArtworkViewHolder> {
 
     private static final String TAG = ArtworksAdapter.class.getSimpleName();
 
-    private Callback<Embedded> mCallback;
+    private Context mContext;
     private Embedded mEmbedded;
     private List<Artwork> mArtworkList;
 
-    public ArtworksAdapter(Callback<Embedded> callback, Embedded embedded, List<Artwork> artworkList) {
-        mCallback = callback;
+    public ArtworksAdapter(List<Artwork> artworkList, Embedded embedded) {
+        //mContext = context;
         mEmbedded = embedded;
         mArtworkList = artworkList;
     }
@@ -85,21 +83,32 @@ public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksAdapter.Artwor
     @Override
     public void onBindViewHolder(@NonNull ArtworkViewHolder holder, int position) {
 
-        Artwork currentArtwork = mArtworkList.get(position);
+        ArtsyResponse artsyResponse = new ArtsyResponse();
 
-        // Get the thumbnail from the json tree
-        ImageLinks currentImageLink = currentArtwork.getLinks();
-        Thumbnail currentThumbnail = currentImageLink.getThumbnail();
+        if (mEmbedded != null) { // mEmbedded is always null if there is no Embedded parameter in the Adapter's constructor!!!
+            mEmbedded = artsyResponse.getEmbedded();
 
-        String artworkThumbnail = currentThumbnail.getHref();
-        String artworkTitle = currentArtwork.getTitle();
-        Log.d(TAG, "Artwork Title: " + artworkTitle);
+            if (mEmbedded != null) {
+                mArtworkList = mEmbedded.getArtworks(); // mEmbedded is always null?
+            }
 
-        holder.artworkTitle.setText(artworkTitle);
+            Artwork currentArtwork = mArtworkList.get(position);
 
-        Picasso.get()
-                .load(Uri.parse(artworkThumbnail))
-                .into(holder.artworkThumbnail);
+            // Get the thumbnail from the json tree
+            ImageLinks currentImageLink = currentArtwork.getLinks();
+            Thumbnail currentThumbnail = currentImageLink.getThumbnail();
+
+            String artworkThumbnail = currentThumbnail.getHref();
+            String artworkTitle = currentArtwork.getTitle();
+            Log.d(TAG, "Artwork Title: " + artworkTitle);
+
+            holder.artworkTitle.setText(artworkTitle);
+
+            Picasso.get()
+                    .load(Uri.parse(artworkThumbnail))
+                    .into(holder.artworkThumbnail);
+        }
+
     }
 
     @Override
