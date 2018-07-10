@@ -50,8 +50,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArtsyApiManager {
 
-    private static final String TAG = ArtsyApiManager.class.getSimpleName();
-
     private static Retrofit sRetrofit = null;
     private static ArtsyApiManager sApiManager;
     private static ArtsyApiInterface sArtsyApiInterface;
@@ -89,8 +87,8 @@ public class ArtsyApiManager {
         return sApiManager;
     }
 
-    public void getEmbedded(Callback<Embedded> callback, String token, int pageSize) {
-        Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, pageSize);
+    public void getEmbedded(Callback<Embedded> callback, String token, int itemSize) {
+        Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, itemSize);
         artsyResponseCall.enqueue(callback);
     }
 
