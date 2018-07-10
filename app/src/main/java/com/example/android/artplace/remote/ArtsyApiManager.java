@@ -54,7 +54,7 @@ public class ArtsyApiManager {
 
     private static Retrofit sRetrofit = null;
     private static ArtsyApiManager sApiManager;
-    private static ArtsyJsonInterface sArtsyJsonInterface;
+    private static ArtsyApiInterface sArtsyApiInterface;
 
     private ArtsyApiManager() {
 
@@ -78,7 +78,7 @@ public class ArtsyApiManager {
 
         }
 
-        sArtsyJsonInterface = sRetrofit.create(ArtsyJsonInterface.class);
+        sArtsyApiInterface = sRetrofit.create(ArtsyApiInterface.class);
 
     }
 
@@ -89,8 +89,8 @@ public class ArtsyApiManager {
         return sApiManager;
     }
 
-    public void getEmbedded(Callback<Embedded> callback, String token) {
-        Call<Embedded> artsyResponseCall = sArtsyJsonInterface.getEmbedded(token);
+    public void getEmbedded(Callback<Embedded> callback, String token, int pageSize) {
+        Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, pageSize);
         artsyResponseCall.enqueue(callback);
     }
 

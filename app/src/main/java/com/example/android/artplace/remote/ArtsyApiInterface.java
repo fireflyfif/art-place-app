@@ -44,8 +44,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Query;
 
-public interface ArtsyJsonInterface {
+public interface ArtsyApiInterface {
 
     // Endpoint for fetching Artists
 
@@ -54,5 +55,6 @@ public interface ArtsyJsonInterface {
 
     // Endpoint for fetching Artworks
     @GET("/api/artworks")
-    Call<Embedded> getEmbedded(@Header("X-XAPP-Token") String token);
+    Call<Embedded> getEmbedded(@Header("X-XAPP-Token") String token,
+                               @Query("size") int pageSize);
 }

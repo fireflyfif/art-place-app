@@ -120,6 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.e(TAG, "onFailure called with msg: " + t.toString());
             }
-        }, TOKEN);
+        }, TOKEN, 10);
     }
 }
