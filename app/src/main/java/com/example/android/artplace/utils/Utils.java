@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace;
+package com.example.android.artplace.utils;
 
 public class Utils {
 

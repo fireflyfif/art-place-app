@@ -35,11 +35,7 @@
 
 package com.example.android.artplace.remote;
 
-import android.util.Log;
-
-import com.example.android.artplace.Utils;
-import com.example.android.artplace.model.ArtsyResponse;
-import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.utils.Utils;
 import com.example.android.artplace.model.CustomDeserializer;
 import com.example.android.artplace.model.Embedded;
 import com.google.gson.Gson;
@@ -69,6 +65,7 @@ public class ArtsyApiManager {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(interceptor).build();
 
+            // Register the TypeAdapter here for deserializing the model
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Embedded.class, new CustomDeserializer())
                     .create();

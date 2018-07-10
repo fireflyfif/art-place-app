@@ -35,12 +35,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-
     // Logging for Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
 
     // Picasso Library dependency
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // Lifecycle AAC dependencies
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
