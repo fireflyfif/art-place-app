@@ -54,7 +54,29 @@ public class ArtsyApiManager {
     private static ArtsyApiManager sApiManager;
     private static ArtsyApiInterface sArtsyApiInterface;
 
-    private ArtsyApiManager() {
+    public static ArtsyApiInterface create() {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
+
+        // Register the TypeAdapter here for deserializing the model
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Embedded.class, new CustomDeserializer())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Utils.BASE_ARTSY_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        return retrofit.create(ArtsyApiInterface.class);
+    }
+
+    /*private ArtsyApiManager() {
 
         if (sRetrofit == null) {
 
@@ -78,14 +100,14 @@ public class ArtsyApiManager {
 
         sArtsyApiInterface = sRetrofit.create(ArtsyApiInterface.class);
 
-    }
+    }*/
 
-    public static ArtsyApiManager getInstance() {
+    /*public static ArtsyApiManager getInstance() {
         if (sApiManager == null) {
             sApiManager = new ArtsyApiManager();
         }
         return sApiManager;
-    }
+    }*/
 
     public void getEmbedded(Callback<Embedded> callback, String token, int itemSize) {
         Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, itemSize);

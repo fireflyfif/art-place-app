@@ -100,7 +100,6 @@ public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksAdapter.Artwor
                     .load(Uri.parse(artworkThumbnail))
                     .into(holder.artworkThumbnail);
         }
-
     }
 
     @Override

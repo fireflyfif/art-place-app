@@ -42,11 +42,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.adapters.ArtworkListAdapter;
 import com.example.android.artplace.adapters.ArtworksAdapter;
 import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.remote.MainApplication;
+import com.example.android.artplace.viewmodel.EmbeddedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,21 +68,37 @@ public class MainActivity extends AppCompatActivity {
     private Embedded mEmbeddedObject;
     private List<Artwork> mArtworkList;
 
+    private ArtworkListAdapter mPagedListAdapter;
+    private EmbeddedViewModel mViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize the ViewModel
+        mViewModel = new EmbeddedViewModel(MainApplication.create(this));
+
         mArtworkRv = findViewById(R.id.artworks_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         mArtworkRv.setLayoutManager(gridLayoutManager);
 
-        // Create new instance of the Embedded object
-        mEmbeddedObject = new Embedded();
-        mArtworkList = new ArrayList<>();
+        // Set the PagedAdapter
+        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext());
 
-        loadArtworks();
+        // Create new instance of the Embedded object
+        //mEmbeddedObject = new Embedded();
+        //mArtworkList = new ArrayList<>();
+
+        // When a new page is available, call submitList() method of the PagedListAdapter class
+        mViewModel.getArtworkLiveData().observe(this, pagedList -> {
+            mPagedListAdapter.submitList(pagedList);
+        });
+
+        mArtworkRv.setAdapter(mPagedListAdapter);
+
+        //loadArtworks();
     }
 
     private void loadArtworks() {

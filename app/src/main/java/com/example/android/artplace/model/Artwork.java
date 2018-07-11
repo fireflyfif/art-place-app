@@ -35,6 +35,8 @@
 
 package com.example.android.artplace.model;
 
+import android.support.v7.util.DiffUtil;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -48,7 +50,7 @@ public class Artwork {
      */
     @SerializedName("id")
     @Expose
-    private String id;
+    private Long id;
 
     /*
     Name of the Artwork's creator,
@@ -104,11 +106,6 @@ public class Artwork {
     @Expose
     private String date;
 
-    // TODO: Include Dimens later on
-    /*@SerializedName("dimensions")
-    @Expose
-    private Dimensions dimensions;*/
-
     /*
     Whether the work is visible on artsy.net.
      */
@@ -135,54 +132,6 @@ public class Artwork {
     @SerializedName("additional_information")
     @Expose
     private String additionalInformation;
-
-    @SerializedName("image_rights")
-    @Expose
-    private String imageRights;
-
-    /*
-    Short text blurb about the work
-    (usually empty)
-     */
-    @SerializedName("blurb")
-    @Expose
-    private String blurb;
-
-    @SerializedName("unique")
-    @Expose
-    private Boolean unique;
-
-    /*
-    A generated score that tells us how important
-    a work is within the artist's body of works.
-     */
-    @SerializedName("iconicity")
-    @Expose
-    private Double iconicity;
-
-    @SerializedName("can_inquire")
-    @Expose
-    private Boolean canInquire;
-
-    @SerializedName("can_acquire")
-    @Expose
-    private Boolean canAcquire;
-
-    /*
-    TODO: Implement in later stage:
-    Allow sharing of the work and images on social networks.
-     */
-    @SerializedName("can_share")
-    @Expose
-    private Boolean canShare;
-
-    @SerializedName("sale_message")
-    @Expose
-    private Object saleMessage;
-
-    @SerializedName("sold")
-    @Expose
-    private Boolean sold;
 
     /*
     Available image versions.
@@ -212,11 +161,11 @@ public class Artwork {
     private ImageLinks links;
 
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -276,14 +225,6 @@ public class Artwork {
         this.date = date;
     }
 
-    /*public Dimensions getDimensions() {
-        return dimensions;
-    }*/
-
-    /*public void setDimensions(Dimensions dimensions) {
-        this.dimensions = dimensions;
-    }*/
-
     public Boolean getPublished() {
         return published;
     }
@@ -316,79 +257,6 @@ public class Artwork {
         this.additionalInformation = additionalInformation;
     }
 
-    public String getImageRights() {
-        return imageRights;
-    }
-
-    public void setImageRights(String imageRights) {
-        this.imageRights = imageRights;
-    }
-
-    public String getBlurb() {
-        return blurb;
-    }
-
-    public void setBlurb(String blurb) {
-        this.blurb = blurb;
-    }
-
-    public Boolean getUnique() {
-        return unique;
-    }
-
-    public void setUnique(Boolean unique) {
-        this.unique = unique;
-    }
-
-
-    public Double getIconicity() {
-        return iconicity;
-    }
-
-    public void setIconicity(Double iconicity) {
-        this.iconicity = iconicity;
-    }
-
-    public Boolean getCanInquire() {
-        return canInquire;
-    }
-
-    public void setCanInquire(Boolean canInquire) {
-        this.canInquire = canInquire;
-    }
-
-    public Boolean getCanAcquire() {
-        return canAcquire;
-    }
-
-    public void setCanAcquire(Boolean canAcquire) {
-        this.canAcquire = canAcquire;
-    }
-
-    public Boolean getCanShare() {
-        return canShare;
-    }
-
-    public void setCanShare(Boolean canShare) {
-        this.canShare = canShare;
-    }
-
-    public Object getSaleMessage() {
-        return saleMessage;
-    }
-
-    public void setSaleMessage(Object saleMessage) {
-        this.saleMessage = saleMessage;
-    }
-
-    public Boolean getSold() {
-        return sold;
-    }
-
-    public void setSold(Boolean sold) {
-        this.sold = sold;
-    }
-
     public List<String> getImageVersions() {
         return imageVersions;
     }
@@ -405,5 +273,25 @@ public class Artwork {
         this.links = links;
     }
 
+    public static DiffUtil.ItemCallback<Artwork> DIFF_CALLBACK = new DiffUtil.ItemCallback<Artwork>() {
+        @Override
+        public boolean areItemsTheSame(Artwork oldItem, Artwork newItem) {
+            return oldItem.id == newItem.id;
+        }
 
+        @Override
+        public boolean areContentsTheSame(Artwork oldItem, Artwork newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        Artwork artwork = (Artwork) obj;
+        return artwork.id == this.id;
+    }
 }

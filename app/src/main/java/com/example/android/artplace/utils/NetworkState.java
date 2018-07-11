@@ -33,39 +33,38 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.utils;
 
-import android.app.Application;
-import android.content.Context;
+// Help from this tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
+public class NetworkState {
 
-public class MainApplication extends Application {
-
-    private ArtsyApiInterface mArtsyApi;
-    public static ArtsyApiManager sManager;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        //sManager = ArtsyApiManager.getInstance();
+    public enum Status {
+        RUNNING,
+        SUCCESS,
+        FAILED
     }
 
-    private static MainApplication get(Context context) {
-        return (MainApplication) context.getApplicationContext();
+    private final Status mStatus;
+    private final String mMessage;
+
+    public static final NetworkState LOADED;
+    public static final NetworkState LOADING;
+
+    public NetworkState(Status status, String msg) {
+        mStatus = status;
+        mMessage = msg;
     }
 
-    public static MainApplication create(Context context) {
-        return MainApplication.get(context);
+    static {
+        LOADED = new NetworkState(Status.SUCCESS, "Success");
+        LOADING = new NetworkState(Status.RUNNING, "Running");
     }
 
-    public ArtsyApiInterface getArtsyApi() {
-        if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.create();
-        }
-        return mArtsyApi;
+    public Status getStatus() {
+        return mStatus;
     }
 
-    public void setArtsyApi(ArtsyApiInterface artsyApi) {
-        mArtsyApi = artsyApi;
+    public String getMessage() {
+        return mMessage;
     }
 }

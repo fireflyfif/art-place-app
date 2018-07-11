@@ -33,39 +33,33 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.datasource;
 
-import android.app.Application;
-import android.content.Context;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.paging.DataSource;
 
-public class MainApplication extends Application {
+import com.example.android.artplace.remote.MainApplication;
 
-    private ArtsyApiInterface mArtsyApi;
-    public static ArtsyApiManager sManager;
+public class ArtworkDataFactory extends ArtworkDataSource.Factory {
+
+    private MutableLiveData<ArtworkDataSource> mutableLiveData;
+    private ArtworkDataSource dataSource;
+    private MainApplication mainApplication;
+
+    public ArtworkDataFactory(MainApplication mainApplication) {
+        this.mainApplication = mainApplication;
+        this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public DataSource create() {
+        dataSource = new ArtworkDataSource(mainApplication);
+        mutableLiveData.postValue(dataSource);
 
-        //sManager = ArtsyApiManager.getInstance();
+        return dataSource;
     }
 
-    private static MainApplication get(Context context) {
-        return (MainApplication) context.getApplicationContext();
-    }
-
-    public static MainApplication create(Context context) {
-        return MainApplication.get(context);
-    }
-
-    public ArtsyApiInterface getArtsyApi() {
-        if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.create();
-        }
-        return mArtsyApi;
-    }
-
-    public void setArtsyApi(ArtsyApiInterface artsyApi) {
-        mArtsyApi = artsyApi;
+    public MutableLiveData<ArtworkDataSource> getMutableLiveData() {
+        return mutableLiveData;
     }
 }
