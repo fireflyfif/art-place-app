@@ -37,6 +37,7 @@ package com.example.android.artplace.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.ItemKeyedDataSource;
+import android.arch.paging.PageKeyedDataSource;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -48,11 +49,14 @@ import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.MainApplication;
 import com.example.android.artplace.utils.NetworkState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ArtworkDataSource extends ItemKeyedDataSource<Long, Artwork> {
+public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
@@ -78,9 +82,23 @@ public class ArtworkDataSource extends ItemKeyedDataSource<Long, Artwork> {
         return initialLoading;
     }
 
+    /**
+     * This id field is unique for each artwork
+     *
+     * @param
+     * @return
+     *//*
+    @NonNull
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Long> params,
-                            @NonNull final LoadInitialCallback<Artwork> callback) {
+    public Long getKey(@NonNull Artwork item) {
+        return item.getId();
+    }*/
+
+    @Override
+    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Artwork> callback) {
+
+        final Embedded embedded = new Embedded();
+        final List<Artwork> artworkList = new ArrayList<>();
 
         // Add NetworkState
         initialLoading.postValue(NetworkState.LOADING);
@@ -91,17 +109,24 @@ public class ArtworkDataSource extends ItemKeyedDataSource<Long, Artwork> {
                     @Override
                     public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
                         if (response.isSuccessful()) {
-                            callback.onResult(response.body().getArtworks());
 
-                            initialLoading.postValue(NetworkState.LOADED);
-                            networkState.postValue(NetworkState.LOADED);
+                            if (embedded.getArtworks() != null) {
+                                artworkList.addAll(embedded.getArtworks());
 
-                            Log.d(TAG, "Response code: " + response.code());
+                                callback.onResult(response.body().getArtworks(), null, 2l);
+
+                                initialLoading.postValue(NetworkState.LOADED);
+                                networkState.postValue(NetworkState.LOADED);
+                            }
+
+                            Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+
                         } else {
+
                             initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
                             networkState.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
 
-                            Log.d(TAG, "Response code: " + response.code());
+                            Log.d(TAG, "Response code from initial load: " + response.code());
                         }
                     }
 
@@ -109,50 +134,51 @@ public class ArtworkDataSource extends ItemKeyedDataSource<Long, Artwork> {
                     public void onFailure(Call<Embedded> call, Throwable t) {
                         networkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
 
-                        Log.d(TAG, "Response code: " + t.getMessage());
+                        Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
                     }
                 });
     }
 
     @Override
-    public void loadAfter(@NonNull final LoadParams<Long> params,
-                          @NonNull final LoadCallback<Artwork> callback) {
+    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Artwork> callback) {
+
+        // Ignore this, because we don't need to load anything before the initial load of data
+    }
+
+    @Override
+    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Artwork> callback) {
 
         Log.i(TAG, "Loading " + params.key + "Count " + params.requestedLoadSize);
 
-        // TODO: Add Network State
+        final Embedded embedded = new Embedded();
+        final List<Artwork> artworkList = new ArrayList<>();
+
+        // Add Network State
+        networkState.postValue(NetworkState.LOADING);
 
         mainApplication.getArtsyApi().getEmbedded(BuildConfig.TOKEN, params.requestedLoadSize)
                 .enqueue(new Callback<Embedded>() {
                     @Override
                     public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
                         // TODO: To complete!
-//                        long artworkId = (params.requestedLoadSize == 10) ? null: params.requestedLoadSize + 1;
-//                        callback.onResult(response.body().getArtworks(), artworkId);
+                        if (embedded.getArtworks() != null) {
+                            artworkList.addAll(embedded.getArtworks());
+
+                            long artworkId = (params.key == embedded.getArtworks().size()) ? null: params.key + 1;
+                            callback.onResult(response.body().getArtworks(), artworkId);
+
+                            networkState.postValue(NetworkState.LOADED);
+                        }
+
                     }
 
                     @Override
                     public void onFailure(Call<Embedded> call, Throwable t) {
 
+                        networkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
+
+                        Log.d(TAG, "Response code: " + t.getMessage());
                     }
                 });
-    }
-
-    @Override
-    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Artwork> callback) {
-
-        // Ignore this, because we don't need to load anything before the initial load of data
-    }
-
-    /**
-     * This id field is unique for each artwork
-     *
-     * @param item
-     * @return
-     */
-    @NonNull
-    @Override
-    public Long getKey(@NonNull Artwork item) {
-        return item.getId();
     }
 }

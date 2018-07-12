@@ -79,17 +79,17 @@ public class EmbeddedViewModel extends ViewModel {
 
         PagedList.Config pagedListConfig =
                 (new PagedList.Config.Builder())
-                        .setEnablePlaceholders(false)
+                        .setEnablePlaceholders(true)
                         .setInitialLoadSizeHint(10)
                         // If not set, defaults to page size.
                         //A value of 0 indicates that no list items
                         // will be loaded until they are specifically requested
                         .setPrefetchDistance(10)
-                        .setPageSize(1)
+                        .setPageSize(10)
                         .build();
 
         // TODO: Resolve the lint warning!
-        mArtworkLiveData = (new LivePagedListBuilder(artworkDataFactory, pagedListConfig))
+        mArtworkLiveData = new LivePagedListBuilder<>(artworkDataFactory, pagedListConfig)
                 .setFetchExecutor(mExecutor)
                 .build();
     }
