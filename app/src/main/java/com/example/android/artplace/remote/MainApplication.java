@@ -41,13 +41,10 @@ import android.content.Context;
 public class MainApplication extends Application {
 
     private ArtsyApiInterface mArtsyApi;
-    public static ArtsyApiManager sManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //sManager = ArtsyApiManager.getInstance();
     }
 
     private static MainApplication get(Context context) {

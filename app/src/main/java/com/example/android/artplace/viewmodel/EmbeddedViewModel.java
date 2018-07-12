@@ -84,12 +84,12 @@ public class EmbeddedViewModel extends ViewModel {
                         // If not set, defaults to page size.
                         //A value of 0 indicates that no list items
                         // will be loaded until they are specifically requested
-                        .setPrefetchDistance(10)
+                        //.setPrefetchDistance(10)
                         .setPageSize(10)
                         .build();
 
         // TODO: Resolve the lint warning!
-        mArtworkLiveData = new LivePagedListBuilder<>(artworkDataFactory, pagedListConfig)
+        mArtworkLiveData = new LivePagedListBuilder<>(artworkDataFactory, pagedListConfig) // liveData is null??
                 .setFetchExecutor(mExecutor)
                 .build();
     }

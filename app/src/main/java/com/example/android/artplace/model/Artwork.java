@@ -50,7 +50,7 @@ public class Artwork {
      */
     @SerializedName("id")
     @Expose
-    private Long id;
+    private String id;
 
     /*
     Name of the Artwork's creator,
@@ -161,11 +161,11 @@ public class Artwork {
     private ImageLinks links;
 
 
-    public long getId() {
+    public String  getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

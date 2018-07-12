@@ -35,7 +35,10 @@
 
 package com.example.android.artplace.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.paging.PagedList;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -92,16 +95,26 @@ public class MainActivity extends AppCompatActivity {
         //mArtworkList = new ArrayList<>();
 
         // When a new page is available, call submitList() method of the PagedListAdapter class
-        mViewModel.getArtworkLiveData().observe(this, pagedList -> {
-            mPagedListAdapter.submitList(pagedList);
+//        mViewModel.getArtworkLiveData().observe(this, pagedList -> {
+//            mPagedListAdapter.submitList(pagedList);
+//        });
+        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+
+            @Override
+            public void onChanged(@Nullable PagedList<Artwork> artworks) {
+                if (artworks != null) {
+                    mPagedListAdapter.submitList(artworks);
+                }
+            }
         });
+
 
         mArtworkRv.setAdapter(mPagedListAdapter);
 
         //loadArtworks();
     }
 
-    private void loadArtworks() {
+    /*private void loadArtworks() {
 
         MainApplication.sManager.getEmbedded(new Callback<Embedded>() {
 
@@ -139,5 +152,5 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure called with msg: " + t.toString());
             }
         }, TOKEN, 10);
-    }
+    }*/
 }

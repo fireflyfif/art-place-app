@@ -54,8 +54,10 @@ import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.utils.NetworkState;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
-public class ArtworkListAdapter extends PagedListAdapter<Artwork, ArtworkListAdapter.ArtworkItemViewHolder> {
+public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder> {
 
     private static final String TAG = ArtworkListAdapter.class.getSimpleName();
 
@@ -64,6 +66,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, ArtworkListAda
 
     private Context mContext;
     private NetworkState mNetworkState;
+    private List<Artwork> mArtworkList;
 
     public ArtworkListAdapter(Context context) {
         super(Artwork.DIFF_CALLBACK);
@@ -72,7 +75,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, ArtworkListAda
 
     @NonNull
     @Override
-    public ArtworkItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.artwork_item, parent, false);
 
@@ -80,10 +83,17 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, ArtworkListAda
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ArtworkItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
+        if (getItem(position) != null) {
+            ((ArtworkItemViewHolder)holder).bindTo(mArtworkList.get(position));
+        }
 
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
     }
 
     private boolean hasExtraRow() {

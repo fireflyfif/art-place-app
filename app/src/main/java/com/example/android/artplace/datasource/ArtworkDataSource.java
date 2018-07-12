@@ -98,7 +98,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Artwork> callback) {
 
         final Embedded embedded = new Embedded();
-        final List<Artwork> artworkList = new ArrayList<>();
+        final List<Artwork> artworkList = new ArrayList<>(); // size = 0 ?
 
         // Add NetworkState
         initialLoading.postValue(NetworkState.LOADING);
