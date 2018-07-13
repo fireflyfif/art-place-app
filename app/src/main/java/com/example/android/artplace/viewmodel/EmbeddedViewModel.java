@@ -60,8 +60,8 @@ public class EmbeddedViewModel extends ViewModel {
 
     private MainApplication mMainApplication;
 
-    public EmbeddedViewModel(@NonNull MainApplication mainApplication) {
-        this.mMainApplication = mainApplication;
+    public EmbeddedViewModel() {
+        //this.mMainApplication = mainApplication;
         init();
     }
 
@@ -71,7 +71,7 @@ public class EmbeddedViewModel extends ViewModel {
         mExecutor = Executors.newFixedThreadPool(5);
 
         // Get an instance of the DataSourceFactory class
-        ArtworkDataFactory artworkDataFactory = new ArtworkDataFactory(mMainApplication);
+        ArtworkDataFactory artworkDataFactory = new ArtworkDataFactory();
         // Initialize the network state liveData
         // TODO: Finish it!
         //mNetworkState = Transformations.switchMap(artworkDataFactory.getMutableLiveData(),

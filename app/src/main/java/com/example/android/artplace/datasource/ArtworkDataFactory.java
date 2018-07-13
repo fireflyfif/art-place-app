@@ -40,14 +40,14 @@ import android.arch.paging.DataSource;
 
 import com.example.android.artplace.remote.MainApplication;
 
-public class ArtworkDataFactory extends ArtworkDataSource.Factory {
+public class ArtworkDataFactory extends DataSource.Factory {
 
     private MutableLiveData<ArtworkDataSource> mutableLiveData;
     private ArtworkDataSource dataSource;
     private MainApplication mainApplication;
 
-    public ArtworkDataFactory(MainApplication mainApplication) {
-        this.mainApplication = mainApplication;
+    public ArtworkDataFactory() {
+        //this.mainApplication = mainApplication;
         this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
     }
 

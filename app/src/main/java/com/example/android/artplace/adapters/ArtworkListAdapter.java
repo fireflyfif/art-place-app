@@ -54,6 +54,7 @@ import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.utils.NetworkState;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
@@ -79,12 +80,14 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.artwork_item, parent, false);
 
+        Log.d(TAG, "onCreateViewHolder called");
         return new ArtworkItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        Log.d(TAG, "onBindViewHolder called");
         if (getItem(position) != null) {
             ((ArtworkItemViewHolder)holder).bindTo(mArtworkList.get(position));
         }
@@ -134,6 +137,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
 
         public void bindTo(Artwork artwork) {
+
+            mArtworkList = new ArrayList<>();
 
             // Get the thumbnail from the json tree
             ImageLinks currentImageLink = artwork.getLinks();

@@ -36,6 +36,7 @@
 package com.example.android.artplace.ui;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -81,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize the ViewModel
-        mViewModel = new EmbeddedViewModel(MainApplication.create(this));
+        //mViewModel = new EmbeddedViewModel(MainApplication.create(this));
+        mViewModel = ViewModelProviders.of(this).get(EmbeddedViewModel.class);
 
         mArtworkRv = findViewById(R.id.artworks_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
