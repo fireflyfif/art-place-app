@@ -38,10 +38,9 @@ package com.example.android.artplace.repository;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtPlaceApp;
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 
@@ -55,34 +54,39 @@ import retrofit2.Response;
 public class ArtsyRepository {
 
     private static final String TAG = ArtsyRepository.class.getSimpleName();
-    private ArtsyApiManager mApiManager;
 
     private static ArtsyRepository INSTANCE;
+    private ArtsyApiInterface mApiInterface;
 
-    private ArtPlaceApp artPlaceApp;
 
-    public ArtsyRepository(ArtsyApiManager apiManager) {
-        mApiManager = apiManager;
+    // Constructor of the Repository class
+    public ArtsyRepository() {
+        mApiInterface = makeApiCall();
     }
 
-    public static ArtsyRepository getInstance(ArtsyApiManager apiManager) {
+    public static ArtsyRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ArtsyRepository(apiManager);
+            INSTANCE = new ArtsyRepository();
         }
 
         return INSTANCE;
     }
 
+    /*
+    Method that makes the call to the API
+     */
+    private static ArtsyApiInterface makeApiCall() {
+        return ArtPlaceApp.create();
+    }
 
-    public void getArtworks(String token, int itemSize) {
+    public void getArtworks(int itemSize) {
 
-        mApiManager.getEmbedded(token, itemSize, new Callback<Embedded>() {
-
+        mApiInterface.getEmbedded(itemSize).enqueue(new Callback<Embedded>() {
             Embedded embedded = new Embedded();
             List<Artwork> artworkList = new ArrayList<>();
 
             @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
                 if (response.isSuccessful()) {
 
                     embedded = response.body();
@@ -90,7 +94,6 @@ public class ArtsyRepository {
                         artworkList = embedded.getArtworks();
 
                         Log.d(TAG, "List of Artworks: " + artworkList.size());
-
                     }
 
                     Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
@@ -100,10 +103,11 @@ public class ArtsyRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
+            public void onFailure(Call<Embedded> call, Throwable t) {
 
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
+
     }
 }

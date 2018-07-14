@@ -40,20 +40,14 @@ import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
@@ -69,17 +63,16 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private MutableLiveData<NetworkState> mNetworkState;
     private MutableLiveData<NetworkState> mInitialLoading;
 
-    private String mToken;
     //private int mItemSize;
 
-    public ArtworkDataSource(ArtsyApiManager apiManager, String token) {
-        mApiManager = apiManager;
-        mArtsyRepository = ArtsyRepository.getInstance(apiManager);
+    public ArtworkDataSource() {
+        //mApiManager = apiManager;
+        mArtsyRepository = ArtsyRepository.getInstance();
 
         mNetworkState = new MutableLiveData();
         mInitialLoading = new MutableLiveData();
 
-        mToken = token;
+        //mToken = token;
         //mItemSize = itemSize;
     }
 
@@ -91,17 +84,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         return mInitialLoading;
     }
 
-    /**
-     * This id field is unique for each artwork
-     *
-     * @param
-     * @return
-     *//*
-    @NonNull
-    @Override
-    public Long getKey(@NonNull Artwork item) {
-        return item.getId();
-    }*/
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Artwork> callback) {
@@ -113,7 +95,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mArtsyRepository.getArtworks(mToken, params.requestedLoadSize);
+        mArtsyRepository.getArtworks(params.requestedLoadSize);
 
         if (embedded.getArtworks() != null) {
             artworkList.addAll(embedded.getArtworks());
@@ -174,15 +156,14 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         Log.i(TAG, "Loading " + params.key + "Count " + params.requestedLoadSize);
 
         final Embedded embedded = new Embedded();
-        final List<Artwork> artworkList = new ArrayList<>();
 
         // Add Network State
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mArtsyRepository.getArtworks(mToken, params.requestedLoadSize);
+        mArtsyRepository.getArtworks(params.requestedLoadSize);
 
         if (embedded.getArtworks() != null) {
-            artworkList.addAll(embedded.getArtworks());
+            final List<Artwork> artworkList = new ArrayList<>(embedded.getArtworks());
 
             long nextKey = (params.key == embedded.getArtworks().size()) ? null: params.key + 1;
             callback.onResult(artworkList, nextKey);

@@ -52,7 +52,7 @@ public class ArtsyApiManager {
 
     private static ArtsyApiInterface sArtsyApiInterface;
 
-    public static ArtsyApiInterface create() {
+   /* public static ArtsyApiInterface create() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -67,7 +67,7 @@ public class ArtsyApiManager {
                 .build();
 
         return retrofit.create(ArtsyApiInterface.class);
-    }
+    }*/
 
     /*
     Register the TypeAdapter here for deserializing the model
@@ -78,11 +78,9 @@ public class ArtsyApiManager {
                 .create();
     }
 
-
-    // TODO: Not in use?
-    public void getEmbedded(String token, int itemSize, Callback<Embedded> callback) {
+    /*public void getEmbedded(String token, int itemSize, Callback<Embedded> callback) {
         Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, itemSize);
         artsyResponseCall.enqueue(callback);
-    }
+    }*/
 
 }

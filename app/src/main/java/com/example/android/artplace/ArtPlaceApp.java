@@ -33,10 +33,29 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.example.android.artplace.model.CustomDeserializer;
+import com.example.android.artplace.model.Embedded;
+import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.utils.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArtPlaceApp extends Application {
 
@@ -55,24 +74,54 @@ public class ArtPlaceApp extends Application {
         INSTANCE = this;
     }
 
-    private static ArtPlaceApp get(Context context) {
-        return (ArtPlaceApp) context.getApplicationContext();
+    /*
+    Register the TypeAdapter here for deserializing the model
+    */
+    private static Gson makeGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Embedded.class, new CustomDeserializer())
+                .create();
     }
 
-    public static ArtPlaceApp create(Context context) {
-        return ArtPlaceApp.get(context);
+    // Provide the Retrofit call
+    public static ArtsyApiInterface create() {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder client = new OkHttpClient.Builder();
+        //COMPLETED: Add the Header wit the Token here
+        client.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(@NonNull Chain chain) throws IOException {
+                Request newRequest = chain.request().newBuilder()
+                        .addHeader("X-XAPP-Token", BuildConfig.TOKEN)
+                        .build();
+                return chain.proceed(newRequest);
+            }
+        }).build();
+
+        client.addInterceptor(interceptor).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Utils.BASE_ARTSY_URL)
+                .client(client.build())
+                .addConverterFactory(GsonConverterFactory.create(makeGson()))
+                .build();
+
+        return retrofit.create(ArtsyApiInterface.class);
     }
 
     /**
      * Method that creates a Retrofit instance from the ArtsyApiManager
      * @return
      */
-    public ArtsyApiInterface getArtsyApi() {
+    /*public ArtsyApiInterface getArtsyApi() {
         if (mArtsyApi == null) {
             mArtsyApi = ArtsyApiManager.create();
         }
         return mArtsyApi;
-    }
+    }*/
 
     public void setArtsyApi(ArtsyApiInterface artsyApi) {
         mArtsyApi = artsyApi;

@@ -78,10 +78,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize the ViewModel
-        //mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
         mViewModel = ViewModelProviders.of(this,
                 new ArtworksViewModelFactory(ArtworkDataSourceFactory
-                        .getInstance(mApiManager, BuildConfig.TOKEN)))
+                        .getInstance()))
                 .get(ArtworksViewModel.class);
 
         mArtworkRv = findViewById(R.id.artworks_rv);
@@ -96,64 +95,20 @@ public class MainActivity extends AppCompatActivity {
         //mArtworkList = new ArrayList<>();
 
         // When a new page is available, call submitList() method of the PagedListAdapter class
-//        mViewModel.getArtworkLiveData().observe(this, pagedList -> {
-//            mPagedListAdapter.submitList(pagedList);
-//        });
+
         mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
-                    mPagedListAdapter.submitList(artworks);
+                    mPagedListAdapter.submitList(artworks); // artworks is 0
                 }
             }
         });
 
-        // TODO: Get the network state
-
+        //TODO: Get the network state
 
         mArtworkRv.setAdapter(mPagedListAdapter);
-
-        //loadArtworks();
     }
 
-    /*private void loadArtworks() {
-
-        ArtPlaceApp.sManager.getEmbedded(new Callback<Embedded>() {
-
-            @Override
-            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
-                if (response.isSuccessful()) {
-
-                    mEmbeddedObject = response.body();
-
-                    if (mEmbeddedObject != null) { // gets non null response
-
-                        mArtworkList = mEmbeddedObject.getArtworks();
-                        Log.d(TAG, "List of Artworks: " + mArtworkList.size());
-
-                    }
-
-                    if (mArtworkAdapter == null) {
-                        mArtworkAdapter = new ArtworksAdapter(mArtworkList, mEmbeddedObject);
-                        mArtworkRv.setAdapter(mArtworkAdapter);
-                        mArtworkRv.setHasFixedSize(true);
-                    }
-
-                    int statusCode = response.code();
-                    Log.e(TAG, "Response code: " + statusCode);
-
-                } else {
-                    int statusCode = response.code();
-                    Log.e(TAG, "Response code: " + statusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Embedded> call, Throwable t) {
-
-                Log.e(TAG, "onFailure called with msg: " + t.toString());
-            }
-        }, TOKEN, 10);
-    }*/
 }

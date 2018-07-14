@@ -39,7 +39,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.DataSource;
 
 import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.remote.ArtPlaceApp;
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiManager;
 
 public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
@@ -59,19 +59,19 @@ public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> 
         this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
     }
 
-    public synchronized static ArtworkDataSourceFactory getInstance(ArtsyApiManager apiManager, String token) {
+    public synchronized static ArtworkDataSourceFactory getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ArtworkDataSourceFactory();
         }
-        sToken = token;
-        sApiManager = apiManager;
+        //sToken = token;
+        //sApiManager = apiManager;
 
         return INSTANCE;
     }
 
     @Override
     public DataSource<Long, Artwork> create() {
-        dataSource = new ArtworkDataSource(sApiManager, sToken);
+        dataSource = new ArtworkDataSource();
         mutableLiveData.postValue(dataSource);
 
         return dataSource;

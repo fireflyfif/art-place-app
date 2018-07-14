@@ -58,6 +58,5 @@ public interface ArtsyApiInterface {
      *  link: https://api.artsy.net/api/artworks?size=10 + header with token
      */
     @GET("/api/artworks")
-    Call<Embedded> getEmbedded(@Header("X-XAPP-Token") String token,
-                               @Query("size") int itemSize);
+    Call<Embedded> getEmbedded(@Query("size") int itemSize);
 }
