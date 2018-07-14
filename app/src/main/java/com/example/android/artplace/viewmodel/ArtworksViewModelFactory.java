@@ -33,33 +33,26 @@
  *
  */
 
-package com.example.android.artplace.utils;
+package com.example.android.artplace.viewmodel;
 
-// Help from this tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
-public class NetworkState {
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-    public enum Status {
-        RUNNING,
-        SUCCESS,
-        FAILED
+import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
+
+public class ArtworksViewModelFactory implements ViewModelProvider.Factory {
+
+    private ArtworkDataSourceFactory mArtworkDataSourceFactory;
+
+    public ArtworksViewModelFactory(ArtworkDataSourceFactory artworkDataSourceFactory) {
+        mArtworkDataSourceFactory = artworkDataSourceFactory;
     }
 
-    private final Status mStatus;
-
-    public static final NetworkState LOADED;
-    public static final NetworkState LOADING;
-
-    public NetworkState(Status status) {
-        mStatus = status;
+    @SuppressWarnings("unchecked")
+    @NonNull
+    @Override
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        return (T) new ArtworksViewModel(mArtworkDataSourceFactory);
     }
-
-    static {
-        LOADED = new NetworkState(Status.SUCCESS);
-        LOADING = new NetworkState(Status.RUNNING);
-    }
-
-    public Status getStatus() {
-        return mStatus;
-    }
-
 }

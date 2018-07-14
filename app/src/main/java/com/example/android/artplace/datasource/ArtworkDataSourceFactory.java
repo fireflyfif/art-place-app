@@ -33,36 +33,51 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.datasource;
 
-import android.app.Application;
-import android.content.Context;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.paging.DataSource;
 
-public class MainApplication extends Application {
+import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.remote.ArtPlaceApp;
+import com.example.android.artplace.remote.ArtsyApiManager;
 
-    private ArtsyApiInterface mArtsyApi;
+public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
+
+    private MutableLiveData<ArtworkDataSource> mutableLiveData;
+    private ArtworkDataSource dataSource;
+    private ArtPlaceApp artPlaceApp;
+
+    private static ArtworkDataSourceFactory INSTANCE;
+
+    private static ArtsyApiManager sApiManager;
+    private static String sToken;
+
+
+    public ArtworkDataSourceFactory() {
+        //this.artPlaceApp = artPlaceApp;
+        this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
+    }
+
+    public synchronized static ArtworkDataSourceFactory getInstance(ArtsyApiManager apiManager, String token) {
+        if (INSTANCE == null) {
+            INSTANCE = new ArtworkDataSourceFactory();
+        }
+        sToken = token;
+        sApiManager = apiManager;
+
+        return INSTANCE;
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public DataSource<Long, Artwork> create() {
+        dataSource = new ArtworkDataSource(sApiManager, sToken);
+        mutableLiveData.postValue(dataSource);
+
+        return dataSource;
     }
 
-    private static MainApplication get(Context context) {
-        return (MainApplication) context.getApplicationContext();
-    }
-
-    public static MainApplication create(Context context) {
-        return MainApplication.get(context);
-    }
-
-    public ArtsyApiInterface getArtsyApi() {
-        if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.create();
-        }
-        return mArtsyApi;
-    }
-
-    public void setArtsyApi(ArtsyApiInterface artsyApi) {
-        mArtsyApi = artsyApi;
+    public MutableLiveData<ArtworkDataSource> getMutableLiveData() {
+        return mutableLiveData;
     }
 }

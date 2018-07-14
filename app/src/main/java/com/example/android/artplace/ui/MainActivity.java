@@ -43,25 +43,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
+import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.R;
 import com.example.android.artplace.adapters.ArtworkListAdapter;
 import com.example.android.artplace.adapters.ArtworksAdapter;
-import com.example.android.artplace.model.ArtsyResponse;
+import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.MainApplication;
-import com.example.android.artplace.viewmodel.EmbeddedViewModel;
+import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.viewmodel.ArtworksViewModel;
+import com.example.android.artplace.viewmodel.ArtworksViewModelFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.example.android.artplace.BuildConfig.TOKEN;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
     private Embedded mEmbeddedObject;
     private List<Artwork> mArtworkList;
 
+    private ArtsyApiManager mApiManager;
+
     private ArtworkListAdapter mPagedListAdapter;
-    private EmbeddedViewModel mViewModel;
+    private ArtworksViewModel mViewModel;
 
 
     @Override
@@ -82,8 +78,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize the ViewModel
-        //mViewModel = new EmbeddedViewModel(MainApplication.create(this));
-        mViewModel = ViewModelProviders.of(this).get(EmbeddedViewModel.class);
+        //mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
+        mViewModel = ViewModelProviders.of(this,
+                new ArtworksViewModelFactory(ArtworkDataSourceFactory
+                        .getInstance(mApiManager, BuildConfig.TOKEN)))
+                .get(ArtworksViewModel.class);
 
         mArtworkRv = findViewById(R.id.artworks_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -110,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: Get the network state
+
 
         mArtworkRv.setAdapter(mPagedListAdapter);
 
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*private void loadArtworks() {
 
-        MainApplication.sManager.getEmbedded(new Callback<Embedded>() {
+        ArtPlaceApp.sManager.getEmbedded(new Callback<Embedded>() {
 
             @Override
             public void onResponse(Call<Embedded> call, Response<Embedded> response) {

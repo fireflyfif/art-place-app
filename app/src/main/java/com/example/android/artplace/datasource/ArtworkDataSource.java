@@ -36,17 +36,16 @@
 package com.example.android.artplace.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.ItemKeyedDataSource;
 import android.arch.paging.PageKeyedDataSource;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtsyApiInterface;
-import com.example.android.artplace.remote.MainApplication;
+import com.example.android.artplace.remote.ArtPlaceApp;
+import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;
@@ -62,24 +61,34 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     //private ArtsyApiInterface mArtsyApi;
 
-    private MainApplication mainApplication;
+    //private ArtPlaceApp artPlaceApp;
 
-    private MutableLiveData networkState;
-    private MutableLiveData initialLoading;
+    private ArtsyRepository mArtsyRepository;
+    private ArtsyApiManager mApiManager;
 
-    public ArtworkDataSource(MainApplication mainApplication) {
-        this.mainApplication = mainApplication;
+    private MutableLiveData<NetworkState> mNetworkState;
+    private MutableLiveData<NetworkState> mInitialLoading;
 
-        networkState = new MutableLiveData();
-        initialLoading = new MutableLiveData();
+    private String mToken;
+    //private int mItemSize;
+
+    public ArtworkDataSource(ArtsyApiManager apiManager, String token) {
+        mApiManager = apiManager;
+        mArtsyRepository = ArtsyRepository.getInstance(apiManager);
+
+        mNetworkState = new MutableLiveData();
+        mInitialLoading = new MutableLiveData();
+
+        mToken = token;
+        //mItemSize = itemSize;
     }
 
-    public MutableLiveData getNetworkState() {
-        return networkState;
+    public MutableLiveData<NetworkState> getNetworkState() {
+        return mNetworkState;
     }
 
-    public MutableLiveData getInitialLoading() {
-        return initialLoading;
+    public MutableLiveData<NetworkState> getInitialLoading() {
+        return mInitialLoading;
     }
 
     /**
@@ -101,10 +110,24 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         final List<Artwork> artworkList = new ArrayList<>(); // size = 0 ?
 
         // Add NetworkState
-        initialLoading.postValue(NetworkState.LOADING);
-        networkState.postValue(NetworkState.LOADING);
+        mInitialLoading.postValue(NetworkState.LOADING);
+        mNetworkState.postValue(NetworkState.LOADING);
 
-        mainApplication.getArtsyApi().getEmbedded(BuildConfig.TOKEN, params.requestedLoadSize)
+        mArtsyRepository.getArtworks(mToken, params.requestedLoadSize);
+
+        if (embedded.getArtworks() != null) {
+            artworkList.addAll(embedded.getArtworks());
+            callback.onResult(artworkList, null, 2L);
+
+            mInitialLoading.postValue(NetworkState.LOADED);
+            mNetworkState.postValue(NetworkState.LOADED);
+        } else {
+            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+        }
+
+
+        /*artPlaceApp.getArtsyApi().getEmbedded(BuildConfig.TOKEN, params.requestedLoadSize)
                 .enqueue(new Callback<Embedded>() {
                     @Override
                     public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
@@ -115,16 +138,16 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                                 callback.onResult(response.body().getArtworks(), null, 2l);
 
-                                initialLoading.postValue(NetworkState.LOADED);
-                                networkState.postValue(NetworkState.LOADED);
+                                mInitialLoading.postValue(NetworkState.LOADED);
+                                mNetworkState.postValue(NetworkState.LOADED);
                             }
 
                             Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
 
                         } else {
 
-                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
-                            networkState.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
 
                             Log.d(TAG, "Response code from initial load: " + response.code());
                         }
@@ -132,11 +155,11 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                     @Override
                     public void onFailure(Call<Embedded> call, Throwable t) {
-                        networkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
+                        mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
 
                         Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
                     }
-                });
+                });*/
     }
 
     @Override
@@ -154,9 +177,24 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         final List<Artwork> artworkList = new ArrayList<>();
 
         // Add Network State
-        networkState.postValue(NetworkState.LOADING);
+        mNetworkState.postValue(NetworkState.LOADING);
 
-        mainApplication.getArtsyApi().getEmbedded(BuildConfig.TOKEN, params.requestedLoadSize)
+        mArtsyRepository.getArtworks(mToken, params.requestedLoadSize);
+
+        if (embedded.getArtworks() != null) {
+            artworkList.addAll(embedded.getArtworks());
+
+            long nextKey = (params.key == embedded.getArtworks().size()) ? null: params.key + 1;
+            callback.onResult(artworkList, nextKey);
+
+            mNetworkState.postValue(NetworkState.LOADED);
+        } else {
+            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+        }
+
+
+
+        /*artPlaceApp.getArtsyApi().getEmbedded(BuildConfig.TOKEN, params.requestedLoadSize)
                 .enqueue(new Callback<Embedded>() {
                     @Override
                     public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
@@ -167,7 +205,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                             long artworkId = (params.key == embedded.getArtworks().size()) ? null: params.key + 1;
                             callback.onResult(response.body().getArtworks(), artworkId);
 
-                            networkState.postValue(NetworkState.LOADED);
+                            mNetworkState.postValue(NetworkState.LOADED);
                         }
 
                     }
@@ -175,10 +213,10 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     @Override
                     public void onFailure(Call<Embedded> call, Throwable t) {
 
-                        networkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
+                        mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED, t.getMessage()));
 
                         Log.d(TAG, "Response code: " + t.getMessage());
                     }
-                });
+                });*/
     }
 }

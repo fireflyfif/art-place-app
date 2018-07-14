@@ -35,33 +35,31 @@
 
 package com.example.android.artplace.viewmodel;
 
+import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.support.annotation.NonNull;
 
-import com.example.android.artplace.datasource.ArtworkDataFactory;
+import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
+import com.example.android.artplace.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.MainApplication;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class EmbeddedViewModel extends ViewModel {
+public class ArtworksViewModel extends ViewModel {
 
     private Executor mExecutor;
     private LiveData<NetworkState> mNetworkState;
-    // TODO: Decide if I should wrap the Artwork or the Embedded model with the PagedList???
     private LiveData<PagedList<Artwork>> mArtworkLiveData;
+    private ArtworkDataSourceFactory mArtworkDataSourceFactory;
 
-    private MainApplication mMainApplication;
 
-    public EmbeddedViewModel() {
-        //this.mMainApplication = mainApplication;
+    public ArtworksViewModel(ArtworkDataSourceFactory artworkDataSourceFactory) {
+        mArtworkDataSourceFactory = artworkDataSourceFactory;
         init();
     }
 
@@ -71,25 +69,28 @@ public class EmbeddedViewModel extends ViewModel {
         mExecutor = Executors.newFixedThreadPool(5);
 
         // Get an instance of the DataSourceFactory class
-        ArtworkDataFactory artworkDataFactory = new ArtworkDataFactory();
-        // Initialize the network state liveData
-        // TODO: Finish it!
-        //mNetworkState = Transformations.switchMap(artworkDataFactory.getMutableLiveData(),
-                //dataSource)
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory();
 
-        PagedList.Config pagedListConfig =
-                (new PagedList.Config.Builder())
+        // Initialize the network state liveData
+        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getMutableLiveData(), new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+            @Override
+            public LiveData<NetworkState> apply(ArtworkDataSource input) {
+                return input.getNetworkState();
+            }
+        });
+
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
                         .setInitialLoadSizeHint(10)
                         // If not set, defaults to page size.
                         //A value of 0 indicates that no list items
                         // will be loaded until they are specifically requested
-                        //.setPrefetchDistance(10)
+                        .setPrefetchDistance(10)
                         .setPageSize(10)
                         .build();
 
-        // TODO: Resolve the lint warning!
-        mArtworkLiveData = new LivePagedListBuilder<>(artworkDataFactory, pagedListConfig) // liveData is null??
+
+        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig) // liveData is null??
                 .setFetchExecutor(mExecutor)
                 .build();
     }

@@ -33,33 +33,48 @@
  *
  */
 
-package com.example.android.artplace.datasource;
+package com.example.android.artplace.remote;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.DataSource;
+import android.app.Application;
+import android.content.Context;
 
-import com.example.android.artplace.remote.MainApplication;
+public class ArtPlaceApp extends Application {
 
-public class ArtworkDataFactory extends DataSource.Factory {
+    private ArtsyApiInterface mArtsyApi;
 
-    private MutableLiveData<ArtworkDataSource> mutableLiveData;
-    private ArtworkDataSource dataSource;
-    private MainApplication mainApplication;
+    private static ArtPlaceApp INSTANCE;
 
-    public ArtworkDataFactory() {
-        //this.mainApplication = mainApplication;
-        this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
+    public static ArtPlaceApp getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public DataSource create() {
-        dataSource = new ArtworkDataSource(mainApplication);
-        mutableLiveData.postValue(dataSource);
+    public void onCreate() {
+        super.onCreate();
 
-        return dataSource;
+        INSTANCE = this;
     }
 
-    public MutableLiveData<ArtworkDataSource> getMutableLiveData() {
-        return mutableLiveData;
+    private static ArtPlaceApp get(Context context) {
+        return (ArtPlaceApp) context.getApplicationContext();
+    }
+
+    public static ArtPlaceApp create(Context context) {
+        return ArtPlaceApp.get(context);
+    }
+
+    /**
+     * Method that creates a Retrofit instance from the ArtsyApiManager
+     * @return
+     */
+    public ArtsyApiInterface getArtsyApi() {
+        if (mArtsyApi == null) {
+            mArtsyApi = ArtsyApiManager.create();
+        }
+        return mArtsyApi;
+    }
+
+    public void setArtsyApi(ArtsyApiInterface artsyApi) {
+        mArtsyApi = artsyApi;
     }
 }
