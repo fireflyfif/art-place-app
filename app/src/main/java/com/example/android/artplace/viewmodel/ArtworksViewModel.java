@@ -41,7 +41,9 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.support.annotation.NonNull;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.Artwork;
@@ -54,12 +56,18 @@ public class ArtworksViewModel extends ViewModel {
 
     private Executor mExecutor;
     private LiveData<NetworkState> mNetworkState;
-    private LiveData<PagedList<Artwork>> mArtworkLiveData;
+    public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
+    //private ArtsyApiInterface mApiService;
+    private ArtPlaceApp mAppController;
 
 
-    public ArtworksViewModel(ArtworkDataSourceFactory artworkDataSourceFactory) {
-        mArtworkDataSourceFactory = artworkDataSourceFactory;
+    public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
+        // This might produce an error, because the ViewModel constructor has no zero argument constructor
+        mAppController = appController;
+        // TODO: Do I need this reference here?
+        //mArtworkDataSourceFactory = artworkDataSourceFactory;
+
         init();
     }
 
@@ -69,10 +77,10 @@ public class ArtworksViewModel extends ViewModel {
         mExecutor = Executors.newFixedThreadPool(5);
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory();
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(mAppController);
 
         // Initialize the network state liveData
-        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getMutableLiveData(), new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(), new Function<ArtworkDataSource, LiveData<NetworkState>>() {
             @Override
             public LiveData<NetworkState> apply(ArtworkDataSource input) {
                 return input.getNetworkState();

@@ -40,44 +40,41 @@ import android.arch.paging.DataSource;
 
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 
 public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
 
-    private MutableLiveData<ArtworkDataSource> mutableLiveData;
-    private ArtworkDataSource dataSource;
-    private ArtPlaceApp artPlaceApp;
+    private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
+    private ArtworkDataSource mDataSource;
+    private ArtPlaceApp mArtPlaceApp;
+    private ArtsyApiInterface apiInterface;
 
     private static ArtworkDataSourceFactory INSTANCE;
 
-    private static ArtsyApiManager sApiManager;
-    private static String sToken;
 
-
-    public ArtworkDataSourceFactory() {
-        //this.artPlaceApp = artPlaceApp;
-        this.mutableLiveData = new MutableLiveData<ArtworkDataSource>();
+    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp) {
+        mArtPlaceApp = artPlaceApp;
+        mArtworksDataSourceLiveData = new MutableLiveData<ArtworkDataSource>();
     }
 
-    public synchronized static ArtworkDataSourceFactory getInstance() {
+    /*public synchronized static ArtworkDataSourceFactory getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ArtworkDataSourceFactory();
+            INSTANCE = new ArtworkDataSourceFactory(mArtPlaceApp);
         }
-        //sToken = token;
-        //sApiManager = apiManager;
 
         return INSTANCE;
-    }
+    }*/
 
     @Override
     public DataSource<Long, Artwork> create() {
-        dataSource = new ArtworkDataSource();
-        mutableLiveData.postValue(dataSource);
+        mDataSource = new ArtworkDataSource(mArtPlaceApp);
+        mArtworksDataSourceLiveData.postValue(mDataSource);
 
-        return dataSource;
+        return mDataSource;
     }
 
-    public MutableLiveData<ArtworkDataSource> getMutableLiveData() {
-        return mutableLiveData;
+    public MutableLiveData<ArtworkDataSource> getArtworksDataSourceLiveData() {
+        return mArtworksDataSourceLiveData;
     }
 }

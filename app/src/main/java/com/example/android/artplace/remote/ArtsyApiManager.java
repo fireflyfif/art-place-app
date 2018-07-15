@@ -35,39 +35,57 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.utils.Utils;
+import android.support.annotation.NonNull;
+
+import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.CustomDeserializer;
 import com.example.android.artplace.model.Embedded;
+import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArtsyApiManager {
 
-    private static ArtsyApiInterface sArtsyApiInterface;
-
-   /* public static ArtsyApiInterface create() {
+    // Provide the Retrofit call
+    public static ArtsyApiInterface create() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor).build();
+        OkHttpClient.Builder client = new OkHttpClient.Builder();
+
+        //COMPLETED: Add the Header wit the Token here
+        // source: https://stackoverflow.com/a/32282876/8132331
+        client.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(@NonNull Chain chain) throws IOException {
+                Request newRequest = chain.request().newBuilder()
+                        .addHeader("X-XAPP-Token", BuildConfig.TOKEN)
+                        .build();
+                return chain.proceed(newRequest);
+            }
+        }).build();
+
+        client.addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Utils.BASE_ARTSY_URL)
-                .client(client)
+                .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create(makeGson()))
                 .build();
 
         return retrofit.create(ArtsyApiInterface.class);
-    }*/
+    }
 
     /*
     Register the TypeAdapter here for deserializing the model
@@ -77,10 +95,5 @@ public class ArtsyApiManager {
                 .registerTypeAdapter(Embedded.class, new CustomDeserializer())
                 .create();
     }
-
-    /*public void getEmbedded(String token, int itemSize, Callback<Embedded> callback) {
-        Call<Embedded> artsyResponseCall = sArtsyApiInterface.getEmbedded(token, itemSize);
-        artsyResponseCall.enqueue(callback);
-    }*/
 
 }

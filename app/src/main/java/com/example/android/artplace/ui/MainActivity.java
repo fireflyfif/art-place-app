@@ -44,16 +44,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.android.artplace.BuildConfig;
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.adapters.ArtworkListAdapter;
 import com.example.android.artplace.adapters.ArtworksAdapter;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.viewmodel.ArtworksViewModel;
-import com.example.android.artplace.viewmodel.ArtworksViewModelFactory;
 
 import java.util.List;
 
@@ -66,10 +65,13 @@ public class MainActivity extends AppCompatActivity {
     private Embedded mEmbeddedObject;
     private List<Artwork> mArtworkList;
 
-    private ArtsyApiManager mApiManager;
+    private ArtsyApiInterface mApiService;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
+    private ArtworkDataSourceFactory mDataSourceFactory;
+    private ArtPlaceApp mAppController;
+
 
 
     @Override
@@ -77,11 +79,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this,
-                new ArtworksViewModelFactory(ArtworkDataSourceFactory
-                        .getInstance()))
-                .get(ArtworksViewModel.class);
+        mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
+        //mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
 
         mArtworkRv = findViewById(R.id.artworks_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -90,17 +91,12 @@ public class MainActivity extends AppCompatActivity {
         // Set the PagedAdapter
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext());
 
-        // Create new instance of the Embedded object
-        //mEmbeddedObject = new Embedded();
-        //mArtworkList = new ArrayList<>();
-
-        // When a new page is available, call submitList() method of the PagedListAdapter class
-
-        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+        mViewModel.mArtworkLiveData.observe(this, new Observer<PagedList<Artwork>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
+                    // When a new page is available, call submitList() method of the PagedListAdapter class
                     mPagedListAdapter.submitList(artworks); // artworks is 0
                 }
             }

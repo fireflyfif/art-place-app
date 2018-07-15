@@ -40,8 +40,10 @@ import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
+import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
@@ -49,38 +51,37 @@ import com.example.android.artplace.utils.NetworkState;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.example.android.artplace.ArtPlaceApp.getInstance;
+
 public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
-    //private ArtsyApiInterface mArtsyApi;
-
-    //private ArtPlaceApp artPlaceApp;
-
     private ArtsyRepository mArtsyRepository;
-    private ArtsyApiManager mApiManager;
+    private ArtsyApiInterface mApiInterface;
+    private ArtPlaceApp mAppController;
 
-    private MutableLiveData<NetworkState> mNetworkState;
-    private MutableLiveData<NetworkState> mInitialLoading;
+    private final MutableLiveData<NetworkState> mNetworkState;
+    private final MutableLiveData<NetworkState> mInitialLoading;
 
-    //private int mItemSize;
 
-    public ArtworkDataSource() {
-        //mApiManager = apiManager;
-        mArtsyRepository = ArtsyRepository.getInstance();
+    public ArtworkDataSource(ArtPlaceApp appController) {
+        //mArtsyRepository = ArtsyRepository.getInstance();
+        mAppController = appController;
 
         mNetworkState = new MutableLiveData();
         mInitialLoading = new MutableLiveData();
-
-        //mToken = token;
-        //mItemSize = itemSize;
     }
 
-    public MutableLiveData<NetworkState> getNetworkState() {
+    public MutableLiveData getNetworkState() {
         return mNetworkState;
     }
 
-    public MutableLiveData<NetworkState> getInitialLoading() {
+    public MutableLiveData getInitialLoading() {
         return mInitialLoading;
     }
 
@@ -88,28 +89,83 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Artwork> callback) {
 
-        final Embedded embedded = new Embedded();
-
-        // Add NetworkState
+        // Update NetworkState
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mArtsyRepository.getArtworks(params.requestedLoadSize);
+        // Make the Retrofit call to the API
+        // Getting null on the AppController?
+        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
+            Embedded embedded = new Embedded();
+            List<Artwork> artworkList = new ArrayList<>();
 
-        if (embedded != null) {
+            @Override
+            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+                if (response.isSuccessful()) {
 
-        }
+                    embedded = response.body();
+                    if (embedded != null) {
+                        callback.onResult(artworkList = embedded.getArtworks(), null, 2L);
 
-        if (embedded.getArtworks() != null) { // getArtworks() is null ??
-            final List<Artwork> artworkList = new ArrayList<>(embedded.getArtworks());
-            callback.onResult(artworkList, null, 2L);
+                        Log.d(TAG, "List of Artworks: " + artworkList.size());
 
-            mInitialLoading.postValue(NetworkState.LOADED);
-            mNetworkState.postValue(NetworkState.LOADED);
-        } else {
-            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-        }
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+                    }
+
+                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+                } else {
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    Log.d(TAG, "Response code from initial load: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
+
+                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
+            }
+        });
+
+        /*mApiInterface.getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
+            Embedded embedded = new Embedded();
+            List<Artwork> artworkList = new ArrayList<>();
+
+            @Override
+            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+                if (response.isSuccessful()) {
+
+                    embedded = response.body();
+                    if (embedded != null) {
+                        callback.onResult(artworkList = embedded.getArtworks(), null, 2L);
+
+                        Log.d(TAG, "List of Artworks: " + artworkList.size());
+
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+                    }
+
+                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+                } else {
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    Log.d(TAG, "Response code from initial load: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
+
+                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
+            }
+        });*/
 
     }
 
@@ -124,22 +180,93 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
         Log.i(TAG, "Loading " + params.key + "Count " + params.requestedLoadSize);
 
-        final Embedded embedded = new Embedded();
-
-        // Add Network State
+        // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mArtsyRepository.getArtworks(params.requestedLoadSize);
+        // Make the Retrofit call to the API
+        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
+            Embedded embedded = new Embedded();
+            List<Artwork> artworkList = new ArrayList<>();
 
-        if (embedded.getArtworks() != null) {
-            final List<Artwork> artworkList = new ArrayList<>(embedded.getArtworks());
+            @Override
+            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
+                if (response.isSuccessful()) {
+                    long nextKey;
+                    if (params.key == embedded.getArtworks().size()) {
+                        nextKey = 0;
+                    } else {
+                        nextKey = params.key + 1;
+                    }
 
-            long nextKey = (params.key == embedded.getArtworks().size()) ? null: params.key + 1;
-            callback.onResult(artworkList, nextKey);
+                    embedded = response.body();
+                    if (embedded != null) {
+                        callback.onResult(artworkList = embedded.getArtworks(), nextKey);
 
-            mNetworkState.postValue(NetworkState.LOADED);
-        } else {
-            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-        }
+                        Log.d(TAG, "List of Artworks: " + artworkList.size());
+
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+                    }
+
+                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+                } else {
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    Log.d(TAG, "Response code from initial load: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Embedded> call, Throwable t) {
+
+                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
+            }
+        });
+
+        /*mApiInterface.getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
+            Embedded embedded = new Embedded();
+            List<Artwork> artworkList = new ArrayList<>();
+
+            @Override
+            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+                if (response.isSuccessful()) {
+                    long nextKey;
+                    if (params.key == embedded.getArtworks().size()) {
+                        nextKey = 0;
+                    } else {
+                        nextKey = params.key + 1;
+                    }
+
+                    embedded = response.body();
+                    if (embedded != null) {
+                        callback.onResult(artworkList = embedded.getArtworks(), nextKey);
+
+                        Log.d(TAG, "List of Artworks: " + artworkList.size());
+
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+                    }
+
+                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+                } else {
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    Log.d(TAG, "Response code from initial load: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Embedded> call, Throwable t) {
+
+                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
+            }
+        });*/
+
     }
 }

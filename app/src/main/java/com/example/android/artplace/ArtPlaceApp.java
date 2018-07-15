@@ -74,23 +74,25 @@ public class ArtPlaceApp extends Application {
         INSTANCE = this;
     }
 
-    /*
-    Register the TypeAdapter here for deserializing the model
-    */
-    private static Gson makeGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(Embedded.class, new CustomDeserializer())
-                .create();
+    private static ArtPlaceApp get(Context context) {
+        return (ArtPlaceApp) context.getApplicationContext();
     }
 
+    public static ArtPlaceApp create(Context context) {
+        return ArtPlaceApp.get(context);
+    }
+
+
     // Provide the Retrofit call
-    public static ArtsyApiInterface create() {
+    /*public static ArtsyApiInterface create() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder();
+
         //COMPLETED: Add the Header wit the Token here
+        // source: https://stackoverflow.com/a/32282876/8132331
         client.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(@NonNull Chain chain) throws IOException {
@@ -110,18 +112,17 @@ public class ArtPlaceApp extends Application {
                 .build();
 
         return retrofit.create(ArtsyApiInterface.class);
-    }
+    }*/
 
     /**
      * Method that creates a Retrofit instance from the ArtsyApiManager
-     * @return
      */
-    /*public ArtsyApiInterface getArtsyApi() {
+    public ArtsyApiInterface getArtsyApi() {
         if (mArtsyApi == null) {
             mArtsyApi = ArtsyApiManager.create();
         }
         return mArtsyApi;
-    }*/
+    }
 
     public void setArtsyApi(ArtsyApiInterface artsyApi) {
         mArtsyApi = artsyApi;

@@ -35,13 +35,23 @@
 
 package com.example.android.artplace.repository;
 
+import android.arch.core.util.Function;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.android.artplace.datasource.ArtworkDataSource;
+import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,17 +65,22 @@ public class ArtsyRepository {
     private static final String TAG = ArtsyRepository.class.getSimpleName();
 
     private static ArtsyRepository INSTANCE;
-    private ArtsyApiInterface mApiInterface;
+    private static ArtsyApiInterface mApiInterface;
+    private ArtworkDataSourceFactory mDataSourceFactory;
+
+    private LiveData<NetworkState> mNetworkState;
+    private LiveData<NetworkState> mInitialLoading;
 
 
     // Constructor of the Repository class
-    public ArtsyRepository() {
-        mApiInterface = makeApiCall();
+    public ArtsyRepository(ArtsyApiInterface apiInterface) {
+        mApiInterface = apiInterface;
+        //mApiInterface = makeApiCall();
     }
 
     public static ArtsyRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ArtsyRepository();
+            INSTANCE = new ArtsyRepository(mApiInterface);
         }
 
         return INSTANCE;
@@ -75,10 +90,11 @@ public class ArtsyRepository {
     Method that makes the call to the API
      */
     private static ArtsyApiInterface makeApiCall() {
-        return ArtPlaceApp.create();
+        return ArtsyApiManager.create();
     }
 
-    public void getArtworks(int itemSize) {
+
+    /*public void getArtworks(int itemSize) {
 
         mApiInterface.getEmbedded(itemSize).enqueue(new Callback<Embedded>() {
             Embedded embedded = new Embedded();
@@ -107,6 +123,5 @@ public class ArtsyRepository {
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
-
-    }
+    }*/
 }
