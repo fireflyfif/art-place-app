@@ -89,8 +89,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
         Log.d(TAG, "onBindViewHolder called");
         if (getItem(position) != null) {
-            // TODO: Receiving a null object here!
-            ((ArtworkItemViewHolder)holder).bindTo(mArtworkList.get(position));
+            // COMPLETED: Receiving a null object here! Fixed!
+            ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
         }
 
     }

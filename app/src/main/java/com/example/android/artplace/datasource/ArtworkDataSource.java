@@ -70,7 +70,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
 
     public ArtworkDataSource(ArtPlaceApp appController) {
-        //mArtsyRepository = ArtsyRepository.getInstance();
         mAppController = appController;
 
         mNetworkState = new MutableLiveData();
@@ -131,42 +130,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             }
         });
 
-        /*mApiInterface.getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
-            Embedded embedded = new Embedded();
-            List<Artwork> artworkList = new ArrayList<>();
-
-            @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
-                if (response.isSuccessful()) {
-
-                    embedded = response.body();
-                    if (embedded != null) {
-                        callback.onResult(artworkList = embedded.getArtworks(), null, 2L);
-
-                        Log.d(TAG, "List of Artworks: " + artworkList.size());
-
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
-                    }
-
-                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
-                } else {
-
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
-                    Log.d(TAG, "Response code from initial load: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
-
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
-            }
-        });*/
-
     }
 
     @Override
@@ -191,15 +154,17 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             @Override
             public void onResponse(Call<Embedded> call, Response<Embedded> response) {
                 if (response.isSuccessful()) {
-                    long nextKey;
-                    if (params.key == embedded.getArtworks().size()) {
-                        nextKey = 0;
-                    } else {
-                        nextKey = params.key + 1;
-                    }
 
                     embedded = response.body();
                     if (embedded != null) {
+                        long nextKey;
+                        // TODO: Getting repeated artworks???
+                        if (params.key == embedded.getArtworks().size()) {
+                            nextKey = 0;
+                        } else {
+                            nextKey = params.key + 1;
+                        }
+
                         callback.onResult(artworkList = embedded.getArtworks(), nextKey);
 
                         Log.d(TAG, "List of Artworks: " + artworkList.size());
@@ -225,48 +190,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
-
-        /*mApiInterface.getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
-            Embedded embedded = new Embedded();
-            List<Artwork> artworkList = new ArrayList<>();
-
-            @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
-                if (response.isSuccessful()) {
-                    long nextKey;
-                    if (params.key == embedded.getArtworks().size()) {
-                        nextKey = 0;
-                    } else {
-                        nextKey = params.key + 1;
-                    }
-
-                    embedded = response.body();
-                    if (embedded != null) {
-                        callback.onResult(artworkList = embedded.getArtworks(), nextKey);
-
-                        Log.d(TAG, "List of Artworks: " + artworkList.size());
-
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
-                    }
-
-                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
-                } else {
-
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
-                    Log.d(TAG, "Response code from initial load: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Embedded> call, Throwable t) {
-
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
-            }
-        });*/
 
     }
 }
