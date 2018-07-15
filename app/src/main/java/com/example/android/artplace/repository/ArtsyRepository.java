@@ -42,7 +42,6 @@ import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.Embedded;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiInterface;
-import com.example.android.artplace.remote.ArtsyApiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +85,7 @@ public class ArtsyRepository {
             List<Artwork> artworkList = new ArrayList<>();
 
             @Override
-            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
+            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
                 if (response.isSuccessful()) {
 
                     embedded = response.body();
@@ -103,7 +102,7 @@ public class ArtsyRepository {
             }
 
             @Override
-            public void onFailure(Call<Embedded> call, Throwable t) {
+            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
 
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
