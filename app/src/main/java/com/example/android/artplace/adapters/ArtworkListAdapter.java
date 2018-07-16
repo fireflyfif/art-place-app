@@ -57,6 +57,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
 public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder> {
 
@@ -127,14 +130,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     public class ArtworkItemViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.artwork_thumbnail)
         private ImageView artworkThumbnail;
+
+        @BindView(R.id.artwork_title)
         private TextView artworkTitle;
 
         public ArtworkItemViewHolder(View itemView) {
             super(itemView);
 
-            artworkThumbnail = itemView.findViewById(R.id.artwork_thumbnail);
-            artworkTitle = itemView.findViewById(R.id.artwork_title);
+            ButterKnife.bind(this, itemView);
         }
 
         public void bindTo(Artwork artwork) {

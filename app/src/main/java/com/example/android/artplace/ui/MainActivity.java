@@ -43,6 +43,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
@@ -56,22 +57,18 @@ import com.example.android.artplace.viewmodel.ArtworksViewModel;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ArtworksAdapter mArtworkAdapter;
+    @BindView((R.id.artworks_rv))
     private RecyclerView mArtworkRv;
-    private Embedded mEmbeddedObject;
-    private List<Artwork> mArtworkList;
-
-    private ArtsyApiInterface mApiService;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
-    private ArtworkDataSourceFactory mDataSourceFactory;
-    private ArtPlaceApp mAppController;
-
 
 
     @Override
@@ -79,14 +76,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
 
         // Initialize the ViewModel
         mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
         //mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
 
-        mArtworkRv = findViewById(R.id.artworks_rv);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        mArtworkRv.setLayoutManager(gridLayoutManager);
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+
+        mArtworkRv.setLayoutManager(staggeredGridLayoutManager);
 
         // Set the PagedAdapter
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext());
@@ -106,5 +106,4 @@ public class MainActivity extends AppCompatActivity {
 
         mArtworkRv.setAdapter(mPagedListAdapter);
     }
-
 }
