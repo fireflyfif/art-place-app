@@ -74,45 +74,21 @@ public class ArtPlaceApp extends Application {
         INSTANCE = this;
     }
 
+    /*
+    Helper method that gets the context of the application
+     */
     private static ArtPlaceApp get(Context context) {
         return (ArtPlaceApp) context.getApplicationContext();
     }
 
+    /*
+    Method that is used for initializing  the ViewModel,
+    because the ViewModel class has a parameter of ArtPlaceApp
+     */
     public static ArtPlaceApp create(Context context) {
         return ArtPlaceApp.get(context);
     }
 
-
-    // Provide the Retrofit call
-    /*public static ArtsyApiInterface create() {
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
-
-        //COMPLETED: Add the Header wit the Token here
-        // source: https://stackoverflow.com/a/32282876/8132331
-        client.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(@NonNull Chain chain) throws IOException {
-                Request newRequest = chain.request().newBuilder()
-                        .addHeader("X-XAPP-Token", BuildConfig.TOKEN)
-                        .build();
-                return chain.proceed(newRequest);
-            }
-        }).build();
-
-        client.addInterceptor(interceptor).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Utils.BASE_ARTSY_URL)
-                .client(client.build())
-                .addConverterFactory(GsonConverterFactory.create(makeGson()))
-                .build();
-
-        return retrofit.create(ArtsyApiInterface.class);
-    }*/
 
     /**
      * Method that creates a Retrofit instance from the ArtsyApiManager

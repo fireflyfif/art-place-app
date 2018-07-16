@@ -106,7 +106,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     if (embedded != null) {
                         callback.onResult(artworkList = embedded.getArtworks(), null, 2L);
 
-                        Log.d(TAG, "List of Artworks: " + artworkList.size());
+                        Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
 
                         mNetworkState.postValue(NetworkState.LOADED);
                         mInitialLoading.postValue(NetworkState.LOADED);
@@ -152,22 +152,24 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             List<Artwork> artworkList = new ArrayList<>();
 
             @Override
-            public void onResponse(Call<Embedded> call, Response<Embedded> response) {
+            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
                 if (response.isSuccessful()) {
-
-                    embedded = response.body();
                     if (embedded != null) {
-                        long nextKey;
-                        // TODO: Getting repeated artworks???
-                        if (params.key == embedded.getArtworks().size()) {
-                            nextKey = 0;
-                        } else {
-                            nextKey = params.key + 1;
+                        embedded = response.body();
+
+                        if (embedded.getArtworks() != null) {
+                            long nextKey;
+                            // TODO: Getting repeated artworks???
+                            if (params.key == embedded.getArtworks().size()) {
+                                nextKey = 0;
+                            } else {
+                                nextKey = params.key + 1;
+                            }
+
+                            callback.onResult(artworkList = embedded.getArtworks(), nextKey);
+
+                            Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
                         }
-
-                        callback.onResult(artworkList = embedded.getArtworks(), nextKey);
-
-                        Log.d(TAG, "List of Artworks: " + artworkList.size());
 
                         mNetworkState.postValue(NetworkState.LOADED);
                         mInitialLoading.postValue(NetworkState.LOADED);

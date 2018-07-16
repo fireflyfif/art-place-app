@@ -131,10 +131,10 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     public class ArtworkItemViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.artwork_thumbnail)
-        private ImageView artworkThumbnail;
+        ImageView artworkThumbnail;
 
         @BindView(R.id.artwork_title)
-        private TextView artworkTitle;
+        TextView artworkTitle;
 
         public ArtworkItemViewHolder(View itemView) {
             super(itemView);

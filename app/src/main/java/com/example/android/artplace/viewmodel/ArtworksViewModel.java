@@ -58,15 +58,14 @@ public class ArtworksViewModel extends ViewModel {
     private LiveData<NetworkState> mNetworkState;
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
-    //private ArtsyApiInterface mApiService;
     private ArtPlaceApp mAppController;
+
+    private static final int PAGE_SIZE = 30;
 
 
     public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
         // This might produce an error, because the ViewModel constructor has no zero argument constructor
         mAppController = appController;
-        // TODO: Do I need this reference here?
-        //mArtworkDataSourceFactory = artworkDataSourceFactory;
 
         init();
     }
@@ -89,16 +88,17 @@ public class ArtworksViewModel extends ViewModel {
 
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
-                        .setInitialLoadSizeHint(10)
+                        .setInitialLoadSizeHint(PAGE_SIZE)
                         // If not set, defaults to page size.
                         //A value of 0 indicates that no list items
                         // will be loaded until they are specifically requested
-                        .setPrefetchDistance(10)
-                        .setPageSize(10)
+                        .setPrefetchDistance(10 * 2)
+                        .setPageSize(PAGE_SIZE)
                         .build();
 
 
         mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig) // liveData is null??
+                //.setInitialLoadKey()
                 .setFetchExecutor(mExecutor)
                 .build();
     }

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @BindView((R.id.artworks_rv))
-    private RecyclerView mArtworkRv;
+    RecyclerView artworksRv;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
@@ -86,12 +86,12 @@ public class MainActivity extends AppCompatActivity {
         StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
-        mArtworkRv.setLayoutManager(staggeredGridLayoutManager);
+        artworksRv.setLayoutManager(staggeredGridLayoutManager);
 
         // Set the PagedAdapter
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext());
 
-        mViewModel.mArtworkLiveData.observe(this, new Observer<PagedList<Artwork>>() {
+        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
@@ -104,6 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO: Get the network state
 
-        mArtworkRv.setAdapter(mPagedListAdapter);
+        artworksRv.setAdapter(mPagedListAdapter);
     }
 }
