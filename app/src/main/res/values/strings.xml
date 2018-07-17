@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ArtPlace</string>
+    <string name="error_msg">No Internet connection.  \nPlease try again.</string>
 </resources>

@@ -43,12 +43,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.ui.adapters.ArtworkListAdapter;
 import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.viewmodel.ArtworksViewModel;
 
 import butterknife.BindView;
@@ -59,8 +63,12 @@ public class MainActivity extends AppCompatActivity implements ArtworkListAdapte
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
-    @BindView((R.id.artworks_rv))
+    @BindView(R.id.artworks_rv)
     RecyclerView artworksRv;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView(R.id.error_message)
+    TextView errorMessage;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
@@ -86,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements ArtworkListAdapte
         // Set the PagedListAdapter
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this);
 
+        // Call submitList() method of the PagedListAdapter when a new page is available
         mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
-
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
@@ -97,7 +105,39 @@ public class MainActivity extends AppCompatActivity implements ArtworkListAdapte
             }
         });
 
-        //TODO: Get the network state
+        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
+        mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                mPagedListAdapter.setNetworkState(networkState);
+            }
+        });
+
+        mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                // When the NetworkStatus is Successful
+                // hide both the Progress Bar and the error message
+                if (networkState != null &&
+                        networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    errorMessage.setVisibility(View.INVISIBLE);
+                }
+                // When the NetworkStatus is Failed
+                // show the error message and hide the Progress Bar
+                else if (networkState != null &&
+                        networkState.getStatus() == NetworkState.Status.FAILED) {
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                }
+                // When the NetworkStatus is Running/Loading
+                // show the Loading Progress Bar and hide the error message
+                else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setVisibility(View.GONE);
+                }
+            }
+        });
 
         artworksRv.setAdapter(mPagedListAdapter);
     }

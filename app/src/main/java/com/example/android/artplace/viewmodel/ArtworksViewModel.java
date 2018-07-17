@@ -56,6 +56,8 @@ public class ArtworksViewModel extends ViewModel {
 
     private Executor mExecutor;
     private LiveData<NetworkState> mNetworkState;
+    private LiveData<NetworkState> mInitialLoading;
+
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
     private ArtPlaceApp mAppController;
@@ -64,12 +66,15 @@ public class ArtworksViewModel extends ViewModel {
 
 
     public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
-        // This might produce an error, because the ViewModel constructor has no zero argument constructor
+        // This will produce an error, because the ViewModel constructor has no zero argument constructor
         mAppController = appController;
 
         init();
     }
 
+    /*
+    Method for initializing the DataSourceFactory and for building the LiveData
+     */
     private void init() {
 
         // Initialize an executor class
@@ -79,12 +84,22 @@ public class ArtworksViewModel extends ViewModel {
         mArtworkDataSourceFactory = new ArtworkDataSourceFactory(mAppController);
 
         // Initialize the network state liveData
-        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(), new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
+                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
             @Override
             public LiveData<NetworkState> apply(ArtworkDataSource input) {
                 return input.getNetworkState();
             }
         });
+
+        // Initialize the Loading state liveData
+        mInitialLoading = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
+                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+                    @Override
+                    public LiveData<NetworkState> apply(ArtworkDataSource input) {
+                        return input.getInitialLoading();
+                    }
+                });
 
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
@@ -97,13 +112,17 @@ public class ArtworksViewModel extends ViewModel {
                         .build();
 
 
-        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig) // liveData is null??
+        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
                 //.setInitialLoadKey()
                 .setFetchExecutor(mExecutor)
                 .build();
     }
 
     public LiveData<NetworkState> getNetworkState() {
+        return mNetworkState;
+    }
+
+    public LiveData<NetworkState> getInitialLoading() {
         return mNetworkState;
     }
 

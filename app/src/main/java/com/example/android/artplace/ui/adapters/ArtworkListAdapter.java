@@ -44,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
@@ -69,9 +70,9 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     private Context mContext;
     private NetworkState mNetworkState;
 
-
     private OnArtworkClickListener mClickHandler;
 
+    // Interface for the item click callback
     public interface OnArtworkClickListener {
         void onArtworkClick(Artwork artwork);
     }
@@ -86,18 +87,28 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.artwork_item, parent, false);
 
-        return new ArtworkItemViewHolder(view);
+        if (viewType == TYPE_PROGRESS) {
+            View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
+            return new NetworkStateItemViewHolder(view);
+
+        } else {
+            View view = layoutInflater.inflate(R.layout.artwork_item, parent, false);
+            return new ArtworkItemViewHolder(view);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        // This is working, because the getItem is actually from PagedList
-        if (getItem(position) != null) {
-
-            ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
+        if (holder instanceof ArtworkItemViewHolder) {
+            // This gets the Item from the PagedList
+            if (getItem(position) != null) {
+                ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
+            }
+        } else {
+            ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
         }
     }
 
@@ -111,6 +122,15 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             return  true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (hasExtraRow() && position == getItemCount() -1) {
+            return TYPE_PROGRESS;
+        } else {
+            return TYPE_ITEM;
         }
     }
 
@@ -142,7 +162,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
         @BindView(R.id.artwork_thumbnail)
         ImageView artworkThumbnail;
-
         @BindView(R.id.artwork_title)
         TextView artworkTitle;
 
@@ -175,7 +194,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                     .into(artworkThumbnail);
         }
 
-
         @Override
         public void onClick(View v) {
             // Get the item position from the PagedList!!!
@@ -183,4 +201,38 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             mClickHandler.onArtworkClick(currentArtwork);
         }
     }
-}
+
+    public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.progress_bar)
+        ProgressBar progressBar;
+        @BindView(R.id.error_message)
+        TextView errorMessage;
+
+        public NetworkStateItemViewHolder(View itemView) {
+            super(itemView);
+
+            ButterKnife.bind(this, itemView);
+        }
+
+        public void bindView(NetworkState networkState) {
+
+            if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.RUNNING) {
+                progressBar.setVisibility(View.VISIBLE);
+                errorMessage.setVisibility(View.INVISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.GONE);
+            }
+
+            if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.FAILED) {
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.GONE);
+            }
+        }
+    }}

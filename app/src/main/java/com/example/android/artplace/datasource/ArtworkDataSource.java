@@ -61,8 +61,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
-    private ArtsyRepository mArtsyRepository;
-    private ArtsyApiInterface mApiInterface;
     private ArtPlaceApp mAppController;
 
     private final MutableLiveData<NetworkState> mNetworkState;
@@ -93,7 +91,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mNetworkState.postValue(NetworkState.LOADING);
 
         // Make the Retrofit call to the API
-        // Getting null on the AppController?
         mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
             Embedded embedded = new Embedded();
             List<Artwork> artworkList = new ArrayList<>();
@@ -172,13 +169,11 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         }
 
                         mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
                     }
 
                     Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
                 } else {
 
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                     mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
 
                     Log.d(TAG, "Response code from initial load: " + response.code());
