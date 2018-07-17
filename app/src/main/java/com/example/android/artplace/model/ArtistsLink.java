@@ -35,10 +35,13 @@
 
 package com.example.android.artplace.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ArtistsLink {
+public class ArtistsLink implements Parcelable {
 
     /*
     Link to the artists endpoint, e.g.:
@@ -56,4 +59,34 @@ public class ArtistsLink {
     public void setHref(String href) {
         this.href = href;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.href);
+    }
+
+    public ArtistsLink() {
+    }
+
+    protected ArtistsLink(Parcel in) {
+        this.href = in.readString();
+    }
+
+    public static final Parcelable.Creator<ArtistsLink> CREATOR = new Parcelable.Creator<ArtistsLink>() {
+        @Override
+        public ArtistsLink createFromParcel(Parcel source) {
+            return new ArtistsLink(source);
+        }
+
+        @Override
+        public ArtistsLink[] newArray(int size) {
+            return new ArtistsLink[size];
+        }
+    };
 }

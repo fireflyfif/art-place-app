@@ -36,33 +36,28 @@
 package com.example.android.artplace.ui;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
-import com.example.android.artplace.adapters.ArtworkListAdapter;
-import com.example.android.artplace.adapters.ArtworksAdapter;
-import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
+import com.example.android.artplace.ui.adapters.ArtworkListAdapter;
 import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.viewmodel.ArtworksViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ArtworkListAdapter.OnArtworkClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView((R.id.artworks_rv))
     RecyclerView artworksRv;
@@ -88,16 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
         artworksRv.setLayoutManager(staggeredGridLayoutManager);
 
-        // Set the PagedAdapter
-        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext());
+        // Set the PagedListAdapter
+        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this);
 
         mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
-                    // When a new page is available, call submitList() method of the PagedListAdapter class
-                    mPagedListAdapter.submitList(artworks); // artworks is 0
+                    // When a new page is available, call submitList() method of the PagedListAdapter
+                    mPagedListAdapter.submitList(artworks); // the paged list of artworks is 0, but it's working
                 }
             }
         });
@@ -106,4 +101,18 @@ public class MainActivity extends AppCompatActivity {
 
         artworksRv.setAdapter(mPagedListAdapter);
     }
+
+    @Override
+    public void onArtworkClick(Artwork artwork) {
+        Toast.makeText(this, "Clicked artwork with id " + artwork.getId(), Toast.LENGTH_SHORT).show();
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
+
+        Intent intent = new Intent(MainActivity.this, ArtworkDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+    }
+
 }

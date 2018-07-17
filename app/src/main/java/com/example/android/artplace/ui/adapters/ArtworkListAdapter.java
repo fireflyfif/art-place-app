@@ -33,14 +33,13 @@
  *
  */
 
-package com.example.android.artplace.adapters;
+package com.example.android.artplace.ui.adapters;
 
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,6 @@ import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.utils.NetworkState;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -70,11 +68,18 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     private Context mContext;
     private NetworkState mNetworkState;
-    private List<Artwork> mArtworkList;
 
-    public ArtworkListAdapter(Context context) {
+
+    private OnArtworkClickListener mClickHandler;
+
+    public interface OnArtworkClickListener {
+        void onArtworkClick(Artwork artwork);
+    }
+
+    public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler) {
         super(Artwork.DIFF_CALLBACK);
         mContext = context;
+        mClickHandler = clickHandler;
     }
 
     @NonNull
@@ -83,19 +88,17 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.artwork_item, parent, false);
 
-        Log.d(TAG, "onCreateViewHolder called");
         return new ArtworkItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        Log.d(TAG, "onBindViewHolder called");
+        // This is working, because the getItem is actually from PagedList
         if (getItem(position) != null) {
-            // COMPLETED: Receiving a null object here! Fixed!
+
             ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
         }
-
     }
 
     @Override
@@ -128,7 +131,14 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
     }
 
-    public class ArtworkItemViewHolder extends RecyclerView.ViewHolder {
+    // TODO: Do I need this?
+    public void swipeData(List<Artwork> artworkList) {
+        //mArtworkList = artworkList;
+
+        notifyDataSetChanged();
+    }
+
+    public class ArtworkItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.artwork_thumbnail)
         ImageView artworkThumbnail;
@@ -140,11 +150,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             super(itemView);
 
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(this);
         }
 
         public void bindTo(Artwork artwork) {
 
-            mArtworkList = new ArrayList<>();
+            //mArtworkList = new ArrayList<>();
+
+            //Embedded embedded = new Embedded();
+            //mArtworkList = embedded.getArtworks();
 
             // Get the thumbnail from the json tree
             ImageLinks currentImageLink = artwork.getLinks();
@@ -152,13 +167,20 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
             String artworkThumbnailString = currentThumbnail.getHref();
             String artworkTitleString = artwork.getTitle();
-            Log.d(TAG, "Artwork Title: " + artworkTitle);
 
             artworkTitle.setText(artworkTitleString);
 
             Picasso.get()
                     .load(Uri.parse(artworkThumbnailString))
                     .into(artworkThumbnail);
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            // Get the item position from the PagedList!!!
+            Artwork currentArtwork = getItem(getAdapterPosition());
+            mClickHandler.onArtworkClick(currentArtwork);
         }
     }
 }

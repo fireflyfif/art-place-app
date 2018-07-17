@@ -35,6 +35,8 @@
 
 package com.example.android.artplace.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.util.DiffUtil;
 
 import com.google.gson.annotations.Expose;
@@ -42,7 +44,29 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Artwork {
+public class Artwork implements Parcelable {
+
+    public static DiffUtil.ItemCallback<Artwork> DIFF_CALLBACK = new DiffUtil.ItemCallback<Artwork>() {
+        @Override
+        public boolean areItemsTheSame(Artwork oldItem, Artwork newItem) {
+            return oldItem.id == newItem.id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(Artwork oldItem, Artwork newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        Artwork artwork = (Artwork) obj;
+        return artwork.id == this.id;
+    }
 
     /*
     Id of the Artwork,
@@ -59,18 +83,6 @@ public class Artwork {
     @SerializedName("slug")
     @Expose
     private String slug;
-
-    /*
-    Timestamp of when the record was created,
-    e.g. "2010-12-20T19:48:55+00:00"
-     */
-    @SerializedName("created_at")
-    @Expose
-    private String createdAt;
-
-    @SerializedName("updated_at")
-    @Expose
-    private String updatedAt;
 
     /*
     The title of a piece,
@@ -106,16 +118,7 @@ public class Artwork {
     @Expose
     private String date;
 
-    /*
-    Whether the work is visible on artsy.net.
-     */
-    @SerializedName("published")
-    @Expose
-    private Boolean published;
 
-    @SerializedName("website")
-    @Expose
-    private String website;
 
     /*
     The institution which holds the work in their permanent collection,
@@ -177,22 +180,6 @@ public class Artwork {
         this.slug = slug;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -225,21 +212,6 @@ public class Artwork {
         this.date = date;
     }
 
-    public Boolean getPublished() {
-        return published;
-    }
-
-    public void setPublished(Boolean published) {
-        this.published = published;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
 
     public String getCollectingInstitution() {
         return collectingInstitution;
@@ -273,25 +245,51 @@ public class Artwork {
         this.links = links;
     }
 
-    public static DiffUtil.ItemCallback<Artwork> DIFF_CALLBACK = new DiffUtil.ItemCallback<Artwork>() {
-        @Override
-        public boolean areItemsTheSame(Artwork oldItem, Artwork newItem) {
-            return oldItem.id == newItem.id;
-        }
-
-        @Override
-        public boolean areContentsTheSame(Artwork oldItem, Artwork newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.slug);
+        dest.writeString(this.title);
+        dest.writeString(this.category);
+        dest.writeString(this.medium);
+        dest.writeString(this.date);
+        dest.writeString(this.collectingInstitution);
+        dest.writeString(this.additionalInformation);
+        dest.writeStringList(this.imageVersions);
+        dest.writeParcelable(this.links, flags);
+    }
+
+    public Artwork() {
+    }
+
+    protected Artwork(Parcel in) {
+        this.id = in.readString();
+        this.slug = in.readString();
+        this.title = in.readString();
+        this.category = in.readString();
+        this.medium = in.readString();
+        this.date = in.readString();
+        this.collectingInstitution = in.readString();
+        this.additionalInformation = in.readString();
+        this.imageVersions = in.createStringArrayList();
+        this.links = in.readParcelable(ImageLinks.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Artwork> CREATOR = new Parcelable.Creator<Artwork>() {
+        @Override
+        public Artwork createFromParcel(Parcel source) {
+            return new Artwork(source);
         }
 
-        Artwork artwork = (Artwork) obj;
-        return artwork.id == this.id;
-    }
+        @Override
+        public Artwork[] newArray(int size) {
+            return new Artwork[size];
+        }
+    };
 }

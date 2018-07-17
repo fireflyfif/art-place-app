@@ -35,10 +35,13 @@
 
 package com.example.android.artplace.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ImageLinks {
+public class ImageLinks implements Parcelable {
 
     /*
     Default image thumbnail.
@@ -55,12 +58,6 @@ public class ImageLinks {
     @Expose
     private ArtworkImage image;
 
-    /*
-    Don't need this now
-     */
-    /*@SerializedName("self")
-    @Expose
-    private Self_ self;*/
 
     /*
     TODO: Implement later on
@@ -81,19 +78,6 @@ public class ImageLinks {
     @Expose
     private ArtistsLink artists;
 
-    /*
-    Don't need this now
-     */
-    /*@SerializedName("similar_artworks")
-    @Expose
-    private SimilarArtworks similarArtworks;*/
-
-    /*
-    Don't need this now
-     */
-    /*@SerializedName("collection_users")
-    @Expose
-    private CollectionUsers collectionUsers;*/
 
     public Thumbnail getThumbnail() {
         return thumbnail;
@@ -119,4 +103,37 @@ public class ImageLinks {
         this.artists = artists;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.thumbnail, flags);
+        dest.writeParcelable(this.image, flags);
+        dest.writeParcelable(this.artists, flags);
+    }
+
+    public ImageLinks() {
+    }
+
+    protected ImageLinks(Parcel in) {
+        this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
+        this.image = in.readParcelable(ArtworkImage.class.getClassLoader());
+        this.artists = in.readParcelable(ArtistsLink.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<ImageLinks> CREATOR = new Parcelable.Creator<ImageLinks>() {
+        @Override
+        public ImageLinks createFromParcel(Parcel source) {
+            return new ImageLinks(source);
+        }
+
+        @Override
+        public ImageLinks[] newArray(int size) {
+            return new ImageLinks[size];
+        }
+    };
 }

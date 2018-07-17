@@ -33,60 +33,18 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.ui;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.example.android.artplace.R;
 
-public class ArtworkImage implements Parcelable {
-
-    /*
-    Link to the image
-    TODO: needs {image_versions} always to be "large"
-     */
-    @SerializedName("href")
-    @Expose
-    private String href;
-
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
+public class ArtworkDetailActivity extends AppCompatActivity {
 
     @Override
-    public int describeContents() {
-        return 0;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_artwork_detail);
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
-    }
-
-    public ArtworkImage() {
-    }
-
-    protected ArtworkImage(Parcel in) {
-        this.href = in.readString();
-    }
-
-    public static final Parcelable.Creator<ArtworkImage> CREATOR = new Parcelable.Creator<ArtworkImage>() {
-        @Override
-        public ArtworkImage createFromParcel(Parcel source) {
-            return new ArtworkImage(source);
-        }
-
-        @Override
-        public ArtworkImage[] newArray(int size) {
-            return new ArtworkImage[size];
-        }
-    };
 }
