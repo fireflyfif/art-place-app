@@ -61,6 +61,8 @@ import com.example.android.artplace.utils.ConnectivityUtils;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.viewmodel.ArtworksViewModel;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -93,14 +95,8 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
         //mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
 
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-
-        artworksRv.setLayoutManager(staggeredGridLayoutManager);
-
-        // Set the PagedListAdapter
-        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this, this);
+        // Setup the RecyclerView
+        setRecyclerView();
 
         // Call submitList() method of the PagedListAdapter when a new page is available
         mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
@@ -152,6 +148,17 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         artworksRv.setAdapter(mPagedListAdapter);
     }
 
+    private void setRecyclerView() {
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+
+        artworksRv.setLayoutManager(staggeredGridLayoutManager);
+
+        // Set the PagedListAdapter
+        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this, this);
+    }
+
     @Override
     public void onArtworkClick(Artwork artwork) {
         Toast.makeText(this, "Clicked artwork with id " + artwork.getId(), Toast.LENGTH_SHORT).show();
@@ -173,6 +180,27 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     }
 
+    private synchronized void refreshArtworks() {
+
+        // Setup the RecyclerView
+        setRecyclerView();
+
+        // Call submitList() method of the PagedListAdapter when a new page is available
+        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Artwork> artworks) {
+                if (artworks != null) {
+                    mPagedListAdapter.submitList(null);
+                    // When a new page is available, call submitList() method of the PagedListAdapter
+                    mPagedListAdapter.submitList(artworks);
+                }
+            }
+        });
+
+        // Setup the Adapter on the RecyclerView
+        artworksRv.setAdapter(mPagedListAdapter);
+    }
+
 
     /**
      * AsyncTask that is used for requesting a network connection upon a Refresh button click from the user
@@ -182,17 +210,28 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
      */
     private class RetrieveNetworkConnectivity extends AsyncTask<String, Void, Boolean> {
 
-        private Exception exception;
+        //private WeakReference<MainActivity> mAppReference;
+        //private CoordinatorLayout mCoordinatorLayout;
+
+        private Exception mException;
+
+        public RetrieveNetworkConnectivity() {
+            //mAppReference = new WeakReference<>(context);
+            //mCoordinatorLayout = coordinatorLayout;
+        }
 
         @Override
         protected Boolean doInBackground(String... urls) {
             try {
-                boolean isConnected = ConnectivityUtils.isConnected(getApplicationContext());
+                boolean isConnected = ConnectivityUtils.isConnected();
                 if (isConnected) {
-                    // TODO: Refresh the list of artworks here
 
                     Snackbar.make(coordinatorLayout, "All good with your Network connection!",
                             Snackbar.LENGTH_LONG).show();
+
+                    // Refresh the list of artworks here
+                    // TODO: Problem: get's only the initial Load
+                    refreshArtworks();
 
                     return true;
                 } else {
@@ -202,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                     return false;
                 }
             } catch (Exception e) {
-                this.exception = e;
+                this.mException = e;
                 return null;
             }
 

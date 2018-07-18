@@ -55,7 +55,8 @@ public class ConnectivityUtils {
     public ConnectivityUtils() {
     }
 
-    private static boolean isNetworkAvailable(Context context) {
+    // Always called on a background thread, otherwise will produce a NetworkOnMainThreadException
+    private static boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 ArtPlaceApp.getInstance().getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -68,8 +69,8 @@ public class ConnectivityUtils {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    public static boolean isConnected(Context context) {
-        if (isNetworkAvailable(context)) {
+    public static boolean isConnected() {
+        if (isNetworkAvailable()) {
             try {
                 HttpURLConnection urlConnection = (HttpURLConnection)
                         (new URL("http://clients3.google.com/generate_204")
