@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -33,38 +34,16 @@
   ~
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/network_state_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="@dimen/padding_16dp">
+<resources>
 
-    <TextView
-        android:id="@+id/network_state_error_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="@dimen/padding_10dp"
-        android:text="@string/error_msg" />
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
 
-    <ImageButton
-        android:id="@+id/network_state_refresh_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_refresh_24dp"
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBarOverlay">true</item>
 
-        android:clickable="true"
-        android:focusable="true"
-
-        android:background="@android:color/transparent"
-        android:padding="@dimen/padding_10dp"/>
-
-    <ProgressBar
-        android:id="@+id/network_state_pb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_10dp" />
-
-</LinearLayout>
+    </style>
+</resources>

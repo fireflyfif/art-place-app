@@ -33,63 +33,11 @@
  *
  */
 
-package com.example.android.artplace;
+package com.example.android.artplace.callbacks;
 
-import android.app.Application;
-import android.content.Context;
+import com.example.android.artplace.model.Artwork;
 
-import com.example.android.artplace.remote.ArtsyApiInterface;
-import com.example.android.artplace.remote.ArtsyApiManager;
-
-public class ArtPlaceApp extends Application {
-
-    private ArtsyApiInterface mArtsyApi;
-
-    private static ArtPlaceApp INSTANCE;
-
-    /*public static ArtPlaceApp getInstance() {
-        return INSTANCE;
-    }*/
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        INSTANCE = this;
-    }
-
-    public static synchronized ArtPlaceApp getInstance() {
-        return INSTANCE;
-    }
-
-    /*
-    Helper method that gets the context of the application
-     */
-    private static ArtPlaceApp get(Context context) {
-        return (ArtPlaceApp) context.getApplicationContext();
-    }
-
-    /*
-    Method that is used for initializing  the ViewModel,
-    because the ViewModel class has a parameter of ArtPlaceApp
-     */
-    public static ArtPlaceApp create(Context context) {
-        return ArtPlaceApp.get(context);
-    }
-
-
-    /**
-     * Method that creates a Retrofit instance from the ArtsyApiManager
-     */
-    public ArtsyApiInterface getArtsyApi() {
-        if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.create();
-        }
-        return mArtsyApi;
-    }
-
-
-    public void setArtsyApi(ArtsyApiInterface artsyApi) {
-        mArtsyApi = artsyApi;
-    }
+// Interface for the item click callback
+public interface OnArtworkClickListener {
+    void onArtworkClick(Artwork artwork);
 }

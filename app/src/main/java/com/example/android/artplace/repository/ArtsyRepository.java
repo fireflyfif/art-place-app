@@ -93,35 +93,4 @@ public class ArtsyRepository {
         return ArtsyApiManager.create();
     }
 
-
-    /*public void getArtworks(int itemSize) {
-
-        mApiInterface.getEmbedded(itemSize).enqueue(new Callback<Embedded>() {
-            Embedded embedded = new Embedded();
-            List<Artwork> artworkList = new ArrayList<>();
-
-            @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
-                if (response.isSuccessful()) {
-
-                    embedded = response.body();
-                    if (embedded != null) {
-                        artworkList = embedded.getArtworks();
-
-                        Log.d(TAG, "List of Artworks: " + artworkList.size());
-                    }
-
-                    Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
-                } else {
-                    Log.d(TAG, "Response code from initial load: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
-
-                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
-            }
-        });
-    }*/
 }

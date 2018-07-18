@@ -43,7 +43,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -51,6 +53,8 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artwork;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.callbacks.OnArtworkClickListener;
+import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.utils.NetworkState;
 import com.squareup.picasso.Picasso;
 
@@ -71,16 +75,14 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     private NetworkState mNetworkState;
 
     private OnArtworkClickListener mClickHandler;
+    private OnRefreshListener mRefreshHandler;
 
-    // Interface for the item click callback
-    public interface OnArtworkClickListener {
-        void onArtworkClick(Artwork artwork);
-    }
 
-    public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler) {
+    public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler, OnRefreshListener onRefreshListener) {
         super(Artwork.DIFF_CALLBACK);
         mContext = context;
         mClickHandler = clickHandler;
+        mRefreshHandler = onRefreshListener;
     }
 
     @NonNull
@@ -202,12 +204,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
     }
 
-    public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder {
+    public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.progress_bar)
+        @BindView(R.id.network_state_layout)
+        LinearLayout networkLayout;
+        @BindView(R.id.network_state_pb)
         ProgressBar progressBar;
-        @BindView(R.id.error_message)
+        @BindView(R.id.network_state_error_msg)
         TextView errorMessage;
+        @BindView(R.id.network_state_refresh_bt)
+        ImageButton refreshButton;
 
         public NetworkStateItemViewHolder(View itemView) {
             super(itemView);
@@ -219,20 +225,37 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
             if (networkState != null &&
                     networkState.getStatus() == NetworkState.Status.RUNNING) {
+                networkLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
-                errorMessage.setVisibility(View.INVISIBLE);
-            } else {
+                errorMessage.setVisibility(View.GONE);
+                refreshButton.setVisibility(View.GONE);
+            } else if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                networkLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setVisibility(View.GONE);
-            }
-
-            if (networkState != null &&
+                refreshButton.setVisibility(View.GONE);
+            } else if (networkState != null &&
                     networkState.getStatus() == NetworkState.Status.FAILED) {
+                networkLayout.setVisibility(View.VISIBLE);
+                //networkLayout.setOnClickListener(this);
+
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setVisibility(View.VISIBLE);
+                refreshButton.setVisibility(View.VISIBLE);
+                // TODO: Check if it will work
+                refreshButton.setOnClickListener(this::onClick);
             } else {
+                networkLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setVisibility(View.GONE);
+                refreshButton.setVisibility(View.GONE);
             }
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            mRefreshHandler.onRefreshConnection();
         }
     }}
