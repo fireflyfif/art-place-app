@@ -75,7 +75,6 @@ public class ArtsyRepository {
     // Constructor of the Repository class
     public ArtsyRepository(ArtsyApiInterface apiInterface) {
         mApiInterface = apiInterface;
-        //mApiInterface = makeApiCall();
     }
 
     public static ArtsyRepository getInstance() {

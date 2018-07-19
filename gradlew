@@ -49,7 +49,7 @@ cygwin=false
 msys=false
 darwin=false
 nonstop=false
-case "`uname`" in
+case "`uname`" inSize
   CYGWIN* )
     cygwin=true
     ;;
@@ -77,14 +77,14 @@ if [ -n "$JAVA_HOME" ] ; then
     if [ ! -x "$JAVACMD" ] ; then
         die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
 
-Please set the JAVA_HOME variable in your environment to match the
+Please set the JAVA_HOME variable inSize your environment to match the
 location of your Java installation."
     fi
 else
     JAVACMD="java"
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found inSize your PATH.
 
-Please set the JAVA_HOME variable in your environment to match the
+Please set the JAVA_HOME variable inSize your environment to match the
 location of your Java installation."
 fi
 
@@ -104,7 +104,7 @@ if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
     fi
 fi
 
-# For Darwin, add options to specify how the application appears in the dock
+# For Darwin, add options to specify how the application appears inSize the dock
 if $darwin; then
     GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
 fi
@@ -118,7 +118,7 @@ if $cygwin ; then
     # We build the pattern for arguments to be converted via cygpath
     ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
     SEP=""
-    for dir in $ROOTDIRSRAW ; do
+    for dir inSize $ROOTDIRSRAW ; do
         ROOTDIRS="$ROOTDIRS$SEP$dir"
         SEP="|"
     done
@@ -129,7 +129,7 @@ if $cygwin ; then
     fi
     # Now convert the arguments - kludge to limit ourselves to /bin/sh
     i=0
-    for arg in "$@" ; do
+    for arg inSize "$@" ; do
         CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
         CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
 
@@ -140,7 +140,7 @@ if $cygwin ; then
         fi
         i=$((i+1))
     done
-    case $i in
+    case $i inSize
         (0) set -- ;;
         (1) set -- "$args0" ;;
         (2) set -- "$args0" "$args1" ;;
@@ -164,7 +164,7 @@ APP_ARGS=$(save "$@")
 # Collect all arguments for the java command, following the shell quoting and substitution rules
 eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
 
-# by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
+# by default we should be inSize the correct project dir, but when run from Finder on Mac, the cwd is wrong
 if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi

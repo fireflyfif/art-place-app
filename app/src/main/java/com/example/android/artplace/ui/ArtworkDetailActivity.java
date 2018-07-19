@@ -35,16 +35,134 @@
 
 package com.example.android.artplace.ui;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.model.ArtistsLink;
+import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.model.ArtworkImage;
+import com.example.android.artplace.model.CmSize;
+import com.example.android.artplace.model.Dimensions;
+import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.InSize;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
+
+    private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
+    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
+
+    @BindView(R.id.artwork_title)
+    TextView artworkName;
+    @BindView(R.id.artwork_artist)
+    TextView artistNameLink;
+    @BindView(R.id.artwork_medium)
+    TextView artworkMedium;
+    @BindView(R.id.artwork_category)
+    TextView artworkCategory;
+    @BindView(R.id.artwork_date)
+    TextView artworkDate;
+    @BindView(R.id.artwork_museum)
+    TextView artworkMuseum;
+    @BindView(R.id.artwork_image)
+    ImageView artworkImage;
+    @BindView(R.id.artwork_dimens_cm)
+    TextView dimensCm;
+    @BindView(R.id.artwork_dimens_in)
+    TextView dimensIn;
+
+    private Artwork mArtworkObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artwork_detail);
+
+        ButterKnife.bind(this);
+
+        if (getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+
+            mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
+
+            if (mArtworkObject != null) {
+                String titleString = mArtworkObject.getTitle();
+                artworkName.setText(titleString);
+
+                String mediumString = mArtworkObject.getMedium();
+                artworkMedium.setText(mediumString);
+
+                String categoryString = mArtworkObject.getCategory();
+                artworkCategory.setText(categoryString);
+
+                String dateString = mArtworkObject.getDate();
+                artworkDate.setText(dateString);
+
+                String museumString = mArtworkObject.getCollectingInstitution();
+                artworkMuseum.setText(museumString);
+
+                Dimensions dimensionObject = mArtworkObject.getDimensions();
+
+//                CmSize cmSizeObject = dimensionObject.getCmSize(); // CmSize is null??
+//                String dimensInCmString = cmSizeObject.getText();
+//                dimensCm.setText(dimensInCmString);
+
+//                InSize inSizeObject = dimensionObject.getInSize(); // InSize is null??
+//                String dimensInInchString = inSizeObject.getText();
+//                dimensIn.setText(dimensInInchString);
+            }
+
+            List<String> imageVersionList = mArtworkObject.getImageVersions();
+            // Get the first entry from this list, which corresponds to "large"
+            String versionString = imageVersionList.get(0);
+
+            ImageLinks imageLinksObject = mArtworkObject.getLinks();
+
+            ArtworkImage artworkImageObject = imageLinksObject.getImage();
+            // Get the link for the current artwork,
+            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+            String artworkImgLinkString = artworkImageObject.getHref();
+            // Replace the {image_version} from the artworkImgLinkString with
+            // the wanted version, e.g. "large"
+            String newArtworkLinkString = artworkImgLinkString
+                    .replaceAll("\\{.*?\\}", versionString);
+
+            Log.d(TAG, "New link to the image: " + newArtworkLinkString);
+
+            // Set the image here
+            Picasso.get()
+                    .load(Uri.parse(newArtworkLinkString))
+                    .into(artworkImage);
+
+            ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
+            String artistLinkString = artistsLinkObject.getHref(); // This link needs a token!!!
+            Log.d(TAG, "Link to the artist: " + artistLinkString);
+
+            artistNameLink.setText(artistLinkString);
+            artistNameLink.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
+                    intent.putExtra("artist_link", artistLinkString);
+                    startActivity(intent);
+                }
+            });
+
+        }
     }
 }
+

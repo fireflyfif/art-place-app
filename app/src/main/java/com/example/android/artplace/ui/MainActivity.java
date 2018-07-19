@@ -169,9 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         Intent intent = new Intent(MainActivity.this, ArtworkDetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-
     }
-
 
     @Override
     public void onRefreshConnection() {

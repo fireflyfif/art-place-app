@@ -118,7 +118,9 @@ public class Artwork implements Parcelable {
     @Expose
     private String date;
 
-
+    @SerializedName("dimensions")
+    @Expose
+    private Dimensions dimensions;
 
     /*
     The institution which holds the work in their permanent collection,
@@ -212,6 +214,13 @@ public class Artwork implements Parcelable {
         this.date = date;
     }
 
+    public Dimensions getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(Dimensions dimensions) {
+        this.dimensions = dimensions;
+    }
 
     public String getCollectingInstitution() {
         return collectingInstitution;
@@ -259,6 +268,7 @@ public class Artwork implements Parcelable {
         dest.writeString(this.category);
         dest.writeString(this.medium);
         dest.writeString(this.date);
+        dest.writeParcelable(this.dimensions, flags);
         dest.writeString(this.collectingInstitution);
         dest.writeString(this.additionalInformation);
         dest.writeStringList(this.imageVersions);
@@ -275,6 +285,7 @@ public class Artwork implements Parcelable {
         this.category = in.readString();
         this.medium = in.readString();
         this.date = in.readString();
+        this.dimensions = in.readParcelable(Dimensions.class.getClassLoader());
         this.collectingInstitution = in.readString();
         this.additionalInformation = in.readString();
         this.imageVersions = in.createStringArrayList();
