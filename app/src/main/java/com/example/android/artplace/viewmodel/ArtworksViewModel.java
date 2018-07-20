@@ -43,6 +43,7 @@ import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 
+import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.datasource.ArtworkDataSource;
@@ -54,7 +55,6 @@ import java.util.concurrent.Executors;
 
 public class ArtworksViewModel extends ViewModel {
 
-    private Executor mExecutor;
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
@@ -76,9 +76,6 @@ public class ArtworksViewModel extends ViewModel {
     Method for initializing the DataSourceFactory and for building the LiveData
      */
     private void init() {
-
-        // Initialize an executor class
-        mExecutor = Executors.newFixedThreadPool(5);
 
         // Get an instance of the DataSourceFactory class
         mArtworkDataSourceFactory = new ArtworkDataSourceFactory(mAppController);
@@ -114,7 +111,7 @@ public class ArtworksViewModel extends ViewModel {
 
         mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
                 //.setInitialLoadKey()
-                .setFetchExecutor(mExecutor)
+                .setFetchExecutor(AppExecutors.networkIO())
                 .build();
     }
 

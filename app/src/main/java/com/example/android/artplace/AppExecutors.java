@@ -33,26 +33,47 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace;
 
-import com.example.android.artplace.model.Embedded;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import android.os.Handler;
 
-public interface ArtsyApiInterface {
+// Help from this resource: https://github.com/udacity/ud851-Exercises/blob/student/Lesson09b-ToDo-List-AAC/T09b.04-Exercise-Executors/app/src/main/java/com/example/android/todolist/AppExecutors.java
+public class AppExecutors {
 
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<Embedded> getArtist(@Query("artwork_id") String artworkId);
+    private final static Executor mDiskIO = Executors.newSingleThreadExecutor();
 
-    /**
-     *  Endpoint for fetching Artworks
-     *  link: https://api.artsy.net/api/artworks?size=10 + header with token
-     */
-    @GET("/api/artworks")
-    Call<Embedded> getEmbedded(@Query("size") int itemSize);
+    private final static Executor mNetworkIO = Executors.newFixedThreadPool(5);
+
+    private final static Executor mMainThread = new MainThreadExecutor();
+
+
+
+    public AppExecutors() {
+    }
+
+    public static Executor networkIO() {
+        return mNetworkIO;
+    }
+
+    public static Executor diskIO() {
+        return mDiskIO;
+    }
+
+    public static Executor mainThread() {
+        return mMainThread;
+    }
+
+    private static class MainThreadExecutor implements Executor {
+
+        private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+        @Override
+        public void execute(@NonNull Runnable command) {
+            mainThreadHandler.post(command);
+        }
+    }
 }

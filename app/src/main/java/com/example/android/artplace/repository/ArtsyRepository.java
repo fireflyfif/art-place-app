@@ -81,7 +81,6 @@ public class ArtsyRepository {
         if (INSTANCE == null) {
             INSTANCE = new ArtsyRepository(mApiInterface);
         }
-
         return INSTANCE;
     }
 
@@ -91,5 +90,6 @@ public class ArtsyRepository {
     private static ArtsyApiInterface makeApiCall() {
         return ArtsyApiManager.create();
     }
+
 
 }
