@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.Artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,23 +41,29 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ArtworkImage implements Parcelable {
+public class Dimensions implements Parcelable {
 
-    /*
-    Link to the image
-    TODO: needs {image_versions} always to be "large"
-     */
-    @SerializedName("href")
+    @SerializedName("inSize")
     @Expose
-    private String href;
+    private InSize inSize;
+    @SerializedName("cmSize")
+    @Expose
+    private CmSize cmSize;
 
-
-    public String getHref() {
-        return href;
+    public InSize getInSize() {
+        return inSize;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public void setInSize(InSize inSize) {
+        this.inSize = inSize;
+    }
+
+    public CmSize getCmSize() {
+        return cmSize;
+    }
+
+    public void setCmSize(CmSize cmSize) {
+        this.cmSize = cmSize;
     }
 
 
@@ -68,25 +74,27 @@ public class ArtworkImage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
+        dest.writeParcelable(this.inSize, flags);
+        dest.writeParcelable(this.cmSize, flags);
     }
 
-    public ArtworkImage() {
+    public Dimensions() {
     }
 
-    protected ArtworkImage(Parcel in) {
-        this.href = in.readString();
+    protected Dimensions(Parcel in) {
+        this.inSize = in.readParcelable(InSize.class.getClassLoader());
+        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<ArtworkImage> CREATOR = new Parcelable.Creator<ArtworkImage>() {
+    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
         @Override
-        public ArtworkImage createFromParcel(Parcel source) {
-            return new ArtworkImage(source);
+        public Dimensions createFromParcel(Parcel source) {
+            return new Dimensions(source);
         }
 
         @Override
-        public ArtworkImage[] newArray(int size) {
-            return new ArtworkImage[size];
+        public Dimensions[] newArray(int size) {
+            return new Dimensions[size];
         }
     };
 }

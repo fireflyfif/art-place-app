@@ -37,7 +37,6 @@ package com.example.android.artplace.ui;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,13 +45,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.ArtistsLink;
-import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.model.ArtworkImage;
-import com.example.android.artplace.model.CmSize;
-import com.example.android.artplace.model.Dimensions;
+import com.example.android.artplace.model.Artworks.ArtistsLink;
+import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
-import com.example.android.artplace.model.InSize;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -131,10 +128,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             ImageLinks imageLinksObject = mArtworkObject.getLinks();
 
-            ArtworkImage artworkImageObject = imageLinksObject.getImage();
+            MainImage mainImageObject = imageLinksObject.getImage();
             // Get the link for the current artwork,
             // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-            String artworkImgLinkString = artworkImageObject.getHref();
+            String artworkImgLinkString = mainImageObject.getHref();
             // Replace the {image_version} from the artworkImgLinkString with
             // the wanted version, e.g. "large"
             String newArtworkLinkString = artworkImgLinkString

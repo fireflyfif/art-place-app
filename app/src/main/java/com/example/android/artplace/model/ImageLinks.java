@@ -38,6 +38,8 @@ package com.example.android.artplace.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.android.artplace.model.Artworks.ArtistsLink;
+import com.example.android.artplace.model.Artworks.MainImage;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -56,7 +58,7 @@ public class ImageLinks implements Parcelable {
      */
     @SerializedName("image")
     @Expose
-    private ArtworkImage image;
+    private MainImage image;
 
 
     /*
@@ -87,11 +89,11 @@ public class ImageLinks implements Parcelable {
         this.thumbnail = thumbnail;
     }
 
-    public ArtworkImage getImage() {
+    public MainImage getImage() {
         return image;
     }
 
-    public void setImage(ArtworkImage image) {
+    public void setImage(MainImage image) {
         this.image = image;
     }
 
@@ -121,7 +123,7 @@ public class ImageLinks implements Parcelable {
 
     protected ImageLinks(Parcel in) {
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
-        this.image = in.readParcelable(ArtworkImage.class.getClassLoader());
+        this.image = in.readParcelable(MainImage.class.getClassLoader());
         this.artists = in.readParcelable(ArtistsLink.class.getClassLoader());
     }
 

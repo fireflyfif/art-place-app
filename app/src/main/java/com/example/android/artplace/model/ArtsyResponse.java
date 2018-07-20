@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.model;
 
+import com.example.android.artplace.model.Artworks.Embedded;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.Artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,29 +41,18 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Dimensions implements Parcelable {
+public class InSize implements Parcelable {
 
-    @SerializedName("inSize")
+    @SerializedName("text")
     @Expose
-    private InSize inSize;
-    @SerializedName("cmSize")
-    @Expose
-    private CmSize cmSize;
+    private String text;
 
-    public InSize getInSize() {
-        return inSize;
+    public String getText() {
+        return text;
     }
 
-    public void setInSize(InSize inSize) {
-        this.inSize = inSize;
-    }
-
-    public CmSize getCmSize() {
-        return cmSize;
-    }
-
-    public void setCmSize(CmSize cmSize) {
-        this.cmSize = cmSize;
+    public void setText(String text) {
+        this.text = text;
     }
 
 
@@ -74,27 +63,25 @@ public class Dimensions implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.inSize, flags);
-        dest.writeParcelable(this.cmSize, flags);
+        dest.writeString(this.text);
     }
 
-    public Dimensions() {
+    public InSize() {
     }
 
-    protected Dimensions(Parcel in) {
-        this.inSize = in.readParcelable(InSize.class.getClassLoader());
-        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
+    protected InSize(Parcel in) {
+        this.text = in.readString();
     }
 
-    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
+    public static final Parcelable.Creator<InSize> CREATOR = new Parcelable.Creator<InSize>() {
         @Override
-        public Dimensions createFromParcel(Parcel source) {
-            return new Dimensions(source);
+        public InSize createFromParcel(Parcel source) {
+            return new InSize(source);
         }
 
         @Override
-        public Dimensions[] newArray(int size) {
-            return new Dimensions[size];
+        public InSize[] newArray(int size) {
+            return new InSize[size];
         }
     };
 }

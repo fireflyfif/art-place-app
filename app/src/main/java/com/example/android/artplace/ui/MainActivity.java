@@ -54,14 +54,12 @@ import android.widget.Toast;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.ui.adapters.ArtworkListAdapter;
-import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.utils.ConnectivityUtils;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.viewmodel.ArtworksViewModel;
-
-import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

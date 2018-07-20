@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.Artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,18 +41,23 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InSize implements Parcelable {
+public class ArtistsLink implements Parcelable {
 
-    @SerializedName("text")
+    /*
+    Link to the artists endpoint, e.g.:
+    "https://api.artsy.net/api/artists?artwork_id=4d8b92eb4eb68a1b2c000968"
+    Note: needs a token added to the Header!
+     */
+    @SerializedName("href")
     @Expose
-    private String text;
+    private String href;
 
-    public String getText() {
-        return text;
+    public String getHref() {
+        return href;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 
@@ -63,25 +68,25 @@ public class InSize implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
+        dest.writeString(this.href);
     }
 
-    public InSize() {
+    public ArtistsLink() {
     }
 
-    protected InSize(Parcel in) {
-        this.text = in.readString();
+    protected ArtistsLink(Parcel in) {
+        this.href = in.readString();
     }
 
-    public static final Parcelable.Creator<InSize> CREATOR = new Parcelable.Creator<InSize>() {
+    public static final Parcelable.Creator<ArtistsLink> CREATOR = new Parcelable.Creator<ArtistsLink>() {
         @Override
-        public InSize createFromParcel(Parcel source) {
-            return new InSize(source);
+        public ArtistsLink createFromParcel(Parcel source) {
+            return new ArtistsLink(source);
         }
 
         @Override
-        public InSize[] newArray(int size) {
-            return new InSize[size];
+        public ArtistsLink[] newArray(int size) {
+            return new ArtistsLink[size];
         }
     };
 }

@@ -33,55 +33,24 @@
  *
  */
 
-package com.example.android.artplace.model;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.example.android.artplace.model.Artworks;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CmSize implements Parcelable {
+import java.util.List;
 
-    @SerializedName("text")
+public class Embedded {
+
+    @SerializedName("artworks")
     @Expose
-    private String text;
+    private List<Artwork> artworks;
 
-    public String getText() {
-        return text;
+    public List<Artwork> getArtworks() {
+        return artworks;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setArtworks(List<Artwork> artworks) {
+        this.artworks = artworks;
     }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
-    }
-
-    public CmSize() {
-    }
-
-    protected CmSize(Parcel in) {
-        this.text = in.readString();
-    }
-
-    public static final Parcelable.Creator<CmSize> CREATOR = new Parcelable.Creator<CmSize>() {
-        @Override
-        public CmSize createFromParcel(Parcel source) {
-            return new CmSize(source);
-        }
-
-        @Override
-        public CmSize[] newArray(int size) {
-            return new CmSize[size];
-        }
-    };
 }

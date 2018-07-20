@@ -41,11 +41,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.remote.ArtsyApiInterface;
-import com.example.android.artplace.remote.ArtsyApiManager;
-import com.example.android.artplace.repository.ArtsyRepository;
+import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.Embedded;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;
@@ -54,8 +51,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.example.android.artplace.ArtPlaceApp.getInstance;
 
 public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 

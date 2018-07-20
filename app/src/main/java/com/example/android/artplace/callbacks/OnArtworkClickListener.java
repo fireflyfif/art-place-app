@@ -35,7 +35,7 @@
 
 package com.example.android.artplace.callbacks;
 
-import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.model.Artworks.Artwork;
 
 // Interface for the item click callback
 public interface OnArtworkClickListener {

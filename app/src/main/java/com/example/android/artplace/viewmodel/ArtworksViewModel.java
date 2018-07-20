@@ -47,11 +47,8 @@ import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.datasource.ArtworkDataSource;
-import com.example.android.artplace.model.Artwork;
+import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class ArtworksViewModel extends ViewModel {
 

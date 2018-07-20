@@ -35,26 +35,15 @@
 
 package com.example.android.artplace.repository;
 
-import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
-import android.arch.paging.LivePagedListBuilder;
-import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.example.android.artplace.datasource.ArtworkDataSource;
+import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
-import com.example.android.artplace.model.Artwork;
-import com.example.android.artplace.model.Embedded;
-import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.Artworks.Embedded;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.utils.NetworkState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,7 +54,7 @@ public class ArtsyRepository {
     private static final String TAG = ArtsyRepository.class.getSimpleName();
 
     private static ArtsyRepository INSTANCE;
-    private static ArtsyApiInterface mApiInterface;
+    private static ArtsyApiInterface sApiInterface;
     private ArtworkDataSourceFactory mDataSourceFactory;
 
     private LiveData<NetworkState> mNetworkState;
@@ -74,12 +63,12 @@ public class ArtsyRepository {
 
     // Constructor of the Repository class
     public ArtsyRepository(ArtsyApiInterface apiInterface) {
-        mApiInterface = apiInterface;
+        sApiInterface = apiInterface;
     }
 
     public static ArtsyRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ArtsyRepository(mApiInterface);
+            INSTANCE = new ArtsyRepository(sApiInterface);
         }
         return INSTANCE;
     }
@@ -91,5 +80,28 @@ public class ArtsyRepository {
         return ArtsyApiManager.create();
     }
 
+    /**
+     * Fetch data from the Artists endpoint with selected artwork ID
+     *
+     * @param artworkId is the current artwork ID
+     */
+    private void loadArtist(String artworkId) {
+        AppExecutors.networkIO().execute(() -> {
+            sApiInterface.getArtist(artworkId).enqueue(new Callback<Embedded>() {
+                @Override
+                public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+                    if (response.isSuccessful()) {
+                        Artwork
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
+
+                }
+            });
+
+        });
+    }
 
 }
