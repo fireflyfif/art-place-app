@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui;
+package com.example.android.artplace.ui.ArtworksMainActivity;
 
 import android.arch.lifecycle.Observer;
 import android.arch.paging.PagedList;
@@ -53,13 +53,13 @@ import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
-import com.example.android.artplace.ui.adapters.ArtworkListAdapter;
+import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.ArtworksMainActivity.adapters.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.utils.ConnectivityUtils;
 import com.example.android.artplace.utils.NetworkState;
-import com.example.android.artplace.viewmodel.ArtworksViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

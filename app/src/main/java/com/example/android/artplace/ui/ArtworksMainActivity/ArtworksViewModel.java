@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.viewmodel;
+package com.example.android.artplace.ui.ArtworksMainActivity;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;

@@ -39,7 +39,7 @@ import android.support.annotation.NonNull;
 
 import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.Artworks.CustomDeserializer;
-import com.example.android.artplace.model.Artworks.Embedded;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -92,7 +92,7 @@ public class ArtsyApiManager {
      */
     private static Gson makeGson() {
         return new GsonBuilder()
-                .registerTypeAdapter(Embedded.class, new CustomDeserializer())
+                .registerTypeAdapter(EmbeddedArtworks.class, new CustomDeserializer())
                 .create();
     }
 

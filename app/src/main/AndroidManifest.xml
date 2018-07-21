@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.ArtworksMainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.ArtworkDetailActivity"></activity>
-        <activity android:name=".ui.ArtistDetailActivity"></activity>
+        <activity android:name=".ui.ArtistActivity.ArtistDetailActivity"></activity>
     </application>
 
 </manifest>

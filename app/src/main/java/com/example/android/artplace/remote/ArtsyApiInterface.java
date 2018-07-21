@@ -35,7 +35,8 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.model.Artworks.Embedded;
+import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -47,12 +48,12 @@ public interface ArtsyApiInterface {
      * Endpoint for fetching Artist of the current Artwork
      */
     @GET("/api/artists")
-    Call<Embedded> getArtist(@Query("artwork_id") String artworkId);
+    Call<EmbeddedArtists> getArtist(@Query("artwork_id") String artworkId);
 
     /**
      *  Endpoint for fetching Artworks
      *  link: https://api.artsy.net/api/artworks?size=10 + header with token
      */
     @GET("/api/artworks")
-    Call<Embedded> getEmbedded(@Query("size") int itemSize);
+    Call<EmbeddedArtworks> getEmbedded(@Query("size") int itemSize);
 }

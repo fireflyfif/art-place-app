@@ -33,24 +33,24 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.Artists;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Embedded {
+public class EmbeddedArtists {
 
-    @SerializedName("artworks")
+    @SerializedName("artists")
     @Expose
-    private List<Artwork> artworks;
+    private List<Artist> artists = null;
 
-    public List<Artwork> getArtworks() {
-        return artworks;
+    public List<Artist> getArtists() {
+        return artists;
     }
 
-    public void setArtworks(List<Artwork> artworks) {
-        this.artworks = artworks;
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
     }
 }

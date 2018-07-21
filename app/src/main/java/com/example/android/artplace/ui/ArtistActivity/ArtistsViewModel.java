@@ -33,18 +33,34 @@
  *
  */
 
-package com.example.android.artplace.ui;
+package com.example.android.artplace.ui.ArtistActivity;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
 
-import com.example.android.artplace.R;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.repository.ArtsyRepository;
 
-public class ArtistDetailActivity extends AppCompatActivity {
+import java.util.List;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artist_detail);
+public class ArtistsViewModel extends ViewModel {
+
+    private LiveData<List<Artist>> mArtistLiveData;
+    private ArtsyRepository mRepository;
+
+    public ArtistsViewModel(ArtsyRepository artsyRepository) {
+        mRepository = artsyRepository;
     }
+
+    public void init(String artworkId) {
+        if (mArtistLiveData != null) {
+            return;
+        }
+        mArtistLiveData = mRepository.getArtist(artworkId); // Repository is null?
+    }
+
+    public LiveData<List<Artist>> getArtist() {
+        return mArtistLiveData;
+    }
+
 }

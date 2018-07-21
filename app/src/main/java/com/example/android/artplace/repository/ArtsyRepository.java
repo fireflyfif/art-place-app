@@ -36,14 +36,21 @@
 package com.example.android.artplace.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
-import com.example.android.artplace.model.Artworks.Embedded;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.model.Artists.EmbeddedArtists;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.utils.NetworkState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,20 +62,20 @@ public class ArtsyRepository {
 
     private static ArtsyRepository INSTANCE;
     private static ArtsyApiInterface sApiInterface;
-    private ArtworkDataSourceFactory mDataSourceFactory;
+    private ArtPlaceApp mAppController;
 
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
 
     // Constructor of the Repository class
-    public ArtsyRepository(ArtsyApiInterface apiInterface) {
-        sApiInterface = apiInterface;
+    public ArtsyRepository(ArtPlaceApp appController) {
+        mAppController = appController;
     }
 
     public static ArtsyRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ArtsyRepository(sApiInterface);
+            //INSTANCE = new ArtsyRepository(sApiInterface);
         }
         return INSTANCE;
     }
@@ -80,28 +87,48 @@ public class ArtsyRepository {
         return ArtsyApiManager.create();
     }
 
+    public LiveData<List<Artist>> getArtist(String artworkId) {
+        return loadArtist(artworkId);
+    }
+
     /**
      * Fetch data from the Artists endpoint with selected artwork ID
      *
      * @param artworkId is the current artwork ID
      */
-    private void loadArtist(String artworkId) {
+    private LiveData<List<Artist>> loadArtist(String artworkId) {
+
+        MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
+
         AppExecutors.networkIO().execute(() -> {
-            sApiInterface.getArtist(artworkId).enqueue(new Callback<Embedded>() {
+            mAppController.getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
+                EmbeddedArtists embeddedArtists = new EmbeddedArtists();
+
                 @Override
-                public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+                public void onResponse(Call<EmbeddedArtists> call, Response<EmbeddedArtists> response) {
                     if (response.isSuccessful()) {
-                        Artwork
+                        embeddedArtists = response.body();
+
+                        if (embeddedArtists != null) {
+                            //artistList = artists.getArtists();
+                            artistLiveData.setValue(embeddedArtists.getArtists());
+                        }
+                        Log.d(TAG, "Loaded successfully! " + response.code());
+
+                    } else {
+                        artistLiveData.setValue(null);
+                        Log.d(TAG, "Loaded NOT successfully! " + response.code());
                     }
                 }
-
                 @Override
-                public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
-
+                public void onFailure(Call<EmbeddedArtists> call, Throwable t) {
+                    Log.d(TAG, "OnFailure! " + t.getMessage());
                 }
             });
 
         });
-    }
 
+        // TODO: Make it return LiveData<Artist>
+        return artistLiveData;
+    }
 }

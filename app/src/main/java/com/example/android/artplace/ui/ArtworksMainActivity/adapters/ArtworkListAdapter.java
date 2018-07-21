@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.adapters;
+package com.example.android.artplace.ui.ArtworksMainActivity.adapters;
 
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
@@ -179,7 +179,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
             //mArtworkList = new ArrayList<>();
 
-            //Embedded embedded = new Embedded();
+            //EmbeddedArtworks embedded = new EmbeddedArtworks();
             //mArtworkList = embedded.getArtworks();
 
             // Get the thumbnail from the json tree

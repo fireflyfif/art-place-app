@@ -50,6 +50,7 @@ import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.ui.ArtistActivity.ArtistDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -61,6 +62,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
+    private static final String ARTWORK_ID_KEY = "artwork_id";
+    private static final String ARTIST_LINK_KEY = "artist_link";
 
     @BindView(R.id.artwork_title)
     TextView artworkName;
@@ -148,13 +151,17 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String artistLinkString = artistsLinkObject.getHref(); // This link needs a token!!!
             Log.d(TAG, "Link to the artist: " + artistLinkString);
 
+            String artworkId = mArtworkObject.getId();
+            Log.d(TAG, "Artwork id: " + artworkId);
+
             artistNameLink.setText(artistLinkString);
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                    intent.putExtra("artist_link", artistLinkString);
+                    intent.putExtra(ARTIST_LINK_KEY, artistLinkString);
+                    intent.putExtra(ARTWORK_ID_KEY, artworkId);
                     startActivity(intent);
                 }
             });

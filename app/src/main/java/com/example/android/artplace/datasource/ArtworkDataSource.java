@@ -42,7 +42,7 @@ import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.Embedded;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;
@@ -86,17 +86,17 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mNetworkState.postValue(NetworkState.LOADING);
 
         // Make the Retrofit call to the API
-        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
-            Embedded embedded = new Embedded();
+        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<EmbeddedArtworks>() {
+            EmbeddedArtworks embeddedArtworks = new EmbeddedArtworks();
             List<Artwork> artworkList = new ArrayList<>();
 
             @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+            public void onResponse(@NonNull Call<EmbeddedArtworks> call, @NonNull Response<EmbeddedArtworks> response) {
                 if (response.isSuccessful()) {
 
-                    embedded = response.body();
-                    if (embedded != null) {
-                        callback.onResult(artworkList = embedded.getArtworks(), null, 2L);
+                    embeddedArtworks = response.body();
+                    if (embeddedArtworks != null) {
+                        callback.onResult(artworkList = embeddedArtworks.getArtworks(), null, 2L);
 
                         Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
 
@@ -115,7 +115,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Embedded> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<EmbeddedArtworks> call, @NonNull Throwable t) {
 
                 mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
@@ -139,26 +139,26 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mNetworkState.postValue(NetworkState.LOADING);
 
         // Make the Retrofit call to the API
-        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<Embedded>() {
-            Embedded embedded = new Embedded();
+        mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<EmbeddedArtworks>() {
+            EmbeddedArtworks embeddedArtworks = new EmbeddedArtworks();
             List<Artwork> artworkList = new ArrayList<>();
 
             @Override
-            public void onResponse(@NonNull Call<Embedded> call, @NonNull Response<Embedded> response) {
+            public void onResponse(@NonNull Call<EmbeddedArtworks> call, @NonNull Response<EmbeddedArtworks> response) {
                 if (response.isSuccessful()) {
-                    if (embedded != null) {
-                        embedded = response.body();
+                    if (embeddedArtworks != null) {
+                        embeddedArtworks = response.body();
 
-                        if (embedded.getArtworks() != null) {
+                        if (embeddedArtworks.getArtworks() != null) {
                             long nextKey;
                             // TODO: Getting repeated artworks???
-                            if (params.key == embedded.getArtworks().size()) {
+                            if (params.key == embeddedArtworks.getArtworks().size()) {
                                 nextKey = 0;
                             } else {
                                 nextKey = params.key + 1;
                             }
 
-                            callback.onResult(artworkList = embedded.getArtworks(), nextKey);
+                            callback.onResult(artworkList = embeddedArtworks.getArtworks(), nextKey);
 
                             Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
                         }
@@ -176,7 +176,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             }
 
             @Override
-            public void onFailure(Call<Embedded> call, Throwable t) {
+            public void onFailure(Call<EmbeddedArtworks> call, Throwable t) {
 
                 mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());

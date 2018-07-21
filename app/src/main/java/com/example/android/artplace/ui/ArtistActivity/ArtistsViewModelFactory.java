@@ -33,48 +33,36 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.ui.ArtistActivity;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-// Model class for the response of the Artsy API
-public class ArtsyResponse {
+import com.example.android.artplace.repository.ArtsyRepository;
 
-    @SerializedName("total_count")
-    @Expose
-    private Object totalCount;
+import java.util.Map;
 
-//    @SerializedName("_links")
-//    @Expose
-//    private Links links;
+import java.security.Provider;
 
-    @SerializedName("_embedded")
-    @Expose
-    private EmbeddedArtworks embeddedArtworks;
+// Help from this tutorial: https://proandroiddev.com/the-missing-google-sample-of-android-architecture-components-guide-c7d6e7306b8f
+public class ArtistsViewModelFactory implements ViewModelProvider.Factory {
 
-    public Object getTotalCount() {
-        return totalCount;
+    private ArtsyRepository mRepository;
+
+    public ArtistsViewModelFactory(ArtsyRepository artsyRepository) {
+        mRepository = artsyRepository;
     }
 
-    public void setTotalCount(Object totalCount) {
-        this.totalCount = totalCount;
-    }
+    @SuppressWarnings("unchecked")
+    @NonNull
+    @Override
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
 
-    /*public Links getLinks() {
-        return links;
-    }*/
+        if (modelClass.isAssignableFrom(ArtistsViewModel.class)) {
+            return (T) new ArtistsViewModel(mRepository);
+        }
 
-    /*public void setLinks(Links links) {
-        this.links = links;
-    }*/
-
-    public EmbeddedArtworks getEmbeddedArtworks() {
-        return embeddedArtworks;
-    }
-
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
+        throw new IllegalArgumentException("Unknown ViewModel class");
     }
 }

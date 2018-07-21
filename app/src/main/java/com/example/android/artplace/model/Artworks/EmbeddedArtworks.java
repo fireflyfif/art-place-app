@@ -33,48 +33,24 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.Artworks;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-// Model class for the response of the Artsy API
-public class ArtsyResponse {
+import java.util.List;
 
-    @SerializedName("total_count")
+public class EmbeddedArtworks {
+
+    @SerializedName("artworks")
     @Expose
-    private Object totalCount;
+    private List<Artwork> artworks;
 
-//    @SerializedName("_links")
-//    @Expose
-//    private Links links;
-
-    @SerializedName("_embedded")
-    @Expose
-    private EmbeddedArtworks embeddedArtworks;
-
-    public Object getTotalCount() {
-        return totalCount;
+    public List<Artwork> getArtworks() {
+        return artworks;
     }
 
-    public void setTotalCount(Object totalCount) {
-        this.totalCount = totalCount;
-    }
-
-    /*public Links getLinks() {
-        return links;
-    }*/
-
-    /*public void setLinks(Links links) {
-        this.links = links;
-    }*/
-
-    public EmbeddedArtworks getEmbeddedArtworks() {
-        return embeddedArtworks;
-    }
-
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
+    public void setArtworks(List<Artwork> artworks) {
+        this.artworks = artworks;
     }
 }

@@ -43,12 +43,12 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-// Custom Deserializer gets the JSON and deserialize it to access the Embedded element
+// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
 // resource: https://stackoverflow.com/a/23071080/8132331
-public class CustomDeserializer implements JsonDeserializer<Embedded> {
+public class CustomDeserializer implements JsonDeserializer<EmbeddedArtworks> {
 
     @Override
-    public Embedded deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
         // Get the "embedded" element from the parsed JSON
@@ -56,6 +56,6 @@ public class CustomDeserializer implements JsonDeserializer<Embedded> {
 
         // Deserialize it by using a new instance of Gson to avoid infinite recursion
         // to this deserializer
-        return new Gson().fromJson(embeddedElement, Embedded.class);
+        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
     }
 }
