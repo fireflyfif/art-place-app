@@ -33,8 +33,9 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.Artists;
 
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -45,10 +46,10 @@ import java.lang.reflect.Type;
 
 // Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
 // resource: https://stackoverflow.com/a/23071080/8132331
-public class CustomDeserializer implements JsonDeserializer<EmbeddedArtworks> {
+public class CustomArtistsDeserializer implements JsonDeserializer<EmbeddedArtists> {
 
     @Override
-    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public EmbeddedArtists deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
         // Get the "embedded" element from the parsed JSON
@@ -56,6 +57,6 @@ public class CustomDeserializer implements JsonDeserializer<EmbeddedArtworks> {
 
         // Deserialize it by using a new instance of Gson to avoid infinite recursion
         // to this deserializer
-        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
+        return new Gson().fromJson(embeddedElement, EmbeddedArtists.class);
     }
 }

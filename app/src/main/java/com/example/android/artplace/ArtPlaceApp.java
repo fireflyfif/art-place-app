@@ -41,25 +41,37 @@ import android.content.Context;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
 
+// Singleton class that extends the Application.
+// Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
 public class ArtPlaceApp extends Application {
 
     private ArtsyApiInterface mArtsyApi;
 
-    private static ArtPlaceApp INSTANCE;
+    // With volatile variable all the write will happen on volatile sInstance
+    // before any read of sInstance variable
+    private static volatile ArtPlaceApp sInstance;
 
-    /*public static ArtPlaceApp getInstance() {
-        return INSTANCE;
-    }*/
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        INSTANCE = this;
+        sInstance = this;
     }
 
-    public static synchronized ArtPlaceApp getInstance() {
-        return INSTANCE;
+    public static ArtPlaceApp getInstance() {
+        // Double check locking pattern
+        if (sInstance == null) {
+
+            synchronized (ArtPlaceApp.class) {
+                // If there is no instance available, create one
+                if (sInstance == null) {
+                    sInstance = new ArtPlaceApp();
+                }
+            }
+        }
+
+        return sInstance;
     }
 
     /*

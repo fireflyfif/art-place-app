@@ -56,36 +56,44 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+// Singleton pattern for the Repository class,
+// best explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
 public class ArtsyRepository {
 
     private static final String TAG = ArtsyRepository.class.getSimpleName();
 
-    private static ArtsyRepository INSTANCE;
-    private static ArtsyApiInterface sApiInterface;
-    private ArtPlaceApp mAppController;
+    // With volatile variable all the write will happen on volatile sInstance
+    // before any read of sInstance variable
+    private static volatile ArtsyRepository sRepositoryInstance;
 
-    private LiveData<NetworkState> mNetworkState;
-    private LiveData<NetworkState> mInitialLoading;
+    //private static ArtPlaceApp sAppController;
 
 
-    // Constructor of the Repository class
-    public ArtsyRepository(ArtPlaceApp appController) {
-        mAppController = appController;
+    // Private constructor of the Repository class
+    private ArtsyRepository() {
+        //sAppController = appController;
+
+        // Prevent from the reflection api
+        if (sRepositoryInstance != null) {
+            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+        }
     }
 
     public static ArtsyRepository getInstance() {
-        if (INSTANCE == null) {
-            //INSTANCE = new ArtsyRepository(sApiInterface);
+        // Double check locking pattern
+        if (sRepositoryInstance == null) {
+
+            // if there is no instance available, create a new one
+            synchronized (ArtsyRepository.class) {
+                if (sRepositoryInstance == null) {
+                    sRepositoryInstance = new ArtsyRepository();
+                }
+            }
         }
-        return INSTANCE;
+
+        return sRepositoryInstance;
     }
 
-    /*
-    Method that makes the call to the API
-     */
-    private static ArtsyApiInterface makeApiCall() {
-        return ArtsyApiManager.create();
-    }
 
     public LiveData<List<Artist>> getArtist(String artworkId) {
         return loadArtist(artworkId);
@@ -101,17 +109,20 @@ public class ArtsyRepository {
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
         AppExecutors.networkIO().execute(() -> {
-            mAppController.getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
+            // Get the eInstance of the ArtPlaceApp to create the Retrofit call
+            ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
                 EmbeddedArtists embeddedArtists = new EmbeddedArtists();
+                List<Artist> artistList = new ArrayList<>();
 
                 @Override
-                public void onResponse(Call<EmbeddedArtists> call, Response<EmbeddedArtists> response) {
+                public void onResponse(@NonNull Call<EmbeddedArtists> call, @NonNull Response<EmbeddedArtists> response) {
                     if (response.isSuccessful()) {
                         embeddedArtists = response.body();
 
                         if (embeddedArtists != null) {
-                            //artistList = artists.getArtists();
-                            artistLiveData.setValue(embeddedArtists.getArtists());
+                            artistList = embeddedArtists.getArtists();
+
+                            artistLiveData.setValue(artistList);
                         }
                         Log.d(TAG, "Loaded successfully! " + response.code());
 
@@ -121,14 +132,14 @@ public class ArtsyRepository {
                     }
                 }
                 @Override
-                public void onFailure(Call<EmbeddedArtists> call, Throwable t) {
+                public void onFailure(@NonNull Call<EmbeddedArtists> call, @NonNull Throwable t) {
                     Log.d(TAG, "OnFailure! " + t.getMessage());
                 }
             });
 
         });
 
-        // TODO: Make it return LiveData<Artist>
+        // Return LiveData<Artist>
         return artistLiveData;
     }
 }

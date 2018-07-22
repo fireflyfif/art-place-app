@@ -46,17 +46,17 @@ import java.util.List;
 public class ArtistsViewModel extends ViewModel {
 
     private LiveData<List<Artist>> mArtistLiveData;
-    private ArtsyRepository mRepository;
 
-    public ArtistsViewModel(ArtsyRepository artsyRepository) {
-        mRepository = artsyRepository;
+
+    public ArtistsViewModel() {
     }
 
     public void init(String artworkId) {
         if (mArtistLiveData != null) {
             return;
         }
-        mArtistLiveData = mRepository.getArtist(artworkId); // Repository is null?
+        // Get the ArtistLiveData from the instance of the Repository class
+        mArtistLiveData = ArtsyRepository.getInstance().getArtist(artworkId);
     }
 
     public LiveData<List<Artist>> getArtist() {

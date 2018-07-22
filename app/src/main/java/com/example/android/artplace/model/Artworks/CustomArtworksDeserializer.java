@@ -33,36 +33,29 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtistActivity;
+package com.example.android.artplace.model.Artworks;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
-import com.example.android.artplace.repository.ArtsyRepository;
+import java.lang.reflect.Type;
 
-import java.util.Map;
+// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
+// resource: https://stackoverflow.com/a/23071080/8132331
+public class CustomArtworksDeserializer implements JsonDeserializer<EmbeddedArtworks> {
 
-import java.security.Provider;
-
-// Help from this tutorial: https://proandroiddev.com/the-missing-google-sample-of-android-architecture-components-guide-c7d6e7306b8f
-public class ArtistsViewModelFactory implements ViewModelProvider.Factory {
-
-    private ArtsyRepository mRepository;
-
-    public ArtistsViewModelFactory(ArtsyRepository artsyRepository) {
-        mRepository = artsyRepository;
-    }
-
-    @SuppressWarnings("unchecked")
-    @NonNull
     @Override
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
 
-        if (modelClass.isAssignableFrom(ArtistsViewModel.class)) {
-            return (T) new ArtistsViewModel(mRepository);
-        }
+        // Get the "embedded" element from the parsed JSON
+        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
 
-        throw new IllegalArgumentException("Unknown ViewModel class");
+        // Deserialize it by using a new instance of Gson to avoid infinite recursion
+        // to this deserializer
+        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
     }
 }

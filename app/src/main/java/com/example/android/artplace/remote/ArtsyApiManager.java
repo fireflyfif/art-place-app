@@ -38,7 +38,9 @@ package com.example.android.artplace.remote;
 import android.support.annotation.NonNull;
 
 import com.example.android.artplace.BuildConfig;
-import com.example.android.artplace.model.Artworks.CustomDeserializer;
+import com.example.android.artplace.model.Artists.CustomArtistsDeserializer;
+import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.Artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
@@ -91,8 +93,12 @@ public class ArtsyApiManager {
     Register the TypeAdapter here for deserializing the model
      */
     private static Gson makeGson() {
+
+        // TODO: Register two different TypeAdapters!
+        // resource: https://stackoverflow.com/a/33459073/8132331
         return new GsonBuilder()
-                .registerTypeAdapter(EmbeddedArtworks.class, new CustomDeserializer())
+                .registerTypeAdapter(EmbeddedArtworks.class, new CustomArtworksDeserializer())
+                .registerTypeAdapter(EmbeddedArtists.class, new CustomArtistsDeserializer())
                 .create();
     }
 

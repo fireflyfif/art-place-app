@@ -37,15 +37,15 @@ package com.example.android.artplace.ui.ArtistActivity;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artists.Artist;
-import com.example.android.artplace.repository.ArtsyRepository;
 
 import java.util.List;
 
@@ -53,6 +53,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ArtistDetailActivity extends AppCompatActivity {
+
+    private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
     private static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTIST_LINK_KEY = "artist_link";
@@ -65,9 +67,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
     ImageView artistImage;
 
     private ArtistsViewModel mArtistViewModel;
-    private ArtistsViewModelFactory mArtistsViewModelFactory;
-    private ArtsyRepository mRepository;
-    private List<Artist> mArtistList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +81,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
             if (getIntent().hasExtra(ARTWORK_ID_KEY)) {
                 String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);
 
-                mArtistViewModel = ViewModelProviders.of(this, new ArtistsViewModelFactory(mRepository))
-                        .get(ArtistsViewModel.class);
+                // Initialize the ViewModel
+                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsViewModel.class);
                 mArtistViewModel.init(receivedArtworkId);
 
                 mArtistViewModel.getArtist().observe(this, new Observer<List<Artist>>() {
@@ -92,23 +92,14 @@ public class ArtistDetailActivity extends AppCompatActivity {
                             for (int i = 0; i < artists.size(); i++) {
                                 Artist artistCurrent = artists.get(i);
                                 String artistNameString = artistCurrent.getName();
+
+
                                 artistName.setText(artistNameString);
                             }
-
                         }
+                        Log.d(TAG, "Fetched Artists: " + artists);
                     }
                 });
-
-                /*mArtistViewModel.getArtist().observe(this, new Observer<Artist>() {
-                    @Override
-                    public void onChanged(@Nullable Artist artist) {
-                        if (artist != null) {
-                            artistName.setText(artist.getName());
-                            artistOrigin.setText(artist.getHometown());
-                        }
-
-                    }
-                });*/
             }
 
 
@@ -117,6 +108,5 @@ public class ArtistDetailActivity extends AppCompatActivity {
             }
         }
 
-        // TODO: Configure the ViewModel
     }
 }
