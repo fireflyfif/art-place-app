@@ -33,34 +33,58 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtistActivity;
+package com.example.android.artplace.model.remote;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.example.android.artplace.model.remote.Artists.Artist;
-import com.example.android.artplace.repository.ArtsyRepository;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class Thumbnail implements Parcelable {
 
-public class ArtistsViewModel extends ViewModel {
+    /*
+    Link to the image thumbnail in "medium" size
+     */
+    @SerializedName("href")
+    @Expose
+    private String href;
 
-    private LiveData<List<Artist>> mArtistLiveData;
-
-
-    public ArtistsViewModel() {
+    public String getHref() {
+        return href;
     }
 
-    public void init(String artworkId) {
-        if (mArtistLiveData != null) {
-            return;
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.href);
+    }
+
+    public Thumbnail() {
+    }
+
+    protected Thumbnail(Parcel in) {
+        this.href = in.readString();
+    }
+
+    public static final Parcelable.Creator<Thumbnail> CREATOR = new Parcelable.Creator<Thumbnail>() {
+        @Override
+        public Thumbnail createFromParcel(Parcel source) {
+            return new Thumbnail(source);
         }
-        // Get the ArtistLiveData from the instance of the Repository class
-        mArtistLiveData = ArtsyRepository.getInstance().getArtist(artworkId);
-    }
 
-    public LiveData<List<Artist>> getArtist() {
-        return mArtistLiveData;
-    }
-
+        @Override
+        public Thumbnail[] newArray(int size) {
+            return new Thumbnail[size];
+        }
+    };
 }

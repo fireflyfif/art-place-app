@@ -33,29 +33,68 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.remote.Artworks;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.lang.reflect.Type;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
-// resource: https://stackoverflow.com/a/23071080/8132331
-public class CustomArtworksDeserializer implements JsonDeserializer<EmbeddedArtworks> {
+public class Dimensions implements Parcelable {
+
+    @SerializedName("in")
+    @Expose
+    private InSize inSize;
+    @SerializedName("cm")
+    @Expose
+    private CmSize cmSize;
+
+    public InSize getInSize() {
+        return inSize;
+    }
+
+    public void setInSize(InSize inSize) {
+        this.inSize = inSize;
+    }
+
+    public CmSize getCmSize() {
+        return cmSize;
+    }
+
+    public void setCmSize(CmSize cmSize) {
+        this.cmSize = cmSize;
+    }
+
 
     @Override
-    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-
-        // Get the "embedded" element from the parsed JSON
-        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
-
-        // Deserialize it by using a new instance of Gson to avoid infinite recursion
-        // to this deserializer
-        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
+    public int describeContents() {
+        return 0;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.inSize, flags);
+        dest.writeParcelable(this.cmSize, flags);
+    }
+
+    public Dimensions() {
+    }
+
+    protected Dimensions(Parcel in) {
+        this.inSize = in.readParcelable(InSize.class.getClassLoader());
+        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
+        @Override
+        public Dimensions createFromParcel(Parcel source) {
+            return new Dimensions(source);
+        }
+
+        @Override
+        public Dimensions[] newArray(int size) {
+            return new Dimensions[size];
+        }
+    };
 }

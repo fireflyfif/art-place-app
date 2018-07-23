@@ -33,55 +33,48 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.remote;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.example.android.artplace.model.remote.Artworks.EmbeddedArtworks;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CmSize implements Parcelable {
+// Model class for the response of the Artsy API
+public class ArtsyResponse {
 
-    @SerializedName("text")
+    @SerializedName("total_count")
     @Expose
-    private String text;
+    private Object totalCount;
 
-    public String getText() {
-        return text;
+//    @SerializedName("_links")
+//    @Expose
+//    private Links links;
+
+    @SerializedName("_embedded")
+    @Expose
+    private EmbeddedArtworks embeddedArtworks;
+
+    public Object getTotalCount() {
+        return totalCount;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTotalCount(Object totalCount) {
+        this.totalCount = totalCount;
     }
 
+    /*public Links getLinks() {
+        return links;
+    }*/
 
-    @Override
-    public int describeContents() {
-        return 0;
+    /*public void setLinks(Links links) {
+        this.links = links;
+    }*/
+
+    public EmbeddedArtworks getEmbeddedArtworks() {
+        return embeddedArtworks;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
+    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
+        this.embeddedArtworks = embeddedArtworks;
     }
-
-    public CmSize() {
-    }
-
-    protected CmSize(Parcel in) {
-        this.text = in.readString();
-    }
-
-    public static final Parcelable.Creator<CmSize> CREATOR = new Parcelable.Creator<CmSize>() {
-        @Override
-        public CmSize createFromParcel(Parcel source) {
-            return new CmSize(source);
-        }
-
-        @Override
-        public CmSize[] newArray(int size) {
-            return new CmSize[size];
-        }
-    };
 }

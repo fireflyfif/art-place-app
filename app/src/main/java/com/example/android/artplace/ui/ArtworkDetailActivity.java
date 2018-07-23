@@ -47,16 +47,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artworks.ArtistsLink;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.CmSize;
-import com.example.android.artplace.model.Artworks.InSize;
-import com.example.android.artplace.model.Artworks.MainImage;
-import com.example.android.artplace.model.Artworks.Dimensions;
-import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.remote.Artworks.ArtistsLink;
+import com.example.android.artplace.model.remote.Artworks.Artwork;
+import com.example.android.artplace.model.remote.Artworks.CmSize;
+import com.example.android.artplace.model.remote.Artworks.InSize;
+import com.example.android.artplace.model.remote.Artworks.MainImage;
+import com.example.android.artplace.model.remote.Artworks.Dimensions;
+import com.example.android.artplace.model.remote.ImageLinks;
 import com.example.android.artplace.ui.ArtistActivity.ArtistDetailActivity;
 import com.squareup.picasso.Picasso;
 
+import java.text.Normalizer;
 import java.util.List;
 
 import butterknife.BindView;
@@ -112,10 +113,14 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     private void setupUi(Artwork currentArtwork) {
 
+        String titleString = null;
         if (currentArtwork.getTitle() != null) {
-            String titleString = currentArtwork.getTitle();
+            titleString = currentArtwork.getTitle();
             artworkName.setText(titleString);
             collapsingToolbarLayout.setTitle(titleString);
+            Log.d(TAG, "Title of the artwork: " + titleString);
+
+
         } else {
             artworkName.setText("N/A");
         }
@@ -152,7 +157,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Dimensions dimensionObject = currentArtwork.getDimensions();
 
             if (dimensionObject.getCmSize() != null) {
-                CmSize cmSizeObject = dimensionObject.getCmSize(); // CmSize is null??
+                CmSize cmSizeObject = dimensionObject.getCmSize();
                 String dimensInCmString = cmSizeObject.getText();
                 dimensCm.setText(dimensInCmString);
             } else {
@@ -160,7 +165,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
 
             if (dimensionObject.getInSize() != null) {
-                InSize inSizeObject = dimensionObject.getInSize(); // InSize is null??
+                InSize inSizeObject = dimensionObject.getInSize();
                 String dimensInInchString = inSizeObject.getText();
                 dimensIn.setText(dimensInInchString);
             } else {
@@ -201,8 +206,50 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String artworkId = currentArtwork.getId();
             Log.d(TAG, "Artwork id: " + artworkId);
 
-            // TODO: Find a way to display the name of the Artist
-            artistNameLink.setText("Artist");
+            String artworkSlug = currentArtwork.getSlug();
+            String newSlugString = artworkSlug.replaceAll("-", " ").toLowerCase();
+
+            String newTitleString = titleString
+                    .toLowerCase()
+                    .replaceAll("'", "")
+                    .replaceAll("\\.", "")
+                    .replaceAll(",", "")
+                    .replaceAll(":", "")
+                    .replaceAll("-", " ");
+
+            Log.d(TAG, "Does the slug contain the artwork title: " + newSlugString.contains(newTitleString)
+                    + " \nNew artwork Title: " + newTitleString);
+
+            String artistNameFromSlug;
+            if (newSlugString.contains(newTitleString) || (newTitleString.contains("(") || newTitleString.contains(")"))) {
+
+                if (newTitleString.contains("(") && newTitleString.contains(")")) {
+                    Log.d(TAG, "Title contains brackets: " + (newTitleString.contains("(") || newTitleString.contains(")")));
+
+                    String newTitleWithoutBrackets = newTitleString.replaceAll("[()]", "");
+                    Log.d(TAG, "New title without brackets (): " + newTitleWithoutBrackets);
+
+                    String normalizingTitleString = Normalizer.normalize(newTitleWithoutBrackets, Normalizer.Form.NFD);
+                    String removedDiacriticsFromTitle = normalizingTitleString.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+                    Log.d(TAG, "New title without diacritics: " + removedDiacriticsFromTitle);
+
+                    // TODO: Cover the case for Baswan artist!!!
+
+                    artistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
+                    Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
+
+                } else {
+                    artistNameFromSlug = newSlugString.replace(newTitleString, "");
+
+                    Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
+                }
+                // TODO: Find how to display the name of the Artist
+                artistNameLink.setText(artistNameFromSlug);
+
+            } else {
+                artistNameLink.setText("Artist");
+            }
+
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -213,7 +260,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
         }
     }
 }

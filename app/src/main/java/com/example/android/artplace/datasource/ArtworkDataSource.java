@@ -41,8 +41,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.remote.Artworks.Artwork;
+import com.example.android.artplace.model.remote.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.NetworkState;
 
 import java.util.ArrayList;

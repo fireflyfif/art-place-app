@@ -33,24 +33,18 @@
  *
  */
 
-package com.example.android.artplace.model.Artists;
+package com.example.android.artplace.model.local;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.arch.persistence.room.Entity;
 
-import java.util.List;
+@Entity(tableName = "fav_artworks")
+public class FavoriteArtworks {
 
-public class EmbeddedArtists {
+    private int id;
 
-    @SerializedName("artists")
-    @Expose
-    private List<Artist> artists = null;
+    private String artworkName;
 
-    public List<Artist> getArtists() {
-        return artists;
-    }
+    private String artwork;
 
-    public void setArtists(List<Artist> artists) {
-        this.artists = artists;
-    }
+
 }

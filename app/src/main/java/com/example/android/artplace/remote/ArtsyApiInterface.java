@@ -35,8 +35,8 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.model.Artists.EmbeddedArtists;
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.remote.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.remote.Artworks.EmbeddedArtworks;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

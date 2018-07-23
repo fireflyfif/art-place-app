@@ -50,9 +50,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.ImageLinks;
-import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.model.remote.Artworks.Artwork;
+import com.example.android.artplace.model.remote.ImageLinks;
+import com.example.android.artplace.model.remote.Thumbnail;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.utils.NetworkState;

@@ -33,76 +33,31 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.remote.Artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.artplace.model.Artworks.ArtistsLink;
-import com.example.android.artplace.model.Artworks.MainImage;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ImageLinks implements Parcelable {
+public class MainImage implements Parcelable {
 
     /*
-    Default image thumbnail.
-    Doesn't need a size, it's always set to "medium"
+    Link to the image
+    TODO: needs {image_versions} always to be "large"
      */
-    @SerializedName("thumbnail")
+    @SerializedName("href")
     @Expose
-    private Thumbnail thumbnail;
-
-    /*
-    Curied image location.
-     */
-    @SerializedName("image")
-    @Expose
-    private MainImage image;
+    private String href;
 
 
-    /*
-    TODO: Implement later on
-    An external location on the artsy.net website.
-     */
-    /*@SerializedName("permalink")
-    @Expose
-    private Permalink permalink;*/
-
-    /*
-    Don't need this now
-     */
-    /*@SerializedName("genes")
-    @Expose
-    private Genes genes;*/
-
-    @SerializedName("artists")
-    @Expose
-    private ArtistsLink artists;
-
-
-    public Thumbnail getThumbnail() {
-        return thumbnail;
+    public String getHref() {
+        return href;
     }
 
-    public void setThumbnail(Thumbnail thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public MainImage getImage() {
-        return image;
-    }
-
-    public void setImage(MainImage image) {
-        this.image = image;
-    }
-
-    public ArtistsLink getArtists() {
-        return artists;
-    }
-
-    public void setArtists(ArtistsLink artists) {
-        this.artists = artists;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 
@@ -113,29 +68,25 @@ public class ImageLinks implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.thumbnail, flags);
-        dest.writeParcelable(this.image, flags);
-        dest.writeParcelable(this.artists, flags);
+        dest.writeString(this.href);
     }
 
-    public ImageLinks() {
+    public MainImage() {
     }
 
-    protected ImageLinks(Parcel in) {
-        this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
-        this.image = in.readParcelable(MainImage.class.getClassLoader());
-        this.artists = in.readParcelable(ArtistsLink.class.getClassLoader());
+    protected MainImage(Parcel in) {
+        this.href = in.readString();
     }
 
-    public static final Parcelable.Creator<ImageLinks> CREATOR = new Parcelable.Creator<ImageLinks>() {
+    public static final Parcelable.Creator<MainImage> CREATOR = new Parcelable.Creator<MainImage>() {
         @Override
-        public ImageLinks createFromParcel(Parcel source) {
-            return new ImageLinks(source);
+        public MainImage createFromParcel(Parcel source) {
+            return new MainImage(source);
         }
 
         @Override
-        public ImageLinks[] newArray(int size) {
-            return new ImageLinks[size];
+        public MainImage[] newArray(int size) {
+            return new MainImage[size];
         }
     };
 }

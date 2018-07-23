@@ -33,60 +33,29 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.remote.Artworks;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.lang.reflect.Type;
 
-public class MainImage implements Parcelable {
-
-    /*
-    Link to the image
-    TODO: needs {image_versions} always to be "large"
-     */
-    @SerializedName("href")
-    @Expose
-    private String href;
-
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
+// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
+// resource: https://stackoverflow.com/a/23071080/8132331
+public class CustomArtworksDeserializer implements JsonDeserializer<EmbeddedArtworks> {
 
     @Override
-    public int describeContents() {
-        return 0;
+    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+
+        // Get the "embedded" element from the parsed JSON
+        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
+
+        // Deserialize it by using a new instance of Gson to avoid infinite recursion
+        // to this deserializer
+        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
-    }
-
-    public MainImage() {
-    }
-
-    protected MainImage(Parcel in) {
-        this.href = in.readString();
-    }
-
-    public static final Parcelable.Creator<MainImage> CREATOR = new Parcelable.Creator<MainImage>() {
-        @Override
-        public MainImage createFromParcel(Parcel source) {
-            return new MainImage(source);
-        }
-
-        @Override
-        public MainImage[] newArray(int size) {
-            return new MainImage[size];
-        }
-    };
 }

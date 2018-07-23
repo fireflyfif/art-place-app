@@ -33,13 +33,13 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.remote.Artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.util.DiffUtil;
 
-import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.remote.ImageLinks;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

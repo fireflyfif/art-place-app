@@ -38,7 +38,7 @@ package com.example.android.artplace.datasource;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.DataSource;
 
-import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.remote.Artworks.Artwork;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 

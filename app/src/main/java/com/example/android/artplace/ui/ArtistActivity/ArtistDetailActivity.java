@@ -49,9 +49,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artists.Artist;
-import com.example.android.artplace.model.Artworks.MainImage;
-import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.remote.Artists.Artist;
+import com.example.android.artplace.model.remote.Artworks.MainImage;
+import com.example.android.artplace.model.remote.ImageLinks;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -178,7 +178,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
         String newArtistLinkString = artistImgLinkString
                 .replaceAll("\\{.*?\\}", versionString);
 
-        // TODO: Handle no image cases with placeholders
+        // Handle no image cases with placeholders
         Picasso.get()
                 .load(Uri.parse(newArtistLinkString))
                 .placeholder(R.drawable.movie_video_02)

@@ -47,7 +47,7 @@ import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.datasource.ArtworkDataSource;
-import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.remote.Artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
 
 public class ArtworksViewModel extends ViewModel {

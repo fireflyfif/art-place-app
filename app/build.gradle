@@ -44,7 +44,7 @@ dependencies {
 
     // Retrofit library dependencies
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.4'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     // Logging for Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
@@ -62,6 +62,10 @@ dependencies {
     // Butterknife Dependency
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    // Room Library Dependencies
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
