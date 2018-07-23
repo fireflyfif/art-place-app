@@ -37,8 +37,12 @@ package com.example.android.artplace.ui.ArtistActivity;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -46,6 +50,9 @@ import android.widget.TextView;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.ImageLinks;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -57,14 +64,21 @@ public class ArtistDetailActivity extends AppCompatActivity {
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
     private static final String ARTWORK_ID_KEY = "artwork_id";
-    private static final String ARTIST_LINK_KEY = "artist_link";
 
+    @BindView(R.id.coordinator_artist)
+    CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.collapsing_toolbar_artist)
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
-    TextView artistOrigin;
+    TextView artistHomeTown;
     @BindView(R.id.artist_image)
     ImageView artistImage;
+    @BindView(R.id.artist_lifespan)
+    TextView artistLifespan;
+    @BindView(R.id.artist_location)
+    TextView artistLocation;
 
     private ArtistsViewModel mArtistViewModel;
 
@@ -89,24 +103,87 @@ public class ArtistDetailActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(@Nullable List<Artist> artists) {
                         if (artists != null) {
+                            // Check if the list of artist is not 0
+                            if (artists.size() == 0) {
+                                // Show a message to the user that there is no artist for the selected artwork
+                                Snackbar.make(coordinatorLayout, "Sorry, No data for this artwork.", Snackbar.LENGTH_SHORT).show();
+                            }
+
                             for (int i = 0; i < artists.size(); i++) {
                                 Artist artistCurrent = artists.get(i);
-                                String artistNameString = artistCurrent.getName();
-
-
-                                artistName.setText(artistNameString);
+                                setupUi(artistCurrent);
                             }
+                            Log.d(TAG, "Fetched Artists: " + artists.size());
                         }
-                        Log.d(TAG, "Fetched Artists: " + artists);
                     }
                 });
             }
 
-
-            if (getIntent().hasExtra(ARTIST_LINK_KEY)) {
-                String artistLink = getIntent().getStringExtra(ARTIST_LINK_KEY);
-            }
         }
+    }
+
+    private void setupUi(Artist currentArtist) {
+
+        // Get the name of the artist
+        if (currentArtist.getName() != null) {
+            String artistNameString = currentArtist.getName();
+            artistName.setText(artistNameString);
+
+            collapsingToolbarLayout.setTitle(artistNameString);
+        } else {
+            artistName.setText("N/A");
+        }
+
+        // Get the Home town of the artist
+        if (currentArtist.getHometown() != null) {
+            String artistHomeTownString = currentArtist.getHometown();
+            artistHomeTown.setText(artistHomeTownString);
+        } else {
+            artistHomeTown.setText("N/A");
+        }
+
+        // Get the date of the birth and dead of the artist
+        String artistBirthString;
+        String artistDeathString;
+        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
+            artistBirthString = currentArtist.getBirthday();
+            artistDeathString = currentArtist.getDeathday();
+
+            String lifespanConcatString = artistBirthString + " - " + artistDeathString;
+            artistLifespan.setText(lifespanConcatString);
+        } else {
+            artistLifespan.setText("N/A");
+        }
+
+        // Get the location of the artist
+        if (currentArtist.getLocation() != null) {
+            String artistLocationString = currentArtist.getLocation();
+            artistLocation.setText(artistLocationString);
+        } else {
+            artistLocation.setText("N/A");
+        }
+
+        // Get the list of image versions first
+        List<String> imageVersionList = currentArtist.getImageVersions();
+        // Get the first entry from this list, which corresponds to "large"
+        String versionString = imageVersionList.get(0);
+
+        ImageLinks imageLinksObject = currentArtist.getLinks();
+        MainImage mainImageObject = imageLinksObject.getImage();
+        // Get the link for the current artist,
+        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        String artistImgLinkString = mainImageObject.getHref();
+        // Replace the {image_version} from the artworkImgLinkString with
+        // the wanted version, e.g. "large"
+        String newArtistLinkString = artistImgLinkString
+                .replaceAll("\\{.*?\\}", versionString);
+
+        // TODO: Handle no image cases with placeholders
+        Picasso.get()
+                .load(Uri.parse(newArtistLinkString))
+                .placeholder(R.drawable.movie_video_02)
+                .error(R.drawable.movie_video_02)
+                .into(artistImage);
 
     }
 }

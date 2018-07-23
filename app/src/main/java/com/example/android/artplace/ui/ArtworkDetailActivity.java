@@ -37,16 +37,20 @@ package com.example.android.artplace.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artworks.ArtistsLink;
 import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.CmSize;
+import com.example.android.artplace.model.Artworks.InSize;
 import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
@@ -63,12 +67,14 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_ID_KEY = "artwork_id";
-    private static final String ARTIST_LINK_KEY = "artist_link";
 
+
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.artwork_title)
     TextView artworkName;
-    @BindView(R.id.artwork_artist)
-    TextView artistNameLink;
+    @BindView(R.id.artwork_artist_button)
+    Button artistNameLink;
     @BindView(R.id.artwork_medium)
     TextView artworkMedium;
     @BindView(R.id.artwork_category)
@@ -99,68 +105,110 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
-                String titleString = mArtworkObject.getTitle();
-                artworkName.setText(titleString);
+                setupUi(mArtworkObject);
+            }
+        }
+    }
 
-                String mediumString = mArtworkObject.getMedium();
-                artworkMedium.setText(mediumString);
+    private void setupUi(Artwork currentArtwork) {
 
-                String categoryString = mArtworkObject.getCategory();
-                artworkCategory.setText(categoryString);
+        if (currentArtwork.getTitle() != null) {
+            String titleString = currentArtwork.getTitle();
+            artworkName.setText(titleString);
+            collapsingToolbarLayout.setTitle(titleString);
+        } else {
+            artworkName.setText("N/A");
+        }
 
-                String dateString = mArtworkObject.getDate();
-                artworkDate.setText(dateString);
+        if (currentArtwork.getMedium() != null) {
+            String mediumString = currentArtwork.getMedium();
+            artworkMedium.setText(mediumString);
+        } else {
+            artworkMedium.setText("N/A");
+        }
 
-                String museumString = mArtworkObject.getCollectingInstitution();
-                artworkMuseum.setText(museumString);
+        if (currentArtwork.getCategory() != null) {
+            String categoryString = currentArtwork.getCategory();
+            artworkCategory.setText(categoryString);
+        } else {
+            artworkCategory.setText("N/A");
+        }
 
-                Dimensions dimensionObject = mArtworkObject.getDimensions();
+        if (currentArtwork.getDate() != null) {
+            String dateString = currentArtwork.getDate();
+            artworkDate.setText(dateString);
+        } else {
+            artworkDate.setText("N/A");
+        }
 
-//                CmSize cmSizeObject = dimensionObject.getCmSize(); // CmSize is null??
-//                String dimensInCmString = cmSizeObject.getText();
-//                dimensCm.setText(dimensInCmString);
+        if (currentArtwork.getCollectingInstitution() != null) {
+            String museumString = currentArtwork.getCollectingInstitution();
+            artworkMuseum.setText(museumString);
+        } else {
+            artworkMuseum.setText("N/A");
+        }
 
-//                InSize inSizeObject = dimensionObject.getInSize(); // InSize is null??
-//                String dimensInInchString = inSizeObject.getText();
-//                dimensIn.setText(dimensInInchString);
+        if (currentArtwork.getDimensions() != null) {
+            Dimensions dimensionObject = currentArtwork.getDimensions();
+
+            if (dimensionObject.getCmSize() != null) {
+                CmSize cmSizeObject = dimensionObject.getCmSize(); // CmSize is null??
+                String dimensInCmString = cmSizeObject.getText();
+                dimensCm.setText(dimensInCmString);
+            } else {
+                dimensCm.setText("N/A");
             }
 
-            List<String> imageVersionList = mArtworkObject.getImageVersions();
-            // Get the first entry from this list, which corresponds to "large"
-            String versionString = imageVersionList.get(0);
+            if (dimensionObject.getInSize() != null) {
+                InSize inSizeObject = dimensionObject.getInSize(); // InSize is null??
+                String dimensInInchString = inSizeObject.getText();
+                dimensIn.setText(dimensInInchString);
+            } else {
+                dimensIn.setText("N/A");
+            }
+        }
 
-            ImageLinks imageLinksObject = mArtworkObject.getLinks();
+        List<String> imageVersionList = currentArtwork.getImageVersions();
+        // Get the first entry from this list, which corresponds to "large"
+        String versionString = imageVersionList.get(0);
 
-            MainImage mainImageObject = imageLinksObject.getImage();
-            // Get the link for the current artwork,
-            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-            String artworkImgLinkString = mainImageObject.getHref();
-            // Replace the {image_version} from the artworkImgLinkString with
-            // the wanted version, e.g. "large"
-            String newArtworkLinkString = artworkImgLinkString
-                    .replaceAll("\\{.*?\\}", versionString);
+        ImageLinks imageLinksObject = currentArtwork.getLinks();
 
-            Log.d(TAG, "New link to the image: " + newArtworkLinkString);
+        MainImage mainImageObject = imageLinksObject.getImage();
+        // Get the link for the current artwork,
+        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        String artworkImgLinkString = mainImageObject.getHref();
+        // Replace the {image_version} from the artworkImgLinkString with
+        // the wanted version, e.g. "large"
+        String newArtworkLinkString = artworkImgLinkString
+                .replaceAll("\\{.*?\\}", versionString);
 
-            // Set the image here
-            Picasso.get()
-                    .load(Uri.parse(newArtworkLinkString))
-                    .into(artworkImage);
+        Log.d(TAG, "New link to the image: " + newArtworkLinkString);
 
+        // Set the image here
+        // TODO: Handle error cases
+        Picasso.get()
+                .load(Uri.parse(newArtworkLinkString))
+                .placeholder(R.drawable.movie_video_02)
+                .error(R.drawable.movie_video_02)
+                .into(artworkImage);
+
+        if (imageLinksObject.getArtists() != null) {
             ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
             String artistLinkString = artistsLinkObject.getHref(); // This link needs a token!!!
             Log.d(TAG, "Link to the artist: " + artistLinkString);
 
-            String artworkId = mArtworkObject.getId();
+            String artworkId = currentArtwork.getId();
             Log.d(TAG, "Artwork id: " + artworkId);
 
-            artistNameLink.setText(artistLinkString);
+            // TODO: Find a way to display the name of the Artist
+            artistNameLink.setText("Artist");
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                    intent.putExtra(ARTIST_LINK_KEY, artistLinkString);
+                    // TODO: Send the name of the artwork as extra
                     intent.putExtra(ARTWORK_ID_KEY, artworkId);
                     startActivity(intent);
                 }

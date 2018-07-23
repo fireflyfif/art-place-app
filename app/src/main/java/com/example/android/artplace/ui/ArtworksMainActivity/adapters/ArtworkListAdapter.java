@@ -177,11 +177,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
         public void bindTo(Artwork artwork) {
 
-            //mArtworkList = new ArrayList<>();
-
-            //EmbeddedArtworks embedded = new EmbeddedArtworks();
-            //mArtworkList = embedded.getArtworks();
-
             // Get the thumbnail from the json tree
             ImageLinks currentImageLink = artwork.getLinks();
             Thumbnail currentThumbnail = currentImageLink.getThumbnail();
@@ -193,6 +188,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
             Picasso.get()
                     .load(Uri.parse(artworkThumbnailString))
+                    .placeholder(R.drawable.movie_video_02)
+                    .error(R.drawable.movie_video_02)
                     .into(artworkThumbnail);
         }
 

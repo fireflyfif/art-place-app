@@ -117,11 +117,12 @@
                     android:layout_height="wrap_content"
                     tools:text="Artwork Title"/>
 
-                <TextView
-                    android:id="@+id/artwork_artist"
-                    android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/artwork_artist_button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Gustav Klimt"/>
+                    android:background="@android:color/transparent"
+                    tools:text="Artist"/>
 
                 <TextView
                     android:id="@+id/artwork_medium"
