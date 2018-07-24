@@ -38,6 +38,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_artwork"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -64,9 +65,6 @@
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true">
 
-                <!--suppress AndroidLintContentDescription -->
-                <!--COMPLETED: Add transitionName for the transition animation
-                    COMPLETED: Replace DynamicHeightNetworkImageView with ImageView -->
                 <ImageView
                     android:id="@+id/artwork_image"
                     android:layout_width="match_parent"
@@ -82,7 +80,7 @@
 
             </FrameLayout>
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_detail"
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize"
                 android:background="@null"

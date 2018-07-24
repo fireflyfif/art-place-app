@@ -13,15 +13,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ArtworksMainActivity.MainActivity">
+
+        <activity
+            android:name=".ui.ArtworksMainActivity.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ArtworkDetailActivity"></activity>
-        <activity android:name=".ui.ArtistActivity.ArtistDetailActivity"></activity>
+
+        <activity
+            android:name=".ui.ArtworkDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.ArtworksMainActivity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.ArtworksMainActivity.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.ArtistActivity.ArtistDetailActivity"
+            android:parentActivityName=".ui.ArtworkDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.ArtworkDetailActivity" />
+
+        </activity>
     </application>
 
 </manifest>

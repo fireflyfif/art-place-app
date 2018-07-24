@@ -63,9 +63,6 @@
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true">
 
-                <!--suppress AndroidLintContentDescription -->
-                <!--COMPLETED: Add transitionName for the transition animation
-                    COMPLETED: Replace DynamicHeightNetworkImageView with ImageView -->
                 <ImageView
                     android:id="@+id/artist_image"
                     android:layout_width="match_parent"
@@ -134,6 +131,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Vienna, Austria" />
+
+                <TextView
+                    android:id="@+id/artwork_title_clicked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="The Kiss" />
 
             </LinearLayout>
 

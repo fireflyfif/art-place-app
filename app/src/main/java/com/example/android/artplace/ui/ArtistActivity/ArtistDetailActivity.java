@@ -44,6 +44,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,6 +54,8 @@ import com.example.android.artplace.model.remote.Artists.Artist;
 import com.example.android.artplace.model.remote.Artworks.MainImage;
 import com.example.android.artplace.model.remote.ImageLinks;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -64,9 +67,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
     private static final String ARTWORK_ID_KEY = "artwork_id";
+    private static final String ARTWORK_TITLE_KEY = "artwork_title";
 
     @BindView(R.id.coordinator_artist)
     CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.toolbar_artist)
+    Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar_artist)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.artist_name)
@@ -79,6 +85,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistLifespan;
     @BindView(R.id.artist_location)
     TextView artistLocation;
+    @BindView(R.id.artwork_title_clicked)
+    TextView clickedArtworkTitle;
 
     private ArtistsViewModel mArtistViewModel;
 
@@ -90,10 +98,19 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         // TODO: Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
-            if (getIntent().hasExtra(ARTWORK_ID_KEY)) {
+            if (getIntent().hasExtra(ARTWORK_ID_KEY) || getIntent().hasExtra(ARTWORK_TITLE_KEY)) {
                 String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);
+                String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
+
+                clickedArtworkTitle.setText(receivedArtworkTitle);
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsViewModel.class);

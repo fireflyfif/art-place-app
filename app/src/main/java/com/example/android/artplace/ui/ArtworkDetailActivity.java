@@ -38,13 +38,17 @@ package com.example.android.artplace.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.remote.Artworks.ArtistsLink;
@@ -68,10 +72,14 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_ID_KEY = "artwork_id";
+    private static final String ARTWORK_TITLE_KEY = "artwork_title";
 
-
+    @BindView(R.id.coordinator_artwork)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.toolbar_detail)
+    Toolbar toolbar;
     @BindView(R.id.artwork_title)
     TextView artworkName;
     @BindView(R.id.artwork_artist_button)
@@ -99,6 +107,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artwork_detail);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
@@ -206,56 +220,67 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String artworkId = currentArtwork.getId();
             Log.d(TAG, "Artwork id: " + artworkId);
 
+            // The Slug contains the name of the artist as well as the name of the artwork
+            // e.g. "gustav-klimt-der-kuss-the-kiss"
             String artworkSlug = currentArtwork.getSlug();
+            // Remove all "-" from the slug
             String newSlugString = artworkSlug.replaceAll("-", " ").toLowerCase();
+            Log.d(TAG, "New Slug string: " + newSlugString);
 
+            // Clear the title of the artwork from any punctuations or characters that are not English letters
             String newTitleString = titleString
                     .toLowerCase()
                     .replaceAll("'", "")
                     .replaceAll("\\.", "")
                     .replaceAll(",", "")
                     .replaceAll(":", "")
-                    .replaceAll("-", " ");
+                    .replaceAll("-", " ")
+                    .replaceAll("[()]", "");
 
-            Log.d(TAG, "Does the slug contain the artwork title: " + newSlugString.contains(newTitleString)
-                    + " \nNew artwork Title: " + newTitleString);
+            // Normalize the letters
+            // Tutorial here: https://www.drillio.com/en/2011/java-remove-accent-diacritic/
+            String normalizedTitleString = Normalizer.normalize(newTitleString, Normalizer.Form.NFD);
+            String removedDiacriticsFromTitle = normalizedTitleString.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").trim();
+            Log.d(TAG, "New title without diacritics: " + removedDiacriticsFromTitle);
 
-            String artistNameFromSlug;
-            if (newSlugString.contains(newTitleString) || (newTitleString.contains("(") || newTitleString.contains(")"))) {
+            Log.d(TAG, "Does the slug contain the artwork title: " + newSlugString.contains(removedDiacriticsFromTitle)
+                    + " \nNew artwork Title: " + removedDiacriticsFromTitle);
 
-                if (newTitleString.contains("(") && newTitleString.contains(")")) {
-                    Log.d(TAG, "Title contains brackets: " + (newTitleString.contains("(") || newTitleString.contains(")")));
+            String artistNameFromSlug = null;
+            // Check if the slug contains the title of the artwork
+            if (newSlugString.contains(removedDiacriticsFromTitle)) {
 
-                    String newTitleWithoutBrackets = newTitleString.replaceAll("[()]", "");
-                    Log.d(TAG, "New title without brackets (): " + newTitleWithoutBrackets);
+                artistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
 
-                    String normalizingTitleString = Normalizer.normalize(newTitleWithoutBrackets, Normalizer.Form.NFD);
-                    String removedDiacriticsFromTitle = normalizingTitleString.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-                    Log.d(TAG, "New title without diacritics: " + removedDiacriticsFromTitle);
+                Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
 
-                    // TODO: Cover the case for Baswan artist!!!
-
-                    artistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
-                    Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
-
-                } else {
-                    artistNameFromSlug = newSlugString.replace(newTitleString, "");
-
-                    Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
+                if (artistNameFromSlug.equals((""))) {
+                    artistNameFromSlug = "N/A";
                 }
-                // TODO: Find how to display the name of the Artist
+                // Display the name of the Artist
                 artistNameLink.setText(artistNameFromSlug);
-
             } else {
-                artistNameLink.setText("Artist");
+                // Display just "Artist"
+                artistNameLink.setText(R.string.artist_name);
+
             }
 
+            String finalArtistNameFromSlug = artistNameFromSlug;
+            String finalTitleString = titleString;
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
+                    // Check first if the artist name is not null or "N/A"
+                    if ((finalArtistNameFromSlug == null) || (finalArtistNameFromSlug.equals("N/A"))) {
+                        // Show a message to the user that there is no artist for the selected artwork
+                        Snackbar.make(coordinatorLayout, "Sorry, No data for this artist.", Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+
                     Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
                     // TODO: Send the name of the artwork as extra
+                    intent.putExtra(ARTWORK_TITLE_KEY, finalTitleString);
                     intent.putExtra(ARTWORK_ID_KEY, artworkId);
                     startActivity(intent);
                 }
