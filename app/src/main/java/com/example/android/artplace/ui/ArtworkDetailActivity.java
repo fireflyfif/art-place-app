@@ -42,7 +42,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -51,13 +50,13 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.remote.Artworks.ArtistsLink;
-import com.example.android.artplace.model.remote.Artworks.Artwork;
-import com.example.android.artplace.model.remote.Artworks.CmSize;
-import com.example.android.artplace.model.remote.Artworks.InSize;
-import com.example.android.artplace.model.remote.Artworks.MainImage;
-import com.example.android.artplace.model.remote.Artworks.Dimensions;
-import com.example.android.artplace.model.remote.ImageLinks;
+import com.example.android.artplace.model.Artworks.ArtistsLink;
+import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.CmSize;
+import com.example.android.artplace.model.Artworks.InSize;
+import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.Artworks.Dimensions;
+import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.ui.ArtistActivity.ArtistDetailActivity;
 import com.squareup.picasso.Picasso;
 

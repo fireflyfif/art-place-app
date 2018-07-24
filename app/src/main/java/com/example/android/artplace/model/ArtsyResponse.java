@@ -33,30 +33,48 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artists;
+package com.example.android.artplace.model;
 
-import com.example.android.artplace.model.remote.Artworks.EmbeddedArtworks;
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.lang.reflect.Type;
+// Model class for the response of the Artsy API
+public class ArtsyResponse {
 
-// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
-// resource: https://stackoverflow.com/a/23071080/8132331
-public class CustomArtistsDeserializer implements JsonDeserializer<EmbeddedArtists> {
+    @SerializedName("total_count")
+    @Expose
+    private Object totalCount;
 
-    @Override
-    public EmbeddedArtists deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+//    @SerializedName("_links")
+//    @Expose
+//    private Links links;
 
-        // Get the "embedded" element from the parsed JSON
-        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
+    @SerializedName("_embedded")
+    @Expose
+    private EmbeddedArtworks embeddedArtworks;
 
-        // Deserialize it by using a new instance of Gson to avoid infinite recursion
-        // to this deserializer
-        return new Gson().fromJson(embeddedElement, EmbeddedArtists.class);
+    public Object getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Object totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    /*public Links getLinks() {
+        return links;
+    }*/
+
+    /*public void setLinks(Links links) {
+        this.links = links;
+    }*/
+
+    public EmbeddedArtworks getEmbeddedArtworks() {
+        return embeddedArtworks;
+    }
+
+    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
+        this.embeddedArtworks = embeddedArtworks;
     }
 }

@@ -38,7 +38,7 @@ package com.example.android.artplace.ui.ArtistActivity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.example.android.artplace.model.remote.Artists.Artist;
+import com.example.android.artplace.model.Artists.Artist;
 import com.example.android.artplace.repository.ArtsyRepository;
 
 import java.util.List;

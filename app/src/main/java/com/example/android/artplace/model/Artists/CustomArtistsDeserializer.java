@@ -33,24 +33,30 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artists;
+package com.example.android.artplace.model.Artists;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
-public class EmbeddedArtists {
+// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
+// resource: https://stackoverflow.com/a/23071080/8132331
+public class CustomArtistsDeserializer implements JsonDeserializer<EmbeddedArtists> {
 
-    @SerializedName("artists")
-    @Expose
-    private List<Artist> artists = null;
+    @Override
+    public EmbeddedArtists deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
 
-    public List<Artist> getArtists() {
-        return artists;
-    }
+        // Get the "embedded" element from the parsed JSON
+        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
 
-    public void setArtists(List<Artist> artists) {
-        this.artists = artists;
+        // Deserialize it by using a new instance of Gson to avoid infinite recursion
+        // to this deserializer
+        return new Gson().fromJson(embeddedElement, EmbeddedArtists.class);
     }
 }

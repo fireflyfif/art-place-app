@@ -33,68 +33,24 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artworks;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.example.android.artplace.model.Artists;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Dimensions implements Parcelable {
+import java.util.List;
 
-    @SerializedName("in")
+public class EmbeddedArtists {
+
+    @SerializedName("artists")
     @Expose
-    private InSize inSize;
-    @SerializedName("cm")
-    @Expose
-    private CmSize cmSize;
+    private List<Artist> artists = null;
 
-    public InSize getInSize() {
-        return inSize;
+    public List<Artist> getArtists() {
+        return artists;
     }
 
-    public void setInSize(InSize inSize) {
-        this.inSize = inSize;
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
     }
-
-    public CmSize getCmSize() {
-        return cmSize;
-    }
-
-    public void setCmSize(CmSize cmSize) {
-        this.cmSize = cmSize;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.inSize, flags);
-        dest.writeParcelable(this.cmSize, flags);
-    }
-
-    public Dimensions() {
-    }
-
-    protected Dimensions(Parcel in) {
-        this.inSize = in.readParcelable(InSize.class.getClassLoader());
-        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
-        @Override
-        public Dimensions createFromParcel(Parcel source) {
-            return new Dimensions(source);
-        }
-
-        @Override
-        public Dimensions[] newArray(int size) {
-            return new Dimensions[size];
-        }
-    };
 }

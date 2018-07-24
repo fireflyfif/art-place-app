@@ -33,18 +33,68 @@
  *
  */
 
-package com.example.android.artplace.model.local;
+package com.example.android.artplace.model.Artworks;
 
-import android.arch.persistence.room.Entity;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-@Entity(tableName = "fav_artworks")
-public class FavoriteArtworks {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    private int id;
+public class Dimensions implements Parcelable {
 
-    private String artworkName;
+    @SerializedName("in")
+    @Expose
+    private InSize inSize;
+    @SerializedName("cm")
+    @Expose
+    private CmSize cmSize;
 
-    private String artwork;
+    public InSize getInSize() {
+        return inSize;
+    }
+
+    public void setInSize(InSize inSize) {
+        this.inSize = inSize;
+    }
+
+    public CmSize getCmSize() {
+        return cmSize;
+    }
+
+    public void setCmSize(CmSize cmSize) {
+        this.cmSize = cmSize;
+    }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.inSize, flags);
+        dest.writeParcelable(this.cmSize, flags);
+    }
+
+    public Dimensions() {
+    }
+
+    protected Dimensions(Parcel in) {
+        this.inSize = in.readParcelable(InSize.class.getClassLoader());
+        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
+        @Override
+        public Dimensions createFromParcel(Parcel source) {
+            return new Dimensions(source);
+        }
+
+        @Override
+        public Dimensions[] newArray(int size) {
+            return new Dimensions[size];
+        }
+    };
 }

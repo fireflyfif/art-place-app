@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artworks;
+package com.example.android.artplace.model.Artworks;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

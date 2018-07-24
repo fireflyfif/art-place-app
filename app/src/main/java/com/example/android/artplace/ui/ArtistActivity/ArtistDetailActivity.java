@@ -50,12 +50,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.remote.Artists.Artist;
-import com.example.android.artplace.model.remote.Artworks.MainImage;
-import com.example.android.artplace.model.remote.ImageLinks;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.ImageLinks;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

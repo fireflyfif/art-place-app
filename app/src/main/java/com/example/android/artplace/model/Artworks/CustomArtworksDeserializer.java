@@ -33,55 +33,29 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artworks;
+package com.example.android.artplace.model.Artworks;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.lang.reflect.Type;
 
-public class CmSize implements Parcelable {
-
-    @SerializedName("text")
-    @Expose
-    private String text;
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
+// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
+// resource: https://stackoverflow.com/a/23071080/8132331
+public class CustomArtworksDeserializer implements JsonDeserializer<EmbeddedArtworks> {
 
     @Override
-    public int describeContents() {
-        return 0;
+    public EmbeddedArtworks deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+
+        // Get the "embedded" element from the parsed JSON
+        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
+
+        // Deserialize it by using a new instance of Gson to avoid infinite recursion
+        // to this deserializer
+        return new Gson().fromJson(embeddedElement, EmbeddedArtworks.class);
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
-    }
-
-    public CmSize() {
-    }
-
-    protected CmSize(Parcel in) {
-        this.text = in.readString();
-    }
-
-    public static final Parcelable.Creator<CmSize> CREATOR = new Parcelable.Creator<CmSize>() {
-        @Override
-        public CmSize createFromParcel(Parcel source) {
-            return new CmSize(source);
-        }
-
-        @Override
-        public CmSize[] newArray(int size) {
-            return new CmSize[size];
-        }
-    };
 }

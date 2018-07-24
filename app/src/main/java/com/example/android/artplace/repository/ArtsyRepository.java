@@ -42,8 +42,8 @@ import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.remote.Artists.Artist;
-import com.example.android.artplace.model.remote.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.model.Artists.EmbeddedArtists;
 
 import java.util.ArrayList;
 import java.util.List;

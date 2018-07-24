@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model.remote.Artworks;
+package com.example.android.artplace.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,18 +41,21 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InSize implements Parcelable {
+public class Thumbnail implements Parcelable {
 
-    @SerializedName("text")
+    /*
+    Link to the image thumbnail in "medium" size
+     */
+    @SerializedName("href")
     @Expose
-    private String text;
+    private String href;
 
-    public String getText() {
-        return text;
+    public String getHref() {
+        return href;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 
@@ -63,25 +66,25 @@ public class InSize implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
+        dest.writeString(this.href);
     }
 
-    public InSize() {
+    public Thumbnail() {
     }
 
-    protected InSize(Parcel in) {
-        this.text = in.readString();
+    protected Thumbnail(Parcel in) {
+        this.href = in.readString();
     }
 
-    public static final Parcelable.Creator<InSize> CREATOR = new Parcelable.Creator<InSize>() {
+    public static final Parcelable.Creator<Thumbnail> CREATOR = new Parcelable.Creator<Thumbnail>() {
         @Override
-        public InSize createFromParcel(Parcel source) {
-            return new InSize(source);
+        public Thumbnail createFromParcel(Parcel source) {
+            return new Thumbnail(source);
         }
 
         @Override
-        public InSize[] newArray(int size) {
-            return new InSize[size];
+        public Thumbnail[] newArray(int size) {
+            return new Thumbnail[size];
         }
     };
 }

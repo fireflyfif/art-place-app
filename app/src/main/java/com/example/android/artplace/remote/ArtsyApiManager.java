@@ -38,10 +38,10 @@ package com.example.android.artplace.remote;
 import android.support.annotation.NonNull;
 
 import com.example.android.artplace.BuildConfig;
-import com.example.android.artplace.model.remote.Artists.CustomArtistsDeserializer;
-import com.example.android.artplace.model.remote.Artists.EmbeddedArtists;
-import com.example.android.artplace.model.remote.Artworks.CustomArtworksDeserializer;
-import com.example.android.artplace.model.remote.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.Artists.CustomArtistsDeserializer;
+import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.Artworks.CustomArtworksDeserializer;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
