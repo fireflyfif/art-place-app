@@ -33,27 +33,7 @@
  *
  */
 
-package com.example.android.artplace.database.dao;
+package com.example.android.artplace.ui;
 
-import android.arch.paging.DataSource;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-
-import com.example.android.artplace.database.entity.FavoriteArtworks;
-
-import java.util.List;
-
-@Dao
-public interface FavArtworksDao {
-
-    @Insert
-    void insertArtwork(FavoriteArtworks favArtwork);
-
-    @Query("SELECT * FROM fav_artworks")
-    List<FavoriteArtworks> allArtworks();
-
-    @Query("SELECT * FROM fav_artworks")
-    DataSource.Factory<Integer, FavoriteArtworks> getAllArtworks();
-
+public class FavArtworksViewModel {
 }

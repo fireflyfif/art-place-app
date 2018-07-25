@@ -60,36 +60,32 @@ public class ArtsyRepository {
 
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
-    private static volatile ArtsyRepository sRepositoryInstance;
-
-    //private static ArtPlaceApp sAppController;
+    private static volatile ArtsyRepository INSTANCE;
 
 
     // Private constructor of the Repository class
     private ArtsyRepository() {
-        //sAppController = appController;
 
         // Prevent from the reflection api
-        if (sRepositoryInstance != null) {
+        if (INSTANCE != null) {
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
         }
     }
 
     public static ArtsyRepository getInstance() {
         // Double check locking pattern
-        if (sRepositoryInstance == null) {
+        if (INSTANCE == null) {
 
             // if there is no instance available, create a new one
             synchronized (ArtsyRepository.class) {
-                if (sRepositoryInstance == null) {
-                    sRepositoryInstance = new ArtsyRepository();
+                if (INSTANCE == null) {
+                    INSTANCE = new ArtsyRepository();
                 }
             }
         }
 
-        return sRepositoryInstance;
+        return INSTANCE;
     }
-
 
     public LiveData<List<Artist>> getArtist(String artworkId) {
         return loadArtist(artworkId);

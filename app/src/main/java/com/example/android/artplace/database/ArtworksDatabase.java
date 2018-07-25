@@ -33,27 +33,38 @@
  *
  */
 
-package com.example.android.artplace.database.dao;
+package com.example.android.artplace.database;
 
-import android.arch.paging.DataSource;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
+import android.content.Context;
 
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 
-import java.util.List;
+// Helper tutorial: https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9
+@Database(entities = {FavoriteArtworks.class}, version = 1)
+public abstract class ArtworksDatabase extends RoomDatabase {
 
-@Dao
-public interface FavArtworksDao {
+    private static ArtworksDatabase INSTANCE;
 
-    @Insert
-    void insertArtwork(FavoriteArtworks favArtwork);
+    private static final String ARTPLACE_DB_NAME = "artplace.db";
 
-    @Query("SELECT * FROM fav_artworks")
-    List<FavoriteArtworks> allArtworks();
 
-    @Query("SELECT * FROM fav_artworks")
-    DataSource.Factory<Integer, FavoriteArtworks> getAllArtworks();
+    public static ArtworksDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = create(context);
+        }
+
+        return INSTANCE;
+    }
+
+    private static ArtworksDatabase create(Context context) {
+        RoomDatabase.Builder<ArtworksDatabase> databaseBuilder =
+                Room.databaseBuilder(context.getApplicationContext(),
+                        ArtworksDatabase.class, ARTPLACE_DB_NAME);
+
+        return (databaseBuilder.build());
+    }
 
 }
