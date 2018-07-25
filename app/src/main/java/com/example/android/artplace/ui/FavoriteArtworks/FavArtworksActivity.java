@@ -33,7 +33,18 @@
  *
  */
 
-package com.example.android.artplace.ui;
+package com.example.android.artplace.ui.FavoriteArtworks;
 
-public class FavArtworksViewModel {
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.example.android.artplace.R;
+
+public class FavArtworksActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fav_artworks);
+    }
 }

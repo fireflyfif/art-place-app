@@ -54,7 +54,7 @@ import android.widget.Toast;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
-import com.example.android.artplace.ui.ArtworksMainActivity.adapters.ArtworkListAdapter;
+import com.example.android.artplace.ui.ArtworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;

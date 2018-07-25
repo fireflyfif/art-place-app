@@ -33,40 +33,26 @@
  *
  */
 
-package com.example.android.artplace.database;
+package com.example.android.artplace.ui.FavoriteArtworks;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.content.Context;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
 import com.example.android.artplace.database.dao.FavArtworksDao;
-import com.example.android.artplace.database.entity.FavoriteArtworks;
 
-// Helper tutorial: https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9
-@Database(entities = {FavoriteArtworks.class}, version = 1)
-public abstract class ArtworksDatabase extends RoomDatabase {
+public class FavArtworksViewModelFactory implements ViewModelProvider.Factory {
 
-    private static ArtworksDatabase INSTANCE;
+    private FavArtworksDao mFavArtworksDao;
 
-    private static final String ARTPLACE_DB_NAME = "artplace.db";
-
-    public abstract FavArtworksDao favArtworksDao();
-
-    public static ArtworksDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = create(context);
-        }
-
-        return INSTANCE;
+    public FavArtworksViewModelFactory(FavArtworksDao favArtworksDao) {
+        mFavArtworksDao = favArtworksDao;
     }
 
-    private static ArtworksDatabase create(Context context) {
-        RoomDatabase.Builder<ArtworksDatabase> databaseBuilder =
-                Room.databaseBuilder(context.getApplicationContext(),
-                        ArtworksDatabase.class, ARTPLACE_DB_NAME);
-
-        return (databaseBuilder.build());
+    @SuppressWarnings("unchecked")
+    @NonNull
+    @Override
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        return (T) new FavArtworksViewModel(mFavArtworksDao);
     }
-
 }

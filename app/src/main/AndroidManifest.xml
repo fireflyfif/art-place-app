@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".ui.ArtworksMainActivity.MainActivity"
             android:launchMode="singleTop">
@@ -23,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.ArtworkDetailActivity"
             android:launchMode="singleTop"
@@ -32,15 +30,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ArtworksMainActivity.MainActivity" />
         </activity>
-
         <activity
             android:name=".ui.ArtistActivity.ArtistDetailActivity"
             android:parentActivityName=".ui.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ArtworkDetailActivity" />
-
         </activity>
+        <activity android:name=".ui.FavoriteArtworks.FavArtworksActivity"></activity>
     </application>
 
 </manifest>

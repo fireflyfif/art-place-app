@@ -33,40 +33,38 @@
  *
  */
 
-package com.example.android.artplace.database;
+package com.example.android.artplace.ui.FavoriteArtworks;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.content.Context;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 
 import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 
-// Helper tutorial: https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9
-@Database(entities = {FavoriteArtworks.class}, version = 1)
-public abstract class ArtworksDatabase extends RoomDatabase {
+public class FavArtworksViewModel extends ViewModel {
 
-    private static ArtworksDatabase INSTANCE;
+    private static final int PAGE_SIZE = 30;
 
-    private static final String ARTPLACE_DB_NAME = "artplace.db";
+    private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
+    private FavArtworksDao mFavArtworksDao;
 
-    public abstract FavArtworksDao favArtworksDao();
+    public FavArtworksViewModel(FavArtworksDao favArtworksDao) {
+        mFavArtworksDao = favArtworksDao;
+        //FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(application).favArtworksDao();
 
-    public static ArtworksDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = create(context);
-        }
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
+                .setEnablePlaceholders(true)
+                .setPrefetchDistance(PAGE_SIZE)
+                .setPageSize(PAGE_SIZE)
+                .build();
 
-        return INSTANCE;
+        mFavArtworkList = new LivePagedListBuilder<>(mFavArtworksDao.getAllArtworks(), pagedListConfig)
+                .build();
     }
 
-    private static ArtworksDatabase create(Context context) {
-        RoomDatabase.Builder<ArtworksDatabase> databaseBuilder =
-                Room.databaseBuilder(context.getApplicationContext(),
-                        ArtworksDatabase.class, ARTPLACE_DB_NAME);
-
-        return (databaseBuilder.build());
+    public LiveData<PagedList<FavoriteArtworks>> getFavArtworkList() {
+        return mFavArtworkList;
     }
-
 }
