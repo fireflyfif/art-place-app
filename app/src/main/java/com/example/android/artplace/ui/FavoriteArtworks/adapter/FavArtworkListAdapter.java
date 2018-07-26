@@ -66,7 +66,7 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
 
     private OnFavItemClickListener mCallback;
 
-    protected FavArtworkListAdapter(Context context, OnFavItemClickListener onFavItemClickListener) {
+    public FavArtworkListAdapter(Context context, OnFavItemClickListener onFavItemClickListener) {
         super(FavoriteArtworks.DIFF_CALLBACK);
         mContext = context;
         mCallback = onFavItemClickListener;

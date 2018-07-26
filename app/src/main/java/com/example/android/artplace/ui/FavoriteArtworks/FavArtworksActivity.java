@@ -35,25 +35,39 @@
 
 package com.example.android.artplace.ui.FavoriteArtworks;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.ArtworksDatabase;
 import com.example.android.artplace.database.dao.FavArtworksDao;
+import com.example.android.artplace.database.entity.FavoriteArtworks;
+import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.FavoriteArtworks.adapter.FavArtworkListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavArtworksActivity extends AppCompatActivity {
+public class FavArtworksActivity extends AppCompatActivity implements OnFavItemClickListener {
+
+    private static final String TAG = FavArtworksActivity.class.getSimpleName();
 
     @BindView(R.id.fav_artworks_rv)
     RecyclerView favArtworksRv;
 
     private FavArtworkListAdapter mAdapter;
+    private FavArtRepository mFavArtRepository;
+    private PagedList<FavoriteArtworks> mFavoriteArtworksList;
 
 
     @Override
@@ -63,12 +77,41 @@ public class FavArtworksActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext()).favArtworksDao();
+        FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext())
+                .favArtworksDao();
+        mFavArtRepository = new FavArtRepository(getApplication());
 
         FavArtworksViewModel viewModel = ViewModelProviders.of(this, new FavArtworksViewModelFactory(favArtworksDao))
                 .get(FavArtworksViewModel.class);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        favArtworksRv.setLayoutManager(layoutManager);
 
+        mAdapter = new FavArtworkListAdapter(this, this);
+
+        viewModel.getFavArtworkList().observe(this, new Observer<PagedList<FavoriteArtworks>>() {
+
+            @Override
+            public void onChanged(@Nullable PagedList<FavoriteArtworks> favoriteArtworks) {
+                if (favoriteArtworks != null && favoriteArtworks.size() > 0) {
+                    Log.d(TAG, "Submit artworks to the db " + favoriteArtworks.size());
+                    mAdapter.submitList(favoriteArtworks);
+                    // TODO: Add the button for add to favorites
+                } else {
+                    Log.e(TAG, "No artworks added to the database");
+                }
+
+                mFavoriteArtworksList = favoriteArtworks;
+            }
+        });
+
+        favArtworksRv.setAdapter(mAdapter);
 
     }
+
+    @Override
+    public void onFavItemClick(FavoriteArtworks favArtworks) {
+        // TODO: Make the Intent to the DetailActivity
+    }
+
 }

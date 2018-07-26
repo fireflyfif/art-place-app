@@ -56,4 +56,9 @@ public interface FavArtworksDao {
     @Query("SELECT * FROM fav_artworks")
     DataSource.Factory<Integer, FavoriteArtworks> getAllArtworks();
 
+    @Query("DELETE FROM fav_artworks WHERE artwork_id = :artworkId")
+    void deleteArtwork(String artworkId);
+
+    // TODO: Add deleteAll method()
+
 }

@@ -39,10 +39,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,6 +53,7 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.model.Artworks.ArtistsLink;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.model.Artworks.CmSize;
@@ -57,7 +61,10 @@ import com.example.android.artplace.model.Artworks.InSize;
 import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.ArtistActivity.ArtistDetailActivity;
+import com.example.android.artplace.ui.FavoriteArtworks.FavArtworksActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.Normalizer;
@@ -97,8 +104,21 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView dimensCm;
     @BindView(R.id.artwork_dimens_in)
     TextView dimensIn;
+    @BindView(R.id.fav_button)
+    FloatingActionButton mFavButton;
 
     private Artwork mArtworkObject;
+    private FavArtRepository mFavArtRepository;
+
+    private String mArtworkIdString;
+    private String mTitleString;
+    private String mMediumString;
+    private String mCategoryString;
+    private String mDateString;
+    private String mMuseumString;
+    private String mNewArtworkLinkString;
+    private String mArtistNameFromSlug;
+    private String mArtworkThumbnailString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,46 +142,52 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 setupUi(mArtworkObject);
             }
         }
+
+        mFavArtRepository = new FavArtRepository(getApplication());
+
+        // TODO: Check if the item exists in the db already or not!!!
+
+        clickFab();
     }
 
     private void setupUi(Artwork currentArtwork) {
 
-        String titleString = null;
-        if (currentArtwork.getTitle() != null) {
-            titleString = currentArtwork.getTitle();
-            artworkName.setText(titleString);
-            collapsingToolbarLayout.setTitle(titleString);
-            Log.d(TAG, "Title of the artwork: " + titleString);
+        mArtworkIdString = currentArtwork.getId();
 
+        if (currentArtwork.getTitle() != null) {
+            mTitleString = currentArtwork.getTitle();
+            artworkName.setText(mTitleString);
+            collapsingToolbarLayout.setTitle(mTitleString);
+            Log.d(TAG, "Title of the artwork: " + mTitleString);
 
         } else {
             artworkName.setText("N/A");
         }
 
         if (currentArtwork.getMedium() != null) {
-            String mediumString = currentArtwork.getMedium();
-            artworkMedium.setText(mediumString);
+            mMediumString = currentArtwork.getMedium();
+            artworkMedium.setText(mMediumString);
         } else {
             artworkMedium.setText("N/A");
         }
 
         if (currentArtwork.getCategory() != null) {
-            String categoryString = currentArtwork.getCategory();
-            artworkCategory.setText(categoryString);
+            mCategoryString = currentArtwork.getCategory();
+            artworkCategory.setText(mCategoryString);
         } else {
             artworkCategory.setText("N/A");
         }
 
         if (currentArtwork.getDate() != null) {
-            String dateString = currentArtwork.getDate();
-            artworkDate.setText(dateString);
+            mDateString = currentArtwork.getDate();
+            artworkDate.setText(mDateString);
         } else {
             artworkDate.setText("N/A");
         }
 
         if (currentArtwork.getCollectingInstitution() != null) {
-            String museumString = currentArtwork.getCollectingInstitution();
-            artworkMuseum.setText(museumString);
+            mMuseumString = currentArtwork.getCollectingInstitution();
+            artworkMuseum.setText(mMuseumString);
         } else {
             artworkMuseum.setText("N/A");
         }
@@ -198,15 +224,19 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         String artworkImgLinkString = mainImageObject.getHref();
         // Replace the {image_version} from the artworkImgLinkString with
         // the wanted version, e.g. "large"
-        String newArtworkLinkString = artworkImgLinkString
+        mNewArtworkLinkString = artworkImgLinkString
                 .replaceAll("\\{.*?\\}", versionString);
 
-        Log.d(TAG, "New link to the image: " + newArtworkLinkString);
+        Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
+
+        // Extract the string to thumbnail so that it is saved in favorites
+        Thumbnail thumbnail = imageLinksObject.getThumbnail();
+        mArtworkThumbnailString = thumbnail.getHref();
 
         // Set the image here
         // TODO: Handle error cases
         Picasso.get()
-                .load(Uri.parse(newArtworkLinkString))
+                .load(Uri.parse(mNewArtworkLinkString))
                 .placeholder(R.drawable.movie_video_02)
                 .error(R.drawable.movie_video_02)
                 .into(artworkImage);
@@ -227,7 +257,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Log.d(TAG, "New Slug string: " + newSlugString);
 
             // Clear the title of the artwork from any punctuations or characters that are not English letters
-            String newTitleString = titleString
+            String newTitleString = mTitleString
                     .toLowerCase()
                     .replaceAll("'", "")
                     .replaceAll("\\.", "")
@@ -245,27 +275,27 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Does the slug contain the artwork title: " + newSlugString.contains(removedDiacriticsFromTitle)
                     + " \nNew artwork Title: " + removedDiacriticsFromTitle);
 
-            String artistNameFromSlug = null;
+
             // Check if the slug contains the title of the artwork
             if (newSlugString.contains(removedDiacriticsFromTitle)) {
 
-                artistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
+                mArtistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
 
-                Log.d(TAG, "Only name of the artist: " + artistNameFromSlug);
+                Log.d(TAG, "Only name of the artist: " + mArtistNameFromSlug);
 
-                if (artistNameFromSlug.equals((""))) {
-                    artistNameFromSlug = "N/A";
+                if (mArtistNameFromSlug.equals((""))) {
+                    mArtistNameFromSlug = "N/A";
                 }
                 // Display the name of the Artist
-                artistNameLink.setText(artistNameFromSlug);
+                artistNameLink.setText(mArtistNameFromSlug);
             } else {
                 // Display just "Artist"
                 artistNameLink.setText(R.string.artist_name);
 
             }
 
-            String finalArtistNameFromSlug = artistNameFromSlug;
-            String finalTitleString = titleString;
+            String finalArtistNameFromSlug = mArtistNameFromSlug;
+            String finalTitleString = mTitleString;
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -285,6 +315,62 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.fav_artwork, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+
+                return false;
+
+            case R.id.action_favorites:
+                Intent intent = new Intent(ArtworkDetailActivity.this, FavArtworksActivity.class);
+                // TODO: Put as an extra key from this parent activity so that the next activity knows where to go back!!!
+                startActivity(intent);
+
+                return true;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void clickFab() {
+        mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addArtworkToFavorites();
+            }
+        });
+    }
+
+    private void addArtworkToFavorites() {
+        String artworkId = mArtworkIdString;
+        String artworkTitle = mTitleString;
+        String artworkSlug = mArtistNameFromSlug;
+        String artworkCategory = mCategoryString;
+        String artworkMedium = mMediumString;
+        String artworkDate = mDateString;
+        String artworkMuseum = mMuseumString;
+        String artworkThumbnail = mArtworkThumbnailString;
+        String artworkImage = mNewArtworkLinkString;
+
+        FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
+                artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
+
+        mFavArtRepository.insertItem(favArtwork);
+
+        Log.d(TAG, "Insert a new item into the db");
     }
 }
 

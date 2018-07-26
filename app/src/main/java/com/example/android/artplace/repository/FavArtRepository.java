@@ -35,7 +35,62 @@
 
 package com.example.android.artplace.repository;
 
+import android.app.Application;
+import android.arch.paging.DataSource;
+
+import com.example.android.artplace.AppExecutors;
+import com.example.android.artplace.database.ArtworksDatabase;
+import com.example.android.artplace.database.dao.FavArtworksDao;
+import com.example.android.artplace.database.entity.FavoriteArtworks;
+
+
 public class FavArtRepository {
 
+    private static FavArtRepository INSTANCE;
+    private FavArtworksDao mFavArtworksDao;
+
+    public FavArtRepository(Application application) {
+        ArtworksDatabase artworksDatabase = ArtworksDatabase.getInstance(application);
+        mFavArtworksDao = artworksDatabase.favArtworksDao();
+    }
+
+    /*public static FavArtRepository getInstance() {
+        if (INSTANCE == null) {
+
+            synchronized (FavArtRepository.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new FavArtRepository();
+                }
+            }
+        }
+        return INSTANCE;
+    }*/
+
+    public DataSource.Factory<Integer, FavoriteArtworks> getAllFavArtworks() {
+        return mFavArtworksDao.getAllArtworks();
+    }
+
+    public void deleteItem(final String artworkId) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mFavArtworksDao.deleteArtwork(artworkId);
+            }
+        });
+    }
+
+    // TODO: Delete all list of favorite artworks
+
+    public void insertItem(FavoriteArtworks favArtwork) {
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mFavArtworksDao.insertArtwork(favArtwork);
+            }
+        });
+    }
+
+    // TODO: Check if the item already exists in the db
 
 }
