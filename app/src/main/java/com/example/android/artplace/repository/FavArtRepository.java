@@ -33,34 +33,9 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtistActivity;
+package com.example.android.artplace.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+public class FavArtRepository {
 
-import com.example.android.artplace.model.Artists.Artist;
-import com.example.android.artplace.repository.ArtsyRepository;
-
-import java.util.List;
-
-public class ArtistsViewModel extends ViewModel {
-
-    private LiveData<List<Artist>> mArtistLiveData;
-
-
-    public ArtistsViewModel() {
-    }
-
-    public void init(String artworkId) {
-        if (mArtistLiveData != null) {
-            return;
-        }
-        // Get the ArtistLiveData from the instance of the Repository class
-        mArtistLiveData = ArtsyRepository.getInstance().getArtist(artworkId);
-    }
-
-    public LiveData<List<Artist>> getArtist() {
-        return mArtistLiveData;
-    }
 
 }

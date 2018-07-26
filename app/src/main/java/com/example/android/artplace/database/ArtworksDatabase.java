@@ -39,16 +39,17 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
+import android.util.Log;
 
 import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 
 // Helper tutorial: https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9
-@Database(entities = {FavoriteArtworks.class}, version = 1)
+@Database(entities = {FavoriteArtworks.class}, version = 1, exportSchema = false)
 public abstract class ArtworksDatabase extends RoomDatabase {
 
+    private static final String TAG = ArtworksDatabase.class.getSimpleName();
     private static ArtworksDatabase INSTANCE;
-
     private static final String ARTPLACE_DB_NAME = "artplace.db";
 
     public abstract FavArtworksDao favArtworksDao();
@@ -58,10 +59,12 @@ public abstract class ArtworksDatabase extends RoomDatabase {
             INSTANCE = create(context);
         }
 
+        Log.d(TAG, "Getting the database instance");
         return INSTANCE;
     }
 
     private static ArtworksDatabase create(Context context) {
+        Log.d(TAG, "Creating new database instance");
         RoomDatabase.Builder<ArtworksDatabase> databaseBuilder =
                 Room.databaseBuilder(context.getApplicationContext(),
                         ArtworksDatabase.class, ARTPLACE_DB_NAME);

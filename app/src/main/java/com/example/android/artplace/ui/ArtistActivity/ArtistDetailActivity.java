@@ -86,7 +86,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
     @BindView(R.id.artwork_title_clicked)
     TextView clickedArtworkTitle;
 
-    private ArtistsViewModel mArtistViewModel;
+    private ArtistsDetailViewModel mArtistViewModel;
 
 
     @Override
@@ -111,7 +111,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 clickedArtworkTitle.setText(receivedArtworkTitle);
 
                 // Initialize the ViewModel
-                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsViewModel.class);
+                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
                 mArtistViewModel.init(receivedArtworkId);
 
                 mArtistViewModel.getArtist().observe(this, new Observer<List<Artist>>() {

@@ -100,35 +100,34 @@ public class ArtsyRepository {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        AppExecutors.networkIO().execute(() -> {
-            // Get the eInstance of the ArtPlaceApp to create the Retrofit call
-            ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
-                EmbeddedArtists embeddedArtists = new EmbeddedArtists();
-                List<Artist> artistList = new ArrayList<>();
+        // No need of a networkIO Executors here, as Retrofit is doing its call asynchronously
+        // Get the Instance of the ArtPlaceApp to create the Retrofit call
+        ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
+            EmbeddedArtists embeddedArtists = new EmbeddedArtists();
+            List<Artist> artistList = new ArrayList<>();
 
-                @Override
-                public void onResponse(@NonNull Call<EmbeddedArtists> call, @NonNull Response<EmbeddedArtists> response) {
-                    if (response.isSuccessful()) {
-                        embeddedArtists = response.body();
+            @Override
+            public void onResponse(@NonNull Call<EmbeddedArtists> call, @NonNull Response<EmbeddedArtists> response) {
+                if (response.isSuccessful()) {
+                    embeddedArtists = response.body();
 
-                        if (embeddedArtists != null) {
-                            artistList = embeddedArtists.getArtists();
+                    if (embeddedArtists != null) {
+                        artistList = embeddedArtists.getArtists();
 
-                            artistLiveData.setValue(artistList);
-                        }
-                        Log.d(TAG, "Loaded successfully! " + response.code());
-
-                    } else {
-                        artistLiveData.setValue(null);
-                        Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                        artistLiveData.setValue(artistList);
                     }
-                }
-                @Override
-                public void onFailure(@NonNull Call<EmbeddedArtists> call, @NonNull Throwable t) {
-                    Log.d(TAG, "OnFailure! " + t.getMessage());
-                }
-            });
+                    Log.d(TAG, "Loaded successfully! " + response.code());
 
+                } else {
+                    artistLiveData.setValue(null);
+                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<EmbeddedArtists> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
         });
 
         // Return LiveData<Artist>

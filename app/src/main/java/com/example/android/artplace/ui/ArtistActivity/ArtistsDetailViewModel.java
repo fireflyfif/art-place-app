@@ -33,42 +33,34 @@
  *
  */
 
-package com.example.android.artplace.ui.FavoriteArtworks;
+package com.example.android.artplace.ui.ArtistActivity;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
 
-import com.example.android.artplace.R;
-import com.example.android.artplace.database.ArtworksDatabase;
-import com.example.android.artplace.database.dao.FavArtworksDao;
-import com.example.android.artplace.ui.FavoriteArtworks.adapter.FavArtworkListAdapter;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.repository.ArtsyRepository;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.List;
 
-public class FavArtworksActivity extends AppCompatActivity {
+public class ArtistsDetailViewModel extends ViewModel {
 
-    @BindView(R.id.fav_artworks_rv)
-    RecyclerView favArtworksRv;
-
-    private FavArtworkListAdapter mAdapter;
+    private LiveData<List<Artist>> mArtistLiveData;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav_artworks);
-
-        ButterKnife.bind(this);
-
-        FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext()).favArtworksDao();
-
-        FavArtworksViewModel viewModel = ViewModelProviders.of(this, new FavArtworksViewModelFactory(favArtworksDao))
-                .get(FavArtworksViewModel.class);
-
-
-
+    public ArtistsDetailViewModel() {
     }
+
+    public void init(String artworkId) {
+        if (mArtistLiveData != null) {
+            return;
+        }
+        // Get the ArtistLiveData from the instance of the Repository class
+        mArtistLiveData = ArtsyRepository.getInstance().getArtist(artworkId);
+    }
+
+    public LiveData<List<Artist>> getArtist() {
+        return mArtistLiveData;
+    }
+
 }
