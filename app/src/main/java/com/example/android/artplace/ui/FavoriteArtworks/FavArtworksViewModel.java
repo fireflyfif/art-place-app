@@ -35,24 +35,31 @@
 
 package com.example.android.artplace.ui.FavoriteArtworks;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.util.Log;
 
+import com.example.android.artplace.database.ArtworksDatabase;
 import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
+import com.example.android.artplace.repository.FavArtRepository;
 
-public class FavArtworksViewModel extends ViewModel {
+public class FavArtworksViewModel extends AndroidViewModel {
 
+    private static final String TAG = FavArtworksViewModel.class.getSimpleName();
     private static final int PAGE_SIZE = 30;
 
     private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
     private FavArtworksDao mFavArtworksDao;
+    private FavArtRepository mFavArtRepository;
 
-    public FavArtworksViewModel(FavArtworksDao favArtworksDao) {
-        mFavArtworksDao = favArtworksDao;
-        //FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(application).favArtworksDao();
+    public FavArtworksViewModel(Application application) {
+        super(application);
+        //mFavArtworksDao = favArtworksDao;
 
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
@@ -60,11 +67,19 @@ public class FavArtworksViewModel extends ViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        mFavArtworkList = new LivePagedListBuilder<>(mFavArtworksDao.getAllArtworks(), pagedListConfig)
+        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application).getAllFavArtworks(), pagedListConfig)
                 .build();
+        Log.d(TAG, "FavArtworksViewModel called");
     }
 
     public LiveData<PagedList<FavoriteArtworks>> getFavArtworkList() {
         return mFavArtworkList;
+    }
+
+    @Override
+    protected void onCleared() {
+        // Destroy the database instance
+        ArtworksDatabase.destroyInstance();
+        super.onCleared();
     }
 }

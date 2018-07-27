@@ -133,7 +133,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Artwork> callback) {
 
-        Log.i(TAG, "Loading " + params.key + "Count " + params.requestedLoadSize);
+        Log.i(TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
 
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
@@ -150,6 +150,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         embeddedArtworks = response.body();
 
                         if (embeddedArtworks.getArtworks() != null) {
+                            //long nextKey = params.key == 100 ? null: params.key + 30;
                             long nextKey;
                             // TODO: Getting repeated artworks???
                             if (params.key == embeddedArtworks.getArtworks().size()) {
@@ -158,6 +159,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                                 nextKey = params.key + 1;
                             }
 
+                            Log.d(TAG, "Next key : " + nextKey);
                             callback.onResult(artworkList = embeddedArtworks.getArtworks(), nextKey);
 
                             Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());

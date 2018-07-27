@@ -50,13 +50,17 @@ public abstract class ArtworksDatabase extends RoomDatabase {
 
     private static final String TAG = ArtworksDatabase.class.getSimpleName();
     private static ArtworksDatabase INSTANCE;
+    private static final Object LOCK = new Object();
     private static final String ARTPLACE_DB_NAME = "artplace.db";
 
     public abstract FavArtworksDao favArtworksDao();
 
     public static ArtworksDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = create(context);
+
+            synchronized (LOCK) {
+                INSTANCE = create(context);
+            }
         }
 
         Log.d(TAG, "Getting the database instance");
@@ -70,6 +74,10 @@ public abstract class ArtworksDatabase extends RoomDatabase {
                         ArtworksDatabase.class, ARTPLACE_DB_NAME);
 
         return (databaseBuilder.build());
+    }
+
+    public static void destroyInstance() {
+        INSTANCE = null;
     }
 
 }

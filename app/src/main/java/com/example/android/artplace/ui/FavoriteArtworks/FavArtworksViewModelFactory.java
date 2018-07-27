@@ -41,6 +41,7 @@ import android.support.annotation.NonNull;
 
 import com.example.android.artplace.database.dao.FavArtworksDao;
 
+/*
 public class FavArtworksViewModelFactory implements ViewModelProvider.Factory {
 
     private FavArtworksDao mFavArtworksDao;
@@ -53,6 +54,7 @@ public class FavArtworksViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new FavArtworksViewModel(mFavArtworksDao);
+        return (T) new FavArtworksViewModel();
     }
 }
+*/

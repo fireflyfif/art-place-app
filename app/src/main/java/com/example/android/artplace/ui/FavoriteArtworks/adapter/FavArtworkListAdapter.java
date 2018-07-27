@@ -85,7 +85,6 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         if (getItem(position) != null) {
-            // TODO: Check if instead of mFavArtworkList, could be getItem
             ((FavArtworksViewHolder) holder).bindTo(mFavArtworkList.get(position));
         }
     }
@@ -153,8 +152,6 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                         .error(R.drawable.movie_video_02)
                         .into(favThumbnail);
             }
-
-
         }
     }
 }

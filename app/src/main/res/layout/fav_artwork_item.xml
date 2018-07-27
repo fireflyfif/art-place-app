@@ -37,7 +37,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
@@ -59,6 +59,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fav_artwork_thumbnail"
@@ -76,12 +78,17 @@
 
     <TextView
         android:id="@+id/fav_artwork_medium"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/fav_artwork_category"
         app:layout_constraintTop_toBottomOf="@+id/fav_artwork_category"
-        tools:text="Artwork Medium" />
+        tools:text="Artwork Medium Artwork Medium Artwork Medium" />
 
     <TextView
         android:id="@+id/fav_artwork_year"

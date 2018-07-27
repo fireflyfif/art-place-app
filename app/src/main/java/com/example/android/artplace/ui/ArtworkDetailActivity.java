@@ -143,7 +143,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
         }
 
-        mFavArtRepository = new FavArtRepository(getApplication());
+        //mFavArtRepository = new FavArtRepository.getInstance();
 
         // TODO: Check if the item exists in the db already or not!!!
 
@@ -368,7 +368,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
 
-        mFavArtRepository.insertItem(favArtwork);
+        //mFavArtRepository.insertItem(favArtwork);
+        FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
 
         Log.d(TAG, "Insert a new item into the db");
     }

@@ -46,27 +46,29 @@ import com.example.android.artplace.database.entity.FavoriteArtworks;
 
 public class FavArtRepository {
 
+    private static final Object LOCK = new Object();
     private static FavArtRepository INSTANCE;
     private FavArtworksDao mFavArtworksDao;
 
-    public FavArtRepository(Application application) {
+    private FavArtRepository(Application application) {
         ArtworksDatabase artworksDatabase = ArtworksDatabase.getInstance(application);
         mFavArtworksDao = artworksDatabase.favArtworksDao();
     }
 
-    /*public static FavArtRepository getInstance() {
+    public static FavArtRepository getInstance(Application application) {
         if (INSTANCE == null) {
 
-            synchronized (FavArtRepository.class) {
+            synchronized (LOCK) {
                 if (INSTANCE == null) {
-                    INSTANCE = new FavArtRepository();
+                    INSTANCE = new FavArtRepository(application);
                 }
             }
         }
         return INSTANCE;
-    }*/
+    }
 
     public DataSource.Factory<Integer, FavoriteArtworks> getAllFavArtworks() {
+        // TODO: Check if the Dao class is not null
         return mFavArtworksDao.getAllArtworks();
     }
 

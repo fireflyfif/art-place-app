@@ -77,12 +77,11 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         ButterKnife.bind(this);
 
-        FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext())
-                .favArtworksDao();
-        mFavArtRepository = new FavArtRepository(getApplication());
+        // TODO: Too many instances are being called of the ArtworksDatabase class! Reduce that!
+        //FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext()).favArtworksDao();
+        //mFavArtRepository = new FavArtRepository(getApplication());
 
-        FavArtworksViewModel viewModel = ViewModelProviders.of(this, new FavArtworksViewModelFactory(favArtworksDao))
-                .get(FavArtworksViewModel.class);
+        FavArtworksViewModel viewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         favArtworksRv.setLayoutManager(layoutManager);
