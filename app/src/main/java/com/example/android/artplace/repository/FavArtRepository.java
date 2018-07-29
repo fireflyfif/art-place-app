@@ -41,6 +41,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
+import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.ArtworksDatabase;
 import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
@@ -52,12 +53,6 @@ public class FavArtRepository {
     private static final Object LOCK = new Object();
     private static FavArtRepository INSTANCE;
     private FavArtworksDao mFavArtworksDao;
-
-
-    // TODO: Move to the Callbacks package
-    public interface ResultFromDbCallback {
-        void setResult(boolean isFav);
-    }
 
 
     private FavArtRepository(Application application) {
@@ -86,6 +81,7 @@ public class FavArtRepository {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "Item is deleted from the db!");
                 mFavArtworksDao.deleteArtwork(artworkId);
             }
         });

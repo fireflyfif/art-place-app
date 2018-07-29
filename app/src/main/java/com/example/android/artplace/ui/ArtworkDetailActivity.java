@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.ui;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -54,6 +55,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.model.Artworks.ArtistsLink;
 import com.example.android.artplace.model.Artworks.Artwork;
@@ -80,6 +82,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
+    private static final String IS_FAV_SAVED_STATE = "is_fav";
+    private static final int FAV_TAG = 0;
+    private static final int NON_FAV_TAG = 1;
 
     @BindView(R.id.coordinator_artwork)
     CoordinatorLayout coordinatorLayout;
@@ -109,7 +114,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     FloatingActionButton mFavButton;
 
     private Artwork mArtworkObject;
-    private FavArtRepository mFavArtRepository;
 
     private String mArtworkIdString;
     private String mTitleString;
@@ -130,6 +134,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        if (savedInstanceState != null) {
+            mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
+        }
+
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -148,26 +156,33 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
 
         // TODO: Save the boolean into SavedInstanceState!!!
-        // TODO: Check if the item exists in the db already or not!!!
-        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new FavArtRepository.ResultFromDbCallback() {
+        // Check if the item exists in the db already or not!!!
+        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new ResultFromDbCallback() {
             @Override
             public void setResult(boolean isFav) {
                 if (isFav) {
                     mIsFavorite = true;
+                    mFavButton.setTag(FAV_TAG);
                     // Set the button to display it's already added
                     Log.d(TAG, "Item already exists in the db.");
-
+                    mFavButton.setImageResource(R.drawable.ic_check_24dp);
                 } else {
                     // Add to the db
                     mIsFavorite = false;
+                    mFavButton.setTag(NON_FAV_TAG);
                     Log.d(TAG, "Insert a new item into the db");
-
+                    mFavButton.setImageResource(R.drawable.ic_clear_24dp);
                 }
             }
         });
 
-
         clickFab();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_FAV_SAVED_STATE, mIsFavorite);
     }
 
     private void setupUi(Artwork currentArtwork) {
@@ -370,11 +385,32 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addArtworkToFavorites();
+                setIconOnFab(v);
             }
         });
     }
 
+    private void setIconOnFab(View view) {
+        int tagValue = (int) view.getTag();
+
+        switch (tagValue) {
+            case (FAV_TAG):
+                mFavButton.setTag(NON_FAV_TAG);
+                mFavButton.setImageResource(R.drawable.ic_check_24dp);
+                break;
+            case (NON_FAV_TAG):
+                mFavButton.setTag(FAV_TAG);
+                mFavButton.setImageResource(R.drawable.ic_clear_24dp);
+                break;
+            default:
+                mFavButton.setTag(NON_FAV_TAG);
+                mFavButton.setImageResource(R.drawable.ic_clear_24dp);
+                break;
+        }
+    }
+
     private void addArtworkToFavorites() {
+
         String artworkId = mArtworkIdString;
         String artworkTitle = mTitleString;
         String artworkSlug = mArtistNameFromSlug;
@@ -389,16 +425,18 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
 
         if (mIsFavorite) {
+            mFavButton.setTag(FAV_TAG);
             // Do nothing, because the item is in the db
             Log.d(TAG, "Delete the item from the db");
-            Toast.makeText(ArtworkDetailActivity.this, "Item already exists in the db", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ArtworkDetailActivity.this, "Item removed from the favorites", Toast.LENGTH_SHORT).show();
+            FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
         } else {
+            mFavButton.setTag(NON_FAV_TAG);
             // Add to the db
             Log.d(TAG, "Insert a new item into the db");
             FavArtRepository.getInstance(getApplication()).insertItem(favArtwork, artworkId);
             Toast.makeText(ArtworkDetailActivity.this, "Item added to favorites", Toast.LENGTH_SHORT).show();
         }
-
 
     }
 }
