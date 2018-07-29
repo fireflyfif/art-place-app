@@ -37,6 +37,7 @@ package com.example.android.artplace.repository;
 
 import android.app.Application;
 import android.arch.paging.DataSource;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
@@ -51,6 +52,13 @@ public class FavArtRepository {
     private static final Object LOCK = new Object();
     private static FavArtRepository INSTANCE;
     private FavArtworksDao mFavArtworksDao;
+
+
+    // TODO: Move to the Callbacks package
+    public interface ResultFromDbCallback {
+        void setResult(boolean isFav);
+    }
+
 
     private FavArtRepository(Application application) {
         ArtworksDatabase artworksDatabase = ArtworksDatabase.getInstance(application);
@@ -89,35 +97,42 @@ public class FavArtRepository {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                // Only insert if the artwork doesn't exists in the db
-                if (getItemById(artworkId) != null) {
-                    // Item exists in the db
-                    Log.d(TAG, "Item exist in the db: " + getItemById(artworkId));
-                } else {
-                    // Item doesn't exists in the db
-                    Log.d(TAG, "Item doesn't exist in the db: ");
-                    mFavArtworksDao.insertArtwork(favArtwork);
-                }
+                Log.d(TAG, "Item is added to the db!");
+                mFavArtworksDao.insertArtwork(favArtwork);
             }
         });
     }
 
-    public boolean checkIfItemIsFav(String artworkId) {
-        boolean isFav;
 
-        if (getItemById(artworkId) != null) {
-            Log.d(TAG, "Item exist!");
-            isFav = true;
-        } else {
-            Log.d(TAG, "Item doesn't exist!");
-            isFav = false;
-        }
-        return isFav;
+    public void executeGetItemById(String artworkId, ResultFromDbCallback resultFromDbCallback) {
+        new getItemById(artworkId, mFavArtworksDao, resultFromDbCallback).execute();
     }
 
-    // TODO: Check if the item already exists in the db
-    private String getItemById(String artworkId) {
-        return mFavArtworksDao.getItemById(artworkId);
+
+    // Query the item on a background thread via AsyncTask
+    private static class getItemById extends AsyncTask<Void, Void, Boolean> {
+        private String artworkId;
+        private FavArtworksDao favArtworksDao;
+        private ResultFromDbCallback resultFromDbCallback;
+
+        private getItemById(String artworkId, FavArtworksDao favArtworksDao, ResultFromDbCallback resultFromDbCallback) {
+            this.artworkId = artworkId;
+            this.favArtworksDao = favArtworksDao;
+            this.resultFromDbCallback = resultFromDbCallback;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            boolean isFav = artworkId.equals(favArtworksDao.getItemById(artworkId));
+            Log.d(TAG, "From doInBackground: Item exists in the db: " + isFav);
+
+            return isFav;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isFav) {
+            resultFromDbCallback.setResult(isFav);
+        }
     }
 
 }

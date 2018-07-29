@@ -121,6 +121,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mArtistNameFromSlug;
     private String mArtworkThumbnailString;
 
+    private boolean mIsFavorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,8 +147,24 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
 
+        // TODO: Save the boolean into SavedInstanceState!!!
         // TODO: Check if the item exists in the db already or not!!!
+        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new FavArtRepository.ResultFromDbCallback() {
+            @Override
+            public void setResult(boolean isFav) {
+                if (isFav) {
+                    mIsFavorite = true;
+                    // Set the button to display it's already added
+                    Log.d(TAG, "Item already exists in the db.");
 
+                } else {
+                    // Add to the db
+                    mIsFavorite = false;
+                    Log.d(TAG, "Insert a new item into the db");
+
+                }
+            }
+        });
 
 
         clickFab();
@@ -370,17 +388,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
 
-        //FavArtRepository.getInstance(getApplication()).getItemById(mArtworkIdString);
-        boolean isFav = FavArtRepository.getInstance(getApplication()).checkIfItemIsFav(mArtworkIdString);
-        if (isFav) {
-            // Set the button to display it's already added
+        if (mIsFavorite) {
+            // Do nothing, because the item is in the db
             Log.d(TAG, "Delete the item from the db");
-            Toast.makeText(this, "Item already exists in the db", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ArtworkDetailActivity.this, "Item already exists in the db", Toast.LENGTH_SHORT).show();
         } else {
             // Add to the db
             Log.d(TAG, "Insert a new item into the db");
-            Toast.makeText(this, "Item added to favorites", Toast.LENGTH_SHORT).show();
-            //FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
+            FavArtRepository.getInstance(getApplication()).insertItem(favArtwork, artworkId);
+            Toast.makeText(ArtworkDetailActivity.this, "Item added to favorites", Toast.LENGTH_SHORT).show();
         }
 
 

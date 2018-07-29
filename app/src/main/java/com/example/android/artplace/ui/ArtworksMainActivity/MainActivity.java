@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     @Override
     public void onArtworkClick(Artwork artwork) {
-        Toast.makeText(this, "Clicked artwork with id " + artwork.getId(), Toast.LENGTH_SHORT).show();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
