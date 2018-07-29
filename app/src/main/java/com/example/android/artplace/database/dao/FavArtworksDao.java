@@ -53,6 +53,9 @@ public interface FavArtworksDao {
     @Query("SELECT * FROM fav_artworks")
     List<FavoriteArtworks> allArtworks();
 
+    @Query("SELECT artwork_id FROM fav_artworks WHERE artwork_id = :artworkId")
+    String getItemById(String artworkId);
+
     @Query("SELECT * FROM fav_artworks")
     DataSource.Factory<Integer, FavoriteArtworks> getAllArtworks();
 

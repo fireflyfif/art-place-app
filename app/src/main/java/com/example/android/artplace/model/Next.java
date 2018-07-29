@@ -38,47 +38,21 @@ package com.example.android.artplace.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-// Model class for the response of the Artsy API
-public class ArtsyResponse implements Parcelable {
+public class Next implements Parcelable {
 
-    @SerializedName("total_count")
+    @SerializedName("href")
     @Expose
-    private Integer totalCount;
+    private String href;
 
-    @SerializedName("_links")
-    @Expose
-    private Links links;
-
-    @SerializedName("_embedded")
-    @Expose
-    private EmbeddedArtworks embeddedArtworks;
-
-    public Integer getTotalCount() {
-        return totalCount;
+    public String getHref() {
+        return href;
     }
 
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public void setLinks(Links links) {
-        this.links = links;
-    }
-
-    public EmbeddedArtworks getEmbeddedArtworks() {
-        return embeddedArtworks;
-    }
-
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 
@@ -89,29 +63,25 @@ public class ArtsyResponse implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(this.totalCount);
-        dest.writeParcelable(this.links, flags);
-        dest.writeParcelable(this.embeddedArtworks, flags);
+        dest.writeString(this.href);
     }
 
-    public ArtsyResponse() {
+    public Next() {
     }
 
-    protected ArtsyResponse(Parcel in) {
-        this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.links = in.readParcelable(Links.class.getClassLoader());
-        this.embeddedArtworks = in.readParcelable(EmbeddedArtworks.class.getClassLoader());
+    protected Next(Parcel in) {
+        this.href = in.readString();
     }
 
-    public static final Creator<ArtsyResponse> CREATOR = new Creator<ArtsyResponse>() {
+    public static final Parcelable.Creator<Next> CREATOR = new Parcelable.Creator<Next>() {
         @Override
-        public ArtsyResponse createFromParcel(Parcel source) {
-            return new ArtsyResponse(source);
+        public Next createFromParcel(Parcel source) {
+            return new Next(source);
         }
 
         @Override
-        public ArtsyResponse[] newArray(int size) {
-            return new ArtsyResponse[size];
+        public Next[] newArray(int size) {
+            return new Next[size];
         }
     };
 }

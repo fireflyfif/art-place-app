@@ -38,13 +38,11 @@ package com.example.android.artplace.ui.FavoriteArtworks;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.util.Log;
 
 import com.example.android.artplace.database.ArtworksDatabase;
-import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
 
@@ -54,12 +52,10 @@ public class FavArtworksViewModel extends AndroidViewModel {
     private static final int PAGE_SIZE = 30;
 
     private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
-    private FavArtworksDao mFavArtworksDao;
-    private FavArtRepository mFavArtRepository;
+
 
     public FavArtworksViewModel(Application application) {
         super(application);
-        //mFavArtworksDao = favArtworksDao;
 
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
@@ -67,8 +63,8 @@ public class FavArtworksViewModel extends AndroidViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application).getAllFavArtworks(), pagedListConfig)
-                .build();
+        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application).getAllFavArtworks(),
+                pagedListConfig).build();
         Log.d(TAG, "FavArtworksViewModel called");
     }
 
@@ -79,7 +75,7 @@ public class FavArtworksViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         // Destroy the database instance
-        ArtworksDatabase.destroyInstance();
+        //ArtworksDatabase.destroyInstance();
         super.onCleared();
     }
 }

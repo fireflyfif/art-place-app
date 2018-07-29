@@ -37,6 +37,7 @@ package com.example.android.artplace.repository;
 
 import android.app.Application;
 import android.arch.paging.DataSource;
+import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.database.ArtworksDatabase;
@@ -46,6 +47,7 @@ import com.example.android.artplace.database.entity.FavoriteArtworks;
 
 public class FavArtRepository {
 
+    private static final String TAG = FavArtRepository.class.getSimpleName();
     private static final Object LOCK = new Object();
     private static FavArtRepository INSTANCE;
     private FavArtworksDao mFavArtworksDao;
@@ -83,16 +85,39 @@ public class FavArtRepository {
 
     // TODO: Delete all list of favorite artworks
 
-    public void insertItem(FavoriteArtworks favArtwork) {
-
+    public void insertItem(FavoriteArtworks favArtwork, String artworkId) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mFavArtworksDao.insertArtwork(favArtwork);
+                // Only insert if the artwork doesn't exists in the db
+                if (getItemById(artworkId) != null) {
+                    // Item exists in the db
+                    Log.d(TAG, "Item exist in the db: " + getItemById(artworkId));
+                } else {
+                    // Item doesn't exists in the db
+                    Log.d(TAG, "Item doesn't exist in the db: ");
+                    mFavArtworksDao.insertArtwork(favArtwork);
+                }
             }
         });
     }
 
+    public boolean checkIfItemIsFav(String artworkId) {
+        boolean isFav;
+
+        if (getItemById(artworkId) != null) {
+            Log.d(TAG, "Item exist!");
+            isFav = true;
+        } else {
+            Log.d(TAG, "Item doesn't exist!");
+            isFav = false;
+        }
+        return isFav;
+    }
+
     // TODO: Check if the item already exists in the db
+    private String getItemById(String artworkId) {
+        return mFavArtworksDao.getItemById(artworkId);
+    }
 
 }

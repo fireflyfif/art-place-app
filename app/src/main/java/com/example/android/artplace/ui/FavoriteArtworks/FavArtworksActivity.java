@@ -77,7 +77,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         ButterKnife.bind(this);
 
-        // TODO: Too many instances are being called of the ArtworksDatabase class! Reduce that!
+        // COMPLETED: Too many instances are being called of the ArtworksDatabase class! Reduce that!
         //FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext()).favArtworksDao();
         //mFavArtRepository = new FavArtRepository(getApplication());
 
