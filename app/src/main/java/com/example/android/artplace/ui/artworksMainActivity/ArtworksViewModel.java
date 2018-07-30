@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtworksMainActivity;
+package com.example.android.artplace.ui.artworksMainActivity;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;

@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtistActivity;
+package com.example.android.artplace.ui.artistDetailActivity;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;

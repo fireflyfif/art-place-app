@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.ui;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -45,8 +44,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -66,8 +63,10 @@ import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.repository.FavArtRepository;
-import com.example.android.artplace.ui.ArtistActivity.ArtistDetailActivity;
-import com.example.android.artplace.ui.FavoriteArtworks.FavArtworksActivity;
+import com.example.android.artplace.ui.artistDetailActivity.ArtistDetailActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
 
 import java.text.Normalizer;
@@ -112,9 +111,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView dimensIn;
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
+    @BindView(R.id.adView)
+    AdView adView;
 
     private Artwork mArtworkObject;
-
     private String mArtworkIdString;
     private String mTitleString;
     private String mMediumString;
@@ -154,8 +154,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
         }
 
-
-        // TODO: Save the boolean into SavedInstanceState!!!
         // Check if the item exists in the db already or not!!!
         FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new ResultFromDbCallback() {
             @Override
@@ -177,6 +175,14 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         });
 
         clickFab();
+
+        // Initialize Ads
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        // TODO: Add my own
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -350,34 +356,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fav_artwork, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-
-                return false;
-
-            case R.id.action_favorites:
-                Intent intent = new Intent(ArtworkDetailActivity.this, FavArtworksActivity.class);
-                // TODO: Put as an extra key from this parent activity so that the next activity knows where to go back!!!
-                startActivity(intent);
-
-                return true;
-
-            default:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void clickFab() {

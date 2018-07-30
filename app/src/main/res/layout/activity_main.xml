@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".ui.ArtworksMainActivity.MainActivity">
+    tools:context=".ui.artworksMainActivity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -17,7 +17,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="?android:actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|enterAlways"/>
@@ -52,4 +52,5 @@
             android:padding="@dimen/padding_10dp" />
 
     </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>

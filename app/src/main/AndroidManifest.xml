@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.ArtworksMainActivity.MainActivity"
+            android:name=".ui.artworksMainActivity.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,19 +25,21 @@
         <activity
             android:name=".ui.ArtworkDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.ArtworksMainActivity.MainActivity">
+            android:parentActivityName=".ui.artworksMainActivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.ArtworksMainActivity.MainActivity" />
+                android:value=".ui.artworksMainActivity.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.ArtistActivity.ArtistDetailActivity"
+            android:name=".ui.artistDetailActivity.ArtistDetailActivity"
             android:parentActivityName=".ui.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ArtworkDetailActivity" />
         </activity>
-        <activity android:name=".ui.FavoriteArtworks.FavArtworksActivity"></activity>
+        <activity android:name=".ui.favoriteArtworks.FavArtworksActivity">
+
+        </activity>
     </application>
 
 </manifest>

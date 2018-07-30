@@ -53,6 +53,7 @@ public abstract class ArtworksDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static final String ARTPLACE_DB_NAME = "artplace.db";
 
+    // Reference the DAO from the database class
     public abstract FavArtworksDao favArtworksDao();
 
     public static ArtworksDatabase getInstance(Context context) {

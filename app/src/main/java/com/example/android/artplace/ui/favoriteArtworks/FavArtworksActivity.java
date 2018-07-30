@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.FavoriteArtworks;
+package com.example.android.artplace.ui.favoriteArtworks;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -44,16 +44,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
-import com.example.android.artplace.database.ArtworksDatabase;
-import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
-import com.example.android.artplace.ui.FavoriteArtworks.adapter.FavArtworkListAdapter;
+import com.example.android.artplace.ui.favoriteArtworks.adapter.FavArtworkListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

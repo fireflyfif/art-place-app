@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtworksMainActivity.adapter;
+package com.example.android.artplace.ui.artworksMainActivity.adapter;
 
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;

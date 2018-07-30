@@ -2,4 +2,5 @@
     <string name="app_name">ArtPlace</string>
     <string name="error_msg">No Internet connection.  \nPlease try again.</string>
     <string name="artist_name">Artist</string>
+    <string name="favorites">Favorites</string>
 </resources>

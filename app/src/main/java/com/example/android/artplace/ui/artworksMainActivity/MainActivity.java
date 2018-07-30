@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.ArtworksMainActivity;
+package com.example.android.artplace.ui.artworksMainActivity;
 
 import android.arch.lifecycle.Observer;
 import android.arch.paging.PagedList;
@@ -46,18 +46,21 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
-import com.example.android.artplace.ui.ArtworksMainActivity.adapter.ArtworkListAdapter;
+import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
+import com.example.android.artplace.ui.favoriteArtworks.FavArtworksActivity;
 import com.example.android.artplace.utils.ConnectivityUtils;
 import com.example.android.artplace.utils.NetworkState;
 
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     ProgressBar progressBar;
     @BindView(R.id.error_message)
     TextView errorMessage;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
@@ -88,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         // Initialize the ViewModel
         mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
@@ -102,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
                     // When a new page is available, call submitList() method of the PagedListAdapter
-                    mPagedListAdapter.submitList(artworks); // the paged list of artworks is 0, but it's working
+                    mPagedListAdapter.submitList(artworks);
                 }
             }
         });
@@ -170,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     @Override
     public void onRefreshConnection() {
-
         new RetrieveNetworkConnectivity().execute();
 
     }
@@ -194,6 +200,33 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         // Setup the Adapter on the RecyclerView
         artworksRv.setAdapter(mPagedListAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.fav_artwork, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+
+                return false;
+
+            case R.id.action_favorites:
+                Intent intent = new Intent(MainActivity.this, FavArtworksActivity.class);
+                // TODO: Put as an extra key from this parent activity so that the next activity knows where to go back!!!
+                startActivity(intent);
+                return true;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

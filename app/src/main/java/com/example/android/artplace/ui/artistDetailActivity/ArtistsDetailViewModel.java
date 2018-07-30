@@ -33,49 +33,34 @@
  *
  */
 
-package com.example.android.artplace.ui.FavoriteArtworks;
+package com.example.android.artplace.ui.artistDetailActivity;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.paging.LivePagedListBuilder;
-import android.arch.paging.PagedList;
-import android.util.Log;
+import android.arch.lifecycle.ViewModel;
 
-import com.example.android.artplace.database.ArtworksDatabase;
-import com.example.android.artplace.database.entity.FavoriteArtworks;
-import com.example.android.artplace.repository.FavArtRepository;
+import com.example.android.artplace.model.Artists.Artist;
+import com.example.android.artplace.repository.ArtsyRepository;
 
-public class FavArtworksViewModel extends AndroidViewModel {
+import java.util.List;
 
-    private static final String TAG = FavArtworksViewModel.class.getSimpleName();
-    private static final int PAGE_SIZE = 30;
+public class ArtistsDetailViewModel extends ViewModel {
 
-    private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
+    private LiveData<List<Artist>> mArtistLiveData;
 
 
-    public FavArtworksViewModel(Application application) {
-        super(application);
-
-        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
-                .setEnablePlaceholders(true)
-                .setPrefetchDistance(PAGE_SIZE)
-                .setPageSize(PAGE_SIZE)
-                .build();
-
-        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application).getAllFavArtworks(),
-                pagedListConfig).build();
-        Log.d(TAG, "FavArtworksViewModel called");
+    public ArtistsDetailViewModel() {
     }
 
-    public LiveData<PagedList<FavoriteArtworks>> getFavArtworkList() {
-        return mFavArtworkList;
+    public void init(String artworkId) {
+        if (mArtistLiveData != null) {
+            return;
+        }
+        // Get the ArtistLiveData from the instance of the Repository class
+        mArtistLiveData = ArtsyRepository.getInstance().getArtist(artworkId);
     }
 
-    @Override
-    protected void onCleared() {
-        // Destroy the database instance
-        //ArtworksDatabase.destroyInstance();
-        super.onCleared();
+    public LiveData<List<Artist>> getArtist() {
+        return mArtistLiveData;
     }
+
 }
