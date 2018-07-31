@@ -153,7 +153,6 @@ public class Artwork implements Parcelable {
                     "larger",
                     "normalized"
                 ]
-      TODO: Hardcode the version of the image to be always: "large"
      */
     @SerializedName("image_versions")
     @Expose

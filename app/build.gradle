@@ -59,7 +59,7 @@ dependencies {
     // Paging library dependency
     implementation 'android.arch.paging:runtime:1.0.1'
 
-    // Butterknife Dependency
+    // ButterKnife Dependency
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
@@ -67,8 +67,11 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
 
-    // Google Play Service - Ads Dependency
+    // Google Service - Ads Dependency
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
+
+    // Google Service - Analytics Dependency
+    implementation 'com.google.android.gms:play-services-analytics:16.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

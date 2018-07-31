@@ -45,11 +45,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.favoriteArtworks.adapter.FavArtworkListAdapter;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,6 +67,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
     private FavArtworkListAdapter mAdapter;
     private FavArtRepository mFavArtRepository;
     private PagedList<FavoriteArtworks> mFavoriteArtworksList;
+    private Tracker mTracker;
 
 
     @Override
@@ -73,7 +77,11 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         ButterKnife.bind(this);
 
-        // COMPLETED: Too many instances are being called of the ArtworksDatabase class! Reduce that!
+        // Obtain the shared Tracker instance.
+        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
+        ArtPlaceApp application = (ArtPlaceApp) getApplication();
+        mTracker = application.getDefaultTracker();
+
         //FavArtworksDao favArtworksDao = ArtworksDatabase.getInstance(getApplicationContext()).favArtworksDao();
         //mFavArtRepository = new FavArtRepository(getApplication());
 
@@ -102,6 +110,15 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         favArtworksRv.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName(TAG);
+        // Send initial screen screen view hit.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

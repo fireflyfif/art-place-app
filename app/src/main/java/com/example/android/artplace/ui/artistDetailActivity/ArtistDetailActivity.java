@@ -49,10 +49,13 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artists.Artist;
 import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -87,6 +90,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView clickedArtworkTitle;
 
     private ArtistsDetailViewModel mArtistViewModel;
+    private Tracker mTracker;
 
 
     @Override
@@ -95,6 +99,11 @@ public class ArtistDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artist_detail);
 
         ButterKnife.bind(this);
+
+        // Obtain the shared Tracker instance.
+        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
+        ArtPlaceApp application = (ArtPlaceApp) getApplication();
+        mTracker = application.getDefaultTracker();
 
         setSupportActionBar(toolbar);
 
@@ -135,6 +144,15 @@ public class ArtistDetailActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName(TAG);
+        // Send initial screen screen view hit.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void setupUi(Artist currentArtist) {

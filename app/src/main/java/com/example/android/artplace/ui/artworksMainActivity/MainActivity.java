@@ -63,6 +63,8 @@ import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.ui.favoriteArtworks.FavArtworksActivity;
 import com.example.android.artplace.utils.ConnectivityUtils;
 import com.example.android.artplace.utils.NetworkState;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
+    private Tracker mTracker;
 
 
     @Override
@@ -95,6 +98,11 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+
+        // Obtain the shared Tracker instance.
+        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
+        ArtPlaceApp application = (ArtPlaceApp) getApplication();
+        mTracker = application.getDefaultTracker();
 
         // Initialize the ViewModel
         mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
@@ -200,6 +208,15 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         // Setup the Adapter on the RecyclerView
         artworksRv.setAdapter(mPagedListAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName("Artworks-Gridview");
+        // Send initial screen screen view hit.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

@@ -51,6 +51,7 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
@@ -67,6 +68,8 @@ import com.example.android.artplace.ui.artistDetailActivity.ArtistDetailActivity
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
 import java.text.Normalizer;
@@ -126,6 +129,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mArtworkThumbnailString;
 
     private boolean mIsFavorite;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +137,21 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artwork_detail);
 
         ButterKnife.bind(this);
+
+        // Obtain the shared Tracker instance.
+        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
+        ArtPlaceApp application = (ArtPlaceApp) getApplication();
+        mTracker = application.getDefaultTracker();
+
+        // Initialize Ads
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        // TODO: Add my own ID
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
 
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
@@ -175,20 +194,21 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         });
 
         clickFab();
-
-        // Initialize Ads
-        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        // TODO: Add my own
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_FAV_SAVED_STATE, mIsFavorite);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName(TAG);
+        // Send initial screen screen view hit.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void setupUi(Artwork currentArtwork) {

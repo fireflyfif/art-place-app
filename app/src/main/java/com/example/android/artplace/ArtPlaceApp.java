@@ -40,12 +40,16 @@ import android.content.Context;
 
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
 public class ArtPlaceApp extends Application {
 
     private ArtsyApiInterface mArtsyApi;
+    private static GoogleAnalytics sAnalytics;
+    private static Tracker sTracker;
 
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
@@ -57,6 +61,16 @@ public class ArtPlaceApp extends Application {
         super.onCreate();
 
         sInstance = this;
+        sAnalytics = GoogleAnalytics.getInstance(this);
+    }
+
+    // Source: https://developers.google.com/analytics/devguides/collection/android/v4/
+    synchronized public Tracker getDefaultTracker() {
+        if (sTracker == null) {
+            sTracker = sAnalytics.newTracker(R.xml.global_tracker);
+        }
+
+        return sTracker;
     }
 
     public static ArtPlaceApp getInstance() {
