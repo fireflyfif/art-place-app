@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fav_artwork, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 

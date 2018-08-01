@@ -37,7 +37,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ArtworkDetailActivity" />
         </activity>
-        <activity android:name=".ui.favoriteArtworks.FavArtworksActivity">
+        <activity android:name=".ui.favoriteArtworks.FavArtworksActivity"
+            android:parentActivityName=".ui.artworksMainActivity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.artworksMainActivity.MainActivity" />
 
         </activity>
     </application>

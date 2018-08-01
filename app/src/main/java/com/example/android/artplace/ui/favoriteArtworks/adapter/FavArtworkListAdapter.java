@@ -97,6 +97,10 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
         return super.getItemCount();
     }
 
+    public FavoriteArtworks getFavoriteAtPosition(int position) {
+        return mFavArtworkList.get(position);
+    }
+
     @Override
     public void onCurrentListChanged(@Nullable PagedList<FavoriteArtworks> currentList) {
         mFavArtworkList = currentList;

@@ -432,7 +432,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mFavButton.setTag(NON_FAV_TAG);
             // Add to the db
             Log.d(TAG, "Insert a new item into the db");
-            FavArtRepository.getInstance(getApplication()).insertItem(favArtwork, artworkId);
+            FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
             Toast.makeText(ArtworkDetailActivity.this, "Item added to favorites", Toast.LENGTH_SHORT).show();
         }
 

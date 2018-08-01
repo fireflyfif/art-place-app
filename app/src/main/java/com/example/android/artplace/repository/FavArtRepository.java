@@ -73,10 +73,11 @@ public class FavArtRepository {
     }
 
     public DataSource.Factory<Integer, FavoriteArtworks> getAllFavArtworks() {
-        // TODO: Check if the Dao class is not null
+
         return mFavArtworksDao.getAllArtworks();
     }
 
+    // Delete a single item from the database
     public void deleteItem(final String artworkId) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -87,9 +88,19 @@ public class FavArtRepository {
         });
     }
 
-    // TODO: Delete all list of favorite artworks
+    // Delete all list of favorite artworks
+    // TODO: Create a warning dialog for the user before allowing them to delete all data
+    public void deleteAllItems() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mFavArtworksDao.deleteAllData();
+            }
+        });
+    }
 
-    public void insertItem(FavoriteArtworks favArtwork, String artworkId) {
+    // Insert a new item into the database
+    public void insertItem(FavoriteArtworks favArtwork) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -100,6 +111,7 @@ public class FavArtRepository {
     }
 
 
+    // Get an item by Id from the database
     public void executeGetItemById(String artworkId, ResultFromDbCallback resultFromDbCallback) {
         new getItemById(artworkId, mFavArtworksDao, resultFromDbCallback).execute();
     }

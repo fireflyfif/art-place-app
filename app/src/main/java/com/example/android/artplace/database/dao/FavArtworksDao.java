@@ -62,6 +62,7 @@ public interface FavArtworksDao {
     @Query("DELETE FROM fav_artworks WHERE artwork_id = :artworkId")
     void deleteArtwork(String artworkId);
 
-    // TODO: Add deleteAll method()
+    @Query("DELETE FROM fav_artworks")
+    void deleteAllData();
 
 }

@@ -40,5 +40,6 @@
         android:id="@+id/action_favorites"
         android:title="@string/favorites"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_favorite_24dp"/>
 </menu>
