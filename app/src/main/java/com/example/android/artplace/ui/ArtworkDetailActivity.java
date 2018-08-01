@@ -182,13 +182,13 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     mFavButton.setTag(FAV_TAG);
                     // Set the button to display it's already added
                     Log.d(TAG, "Item already exists in the db.");
-                    mFavButton.setImageResource(R.drawable.ic_check_24dp);
+                    mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
                 } else {
                     // Add to the db
                     mIsFavorite = false;
                     mFavButton.setTag(NON_FAV_TAG);
                     Log.d(TAG, "Insert a new item into the db");
-                    mFavButton.setImageResource(R.drawable.ic_clear_24dp);
+                    mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 }
             }
         });
@@ -369,7 +369,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     }
 
                     Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                    // TODO: Send the name of the artwork as extra
+                    // Send the name of the artwork as extra
                     intent.putExtra(ARTWORK_TITLE_KEY, finalTitleString);
                     intent.putExtra(ARTWORK_ID_KEY, artworkId);
                     startActivity(intent);
@@ -382,7 +382,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         mFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addArtworkToFavorites();
                 setIconOnFab(v);
             }
         });
@@ -393,18 +392,26 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         switch (tagValue) {
             case (FAV_TAG):
+                deleteItemFromFav();
                 mFavButton.setTag(NON_FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_check_24dp);
+                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
             case (NON_FAV_TAG):
+                addArtworkToFavorites();
                 mFavButton.setTag(FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_clear_24dp);
+                mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
                 break;
             default:
                 mFavButton.setTag(NON_FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_clear_24dp);
+                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
         }
+    }
+
+    private void deleteItemFromFav() {
+        FavArtRepository.getInstance(getApplication()).deleteItem(mArtworkIdString);
+        Snackbar.make(coordinatorLayout, "Item removed from the favorites", Snackbar.LENGTH_SHORT).show();
+        Log.d(TAG, "Delete the item from the db");
     }
 
     private void addArtworkToFavorites() {
@@ -422,20 +429,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
 
-        if (mIsFavorite) {
-            mFavButton.setTag(FAV_TAG);
-            // Do nothing, because the item is in the db
-            Log.d(TAG, "Delete the item from the db");
-            Toast.makeText(ArtworkDetailActivity.this, "Item removed from the favorites", Toast.LENGTH_SHORT).show();
-            FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
-        } else {
-            mFavButton.setTag(NON_FAV_TAG);
-            // Add to the db
-            Log.d(TAG, "Insert a new item into the db");
-            FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
-            Toast.makeText(ArtworkDetailActivity.this, "Item added to favorites", Toast.LENGTH_SHORT).show();
-        }
-
+        FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
+        Snackbar.make(coordinatorLayout, "Item added to favorites", Snackbar.LENGTH_SHORT).show();
+        Log.d(TAG, "Insert a new item into the db");
     }
 }
 

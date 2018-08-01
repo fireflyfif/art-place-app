@@ -177,7 +177,7 @@
         android:id="@+id/fav_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_check_24dp"
+        android:src="@drawable/ic_favorite_border_24dp"
         app:layout_anchor="@id/card_view_content"
         app:layout_anchorGravity="bottom|center_horizontal"
         android:layout_margin="16dp"/>

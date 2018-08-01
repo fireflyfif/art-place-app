@@ -118,9 +118,8 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Favorites");
+            getSupportActionBar().setTitle(R.string.favorites_title);
         }
-
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -264,7 +263,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to delete all artworks?");
             builder.setTitle("Delete All");
-            builder.setIcon(R.drawable.ic_refresh_24dp);
+            builder.setIcon(R.drawable.ic_delete_24dp);
 
             builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                 @Override

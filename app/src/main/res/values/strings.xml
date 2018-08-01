@@ -5,4 +5,5 @@
     <string name="favorites">Favorites</string>
     <string name="empty_msg">No favorite items found. \nAdd your favorite artworks!</string>
     <string name="delete_all">Delete All</string>
+    <string name="favorites_title">Favorites</string>
 </resources>
