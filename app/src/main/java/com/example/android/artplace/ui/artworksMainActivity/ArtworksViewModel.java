@@ -60,18 +60,18 @@ public class ArtworksViewModel extends ViewModel {
     private ArtPlaceApp mAppController;
 
     private static final int PAGE_SIZE = 30;
+    private static final int INITIAL_SIZE_HINT = 30;
 
 
     public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
-        // This will produce an error, because the ViewModel constructor has no zero argument constructor
         mAppController = appController;
 
         init();
     }
 
     /*
-    Method for initializing the DataSourceFactory and for building the LiveData
-     */
+     Method for initializing the DataSourceFactory and for building the LiveData
+    */
     private void init() {
 
         // Get an instance of the DataSourceFactory class
@@ -96,12 +96,12 @@ public class ArtworksViewModel extends ViewModel {
                 });
 
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
-                        .setEnablePlaceholders(true)
-                        .setInitialLoadSizeHint(PAGE_SIZE)
+                        .setEnablePlaceholders(false)
+                        .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
                         // If not set, defaults to page size.
                         //A value of 0 indicates that no list items
                         // will be loaded until they are specifically requested
-                        .setPrefetchDistance(10 * 2)
+                        .setPrefetchDistance(INITIAL_SIZE_HINT)
                         .setPageSize(PAGE_SIZE)
                         .build();
 
@@ -121,6 +121,25 @@ public class ArtworksViewModel extends ViewModel {
     }
 
     public LiveData<PagedList<Artwork>> getArtworkLiveData() {
+        return mArtworkLiveData;
+    }
+
+    public LiveData<PagedList<Artwork>> refreshArtworkLiveData() {
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
+                // If not set, defaults to page size.
+                //A value of 0 indicates that no list items
+                // will be loaded until they are specifically requested
+                .setPrefetchDistance(INITIAL_SIZE_HINT)
+                .setPageSize(PAGE_SIZE)
+                .build();
+
+
+        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
+                .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                .build();
+
         return mArtworkLiveData;
     }
 }

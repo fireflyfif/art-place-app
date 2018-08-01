@@ -154,11 +154,13 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 }
 
                 mFavoriteArtworksList = favoriteArtworks;
+                Log.d(TAG, "Number of fav artworks: " + favoriteArtworks);
             }
         });
     }
 
     private void deleteItemBySwiping() {
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -189,7 +191,18 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         // Send initial screen screen view hit.
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-        getFavArtworks();
+        refreshFavList();
+    }
+
+    private void refreshFavList() {
+
+        mFavArtworksViewModel.refreshFavArtworkList(getApplication()).observe(this, new Observer<PagedList<FavoriteArtworks>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<FavoriteArtworks> favoriteArtworks) {
+                mAdapter.submitList(favoriteArtworks);
+                mFavoriteArtworksList = favoriteArtworks;
+            }
+        });
     }
 
     @Override
@@ -232,7 +245,10 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mFavArtworksViewModel.deleteAllItems();
-                    getFavArtworks();
+                    // Swapping the data doesn't refresh the list?
+                    mAdapter.swapData(mFavoriteArtworksList);
+                    // Instead - Refresh the list
+                    refreshFavList();
                 }
             });
 

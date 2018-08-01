@@ -49,7 +49,7 @@ import com.example.android.artplace.repository.FavArtRepository;
 public class FavArtworksViewModel extends AndroidViewModel {
 
     private static final String TAG = FavArtworksViewModel.class.getSimpleName();
-    private static final int PAGE_SIZE = 30;
+    private static final int PAGE_SIZE = 20;
 
     private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
     private FavArtRepository mRepository;
@@ -60,25 +60,51 @@ public class FavArtworksViewModel extends AndroidViewModel {
 
         mRepository = FavArtRepository.getInstance(application);
 
+        init(application);
+        Log.d(TAG, "FavArtworksViewModel called");
+    }
+
+    /*
+     Method for initializing the DataSourceFactory and for building the LiveData
+    */
+    private void init(Application application) {
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
                 .setPrefetchDistance(PAGE_SIZE)
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application).getAllFavArtworks(),
+        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application)
+                .getAllFavArtworks(),
                 pagedListConfig).build();
-        Log.d(TAG, "FavArtworksViewModel called");
     }
 
     public LiveData<PagedList<FavoriteArtworks>> getFavArtworkList() {
         return mFavArtworkList;
     }
 
+    public LiveData<PagedList<FavoriteArtworks>> refreshFavArtworkList(Application application) {
+
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
+                .setEnablePlaceholders(true)
+                .setPrefetchDistance(PAGE_SIZE)
+                .setPageSize(PAGE_SIZE)
+                .build();
+
+        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application)
+                .getAllFavArtworks(),
+                pagedListConfig).build();
+
+        Log.d(TAG, "refreshFavArtworkList is called.");
+        return mFavArtworkList;
+    }
+
+    // TODO: Remove this method, because we don't need to call it from here
     public void insertItem(FavoriteArtworks favArtwork) {
         mRepository.insertItem(favArtwork);
     }
 
+    // TODO: Remove this method, because we don't need to call it from here
     public void getItemById(String artworkId, ResultFromDbCallback resultFromDbCallback) {
         mRepository.executeGetItemById(artworkId, resultFromDbCallback);
     }

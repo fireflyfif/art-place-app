@@ -194,8 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         // Setup the RecyclerView
         setRecyclerView();
 
-        // Call submitList() method of the PagedListAdapter when a new page is available
-        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+        mViewModel.refreshArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
             @Override
             public void onChanged(@Nullable PagedList<Artwork> artworks) {
                 if (artworks != null) {
@@ -205,6 +204,18 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                 }
             }
         });
+
+        // Call submitList() method of the PagedListAdapter when a new page is available
+        /*mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Artwork> artworks) {
+                if (artworks != null) {
+                    mPagedListAdapter.submitList(null);
+                    // When a new page is available, call submitList() method of the PagedListAdapter
+                    mPagedListAdapter.submitList(artworks);
+                }
+            }
+        });*/
 
         // Setup the Adapter on the RecyclerView
         artworksRv.setAdapter(mPagedListAdapter);
@@ -217,6 +228,9 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         mTracker.setScreenName("Artworks-Gridview");
         // Send initial screen screen view hit.
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        // Refresh list if there is an internet connection
+        refreshArtworks();
     }
 
     @Override
@@ -275,7 +289,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                             Snackbar.LENGTH_LONG).show();
 
                     // Refresh the list of artworks here
-                    // TODO: Problem: get's only the initial Load
                     refreshArtworks();
 
                     return true;
