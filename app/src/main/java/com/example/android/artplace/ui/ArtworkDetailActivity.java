@@ -138,6 +138,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
@@ -155,12 +161,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
-        }
-
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         if (getIntent().getExtras() != null) {

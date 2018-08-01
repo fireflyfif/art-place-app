@@ -115,7 +115,7 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
         notifyDataSetChanged();
     }
 
-    public class FavArtworksViewHolder extends RecyclerView.ViewHolder {
+    public class FavArtworksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.fav_artwork_thumbnail)
         ImageView favThumbnail;
@@ -132,6 +132,8 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
             super(itemView);
 
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(this);
         }
 
         public void bindTo(FavoriteArtworks favArtwork) {
@@ -155,6 +157,12 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                         .error(R.drawable.movie_video_02)
                         .into(favThumbnail);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            FavoriteArtworks favArtwork = getItem(getAdapterPosition());
+            mCallback.onFavItemClick(favArtwork);
         }
     }
 }

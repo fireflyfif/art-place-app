@@ -39,6 +39,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -63,6 +64,8 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
+import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.FavDetailActivity;
 import com.example.android.artplace.ui.favoriteArtworks.adapter.FavArtworkListAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -75,6 +78,15 @@ import butterknife.ButterKnife;
 public class FavArtworksActivity extends AppCompatActivity implements OnFavItemClickListener {
 
     private static final String TAG = FavArtworksActivity.class.getSimpleName();
+
+    private static final String ARTWORK_ID_KEY = "artwork_id";
+    private static final String ARTWORK_TITLE_KEY = "artwork_title";
+    private static final String ARTWORK_ARTIST_KEY = "artwork_artist";
+    private static final String ARTWORK_CATEGORY_KEY = "artwork_category";
+    private static final String ARTWORK_MEDIUM_KEY = "artwork_medium";
+    private static final String ARTWORK_DATE_KEY = "artwork_date";
+    private static final String ARTWORK_MUSEUM_KEY = "artwork_museum";
+    private static final String ARTWORK_IMAGE_KEY = "artwork_image";
 
     @BindView(R.id.fav_artworks_rv)
     RecyclerView favArtworksRv;
@@ -106,7 +118,9 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Favorites");
         }
+
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -208,6 +222,17 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
     @Override
     public void onFavItemClick(FavoriteArtworks favArtworks) {
         // TODO: Make the Intent to the DetailActivity
+        Intent favIntent = new Intent(FavArtworksActivity.this, FavDetailActivity.class);
+        favIntent.putExtra(ARTWORK_ID_KEY, favArtworks.getId());
+        favIntent.putExtra(ARTWORK_IMAGE_KEY, favArtworks.getArtworkImagePath());
+        favIntent.putExtra(ARTWORK_TITLE_KEY, favArtworks.getArtworkTitle());
+        favIntent.putExtra(ARTWORK_ARTIST_KEY, favArtworks.getArtworkSlug());
+        favIntent.putExtra(ARTWORK_CATEGORY_KEY, favArtworks.getArtworkCategory());
+        favIntent.putExtra(ARTWORK_DATE_KEY, favArtworks.getArtworkDate());
+        favIntent.putExtra(ARTWORK_MEDIUM_KEY, favArtworks.getArtworkMedium());
+        favIntent.putExtra(ARTWORK_MUSEUM_KEY, favArtworks.getArtworkMuseum());
+
+        startActivity(favIntent);
     }
 
     @Override
