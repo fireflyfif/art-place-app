@@ -387,6 +387,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the icons on the FAB according to the clicks
+     * @param view the returned view of the button
+     */
     private void setIconOnFab(View view) {
         int tagValue = (int) view.getTag();
 
@@ -408,12 +412,18 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method for deleting an item from the database
+     */
     private void deleteItemFromFav() {
         FavArtRepository.getInstance(getApplication()).deleteItem(mArtworkIdString);
         Snackbar.make(coordinatorLayout, "Item removed from the favorites", Snackbar.LENGTH_SHORT).show();
         Log.d(TAG, "Delete the item from the db");
     }
 
+    /**
+     * Method for adding an item to the database
+     */
     private void addArtworkToFavorites() {
 
         String artworkId = mArtworkIdString;

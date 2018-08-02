@@ -41,11 +41,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +57,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
+import com.example.android.artplace.callbacks.RefreshList;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
@@ -66,14 +69,18 @@ import com.example.android.artplace.utils.NetworkState;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener, RefreshList {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
+    @BindView(R.id.appbar_main)
+    AppBarLayout appBarLayout;
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.artworks_rv)
@@ -145,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                 else if (networkState != null &&
                         networkState.getStatus() == NetworkState.Status.FAILED) {
                     progressBar.setVisibility(View.GONE);
+                    // TODO: Hide this message when no connection but some cache results still visible
                     errorMessage.setVisibility(View.VISIBLE);
                     Snackbar.make(coordinatorLayout, "No Network connection. Please try again.",
                             Snackbar.LENGTH_LONG).show();
@@ -185,11 +193,13 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     @Override
     public void onRefreshConnection() {
-        new RetrieveNetworkConnectivity().execute();
+        Log.d(TAG, "onRefreshConnection is now triggered");
+        setAppBarVisible();
+        new RetrieveNetworkConnectivity(this, this).execute();
 
     }
 
-    private synchronized void refreshArtworks() {
+    public synchronized void refreshArtworks() {
 
         // Setup the RecyclerView
         setRecyclerView();
@@ -205,18 +215,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
             }
         });
 
-        // Call submitList() method of the PagedListAdapter when a new page is available
-        /*mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Artwork> artworks) {
-                if (artworks != null) {
-                    mPagedListAdapter.submitList(null);
-                    // When a new page is available, call submitList() method of the PagedListAdapter
-                    mPagedListAdapter.submitList(artworks);
-                }
-            }
-        });*/
-
         // Setup the Adapter on the RecyclerView
         artworksRv.setAdapter(mPagedListAdapter);
     }
@@ -229,8 +227,16 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         // Send initial screen screen view hit.
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+        // Show the AppBarLayout every time after resume
+        setAppBarVisible();
+
         // Refresh list if there is an internet connection
-        refreshArtworks();
+        //refreshArtworks();
+    }
+
+    private void setAppBarVisible() {
+        // Set the AppBarLayout to expanded
+        appBarLayout.setExpanded(true, true);
     }
 
     @Override
@@ -253,11 +259,24 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                 startActivity(intent);
                 return true;
 
+            case R.id.action_refresh:
+                // Refresh the list if there is connectivity
+                refreshArtworks();
+
+                return true;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void showRefreshResults(String resultMessage) {
+        // Show the AppBar so that the Refresh icon be visible!!
+        setAppBarVisible();
+        Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
+        refreshArtworks();
     }
 
 
@@ -267,42 +286,64 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
      * Note: It's not ideal in this case, because it's being destroyed with the Lifecylce of the Activity,
      * but it demonstrate a use case of AsyncTask that is needed for passing the Rubrics fro Capstone Stage 2
      */
-    private class RetrieveNetworkConnectivity extends AsyncTask<String, Void, Boolean> {
+    private static class RetrieveNetworkConnectivity extends AsyncTask<String, Void, String> {
 
-        //private WeakReference<MainActivity> mAppReference;
-        //private CoordinatorLayout mCoordinatorLayout;
+        private WeakReference<MainActivity> mContext;
+        private RefreshList mListener;
 
+        boolean flag = false;
         private Exception mException;
 
-        public RetrieveNetworkConnectivity() {
-            //mAppReference = new WeakReference<>(context);
-            //mCoordinatorLayout = coordinatorLayout;
+
+        private RetrieveNetworkConnectivity(MainActivity context, RefreshList refreshList) {
+            mContext = new WeakReference<>(context);
+            mListener = refreshList;
         }
 
         @Override
-        protected Boolean doInBackground(String... urls) {
+        protected String doInBackground(String... result) {
+
+            String snackMessage;
             try {
                 boolean isConnected = ConnectivityUtils.isConnected();
                 if (isConnected) {
+                    flag = true;
+                    Log.d(TAG, "doInBackground, network=true ");
 
-                    Snackbar.make(coordinatorLayout, "All good with your Network connection!",
-                            Snackbar.LENGTH_LONG).show();
+                    snackMessage = "All good with your Network connection!";
 
-                    // Refresh the list of artworks here
-                    refreshArtworks();
-
-                    return true;
+                    return snackMessage;
                 } else {
-                    Snackbar.make(coordinatorLayout, "No Network connection!",
-                            Snackbar.LENGTH_LONG).show();
+                    flag = false;
+                    Log.d(TAG, "doInBackground, network= false");
 
-                    return false;
+                    snackMessage = "No Network connection!";
+
+                    return snackMessage;
                 }
             } catch (Exception e) {
                 this.mException = e;
                 return null;
             }
+        }
 
+        @Override
+        protected void onPostExecute(String result) {
+            if (mListener != null) {
+                if (flag) {
+                    // Show a message to the user there is an internet connection
+                    mListener.showRefreshResults(result);
+
+                    Log.d(TAG, "onPostExecute called with connectivity ON");
+
+                } else {
+                    // Show a message to the user there is No internet connection
+                    mListener.showRefreshResults(result);
+
+                    Log.d(TAG, "onPostExecute called with NO connectivity");
+                }
+            }
         }
     }
+
 }
