@@ -44,12 +44,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.artworksMainActivity.MainActivity" />
         </activity>
-        <activity android:name=".ui.FavDetailActivity"
+        <activity
+            android:name=".ui.FavDetailActivity"
             android:parentActivityName=".ui.favoriteArtworks.FavArtworksActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.favoriteArtworks.FavArtworksActivity" />
         </activity>
+
+        <receiver android:name=".ArtPlaceWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/art_place_widget_info" />
+        </receiver>
+        <service android:name=".FavoritesWidgetService" />
     </application>
 
 </manifest>

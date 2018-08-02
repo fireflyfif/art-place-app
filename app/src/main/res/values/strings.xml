@@ -6,4 +6,6 @@
     <string name="empty_msg">No favorite items found. \nAdd your favorite artworks!</string>
     <string name="delete_all">Delete All</string>
     <string name="favorites_title">Favorites</string>
+    <string name="appwidget_text">No favorite artworks saved.</string>
+    <string name="add_widget">Add widget</string>
 </resources>

@@ -57,7 +57,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
-import com.example.android.artplace.callbacks.RefreshList;
+import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
@@ -74,7 +74,7 @@ import java.lang.ref.WeakReference;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener, RefreshList {
+public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener, SnackMessageListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     }
 
     @Override
-    public void showRefreshResults(String resultMessage) {
+    public void showSnackMessage(String resultMessage) {
         // Show the AppBar so that the Refresh icon be visible!!
         setAppBarVisible();
         Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
@@ -289,15 +289,15 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     private static class RetrieveNetworkConnectivity extends AsyncTask<String, Void, String> {
 
         private WeakReference<MainActivity> mContext;
-        private RefreshList mListener;
+        private SnackMessageListener mListener;
 
         boolean flag = false;
         private Exception mException;
 
 
-        private RetrieveNetworkConnectivity(MainActivity context, RefreshList refreshList) {
+        private RetrieveNetworkConnectivity(MainActivity context, SnackMessageListener snackMessageListener) {
             mContext = new WeakReference<>(context);
-            mListener = refreshList;
+            mListener = snackMessageListener;
         }
 
         @Override
@@ -332,13 +332,13 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
             if (mListener != null) {
                 if (flag) {
                     // Show a message to the user there is an internet connection
-                    mListener.showRefreshResults(result);
+                    mListener.showSnackMessage(result);
 
                     Log.d(TAG, "onPostExecute called with connectivity ON");
 
                 } else {
                     // Show a message to the user there is No internet connection
-                    mListener.showRefreshResults(result);
+                    mListener.showSnackMessage(result);
 
                     Log.d(TAG, "onPostExecute called with NO connectivity");
                 }

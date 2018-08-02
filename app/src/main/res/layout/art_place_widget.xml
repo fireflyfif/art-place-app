@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
   ~ According to Udacity Honor Code we agree that we will not plagiarize (a form of cheating) the work of others. :
   ~ Plagiarism at Udacity can range from submitting a project you didn’t create to copying code into a program without
-  ~ citation. Any action inSize which you misleadingly claim an idea or piece of work as your own when it is not constitutes
+  ~ citation. Any action in which you misleadingly claim an idea or piece of work as your own when it is not constitutes
   ~ plagiarism.
   ~ Read more here: https://udacity.zendesk.com/hc/en-us/articles/360001451091-What-is-plagiarism-
   ~
@@ -14,12 +14,12 @@
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
-  ~ inSize the Software without restriction, including without limitation the rights
+  ~ in the Software without restriction, including without limitation the rights
   ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   ~ copies of the Software, and to permit persons to whom the Software is
   ~ furnished to do so, subject to the following conditions:
   ~
-  ~ The above copyright notice and this permission notice shall be included inSize all
+  ~ The above copyright notice and this permission notice shall be included in all
   ~ copies or substantial portions of the Software.
   ~
   ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -33,19 +33,30 @@
   ~
   -->
 
-<resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#09C"
+    android:padding="@dimen/widget_margin">
 
-    <dimen name="card_view_margin">4dp</dimen>
-    <dimen name="thumbnail_height">150dp</dimen>
-    <dimen name="margin_4dp">4dp</dimen>
-    <dimen name="padding_6dp">6dp</dimen>
-    <dimen name="padding_16dp">16dp</dimen>
-    <dimen name="padding_10dp">10dp</dimen>
+    <TextView
+        android:id="@+id/empty_widget_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="#09C"
+        android:layout_gravity="center"
+        android:contentDescription="@string/appwidget_text"
+        android:text="@string/appwidget_text"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
 
-    <!--
-Refer to App Widget Documentation for margin information
-http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
-    -->
-    <dimen name="widget_margin">8dp</dimen>
-    <dimen name="margin_8dp">8dp</dimen>
-</resources>
+    <ListView
+        android:id="@+id/appwidget_fav_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp" />
+
+</FrameLayout>

@@ -35,6 +35,6 @@
 
 package com.example.android.artplace.callbacks;
 
-public interface RefreshList {
-    void showRefreshResults(String resultMessage);
+public interface SnackMessageListener {
+    void showSnackMessage(String resultMessage);
 }

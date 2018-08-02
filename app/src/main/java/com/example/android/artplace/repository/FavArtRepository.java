@@ -39,12 +39,15 @@ import android.app.Application;
 import android.arch.paging.DataSource;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.ArtworksDatabase;
 import com.example.android.artplace.database.dao.FavArtworksDao;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
+
+import java.util.List;
 
 
 public class FavArtRepository {
@@ -72,6 +75,10 @@ public class FavArtRepository {
         return INSTANCE;
     }
 
+    public List<FavoriteArtworks> getFavArtworksList() {
+        return mFavArtworksDao.allArtworks();
+    }
+
     public DataSource.Factory<Integer, FavoriteArtworks> getAllFavArtworks() {
 
         return mFavArtworksDao.getAllArtworks();
@@ -89,7 +96,7 @@ public class FavArtRepository {
     }
 
     // Delete all list of favorite artworks
-    // TODO: Create a warning dialog for the user before allowing them to delete all data
+    // Create a warning dialog for the user before allowing them to delete all data
     public void deleteAllItems() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override

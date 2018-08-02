@@ -15,6 +15,7 @@ android {
                 (System.getenv('TOKEN') ?: "\"\"")
         buildConfigField "String", "TOKEN", apiToken
 
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
