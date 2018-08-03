@@ -40,12 +40,15 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class ArtPlaceWidget extends AppWidgetProvider {
+
+    private static final String TAG = ArtPlaceWidget.class.getSimpleName();
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -54,6 +57,8 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.art_place_widget);
         //views.setTextViewText(R.id.empty_widget_text, widgetText);
+
+        AppWidgetManager.getInstance(context);
 
         // Setup the intent to point to the FavoritesWidgetService
         Intent intent = new Intent(context, FavoritesWidgetService.class);
@@ -67,6 +72,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         // Set the Remote Adapter to the ListView
         views.setRemoteAdapter(R.id.appwidget_fav_list, intent);
 
+        // Set empty view
         views.setEmptyView(R.id.appwidget_fav_list, R.id.empty_widget_text);
 
         // Instruct the widget manager to update the widget
@@ -77,6 +83,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.d(TAG, "Widget: onUpdate called");
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
@@ -86,11 +93,19 @@ public class ArtPlaceWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
+        Log.d(TAG, "Widget: onEnabled called");
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        Log.d(TAG, "Widget: onDisabled called");
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "Widget: onReceive called");
+        super.onReceive(context, intent);
     }
 }
 

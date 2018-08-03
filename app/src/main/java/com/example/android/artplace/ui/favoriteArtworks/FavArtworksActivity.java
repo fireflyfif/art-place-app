@@ -72,6 +72,9 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -170,6 +173,11 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 Log.d(TAG, "Number of fav artworks: " + favoriteArtworks);
             }
         });
+    }
+
+    public void getFavListForWidget() {
+        List<FavoriteArtworks> favWidgetList;
+        favWidgetList = mFavArtworksViewModel.getFavListForWidget();
     }
 
     private void deleteItemBySwiping() {

@@ -36,7 +36,6 @@
 package com.example.android.artplace;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -59,32 +58,34 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
     @Override
     public void onCreate() {
-
+        Log.d(TAG, "Widget: onCreate triggered now");
     }
 
     @Override
     public void onDataSetChanged() {
+        Log.d(TAG, "Widget: onDataSetChanged triggered now");
 
-        // Get the data here
-        List<FavoriteArtworks> favList = FavArtRepository.getInstance(mApplication).getFavArtworksList();
+        // Get the data here from the Repository on a background thread
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mFavList = FavArtRepository.getInstance(mApplication).getFavArtworksList();
 
-        if (favList == null) {
-            return;
-        }
-        Log.d(TAG, "Widget: Get the fav list: " + favList.size());
+                Log.d(TAG, "Widget: Get the fav list: " + mFavList.size());
+            }
+        });
 
-        mFavList = favList;
     }
 
     @Override
     public void onDestroy() {
-
+        Log.d(TAG, "Widget: onDestroy triggered now");
     }
 
     @Override
     public int getCount() {
         if (mFavList != null) {
-            Log.d(TAG, "Widget: Get the fav list: " + mFavList.size());
+            Log.d(TAG, "Widget: getCount the fav list: " + mFavList.size());
             return mFavList.size();
         }
         return 0;
@@ -92,6 +93,12 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
     @Override
     public RemoteViews getViewAt(int position) {
+
+        Log.d(TAG, "Widget: getViewAt triggered now");
+
+        if (mFavList == null || mFavList.size() > 0) {
+            return null;
+        }
 
         RemoteViews views = new RemoteViews(mApplication.getPackageName(),
                 R.layout.widget_fav_item);
@@ -113,6 +120,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         Log.d(TAG, "Widget: Get the category: " + categoryString);
 
         return views;
+
     }
 
     @Override

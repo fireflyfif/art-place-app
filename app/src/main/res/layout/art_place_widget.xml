@@ -49,6 +49,7 @@
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
         android:textColor="#ffffff"
+        android:visibility="gone"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 

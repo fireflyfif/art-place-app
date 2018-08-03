@@ -46,6 +46,8 @@ import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
 
+import java.util.List;
+
 public class FavArtworksViewModel extends AndroidViewModel {
 
     private static final String TAG = FavArtworksViewModel.class.getSimpleName();
@@ -81,6 +83,10 @@ public class FavArtworksViewModel extends AndroidViewModel {
 
     public LiveData<PagedList<FavoriteArtworks>> getFavArtworkList() {
         return mFavArtworkList;
+    }
+
+    public List<FavoriteArtworks> getFavListForWidget() {
+        return mRepository.getFavArtworksList();
     }
 
     public LiveData<PagedList<FavoriteArtworks>> refreshFavArtworkList(Application application) {

@@ -61,7 +61,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/art_place_widget_info" />
         </receiver>
-        <service android:name=".FavoritesWidgetService" />
+
+        <service
+            android:name=".FavoritesWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>
