@@ -36,13 +36,16 @@
 package com.example.android.artplace;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
@@ -96,7 +99,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
         Log.d(TAG, "Widget: getViewAt triggered now");
 
-        if (mFavList == null || mFavList.size() > 0) {
+        if (mFavList == null || mFavList.size() < 0) {
             return null;
         }
 
@@ -118,6 +121,20 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         String categoryString = mFavList.get(position).getArtworkCategory();
         views.setTextViewText(R.id.widget_category, categoryString);
         Log.d(TAG, "Widget: Get the category: " + categoryString);
+
+        String thumbnailString = mFavList.get(position).getArtworkThumbnailPath();
+        try {
+            Bitmap bitmap = Picasso.get()
+                    .load(thumbnailString)
+                    .resize(200, 200)
+                    .centerCrop()
+                    .error(R.mipmap.ic_launcher).get();
+
+            views.setImageViewBitmap(R.id.widget_thumbnail, bitmap);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return views;
 

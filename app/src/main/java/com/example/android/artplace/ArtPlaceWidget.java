@@ -37,6 +37,7 @@ package com.example.android.artplace;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -50,19 +51,15 @@ public class ArtPlaceWidget extends AppWidgetProvider {
 
     private static final String TAG = ArtPlaceWidget.class.getSimpleName();
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-
-        //CharSequence widgetText = context.getString(R.string.appwidget_text);
+    private static RemoteViews getFavArtworks(Context context) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.art_place_widget);
-        //views.setTextViewText(R.id.empty_widget_text, widgetText);
 
         AppWidgetManager.getInstance(context);
 
         // Setup the intent to point to the FavoritesWidgetService
         Intent intent = new Intent(context, FavoritesWidgetService.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
         // When intents are compared, the extras are ignored, so we need to embed the extras
         // into the data so that the extras will not be ignored.
@@ -74,6 +71,33 @@ public class ArtPlaceWidget extends AppWidgetProvider {
 
         // Set empty view
         views.setEmptyView(R.id.appwidget_fav_list, R.id.empty_widget_text);
+
+        return views;
+    }
+
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId) {
+
+        //CharSequence widgetText = context.getString(R.string.appwidget_text);
+        // Construct the RemoteViews object
+        RemoteViews views = getFavArtworks(context);
+
+//        AppWidgetManager.getInstance(context);
+//
+//        // Setup the intent to point to the FavoritesWidgetService
+//        Intent intent = new Intent(context, FavoritesWidgetService.class);
+//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+//
+//        // When intents are compared, the extras are ignored, so we need to embed the extras
+//        // into the data so that the extras will not be ignored.
+//        // source: https://android.googlesource.com/platform/development/+/master/samples/StackWidget/src/com/example/android/stackwidget/StackWidgetProvider.java
+//        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+//
+//        // Set the Remote Adapter to the ListView
+//        views.setRemoteAdapter(R.id.appwidget_fav_list, intent);
+//
+//        // Set empty view
+//        views.setEmptyView(R.id.appwidget_fav_list, R.id.empty_widget_text);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -105,7 +129,24 @@ public class ArtPlaceWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Widget: onReceive called");
-        super.onReceive(context, intent);
+
+        if (intent != null) {
+
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+
+            int[] appWidgetId = manager.getAppWidgetIds(new ComponentName(context.getApplicationContext(),
+                    ArtPlaceWidget.class));
+
+            RemoteViews views = getFavArtworks(context);
+
+            // Instruct the widget manager to update the widget
+            manager.updateAppWidget(appWidgetId, views);
+            manager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_fav_list);
+            onUpdate(context, manager, appWidgetId);
+
+        }
+
+        //super.onReceive(context, intent);
     }
 }
 
