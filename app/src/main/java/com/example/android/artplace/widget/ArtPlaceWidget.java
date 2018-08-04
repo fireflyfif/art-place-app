@@ -71,7 +71,6 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
         int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 
-        //CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
         RemoteViews views = getGridFavArtworks(context, appWidgetId);;
         /*if (width < 300) {
@@ -165,6 +164,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
                         context.getApplicationContext(), ArtPlaceWidget.class));
 
                 int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+                Log.d(TAG, "Current view Index:" + viewIndex);
 
                 RemoteViews views = getGridFavArtworks(context, appWidgetId[viewIndex]);
 

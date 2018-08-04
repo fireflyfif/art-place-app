@@ -107,7 +107,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
         Log.d(TAG, "Widget: getViewAt triggered now");
 
-        if (mFavList == null || mFavList.size() < 0) {
+        if (mFavList == null || mFavList.size() == 0) {
             return null;
         }
 
@@ -130,6 +130,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         try {
             Bitmap bitmap = Picasso.get()
                     .load(thumbnailString)
+                    .placeholder(R.drawable.movie_video_02)
                     .resize(300, 300)
                     .centerCrop()
                     .error(R.mipmap.ic_launcher).get();
