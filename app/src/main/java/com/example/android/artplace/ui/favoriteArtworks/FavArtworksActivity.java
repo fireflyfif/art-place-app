@@ -82,7 +82,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
     private static final String TAG = FavArtworksActivity.class.getSimpleName();
 
-    private static final String ARTWORK_ID_KEY = "artwork_id";
+    public static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
     private static final String ARTWORK_ARTIST_KEY = "artwork_artist";
     private static final String ARTWORK_CATEGORY_KEY = "artwork_category";

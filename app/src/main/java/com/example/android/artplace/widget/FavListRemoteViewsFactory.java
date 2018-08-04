@@ -33,14 +33,19 @@
  *
  */
 
-package com.example.android.artplace;
+package com.example.android.artplace.widget;
 
 import android.app.Application;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.example.android.artplace.AppExecutors;
+import com.example.android.artplace.R;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.squareup.picasso.Picasso;
@@ -54,9 +59,12 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
     private List<FavoriteArtworks> mFavList;
     private Application mApplication;
+    private int mAppWidgetId;
 
-    public FavListRemoteViewsFactory(Application application){
+    public FavListRemoteViewsFactory(Application application, Intent intent){
         mApplication = application;
+        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
@@ -106,27 +114,23 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         RemoteViews views = new RemoteViews(mApplication.getPackageName(),
                 R.layout.widget_fav_item);
 
-        String titleString = mFavList.get(position).getArtworkTitle();
-        views.setTextViewText(R.id.widget_title, titleString);
-        Log.d(TAG, "Widget: Get the title: " + titleString);
+        String idString = mFavList.get(position).getArtworkId();
+        Log.d(TAG, "Widget: Get the id: " + idString);
 
-        String artistString = mFavList.get(position).getArtworkSlug();
-        views.setTextViewText(R.id.widget_artist, artistString);
-        Log.d(TAG, "Widget: Get the artist: " + artistString);
+        Bundle extras = new Bundle();
+        extras.putInt(ArtPlaceWidget.EXTRA_ITEM, position);
 
-        String dateString = mFavList.get(position).getArtworkDate();
-        views.setTextViewText(R.id.widget_date, dateString);
-        Log.d(TAG, "Widget: Get the date: " + dateString);
-
-        String categoryString = mFavList.get(position).getArtworkCategory();
-        views.setTextViewText(R.id.widget_category, categoryString);
-        Log.d(TAG, "Widget: Get the category: " + categoryString);
+        Intent fillIntent = new Intent();
+        fillIntent.putExtras(extras);
+        views.setOnClickFillInIntent(R.id.widget_thumbnail, fillIntent);
 
         String thumbnailString = mFavList.get(position).getArtworkThumbnailPath();
+        // Set the thumbnail on the widget view
+        // SO post: https://stackoverflow.com/a/27851642/8132331
         try {
             Bitmap bitmap = Picasso.get()
                     .load(thumbnailString)
-                    .resize(200, 200)
+                    .resize(300, 300)
                     .centerCrop()
                     .error(R.mipmap.ic_launcher).get();
 

@@ -52,9 +52,12 @@
                 android:value=".ui.favoriteArtworks.FavArtworksActivity" />
         </activity>
 
-        <receiver android:name=".ArtPlaceWidget">
+        <receiver android:name=".widget.ArtPlaceWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
             </intent-filter>
 
             <meta-data
@@ -63,7 +66,8 @@
         </receiver>
 
         <service
-            android:name=".FavoritesWidgetService"
+            android:name=".widget.FavoritesWidgetService"
+            android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>

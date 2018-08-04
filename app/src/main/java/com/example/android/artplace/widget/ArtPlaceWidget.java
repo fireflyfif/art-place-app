@@ -33,16 +33,27 @@
  *
  */
 
-package com.example.android.artplace;
+package com.example.android.artplace.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.example.android.artplace.R;
+import com.example.android.artplace.ui.FavDetailActivity;
+import com.example.android.artplace.ui.artworksMainActivity.MainActivity;
+import com.example.android.artplace.ui.favoriteArtworks.FavArtworksActivity;
+
+import java.util.Objects;
 
 /**
  * Implementation of App Widget functionality.
@@ -50,8 +61,37 @@ import android.widget.RemoteViews;
 public class ArtPlaceWidget extends AppWidgetProvider {
 
     private static final String TAG = ArtPlaceWidget.class.getSimpleName();
+    public static final String EXTRA_ITEM = "com.example.android.artplace.widget.EXTRA_ITEM";
 
-    private static RemoteViews getFavArtworks(Context context) {
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId) {
+
+        Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+
+        //CharSequence widgetText = context.getString(R.string.appwidget_text);
+        // Construct the RemoteViews object
+        RemoteViews views = getGridFavArtworks(context, appWidgetId);;
+        /*if (width < 300) {
+            views = getSingleArtworkRemoteView(context, imgRes, artworkId);
+        } else {
+            views = getGridFavArtworks(context);
+        }*/
+
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_fav_grid);
+    }
+
+    /**
+     * Creates the RemoteViews to be displayed in the GridView mode widget
+     * @param context The context
+     * @return The REmoteViews of the GridView mode widget
+     */
+    private static RemoteViews getGridFavArtworks(Context context, int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.art_place_widget);
 
@@ -59,7 +99,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
 
         // Setup the intent to point to the FavoritesWidgetService
         Intent intent = new Intent(context, FavoritesWidgetService.class);
-        //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
         // When intents are compared, the extras are ignored, so we need to embed the extras
         // into the data so that the extras will not be ignored.
@@ -67,44 +107,28 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
         // Set the Remote Adapter to the ListView
-        views.setRemoteAdapter(R.id.appwidget_fav_list, intent);
+        views.setRemoteAdapter(R.id.appwidget_fav_grid, intent);
+
+        Intent favIntent = new Intent(context, FavArtworksActivity.class);
+        favIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        favIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, favIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.appwidget_fav_grid, pendingIntent);
 
         // Set empty view
-        views.setEmptyView(R.id.appwidget_fav_list, R.id.empty_widget_text);
+        views.setEmptyView(R.id.appwidget_fav_grid, R.id.empty_widget_text);
+
+        Intent mainIntent = new Intent(context, MainActivity.class);
+        PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.empty_widget_text, mainPendingIntent);
 
         return views;
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
 
-        //CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-        RemoteViews views = getFavArtworks(context);
-
-//        AppWidgetManager.getInstance(context);
-//
-//        // Setup the intent to point to the FavoritesWidgetService
-//        Intent intent = new Intent(context, FavoritesWidgetService.class);
-//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-//
-//        // When intents are compared, the extras are ignored, so we need to embed the extras
-//        // into the data so that the extras will not be ignored.
-//        // source: https://android.googlesource.com/platform/development/+/master/samples/StackWidget/src/com/example/android/stackwidget/StackWidgetProvider.java
-//        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-//
-//        // Set the Remote Adapter to the ListView
-//        views.setRemoteAdapter(R.id.appwidget_fav_list, intent);
-//
-//        // Set empty view
-//        views.setEmptyView(R.id.appwidget_fav_list, R.id.empty_widget_text);
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_fav_list);
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "Widget: onUpdate called");
@@ -112,7 +136,9 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+
     }
+
 
     @Override
     public void onEnabled(Context context) {
@@ -126,27 +152,30 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         Log.d(TAG, "Widget: onDisabled called");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Widget: onReceive called");
 
         if (intent != null) {
+            if (Objects.requireNonNull(intent.getAction()).equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+                AppWidgetManager manager = AppWidgetManager.getInstance(context);
 
-            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                int[] appWidgetId = manager.getAppWidgetIds(new ComponentName(
+                        context.getApplicationContext(), ArtPlaceWidget.class));
 
-            int[] appWidgetId = manager.getAppWidgetIds(new ComponentName(context.getApplicationContext(),
-                    ArtPlaceWidget.class));
+                int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
 
-            RemoteViews views = getFavArtworks(context);
+                RemoteViews views = getGridFavArtworks(context, appWidgetId[viewIndex]);
 
-            // Instruct the widget manager to update the widget
-            manager.updateAppWidget(appWidgetId, views);
-            manager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_fav_list);
-            onUpdate(context, manager, appWidgetId);
+                // Instruct the widget manager to update the widget
+                manager.updateAppWidget(appWidgetId, views);
+                manager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_fav_grid);
 
+                onUpdate(context, manager, appWidgetId);
+            }
         }
 
-        //super.onReceive(context, intent);
     }
 }
 

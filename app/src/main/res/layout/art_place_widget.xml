@@ -36,15 +36,20 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     android:padding="@dimen/widget_margin">
+
+    <GridView
+        android:id="@+id/appwidget_fav_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:numColumns="3"/>
 
     <TextView
         android:id="@+id/empty_widget_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@android:color/white"
         android:layout_gravity="center"
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
@@ -53,11 +58,5 @@
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 
-    <ListView
-        android:id="@+id/appwidget_fav_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp" />
 
 </FrameLayout>
