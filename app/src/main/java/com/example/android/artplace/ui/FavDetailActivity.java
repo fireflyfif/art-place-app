@@ -35,22 +35,32 @@
 
 package com.example.android.artplace.ui;
 
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.postprocessors.IterativeBoxBlurPostProcessor;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.imagepipeline.request.Postprocessor;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class FavDetailActivity extends AppCompatActivity {
 
@@ -85,20 +95,31 @@ public class FavDetailActivity extends AppCompatActivity {
     TextView favMedium;
     @BindView(R.id.fav_detail_museum)
     TextView favMuseum;
+    @BindView(R.id.blurry_image)
+    SimpleDraweeView blurryImage;
+
+    private Postprocessor mPostprocessor;
+    private ImageRequest mImageRequest;
+    private PipelineDraweeController mController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Fresco
+        Fresco.initialize(this);
         setContentView(R.layout.activity_fav_detail);
 
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
-        // TODO: Add the parent to the Manifest
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        // Hide the title on the CollapsingToolbar first
+        collapsingToolbarLayout.setTitle("");
 
         if (getIntent().getExtras() != null) {
 
@@ -120,11 +141,53 @@ public class FavDetailActivity extends AppCompatActivity {
             favMuseum.setText(favMuseumString);
             favCategory.setText(favCategoryString);
 
+            // TODO: Add a blur image as a drop image with Picasso
+
+            // Initialize Blur Post Processor
+            // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
+            mPostprocessor = new BlurPostprocessor(this, 50);
+
+            // Instantiate Image Request using Post Processor as parameter
+            mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(favImageString))
+                    .setPostprocessor(mPostprocessor)
+                    .build();
+
+            // Instantiate Controller
+            mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(mImageRequest)
+                    .setOldController(blurryImage.getController())
+                    .build();
+
+            // Load the blurred image
+            blurryImage.setController(mController);
+
             Picasso.get()
                     .load(Uri.parse(favImageString))
                     .error(R.drawable.movie_video_02)
                     .placeholder(R.drawable.movie_video_02)
                     .into(favImage);
+
+            // Show CoordinatorLayout title only when collapsed
+            // source: https://stackoverflow.com/a/32724422/8132331
+            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                int scrollRange = -1;
+                boolean isShown = true;
+
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout.getTotalScrollRange();
+                    }
+
+                    if (scrollRange + verticalOffset == 0) {
+                        collapsingToolbarLayout.setTitle(favTitleString);
+                        isShown = true;
+                    } else if (isShown) {
+                        collapsingToolbarLayout.setTitle("");
+                        isShown = false;
+                    }
+                }
+            });
 
         }
     }

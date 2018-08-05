@@ -34,6 +34,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/network_state_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -45,21 +46,22 @@
         android:id="@+id/network_state_error_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
         android:gravity="center"
         android:padding="@dimen/padding_10dp"
-        android:text="@string/error_msg" />
+        android:text="@string/error_msg"
+        android:textColor="@color/colorPrimaryDarker" />
 
     <ImageButton
         android:id="@+id/network_state_refresh_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_refresh_24dp"
-
-        android:clickable="true"
-        android:focusable="true"
-
         android:background="@android:color/transparent"
-        android:padding="@dimen/padding_10dp"/>
+        android:clickable="true"
+        android:contentDescription="@string/refresh_button_description"
+        android:focusable="true"
+        android:padding="@dimen/padding_10dp"
+        app:srcCompat="@drawable/ic_refresh_24dp" />
 
     <ProgressBar
         android:id="@+id/network_state_pb"

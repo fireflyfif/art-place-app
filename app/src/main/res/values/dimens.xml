@@ -49,4 +49,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="image_height">250dp</dimen>
+    <dimen name="overlap_layout">50dp</dimen>
 </resources>

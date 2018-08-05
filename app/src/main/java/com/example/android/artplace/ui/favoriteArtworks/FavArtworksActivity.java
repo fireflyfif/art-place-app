@@ -42,6 +42,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -137,7 +138,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         mAdapter = new FavArtworkListAdapter(this, this);
         emptyText.setVisibility(View.INVISIBLE);
 
-        // Show the whole list of Favorite Artwirks via the ViewModel
+        // Show the whole list of Favorite Artworks via the ViewModel
         getFavArtworks();
 
         favArtworksRv.setAdapter(mAdapter);

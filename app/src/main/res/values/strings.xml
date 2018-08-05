@@ -10,4 +10,6 @@
     <string name="add_widget">Add widget</string>
     <string name="thumbnail_widget_description">Image of the saved artwork.</string>
     <string name="current_artwork_description">Image of the current artwork.</string>
+    <string name="refresh_button_description">Refresh button for trying to fetch data from network.</string>
+    <string name="detail_image_description">Detail image of the selected artwork.</string>
 </resources>

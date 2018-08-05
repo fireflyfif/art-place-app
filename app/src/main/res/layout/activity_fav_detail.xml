@@ -54,27 +54,36 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/fav_detail_collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            android:theme="@style/PopupMenuStyle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
                 android:fitsSystemWindows="true">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/blurry_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp" />
 
                 <ImageView
                     android:id="@+id/fav_detail_artwork_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:scaleType="centerCrop"
-                    android:fitsSystemWindows="true"/>
+                    android:layout_gravity="center"
+                    android:fitsSystemWindows="true"
+                    android:contentDescription="@string/detail_image_description" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/image_height"
                     android:background="@drawable/photo_background_protection"
                     android:fitsSystemWindows="true"/>
 
@@ -86,7 +95,8 @@
                 android:background="@null"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/PopupMenuStyle"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
@@ -94,7 +104,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:behavior_overlapTop="20dp"
+        app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.CardView
