@@ -51,6 +51,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
@@ -171,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     private void setRecyclerView() {
         int columnCount = getResources().getInteger(R.integer.list_column_count);
+
         StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 

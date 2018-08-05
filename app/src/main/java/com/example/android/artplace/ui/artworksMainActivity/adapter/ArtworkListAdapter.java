@@ -48,6 +48,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,6 +89,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     private int mMutedColor = 0xFF333333;
     private int mLightMutedColor = 0xFFAAAAAA;
+    private int mLastPosition = -1;
 
 
     public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler, OnRefreshListener onRefreshListener) {
@@ -118,7 +121,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         if (holder instanceof ArtworkItemViewHolder) {
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
-                ((ArtworkItemViewHolder)holder).bindTo(getItem(position));
+                ((ArtworkItemViewHolder)holder).bindTo(getItem(position), position);
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
@@ -186,7 +189,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             itemView.setOnClickListener(this);
         }
 
-        private void bindTo(Artwork artwork) {
+        private void bindTo(Artwork artwork, int position) {
 
             // Get the thumbnail from the json tree
             ImageLinks currentImageLink = artwork.getLinks();
@@ -222,6 +225,9 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                             artworkCard.setCardBackgroundColor(generatedMutedColor);
                             //artworkArtist.setTextColor(generatedLightColor);
+
+                            // Set the item animator here
+                            setItemAnimator(itemView, position);
                         }
 
                         @Override
@@ -236,6 +242,15 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             // Get the item position from the PagedList!!!
             Artwork currentArtwork = getItem(getAdapterPosition());
             mClickHandler.onArtworkClick(currentArtwork);
+        }
+    }
+
+    private void setItemAnimator(View view, int position) {
+        if (position > mLastPosition) {
+            Animation animation = AnimationUtils
+                    .loadAnimation(mContext, R.anim.item_animation_from_bottom);
+            view.startAnimation(animation);
+            mLastPosition = position;
         }
     }
 
