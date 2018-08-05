@@ -65,6 +65,7 @@ import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.artistDetailActivity.ArtistDetailActivity;
+import com.example.android.artplace.utils.StringUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -295,7 +296,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         mArtworkThumbnailString = thumbnail.getHref();
 
         // Set the image here
-        // TODO: Handle error cases
         Picasso.get()
                 .load(Uri.parse(mNewArtworkLinkString))
                 .placeholder(R.drawable.movie_video_02)
@@ -310,59 +310,18 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String artworkId = currentArtwork.getId();
             Log.d(TAG, "Artwork id: " + artworkId);
 
-            // The Slug contains the name of the artist as well as the name of the artwork
-            // e.g. "gustav-klimt-der-kuss-the-kiss"
-            String artworkSlug = currentArtwork.getSlug();
-            // Remove all "-" from the slug
-            String newSlugString = artworkSlug.replaceAll("-", " ").toLowerCase();
-            Log.d(TAG, "New Slug string: " + newSlugString);
+            String artistName = StringUtils.getArtistNameFromSlug(currentArtwork);
+            Log.d(TAG, "Name of Artist after extraction: " + artistName);
 
-            // Clear the title of the artwork from any punctuations or characters that are not English letters
-            String newTitleString = mTitleString
-                    .toLowerCase()
-                    .replaceAll("'", "")
-                    .replaceAll("\\.", "")
-                    .replaceAll(",", "")
-                    .replaceAll(":", "")
-                    .replaceAll("-", " ")
-                    .replaceAll("[()]", "");
+            artistNameLink.setText(artistName);
 
-            // Normalize the letters
-            // Tutorial here: https://www.drillio.com/en/2011/java-remove-accent-diacritic/
-            String normalizedTitleString = Normalizer.normalize(newTitleString, Normalizer.Form.NFD);
-            String removedDiacriticsFromTitle = normalizedTitleString.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").trim();
-            Log.d(TAG, "New title without diacritics: " + removedDiacriticsFromTitle);
-
-            Log.d(TAG, "Does the slug contain the artwork title: " + newSlugString.contains(removedDiacriticsFromTitle)
-                    + " \nNew artwork Title: " + removedDiacriticsFromTitle);
-
-
-            // Check if the slug contains the title of the artwork
-            if (newSlugString.contains(removedDiacriticsFromTitle)) {
-
-                mArtistNameFromSlug = newSlugString.replace(removedDiacriticsFromTitle, "");
-
-                Log.d(TAG, "Only name of the artist: " + mArtistNameFromSlug);
-
-                if (mArtistNameFromSlug.equals((""))) {
-                    mArtistNameFromSlug = "N/A";
-                }
-                // Display the name of the Artist
-                artistNameLink.setText(mArtistNameFromSlug);
-            } else {
-                // Display just "Artist"
-                artistNameLink.setText(R.string.artist_name);
-
-            }
-
-            String finalArtistNameFromSlug = mArtistNameFromSlug;
             String finalTitleString = mTitleString;
             artistNameLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     // Check first if the artist name is not null or "N/A"
-                    if ((finalArtistNameFromSlug == null) || (finalArtistNameFromSlug.equals("N/A"))) {
+                    if ((artistName == null) || (artistName.equals("N/A"))) {
                         // Show a message to the user that there is no artist for the selected artwork
                         Snackbar.make(coordinatorLayout, "Sorry, No data for this artist.", Snackbar.LENGTH_LONG).show();
                         return;

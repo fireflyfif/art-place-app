@@ -9,4 +9,5 @@
     <string name="appwidget_text">No favorite artworks saved.</string>
     <string name="add_widget">Add widget</string>
     <string name="thumbnail_widget_description">Image of the saved artwork.</string>
+    <string name="current_artwork_description">Image of the current artwork.</string>
 </resources>

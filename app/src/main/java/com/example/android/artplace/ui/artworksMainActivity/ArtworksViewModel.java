@@ -59,8 +59,9 @@ public class ArtworksViewModel extends ViewModel {
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
     private ArtPlaceApp mAppController;
 
-    private static final int PAGE_SIZE = 30;
-    private static final int INITIAL_SIZE_HINT = 30;
+    private static final int PAGE_SIZE = 20;
+    private static final int INITIAL_SIZE_HINT = 40;
+    private static final int PREFETCH_DISTANCE_HINT = 10;
 
 
     public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
@@ -131,7 +132,7 @@ public class ArtworksViewModel extends ViewModel {
                 // If not set, defaults to page size.
                 //A value of 0 indicates that no list items
                 // will be loaded until they are specifically requested
-                .setPrefetchDistance(INITIAL_SIZE_HINT)
+                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
                 .setPageSize(PAGE_SIZE)
                 .build();
 

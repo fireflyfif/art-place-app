@@ -37,9 +37,14 @@ package com.example.android.artplace.ui.artworksMainActivity.adapter;
 
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +61,11 @@ import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.StringUtils;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.text.Normalizer;
 import java.util.List;
 
 import butterknife.BindView;
@@ -76,6 +84,9 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     private OnArtworkClickListener mClickHandler;
     private OnRefreshListener mRefreshHandler;
+
+    private int mMutedColor = 0xFF333333;
+    private int mLightMutedColor = 0xFFAAAAAA;
 
 
     public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler, OnRefreshListener onRefreshListener) {
@@ -120,11 +131,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     }
 
     private boolean hasExtraRow() {
-        if (mNetworkState != null && mNetworkState != NetworkState.LOADED) {
-            return  true;
-        } else {
-            return false;
-        }
+        return mNetworkState != null && mNetworkState != NetworkState.LOADED;
     }
 
     @Override
@@ -162,12 +169,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     public class ArtworkItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        @BindView(R.id.artwork_cardview)
+        CardView artworkCard;
         @BindView(R.id.artwork_thumbnail)
         ImageView artworkThumbnail;
         @BindView(R.id.artwork_title)
         TextView artworkTitle;
+        @BindView(R.id.artwork_artist)
+        TextView artworkArtist;
 
-        public ArtworkItemViewHolder(View itemView) {
+        private ArtworkItemViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
@@ -175,22 +186,49 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             itemView.setOnClickListener(this);
         }
 
-        public void bindTo(Artwork artwork) {
+        private void bindTo(Artwork artwork) {
 
             // Get the thumbnail from the json tree
             ImageLinks currentImageLink = artwork.getLinks();
             Thumbnail currentThumbnail = currentImageLink.getThumbnail();
 
             String artworkThumbnailString = currentThumbnail.getHref();
-            String artworkTitleString = artwork.getTitle();
 
+            // Get the title from the response
+            String artworkTitleString = artwork.getTitle();
             artworkTitle.setText(artworkTitleString);
 
+            // Extract the Artist name from the Slug
+            String artistNameString = StringUtils.getArtistNameFromSlug(artwork);
+            Log.d(TAG, "Name of the artist: " + artistNameString);
+            artworkArtist.setText(artistNameString);
+
+            // Set the image with Picasso
             Picasso.get()
                     .load(Uri.parse(artworkThumbnailString))
                     .placeholder(R.drawable.movie_video_02)
                     .error(R.drawable.movie_video_02)
-                    .into(artworkThumbnail);
+                    .into(artworkThumbnail, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                            Bitmap bitmap = ((BitmapDrawable)
+                                    artworkThumbnail.getDrawable()).getBitmap();
+                            artworkThumbnail.setImageBitmap(bitmap);
+
+                            Palette palette = Palette.from(bitmap).generate();
+                            int generatedMutedColor = palette.getMutedColor(mMutedColor);
+                            int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+
+                            artworkCard.setCardBackgroundColor(generatedMutedColor);
+                            //artworkArtist.setTextColor(generatedLightColor);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
         }
 
         @Override
@@ -212,13 +250,13 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         @BindView(R.id.network_state_refresh_bt)
         ImageButton refreshButton;
 
-        public NetworkStateItemViewHolder(View itemView) {
+        private NetworkStateItemViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindView(NetworkState networkState) {
+        private void bindView(NetworkState networkState) {
 
             if (networkState != null &&
                     networkState.getStatus() == NetworkState.Status.RUNNING) {
@@ -235,7 +273,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             } else if (networkState != null &&
                     networkState.getStatus() == NetworkState.Status.FAILED) {
                 networkLayout.setVisibility(View.VISIBLE);
-                //networkLayout.setOnClickListener(this);
 
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setVisibility(View.VISIBLE);

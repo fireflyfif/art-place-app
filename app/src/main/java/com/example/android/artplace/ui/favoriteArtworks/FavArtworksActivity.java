@@ -175,11 +175,6 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         });
     }
 
-    public void getFavListForWidget() {
-        List<FavoriteArtworks> favWidgetList;
-        favWidgetList = mFavArtworksViewModel.getFavListForWidget();
-    }
-
     private void deleteItemBySwiping() {
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -199,7 +194,6 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 // Delete the item by swiping it
                 mFavArtworksViewModel.deleteItem(itemId);
                 Snackbar.make(coordinatorLayout, "This item was deleted!", Snackbar.LENGTH_SHORT).show();
-                //Toast.makeText(FavArtworksActivity.this, "This item was deleted!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(favArtworksRv);
     }
