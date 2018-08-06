@@ -73,11 +73,6 @@ public class ArtPlaceWidget extends AppWidgetProvider {
 
         // Construct the RemoteViews object
         RemoteViews views = getGridFavArtworks(context, appWidgetId);;
-        /*if (width < 300) {
-            views = getSingleArtworkRemoteView(context, imgRes, artworkId);
-        } else {
-            views = getGridFavArtworks(context);
-        }*/
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);

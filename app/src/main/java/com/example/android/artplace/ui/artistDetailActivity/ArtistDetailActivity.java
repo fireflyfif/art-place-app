@@ -113,7 +113,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // TODO: Get the ID from the clicked artwork from the received Intent
+        // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTWORK_ID_KEY) || getIntent().hasExtra(ARTWORK_TITLE_KEY)) {
                 String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);

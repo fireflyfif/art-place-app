@@ -19,4 +19,5 @@
     <string name="detail_image_artist_description">Detail image of the clicked Artist.</string>
     <string name="hometown_label">Hometown</string>
     <string name="nationality_label">Nationality</string>
+    <string name="image_thumbnail_description">Artwork image thumbnail from favorites.</string>
 </resources>

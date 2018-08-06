@@ -173,28 +173,6 @@ public class FavDetailActivity extends AppCompatActivity {
                     .placeholder(R.drawable.placeholder)
                     .into(favImage);
 
-            // Show CoordinatorLayout title only when collapsed
-            // source: https://stackoverflow.com/a/32724422/8132331
-            /*appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                int scrollRange = -1;
-                boolean isShown = true;
-
-                @Override
-                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    if (scrollRange == -1) {
-                        scrollRange = appBarLayout.getTotalScrollRange();
-                    }
-
-                    if (scrollRange + verticalOffset == 0) {
-                        collapsingToolbarLayout.setTitle(favTitleString);
-                        isShown = true;
-                    } else if (isShown) {
-                        collapsingToolbarLayout.setTitle("");
-                        isShown = false;
-                    }
-                }
-            });*/
-
         }
     }
 }
