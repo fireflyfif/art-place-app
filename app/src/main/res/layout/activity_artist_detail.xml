@@ -66,18 +66,20 @@
                 <ImageView
                     android:id="@+id/artist_image"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:scaleType="centerCrop"
+                    android:layout_height="@dimen/image_height"
+                    android:contentDescription="@string/detail_image_artist_description"
                     android:fitsSystemWindows="true"
-                    android:src="@color/colorPrimaryDark" />
+                    android:scaleType="centerCrop"
+                    android:src="@color/colorPrimary" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="@dimen/image_height"
                     android:background="@drawable/photo_background_protection"
                     android:fitsSystemWindows="true" />
 
             </FrameLayout>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_artist"
                 android:layout_width="match_parent"
@@ -93,52 +95,190 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:behavior_overlapTop="20dp"
+        app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:contentPadding="10dp">
+            android:layout_marginBottom="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginLeft="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            android:layout_marginStart="@dimen/margin_8dp"
+            app:cardBackgroundColor="@android:color/white">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/artist_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/artwork_title_clicked"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/padding_16dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="@color/colorPrimaryDark"
+                    app:fontFamily="sans-serif-condensed"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="The Kiss" />
+
+                <TextView
+                    android:id="@+id/artist_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_8dp"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:layout_marginStart="@dimen/margin_8dp"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/padding_10dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    android:textColor="@color/colorPrimary"
+                    app:fontFamily="sans-serif-condensed"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/artwork_title_clicked"
                     tools:text="Gustav Klimt" />
+
+                <View
+                    android:id="@+id/divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginEnd="@dimen/margin_8dp"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:layout_marginStart="@dimen/margin_8dp"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:background="@color/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_name" />
 
                 <TextView
                     android:id="@+id/artist_lifespan"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_8dp"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:layout_marginStart="@dimen/margin_8dp"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:gravity="center_horizontal"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_1"
                     tools:text="1862 - 1918" />
+
+                <View
+                    android:id="@+id/divider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginEnd="@dimen/margin_24dp"
+                    android:layout_marginLeft="@dimen/margin_24dp"
+                    android:layout_marginRight="@dimen/margin_24dp"
+                    android:layout_marginStart="@dimen/margin_24dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    android:background="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_lifespan" />
 
                 <TextView
                     android:id="@+id/artist_home"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_32dp"
+                    android:layout_marginLeft="@dimen/margin_32dp"
+                    android:layout_marginRight="@dimen/margin_32dp"
+                    android:layout_marginStart="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/hometown_label"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_2"
                     tools:text="Baumgarten, Austria" />
 
                 <TextView
-                    android:id="@+id/artist_location"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/artist_nationality"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_32dp"
+                    android:layout_marginRight="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/artist_home"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_home"
+                    tools:text="Austrian" />
+
+
+                <TextView
+                    android:id="@+id/artist_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/last_margin_bottom"
+                    android:layout_marginEnd="@dimen/margin_32dp"
+                    android:layout_marginRight="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/artist_nationality"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_nationality"
                     tools:text="Vienna, Austria" />
 
                 <TextView
-                    android:id="@+id/artwork_title_clicked"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/hometown_label"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    tools:text="The Kiss" />
+                    android:layout_marginLeft="@dimen/margin_32dp"
+                    android:layout_marginStart="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    android:text="@string/hometown_label"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    app:fontFamily="sans-serif-condensed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_2" />
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/nationality_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_8dp"
+                    android:layout_marginLeft="@dimen/margin_32dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:layout_marginStart="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    android:text="@string/nationality_label"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    app:fontFamily="sans-serif-condensed"
+                    app:layout_constraintEnd_toStartOf="@+id/artist_nationality"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_home" />
+
+                <TextView
+                    android:id="@+id/location_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_16dp"
+                    android:layout_marginLeft="@dimen/margin_32dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:layout_marginStart="@dimen/margin_32dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    android:text="@string/location_label"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    app:fontFamily="sans-serif-condensed"
+                    app:layout_constraintEnd_toStartOf="@+id/artist_location"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/artist_nationality" />
+
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
     </android.support.v4.widget.NestedScrollView>

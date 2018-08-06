@@ -91,6 +91,8 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
     private static final String ARTWORK_DATE_KEY = "artwork_date";
     private static final String ARTWORK_MUSEUM_KEY = "artwork_museum";
     private static final String ARTWORK_IMAGE_KEY = "artwork_image";
+    private static final String ARTWORK_DIMENS_CM_KEY = "artwork_dimens_cm";
+    private static final String ARTWORK_DIMENS_INCH_KEY = "artwork_dimens_inch";
 
     @BindView(R.id.fav_artworks_rv)
     RecyclerView favArtworksRv;
@@ -223,7 +225,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
     @Override
     public void onFavItemClick(FavoriteArtworks favArtworks) {
-        // TODO: Make the Intent to the DetailActivity
+        // Set Intent to the DetailActivity
         Intent favIntent = new Intent(FavArtworksActivity.this, FavDetailActivity.class);
         favIntent.putExtra(ARTWORK_ID_KEY, favArtworks.getId());
         favIntent.putExtra(ARTWORK_IMAGE_KEY, favArtworks.getArtworkImagePath());
@@ -233,6 +235,8 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         favIntent.putExtra(ARTWORK_DATE_KEY, favArtworks.getArtworkDate());
         favIntent.putExtra(ARTWORK_MEDIUM_KEY, favArtworks.getArtworkMedium());
         favIntent.putExtra(ARTWORK_MUSEUM_KEY, favArtworks.getArtworkMuseum());
+        favIntent.putExtra(ARTWORK_DIMENS_INCH_KEY, favArtworks.getArtworkDimensInch());
+        favIntent.putExtra(ARTWORK_DIMENS_CM_KEY, favArtworks.getArtworkDimensCm());
 
         startActivity(favIntent);
     }

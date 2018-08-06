@@ -130,7 +130,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         try {
             Bitmap bitmap = Picasso.get()
                     .load(thumbnailString)
-                    .placeholder(R.drawable.movie_video_02)
+                    .placeholder(R.drawable.placeholder)
                     .resize(300, 300)
                     .centerCrop()
                     .error(R.mipmap.ic_launcher).get();

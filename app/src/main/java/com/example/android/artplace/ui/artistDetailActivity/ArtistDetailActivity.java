@@ -88,6 +88,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistLocation;
     @BindView(R.id.artwork_title_clicked)
     TextView clickedArtworkTitle;
+    @BindView(R.id.artist_nationality)
+    TextView artistNationality;
 
     private ArtistsDetailViewModel mArtistViewModel;
     private Tracker mTracker;
@@ -194,6 +196,13 @@ public class ArtistDetailActivity extends AppCompatActivity {
             artistLocation.setText(artistLocationString);
         } else {
             artistLocation.setText("N/A");
+        }
+
+        if (currentArtist.getNationality() != null) {
+            String artistNationalityString = currentArtist.getNationality();
+            artistNationality.setText(artistNationalityString);
+        } else {
+            artistNationality.setText("N/A");
         }
 
         // Get the list of image versions first

@@ -72,6 +72,8 @@ public class FavDetailActivity extends AppCompatActivity {
     private static final String ARTWORK_DATE_KEY = "artwork_date";
     private static final String ARTWORK_MUSEUM_KEY = "artwork_museum";
     private static final String ARTWORK_IMAGE_KEY = "artwork_image";
+    private static final String ARTWORK_DIMENS_CM_KEY = "artwork_dimens_cm";
+    private static final String ARTWORK_DIMENS_INCH_KEY = "artwork_dimens_inch";
 
     @BindView(R.id.fav_detail_appbar)
     AppBarLayout appBarLayout;
@@ -97,6 +99,10 @@ public class FavDetailActivity extends AppCompatActivity {
     TextView favMuseum;
     @BindView(R.id.blurry_image)
     SimpleDraweeView blurryImage;
+    @BindView(R.id.fav_artwork_dimens_cm)
+    TextView favDimensCm;
+    @BindView(R.id.fav_artwork_dimens_in)
+    TextView favDimensIn;
 
     private Postprocessor mPostprocessor;
     private ImageRequest mImageRequest;
@@ -128,6 +134,8 @@ public class FavDetailActivity extends AppCompatActivity {
             String favCategoryString = getIntent().getStringExtra(ARTWORK_CATEGORY_KEY);
             String favMediumString = getIntent().getStringExtra(ARTWORK_MEDIUM_KEY);
             String favMuseumString = getIntent().getStringExtra(ARTWORK_MUSEUM_KEY);
+            String favDimensInchString = getIntent().getStringExtra(ARTWORK_DIMENS_INCH_KEY);
+            String favDimensCmString = getIntent().getStringExtra(ARTWORK_DIMENS_CM_KEY);
 
             collapsingToolbarLayout.setTitle(favTitleString);
 
@@ -137,6 +145,9 @@ public class FavDetailActivity extends AppCompatActivity {
             favMedium.setText(favMediumString);
             favMuseum.setText(favMuseumString);
             favCategory.setText(favCategoryString);
+            favDimensIn.setText(favDimensInchString);
+            favDimensCm.setText(favDimensCmString);
+
 
             // Initialize Blur Post Processor
             // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf

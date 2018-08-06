@@ -116,7 +116,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         views.setPendingIntentTemplate(R.id.appwidget_fav_grid, pendingIntent);
 
         // Set empty view
-        views.setEmptyView(R.id.appwidget_fav_grid, R.id.empty_widget_text);
+        views.setEmptyView(R.id.appwidget_fav_grid, R.id.empty_msg_for_widget);
 
         Intent mainIntent = new Intent(context, MainActivity.class);
         PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent,

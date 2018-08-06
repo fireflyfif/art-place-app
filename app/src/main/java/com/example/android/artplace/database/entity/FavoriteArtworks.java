@@ -81,17 +81,23 @@ public class FavoriteArtworks {
     @ColumnInfo(name = "museum")
     private String artworkMuseum;
 
-    // Not sure
     @ColumnInfo(name = "thumbnail")
     private String artworkThumbnailPath;
 
     @ColumnInfo(name = "image")
     private String artworkImagePath;
 
+    @ColumnInfo(name = "inch")
+    private String artworkDimensInch;
+
+    @ColumnInfo(name = "cm")
+    private String artworkDimensCm;
+
 
     public FavoriteArtworks(String artworkId, String artworkTitle, String artworkSlug, String artworkCategory,
                             String artworkMedium, String artworkDate, String artworkMuseum,
-                            String artworkThumbnailPath, String artworkImagePath) {
+                            String artworkThumbnailPath, String artworkImagePath, String artworkDimensInch,
+                            String artworkDimensCm) {
         this.artworkId = artworkId;
         this.artworkTitle = artworkTitle;
         this.artworkSlug = artworkSlug;
@@ -101,6 +107,8 @@ public class FavoriteArtworks {
         this.artworkMuseum = artworkMuseum;
         this.artworkThumbnailPath = artworkThumbnailPath;
         this.artworkImagePath = artworkImagePath;
+        this.artworkDimensInch = artworkDimensInch;
+        this.artworkDimensCm = artworkDimensCm;
     }
 
     public int getId() {
@@ -181,5 +189,21 @@ public class FavoriteArtworks {
 
     public void setArtworkImagePath(String artworkImagePath) {
         this.artworkImagePath = artworkImagePath;
+    }
+
+    public String getArtworkDimensInch() {
+        return artworkDimensInch;
+    }
+
+    public void setArtworkDimensInch(String artworkDimensInch) {
+        this.artworkDimensInch = artworkDimensInch;
+    }
+
+    public String getArtworkDimensCm() {
+        return artworkDimensCm;
+    }
+
+    public void setArtworkDimensCm(String artworkDimensCm) {
+        this.artworkDimensCm = artworkDimensCm;
     }
 }

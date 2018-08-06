@@ -135,8 +135,11 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mDateString;
     private String mMuseumString;
     private String mNewArtworkLinkString;
+    private String mNewSquareArtworkLinkString;
     private String mArtistNameFromSlug;
     private String mArtworkThumbnailString;
+    private String mDimensInCmString;
+    private String mDimensInInchString;
 
     private boolean mIsFavorite;
     private Tracker mTracker;
@@ -276,16 +279,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             if (dimensionObject.getCmSize() != null) {
                 CmSize cmSizeObject = dimensionObject.getCmSize();
-                String dimensInCmString = cmSizeObject.getText();
-                dimensCm.setText(dimensInCmString);
+                mDimensInCmString = cmSizeObject.getText();
+                dimensCm.setText(mDimensInCmString);
             } else {
                 dimensCm.setText("N/A");
             }
 
             if (dimensionObject.getInSize() != null) {
                 InSize inSizeObject = dimensionObject.getInSize();
-                String dimensInInchString = inSizeObject.getText();
-                dimensIn.setText(dimensInInchString);
+                mDimensInInchString = inSizeObject.getText();
+                dimensIn.setText(mDimensInInchString);
             } else {
                 dimensIn.setText("N/A");
             }
@@ -293,7 +296,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         List<String> imageVersionList = currentArtwork.getImageVersions();
         // Get the first entry from this list, which corresponds to "large"
-        String versionString = imageVersionList.get(0);
+        String versionLargeString = imageVersionList.get(0);
+        // Get the sixth entry from this list, which corresponds to "square"
+        String versionSquareString = imageVersionList.get(6);
 
         ImageLinks imageLinksObject = currentArtwork.getLinks();
 
@@ -304,9 +309,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Replace the {image_version} from the artworkImgLinkString with
         // the wanted version, e.g. "large"
         mNewArtworkLinkString = artworkImgLinkString
-                .replaceAll("\\{.*?\\}", versionString);
-
+                .replaceAll("\\{.*?\\}", versionLargeString);
         Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
+
+        // Get the first entry from this list, which corresponds to "large"
+        mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}", versionSquareString);
+        Log.d(TAG, "New link to the square image: " + mNewSquareArtworkLinkString);
 
         // Extract the string to thumbnail so that it is saved in favorites
         Thumbnail thumbnail = imageLinksObject.getThumbnail();
@@ -330,9 +338,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Load the blurred image
         blurryImage.setController(mController);
 
-        // Set the image here
+        // Set the square image with Picasso
         Picasso.get()
-                .load(Uri.parse(mNewArtworkLinkString))
+                .load(Uri.parse(mNewSquareArtworkLinkString))
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .into(artworkImage);
@@ -345,10 +353,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String artworkId = currentArtwork.getId();
             Log.d(TAG, "Artwork id: " + artworkId);
 
-            String artistName = StringUtils.getArtistNameFromSlug(currentArtwork);
-            Log.d(TAG, "Name of Artist after extraction: " + artistName);
+            mArtistNameFromSlug = StringUtils.getArtistNameFromSlug(currentArtwork);
+            Log.d(TAG, "Name of Artist after extraction: " + mArtistNameFromSlug);
 
-            artistNameLink.setText(artistName);
+            artistNameLink.setText(mArtistNameFromSlug);
 
             String finalTitleString = mTitleString;
             artistNameLink.setOnClickListener(new View.OnClickListener() {
@@ -356,7 +364,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     // Check first if the artist name is not null or "N/A"
-                    if ((artistName == null) || (artistName.equals("N/A"))) {
+                    if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals("N/A"))) {
                         // Show a message to the user that there is no artist for the selected artwork
                         Snackbar.make(coordinatorLayout, "Sorry, No data for this artist.", Snackbar.LENGTH_LONG).show();
                         return;
@@ -390,11 +398,13 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         switch (tagValue) {
             case (FAV_TAG):
+                // Delete from the db
                 deleteItemFromFav();
                 mFavButton.setTag(NON_FAV_TAG);
                 mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
             case (NON_FAV_TAG):
+                // Add an item to the db
                 addArtworkToFavorites();
                 mFavButton.setTag(FAV_TAG);
                 mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
@@ -429,9 +439,11 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         String artworkMuseum = mMuseumString;
         String artworkThumbnail = mArtworkThumbnailString;
         String artworkImage = mNewArtworkLinkString;
+        String artworkDimensInch = mDimensInInchString;
+        String artworkDimensCm = mDimensInCmString;
 
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
-                artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage);
+                artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage, artworkDimensInch, artworkDimensCm);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
         Snackbar.make(coordinatorLayout, "Item added to favorites", Snackbar.LENGTH_SHORT).show();

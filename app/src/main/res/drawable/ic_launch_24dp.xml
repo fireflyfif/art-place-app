@@ -33,45 +33,12 @@
   ~
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin">
-
-    <GridView
-        android:id="@+id/appwidget_fav_grid"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:numColumns="3" />
-
-    <LinearLayout
-        android:id="@+id/empty_msg_for_widget"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/empty_widget_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/margin_8dp"
-            android:contentDescription="@string/appwidget_text"
-            android:drawableBottom="@drawable/ic_favorite_24dp"
-            android:drawablePadding="@dimen/padding_6dp"
-            android:drawableTint="@color/colorAccent"
-            android:fontFamily="sans-serif-condensed"
-            android:gravity="center"
-            android:padding="@dimen/padding_16dp"
-            android:text="@string/appwidget_text"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/widget_empty_text_size"
-            android:textStyle="italic"
-            android:visibility="visible" />
-
-    </LinearLayout>
-
-</FrameLayout>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#ceb665"
+        android:pathData="M19,19H5V5h7V3H5c-1.11,0 -2,0.9 -2,2v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2v-7h-2v7zM14,3v2h3.59l-9.83,9.83 1.41,1.41L19,6.41V10h2V3h-7z"/>
+</vector>
