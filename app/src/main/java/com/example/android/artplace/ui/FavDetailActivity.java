@@ -118,9 +118,6 @@ public class FavDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Hide the title on the CollapsingToolbar first
-        collapsingToolbarLayout.setTitle("");
-
         if (getIntent().getExtras() != null) {
 
             String favIdString = getIntent().getStringExtra(ARTWORK_ID_KEY);
@@ -141,11 +138,9 @@ public class FavDetailActivity extends AppCompatActivity {
             favMuseum.setText(favMuseumString);
             favCategory.setText(favCategoryString);
 
-            // TODO: Add a blur image as a drop image with Picasso
-
             // Initialize Blur Post Processor
             // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-            mPostprocessor = new BlurPostprocessor(this, 50);
+            mPostprocessor = new BlurPostprocessor(this, 20);
 
             // Instantiate Image Request using Post Processor as parameter
             mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(favImageString))
@@ -163,13 +158,13 @@ public class FavDetailActivity extends AppCompatActivity {
 
             Picasso.get()
                     .load(Uri.parse(favImageString))
-                    .error(R.drawable.movie_video_02)
-                    .placeholder(R.drawable.movie_video_02)
+                    .error(R.drawable.placeholder)
+                    .placeholder(R.drawable.placeholder)
                     .into(favImage);
 
             // Show CoordinatorLayout title only when collapsed
             // source: https://stackoverflow.com/a/32724422/8132331
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            /*appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 int scrollRange = -1;
                 boolean isShown = true;
 
@@ -187,7 +182,7 @@ public class FavDetailActivity extends AppCompatActivity {
                         isShown = false;
                     }
                 }
-            });
+            });*/
 
         }
     }

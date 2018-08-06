@@ -209,8 +209,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             // Set the image with Picasso
             Picasso.get()
                     .load(Uri.parse(artworkThumbnailString))
-                    .placeholder(R.drawable.movie_video_02)
-                    .error(R.drawable.movie_video_02)
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
                     .into(artworkThumbnail, new Callback() {
                         @Override
                         public void onSuccess() {

@@ -153,8 +153,8 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                 String favThumbnailPathString = favArtwork.getArtworkThumbnailPath();
                 Picasso.get()
                         .load(Uri.parse(favThumbnailPathString))
-                        .placeholder(R.drawable.movie_video_02)
-                        .error(R.drawable.movie_video_02)
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
                         .into(favThumbnail);
             }
         }

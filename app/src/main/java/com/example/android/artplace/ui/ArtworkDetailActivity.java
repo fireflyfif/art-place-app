@@ -66,6 +66,12 @@ import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.artistDetailActivity.ArtistDetailActivity;
 import com.example.android.artplace.utils.StringUtils;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.imagepipeline.request.Postprocessor;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -78,6 +84,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
@@ -117,6 +124,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     FloatingActionButton mFavButton;
     @BindView(R.id.adView)
     AdView adView;
+    @BindView(R.id.blurry_image)
+    SimpleDraweeView blurryImage;
 
     private Artwork mArtworkObject;
     private String mArtworkIdString;
@@ -132,9 +141,17 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private boolean mIsFavorite;
     private Tracker mTracker;
 
+    // Variables for Fresco Library
+    private Postprocessor mPostprocessor;
+    private ImageRequest mImageRequest;
+    private PipelineDraweeController mController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Fresco
+        Fresco.initialize(this);
         setContentView(R.layout.activity_artwork_detail);
 
         ButterKnife.bind(this);
@@ -295,11 +312,29 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         Thumbnail thumbnail = imageLinksObject.getThumbnail();
         mArtworkThumbnailString = thumbnail.getHref();
 
+        // Initialize Blur Post Processor
+        // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
+        mPostprocessor = new BlurPostprocessor(this, 20);
+
+        // Instantiate Image Request using Post Processor as parameter
+        mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mNewArtworkLinkString))
+                .setPostprocessor(mPostprocessor)
+                .build();
+
+        // Instantiate Controller
+        mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                .setImageRequest(mImageRequest)
+                .setOldController(blurryImage.getController())
+                .build();
+
+        // Load the blurred image
+        blurryImage.setController(mController);
+
         // Set the image here
         Picasso.get()
                 .load(Uri.parse(mNewArtworkLinkString))
-                .placeholder(R.drawable.movie_video_02)
-                .error(R.drawable.movie_video_02)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
                 .into(artworkImage);
 
         if (imageLinksObject.getArtists() != null) {

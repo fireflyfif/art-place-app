@@ -22,6 +22,21 @@ allprojects {
     }
 }
 
+ext {
+    androidSupportVersion = "27.1.1"
+    constraintVersion = "1.1.2"
+    retrofitVersion = "2.4.0"
+    gsonVersion = "2.8.4"
+    okhttpInterseptorVersion = "3.10.0"
+    androidArchVersion = "1.1.1"
+    picassoVersion = "2.71828"
+    butterknifeVersion = "8.8.1"
+    playServicesAdsVersion = "15.0.1"
+    playServicesAnalyticsVersion = "16.0.1"
+    frescoVersion = "1.10.0"
+    frescoProcessorsVersion = "2.1.0"
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

@@ -214,8 +214,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
         // Handle no image cases with placeholders
         Picasso.get()
                 .load(Uri.parse(newArtistLinkString))
-                .placeholder(R.drawable.movie_video_02)
-                .error(R.drawable.movie_video_02)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
                 .into(artistImage);
 
     }

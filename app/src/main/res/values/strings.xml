@@ -12,4 +12,8 @@
     <string name="current_artwork_description">Image of the current artwork.</string>
     <string name="refresh_button_description">Refresh button for trying to fetch data from network.</string>
     <string name="detail_image_description">Detail image of the selected artwork.</string>
+    <string name="location_label">Location</string>
+    <string name="dimensions_label">Dimensions</string>
+    <string name="medium_label">Medium</string>
+    <string name="category_label">Category</string>
 </resources>
