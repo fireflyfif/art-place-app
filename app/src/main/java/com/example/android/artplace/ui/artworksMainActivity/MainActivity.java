@@ -40,6 +40,7 @@ import android.arch.paging.PagedList;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
+    private static final String SAVE_STATE_ARTWORK_KEY = "save_state_artwork";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -97,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
     private Tracker mTracker;
+
+    private Parcelable recyclerViewState;
 
 
     @Override
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     }
 
     private void setRecyclerView() {
+
         int columnCount = getResources().getInteger(R.integer.list_column_count);
 
         StaggeredGridLayoutManager staggeredGridLayoutManager =
@@ -181,6 +186,19 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         // Set the PagedListAdapter
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this, this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        recyclerViewState = artworksRv.getLayoutManager().onSaveInstanceState();
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        artworksRv.getLayoutManager().onRestoreInstanceState(recyclerViewState);
     }
 
     @Override

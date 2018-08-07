@@ -23,7 +23,7 @@ android {
         config {
             keyAlias 'capstone'
             keyPassword 'udacity'
-            storeFile file("$rootDir/keystore.jks")
+            storeFile file("../keystore.jks")
             storePassword 'udacity'
         }
     }
