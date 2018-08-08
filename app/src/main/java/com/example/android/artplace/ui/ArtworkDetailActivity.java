@@ -37,19 +37,18 @@ package com.example.android.artplace.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
@@ -58,9 +57,9 @@ import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.model.Artworks.ArtistsLink;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.model.Artworks.CmSize;
+import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.Artworks.InSize;
 import com.example.android.artplace.model.Artworks.MainImage;
-import com.example.android.artplace.model.Artworks.Dimensions;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.repository.FavArtRepository;
@@ -79,7 +78,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
-import java.text.Normalizer;
 import java.util.List;
 
 import butterknife.BindView;
@@ -173,7 +171,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Initialize Ads
         // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
         // TODO: Add my own ID
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(this, getString(R.string.admob_id));
 
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -243,35 +241,35 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Title of the artwork: " + mTitleString);
 
         } else {
-            artworkName.setText("N/A");
+            artworkName.setText(R.string.not_applicable);
         }
 
         if (currentArtwork.getMedium() != null) {
             mMediumString = currentArtwork.getMedium();
             artworkMedium.setText(mMediumString);
         } else {
-            artworkMedium.setText("N/A");
+            artworkMedium.setText(R.string.not_applicable);
         }
 
         if (currentArtwork.getCategory() != null) {
             mCategoryString = currentArtwork.getCategory();
             artworkCategory.setText(mCategoryString);
         } else {
-            artworkCategory.setText("N/A");
+            artworkCategory.setText(R.string.not_applicable);
         }
 
         if (currentArtwork.getDate() != null) {
             mDateString = currentArtwork.getDate();
             artworkDate.setText(mDateString);
         } else {
-            artworkDate.setText("N/A");
+            artworkDate.setText(R.string.not_applicable);
         }
 
         if (currentArtwork.getCollectingInstitution() != null) {
             mMuseumString = currentArtwork.getCollectingInstitution();
             artworkMuseum.setText(mMuseumString);
         } else {
-            artworkMuseum.setText("N/A");
+            artworkMuseum.setText(R.string.not_applicable);
         }
 
         if (currentArtwork.getDimensions() != null) {
@@ -282,7 +280,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 mDimensInCmString = cmSizeObject.getText();
                 dimensCm.setText(mDimensInCmString);
             } else {
-                dimensCm.setText("N/A");
+                dimensCm.setText(R.string.not_applicable);
             }
 
             if (dimensionObject.getInSize() != null) {
@@ -290,7 +288,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 mDimensInInchString = inSizeObject.getText();
                 dimensIn.setText(mDimensInInchString);
             } else {
-                dimensIn.setText("N/A");
+                dimensIn.setText(R.string.not_applicable);
             }
         }
 
@@ -364,9 +362,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     // Check first if the artist name is not null or "N/A"
-                    if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals("N/A"))) {
+                    if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals(R.string.not_applicable))) {
                         // Show a message to the user that there is no artist for the selected artwork
-                        Snackbar.make(coordinatorLayout, "Sorry, No data for this artist.", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
                         return;
                     }
 
@@ -421,7 +419,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      */
     private void deleteItemFromFav() {
         FavArtRepository.getInstance(getApplication()).deleteItem(mArtworkIdString);
-        Snackbar.make(coordinatorLayout, "Item removed from the favorites", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_SHORT).show();
         Log.d(TAG, "Delete the item from the db");
     }
 
@@ -446,7 +444,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage, artworkDimensInch, artworkDimensCm);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
-        Snackbar.make(coordinatorLayout, "Item added to favorites", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_SHORT).show();
         Log.d(TAG, "Insert a new item into the db");
     }
 }

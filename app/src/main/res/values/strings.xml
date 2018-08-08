@@ -7,7 +7,6 @@
     <string name="delete_all">Delete All</string>
     <string name="favorites_title">Favorites</string>
     <string name="appwidget_text">No favorite artworks saved. \nFind yours by clicking on: </string>
-    <string name="add_widget">Add widget</string>
     <string name="thumbnail_widget_description">Image of the saved artwork.</string>
     <string name="current_artwork_description">Image of the current artwork.</string>
     <string name="refresh_button_description">Refresh button for trying to fetch data from network.</string>
@@ -20,4 +19,21 @@
     <string name="hometown_label">Hometown</string>
     <string name="nationality_label">Nationality</string>
     <string name="image_thumbnail_description">Artwork image thumbnail from favorites.</string>
+    <string name="fab_contentDecription">Button for saving the item into Favorites.</string>
+    <string name="refresh">Refresh</string>
+    <string name="snackbar_no_network_connection">No Network connection. Please try again.</string>
+    <string name="snackbar_no_data_for_artist">Sorry, No data for this artwork.</string>
+    <string name="snackbar_deleted_item">This item was deleted!</string>
+    <string name="snackbar_item_added">Item added to favorites</string>
+    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="not_applicable">N/A</string>
+    <string name="snackbar_no_data_artist">Sorry, No data for this artist.</string>
+    <string name="snackbar_item_removed">Item removed from the favorites</string>
+    <string name="delete_all_message">Are you sure you want to delete all artworks?</string>
+    <string name="delete_all_title">Delete All</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="analytics_artwork_screenname">Artworks-Gridview</string>
+    <string name="network_ok">All good with your Network connection!</string>
+    <string name="no_network">No Network connection!</string>
 </resources>

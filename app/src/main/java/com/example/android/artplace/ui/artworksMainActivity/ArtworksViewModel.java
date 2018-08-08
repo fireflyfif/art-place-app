@@ -35,7 +35,9 @@
 
 package com.example.android.artplace.ui.artworksMainActivity;
 
+import android.app.Application;
 import android.arch.core.util.Function;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
@@ -50,33 +52,32 @@ import com.example.android.artplace.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
 
-public class ArtworksViewModel extends ViewModel {
+public class ArtworksViewModel extends AndroidViewModel {
 
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
-    private ArtPlaceApp mAppController;
 
     private static final int PAGE_SIZE = 20;
     private static final int INITIAL_SIZE_HINT = 40;
     private static final int PREFETCH_DISTANCE_HINT = 10;
 
 
-    public ArtworksViewModel(@NonNull ArtPlaceApp appController) {
-        mAppController = appController;
+    public ArtworksViewModel(Application application) {
+        super(application);
 
-        init();
+        init(application);
     }
 
     /*
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init() {
+    private void init(Application application) {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(mAppController);
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory((ArtPlaceApp) application);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),

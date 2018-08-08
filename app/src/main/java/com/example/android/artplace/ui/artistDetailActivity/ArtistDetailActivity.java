@@ -132,7 +132,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
                             // Check if the list of artist is not 0
                             if (artists.size() == 0) {
                                 // Show a message to the user that there is no artist for the selected artwork
-                                Snackbar.make(coordinatorLayout, "Sorry, No data for this artwork.", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_for_artist, Snackbar.LENGTH_SHORT).show();
                             }
 
                             for (int i = 0; i < artists.size(); i++) {
@@ -166,7 +166,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
             collapsingToolbarLayout.setTitle(artistNameString);
         } else {
-            artistName.setText("N/A");
+            artistName.setText(getString(R.string.not_applicable));
         }
 
         // Get the Home town of the artist
@@ -174,7 +174,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
             String artistHomeTownString = currentArtist.getHometown();
             artistHomeTown.setText(artistHomeTownString);
         } else {
-            artistHomeTown.setText("N/A");
+            artistHomeTown.setText(getString(R.string.not_applicable));
         }
 
         // Get the date of the birth and dead of the artist
@@ -187,7 +187,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
             String lifespanConcatString = artistBirthString + " - " + artistDeathString;
             artistLifespan.setText(lifespanConcatString);
         } else {
-            artistLifespan.setText("N/A");
+            artistLifespan.setText(getString(R.string.not_applicable));
         }
 
         // Get the location of the artist
@@ -195,14 +195,14 @@ public class ArtistDetailActivity extends AppCompatActivity {
             String artistLocationString = currentArtist.getLocation();
             artistLocation.setText(artistLocationString);
         } else {
-            artistLocation.setText("N/A");
+            artistLocation.setText(getString(R.string.not_applicable));
         }
 
         if (currentArtist.getNationality() != null) {
             String artistNationalityString = currentArtist.getNationality();
             artistNationality.setText(artistNationalityString);
         } else {
-            artistNationality.setText("N/A");
+            artistNationality.setText(getString(R.string.not_applicable));
         }
 
         // Get the list of image versions first

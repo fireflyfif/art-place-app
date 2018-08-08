@@ -309,6 +309,7 @@
         app:layout_anchor="@id/background_title_layout"
         app:layout_anchorGravity="bottom|right|end"
         app:pressedTranslationZ="@dimen/fab_pressed_transition"
+        android:contentDescription="@string/fab_contentDecription"
         app:srcCompat="@drawable/ic_favorite_border_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

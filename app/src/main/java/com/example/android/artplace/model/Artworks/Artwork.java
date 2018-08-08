@@ -50,7 +50,7 @@ public class Artwork implements Parcelable {
     public static DiffUtil.ItemCallback<Artwork> DIFF_CALLBACK = new DiffUtil.ItemCallback<Artwork>() {
         @Override
         public boolean areItemsTheSame(Artwork oldItem, Artwork newItem) {
-            return oldItem.id == newItem.id;
+            return oldItem.id.equals(newItem.id);
         }
 
         @Override
@@ -61,12 +61,12 @@ public class Artwork implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) {
+        if (obj.getClass() == getClass()) {
             return true;
         }
 
         Artwork artwork = (Artwork) obj;
-        return artwork.id == this.id;
+        return artwork.id.equals(this.id);
     }
 
     /*

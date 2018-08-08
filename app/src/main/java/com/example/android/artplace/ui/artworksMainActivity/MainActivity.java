@@ -36,8 +36,10 @@
 package com.example.android.artplace.ui.artworksMainActivity;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -81,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
-    private static final String SAVE_STATE_ARTWORK_KEY = "save_state_artwork";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -100,8 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     private ArtworksViewModel mViewModel;
     private Tracker mTracker;
 
-    private Parcelable recyclerViewState;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         mTracker = application.getDefaultTracker();
 
         // Initialize the ViewModel
-        mViewModel = new ArtworksViewModel(ArtPlaceApp.create(this));
-        //mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
 
         // Setup the RecyclerView
         setRecyclerView();
@@ -131,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                 if (artworks != null) {
                     // When a new page is available, call submitList() method of the PagedListAdapter
                     mPagedListAdapter.submitList(artworks);
+
                 }
             }
         });
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                     progressBar.setVisibility(View.GONE);
                     // TODO: Hide this message when no connection but some cache results still visible
                     errorMessage.setVisibility(View.VISIBLE);
-                    Snackbar.make(coordinatorLayout, "No Network connection. Please try again.",
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                             Snackbar.LENGTH_LONG).show();
                 }
                 // When the NetworkStatus is Running/Loading
@@ -188,18 +187,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this, this);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        recyclerViewState = artworksRv.getLayoutManager().onSaveInstanceState();
-
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        artworksRv.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-    }
 
     @Override
     public void onArtworkClick(Artwork artwork) {
@@ -243,8 +230,13 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume is called now!");
 
-        mTracker.setScreenName("Artworks-Gridview");
+        /*if (recyclerViewState != null) {
+            artworksRv.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+        }*/
+
+        mTracker.setScreenName(getString(R.string.analytics_artwork_screenname));
         // Send initial screen screen view hit.
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
@@ -331,14 +323,16 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
                     flag = true;
                     Log.d(TAG, "doInBackground, network=true ");
 
-                    snackMessage = "All good with your Network connection!";
+                    // Cannot extract the string here, because it's a static method
+                    snackMessage = ArtPlaceApp.getInstance().getString(R.string.network_ok);
 
                     return snackMessage;
                 } else {
                     flag = false;
                     Log.d(TAG, "doInBackground, network= false");
 
-                    snackMessage = "No Network connection!";
+                    // Cannot extract the string here, because it's a static method
+                    snackMessage = ArtPlaceApp.getInstance().getString(R.string.no_network);
 
                     return snackMessage;
                 }

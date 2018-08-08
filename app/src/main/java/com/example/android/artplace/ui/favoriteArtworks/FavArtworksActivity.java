@@ -40,14 +40,13 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -58,23 +57,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
-import com.example.android.artplace.repository.FavArtRepository;
-import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.FavDetailActivity;
 import com.example.android.artplace.ui.favoriteArtworks.adapter.FavArtworkListAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -196,7 +187,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 String itemId = favArtwork.getArtworkId();
                 // Delete the item by swiping it
                 mFavArtworksViewModel.deleteItem(itemId);
-                Snackbar.make(coordinatorLayout, "This item was deleted!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(coordinatorLayout, R.string.snackbar_deleted_item, Snackbar.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(favArtworksRv);
     }
@@ -268,11 +259,11 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         if (mFavoriteArtworksList.size() > 0) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Are you sure you want to delete all artworks?");
-            builder.setTitle("Delete All");
+            builder.setMessage(R.string.delete_all_message);
+            builder.setTitle(R.string.delete_all_title);
             builder.setIcon(R.drawable.ic_delete_24dp);
 
-            builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mFavArtworksViewModel.deleteAllItems();
@@ -283,7 +274,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
                 }
             });
 
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (dialog != null) {
@@ -296,6 +287,4 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
             alertDialog.show();
         }
     }
-
-
 }
