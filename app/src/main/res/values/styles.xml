@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,10 +17,10 @@
     </style>
 
     <style name="details_label" parent="Theme.AppCompat">
-        <item name="android:layout_marginEnd">@dimen/margin_8dp</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">@dimen/margin_8dp</item>
         <item name="android:layout_marginLeft">@dimen/margin_16dp</item>
         <item name="android:layout_marginRight">@dimen/margin_8dp</item>
-        <item name="android:layout_marginStart">@dimen/margin_16dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">@dimen/margin_16dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
 
     </style>

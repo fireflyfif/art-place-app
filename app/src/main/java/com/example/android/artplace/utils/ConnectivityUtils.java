@@ -51,8 +51,8 @@ public class ConnectivityUtils {
 
     private static final String TAG = ConnectivityUtils.class.getSimpleName();
 
-
-    public ConnectivityUtils() {
+    // Empty private constructor for preventing creation of instances of this class
+    private ConnectivityUtils() {
     }
 
     // Always called on a background thread, otherwise will produce a NetworkOnMainThreadException

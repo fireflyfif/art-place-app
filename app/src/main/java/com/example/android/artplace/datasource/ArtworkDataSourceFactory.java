@@ -49,21 +49,12 @@ public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> 
     private ArtPlaceApp mArtPlaceApp;
     private ArtsyApiInterface apiInterface;
 
-    private static ArtworkDataSourceFactory INSTANCE;
 
 
     public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp) {
         mArtPlaceApp = artPlaceApp;
         mArtworksDataSourceLiveData = new MutableLiveData<ArtworkDataSource>();
     }
-
-    /*public synchronized static ArtworkDataSourceFactory getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ArtworkDataSourceFactory(mArtPlaceApp);
-        }
-
-        return INSTANCE;
-    }*/
 
     @Override
     public DataSource<Long, Artwork> create() {

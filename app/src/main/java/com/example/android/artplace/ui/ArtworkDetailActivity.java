@@ -362,7 +362,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     // Check first if the artist name is not null or "N/A"
-                    if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals(R.string.not_applicable))) {
+                    if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals("N/A"))) {
                         // Show a message to the user that there is no artist for the selected artwork
                         Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
                         return;
