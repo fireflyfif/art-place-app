@@ -60,8 +60,8 @@ public class ArtworksViewModel extends AndroidViewModel {
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
 
-    private static final int PAGE_SIZE = 20;
-    private static final int INITIAL_SIZE_HINT = 40;
+    private static final int PAGE_SIZE = 10;
+    private static final int INITIAL_SIZE_HINT = 10;
     private static final int PREFETCH_DISTANCE_HINT = 10;
 
 

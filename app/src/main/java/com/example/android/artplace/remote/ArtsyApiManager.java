@@ -85,7 +85,8 @@ public class ArtsyApiManager {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Utils.BASE_ARTSY_URL)
                 .client(client.build())
-                .addConverterFactory(GsonConverterFactory.create(makeGson()))
+                //.addConverterFactory(GsonConverterFactory.create(makeGson()))
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         return retrofit.create(ArtsyApiInterface.class);
