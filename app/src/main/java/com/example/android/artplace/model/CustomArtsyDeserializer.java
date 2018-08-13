@@ -33,39 +33,27 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.model;
 
-import com.example.android.artplace.model.Artists.EmbeddedArtists;
-import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
+import java.lang.reflect.Type;
 
-public interface ArtsyApiInterface {
+public class CustomArtsyDeserializer implements JsonDeserializer<ArtsyResponse> {
 
-    /**
-     * New call to the API that will use the next dynamic link for next page
-     *
-     * @param itemSize displayed items to the user
-     * @param nextUrl dynamic link with the next page
-     * @return a call to the Artsy Response
-     */
-    @GET("/api/artworks")
-    Call<ArtsyResponse> getArtsyResponse(@Query("size") int itemSize, @Url String nextUrl);
+    @Override
+    public ArtsyResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<EmbeddedArtists> getArtist(@Query("artwork_id") String artworkId);
+        // Get the "_links" element from the parsed JSON
+        JsonElement linksElement = json.getAsJsonObject().get("_links");
 
-    /**
-     *  Endpoint for fetching Artworks
-     *  link: https://api.artsy.net/api/artworks?size=10 + header with token
-     */
-    @GET("/api/artworks")
-    Call<EmbeddedArtworks> getEmbedded(@Query("size") int itemSize);
+        // Deserialize it by using a new instance of Gson to avoid infinite recursion
+        // to this deserializer
+        return new Gson().fromJson(linksElement, ArtsyResponse.class);
+    }
 }

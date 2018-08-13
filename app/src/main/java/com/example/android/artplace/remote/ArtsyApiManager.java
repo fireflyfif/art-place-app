@@ -40,8 +40,10 @@ import android.support.annotation.NonNull;
 import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.Artists.CustomArtistsDeserializer;
 import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -94,9 +96,10 @@ public class ArtsyApiManager {
      */
     private static Gson makeGson() {
 
-        // TODO: Register two different TypeAdapters!
+        // Register two different TypeAdapters!
         // resource: https://stackoverflow.com/a/33459073/8132331
         return new GsonBuilder()
+                .registerTypeAdapter(ArtsyResponse.class, new CustomArtsyDeserializer())
                 .registerTypeAdapter(EmbeddedArtworks.class, new CustomArtworksDeserializer())
                 .registerTypeAdapter(EmbeddedArtists.class, new CustomArtistsDeserializer())
                 .create();

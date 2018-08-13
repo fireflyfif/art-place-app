@@ -41,6 +41,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.ArtsyResponse;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.utils.NetworkState;
@@ -60,6 +61,8 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
+
+    private String mNextUrl;
 
 
     public ArtworkDataSource(ArtPlaceApp appController) {
@@ -84,6 +87,20 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         // Update NetworkState
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
+
+        mAppController.getArtsyApi().getArtsyResponse(params.requestedLoadSize, mNextUrl).enqueue(new Callback<ArtsyResponse>() {
+
+
+            @Override
+            public void onResponse(Call<ArtsyResponse> call, Response<ArtsyResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ArtsyResponse> call, Throwable t) {
+
+            }
+        });
 
         // Make the Retrofit call to the API
         mAppController.getArtsyApi().getEmbedded(params.requestedLoadSize).enqueue(new Callback<EmbeddedArtworks>() {
