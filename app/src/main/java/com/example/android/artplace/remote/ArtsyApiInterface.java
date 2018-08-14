@@ -56,7 +56,7 @@ public interface ArtsyApiInterface {
     Call<ArtsyResponse> getArtsyResponse(@Query("size") int itemSize);
 
     @GET
-    Call<ArtsyResponse> getNextLink(@Url String nextUrl);
+    Call<ArtsyResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
     /**
      * Endpoint for fetching Artist of the current Artwork
