@@ -184,49 +184,65 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         private void bindTo(Artwork artwork, int position) {
 
             // Get the thumbnail from the json tree
-            ImageLinks currentImageLink = artwork.getLinks();
-            Thumbnail currentThumbnail = currentImageLink.getThumbnail();
+            if (artwork.getLinks() != null) {
 
-            String artworkThumbnailString = currentThumbnail.getHref();
+                ImageLinks currentImageLink = artwork.getLinks();
 
-            // Get the title from the response
-            String artworkTitleString = artwork.getTitle();
-            artworkTitle.setText(artworkTitleString);
+                if (currentImageLink.getThumbnail() != null) {
 
-            // Extract the Artist name from the Slug
-            String artistNameString = StringUtils.getArtistNameFromSlug(artwork);
-            Log.d(TAG, "Name of the artist: " + artistNameString);
-            artworkArtist.setText(artistNameString);
+                }
+                Thumbnail currentThumbnail = currentImageLink.getThumbnail();
 
-            // Set the image with Picasso
-            Picasso.get()
-                    .load(Uri.parse(artworkThumbnailString))
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
-                    .into(artworkThumbnail, new Callback() {
-                        @Override
-                        public void onSuccess() {
+                String artworkThumbnailString;
+                if (currentThumbnail.getHref() != null) {
+                    artworkThumbnailString = currentThumbnail.getHref();
+                } else {
+                    // Set a default link if there isn't any
+                    artworkThumbnailString = "https://d32dm0rphc51dk.cloudfront.net/9CUbor0r1aIP-WQX3OjE2A/medium.jpg";
+                }
+                Log.d(TAG, "Link to the thumbnail: " + artworkThumbnailString);
 
-                            Bitmap bitmap = ((BitmapDrawable)
-                                    artworkThumbnail.getDrawable()).getBitmap();
-                            artworkThumbnail.setImageBitmap(bitmap);
 
-                            Palette palette = Palette.from(bitmap).generate();
-                            int generatedMutedColor = palette.getMutedColor(mMutedColor);
-                            int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+                // Get the title from the response
+                String artworkTitleString = artwork.getTitle();
+                artworkTitle.setText(artworkTitleString);
 
-                            artworkCard.setCardBackgroundColor(generatedMutedColor);
-                            //artworkArtist.setTextColor(generatedLightColor);
+                // Extract the Artist name from the Slug
+                String artistNameString = StringUtils.getArtistNameFromSlug(artwork);
+                Log.d(TAG, "Name of the artist: " + artistNameString);
+                artworkArtist.setText(artistNameString);
 
-                            // Set the item animator here
-                            setItemAnimator(itemView, position);
-                        }
+                // Set the image with Picasso
+                Picasso.get()
+                        .load(Uri.parse(artworkThumbnailString))
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .into(artworkThumbnail, new Callback() {
+                            @Override
+                            public void onSuccess() {
 
-                        @Override
-                        public void onError(Exception e) {
+                                Bitmap bitmap = ((BitmapDrawable)
+                                        artworkThumbnail.getDrawable()).getBitmap();
+                                artworkThumbnail.setImageBitmap(bitmap);
 
-                        }
-                    });
+                                Palette palette = Palette.from(bitmap).generate();
+                                int generatedMutedColor = palette.getMutedColor(mMutedColor);
+                                int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+
+                                artworkCard.setCardBackgroundColor(generatedMutedColor);
+                                //artworkArtist.setTextColor(generatedLightColor);
+
+                                // Set the item animator here
+                                setItemAnimator(itemView, position);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+
+            }
         }
 
         @Override

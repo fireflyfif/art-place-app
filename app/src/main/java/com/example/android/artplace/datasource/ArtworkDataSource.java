@@ -108,7 +108,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         if (links != null) {
                             next = links.getNext();
                             mNextUrl = next.getHref();
-                            Log.d(TAG, "Link to next: " + mNextUrl);
+                            Log.d(TAG, "Link to next (loadInitial): " + mNextUrl);
                         }
 
                         callback.onResult(artworkList = embeddedArtworks.getArtworks(), null, 2L);
@@ -159,13 +159,30 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 ArtsyResponse artsyResponse = new ArtsyResponse();
                 List<Artwork> artworkList = new ArrayList<>();
 
+                Links links = new Links();
+                Next next = new Next();
+
                 @Override
-                public void onResponse(Call<ArtsyResponse> call, Response<ArtsyResponse> response) {
+                public void onResponse(@NonNull Call<ArtsyResponse> call, @NonNull Response<ArtsyResponse> response) {
 
                     if (response.isSuccessful()) {
                         artsyResponse = response.body();
                         if (artsyResponse != null) {
                             EmbeddedArtworks embeddedArtworks = artsyResponse.getEmbeddedArtworks();
+
+                            links = artsyResponse.getLinks();
+                            if (links != null) {
+                                next = links.getNext();
+
+                                mNextUrl = next.getHref();
+
+                                Log.d(TAG, "Link to next: " + mNextUrl);
+
+                                /*while (mNextUrl != null) {
+
+                                }*/
+
+                            }
 
                             if (embeddedArtworks.getArtworks() != null) {
                                 //long nextKey = params.key == 100 ? null: params.key + 30;
@@ -174,12 +191,14 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                                 if (params.key == embeddedArtworks.getArtworks().size()) {
                                     nextKey = 0;
                                 } else {
-                                    nextKey = params.key + 1;
+                                    nextKey = params.key + 100;
                                 }
 
                                 Log.d(TAG, "Next key : " + nextKey);
 
-                                callback.onResult(artworkList = embeddedArtworks.getArtworks(), nextKey);
+                                artworkList = embeddedArtworks.getArtworks();
+
+                                callback.onResult(artworkList, nextKey);
 
                                 Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
                             }
@@ -193,7 +212,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 }
 
                 @Override
-                public void onFailure(Call<ArtsyResponse> call, Throwable t) {
+                public void onFailure(@NonNull Call<ArtsyResponse> call, @NonNull Throwable t) {
 
                     mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                     Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
