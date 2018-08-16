@@ -128,12 +128,23 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         // Set the thumbnail on the widget view
         // SO post: https://stackoverflow.com/a/27851642/8132331
         try {
-            Bitmap bitmap = Picasso.get()
-                    .load(thumbnailString)
-                    .placeholder(R.drawable.placeholder)
-                    .resize(300, 300)
-                    .centerCrop()
-                    .error(R.mipmap.ic_launcher).get();
+            Bitmap bitmap;
+
+            if (thumbnailString == null || thumbnailString.isEmpty()) {
+                bitmap = Picasso.get()
+                        .load(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder)
+                        .resize(300, 300)
+                        .centerCrop()
+                        .error(R.mipmap.ic_launcher).get();
+            } else {
+                bitmap = Picasso.get()
+                        .load(thumbnailString)
+                        .placeholder(R.drawable.placeholder)
+                        .resize(300, 300)
+                        .centerCrop()
+                        .error(R.mipmap.ic_launcher).get();
+            }
 
             views.setImageViewBitmap(R.id.widget_thumbnail, bitmap);
 

@@ -232,10 +232,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                                 .replaceAll("\\{.*?\\}", versionMediumString);
 
                         Log.d(TAG, "New link to the image: " + artworkThumbnailString);
-                    } else {
-
                     }
-
                 }
 
                 Log.d(TAG, "artworkThumbnailString: " + artworkThumbnailString);
@@ -348,7 +345,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setVisibility(View.VISIBLE);
                 refreshButton.setVisibility(View.VISIBLE);
-                // TODO: Check if it will work
+                // Set the click listener here
                 refreshButton.setOnClickListener(this::onClick);
             } else {
                 networkLayout.setVisibility(View.GONE);

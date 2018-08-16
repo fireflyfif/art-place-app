@@ -150,12 +150,20 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                 String favYearString = favArtwork.getArtworkDate();
                 favYear.setText(favYearString);
 
-                String favThumbnailPathString = favArtwork.getArtworkThumbnailPath();
-                Picasso.get()
-                        .load(Uri.parse(favThumbnailPathString))
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.placeholder)
-                        .into(favThumbnail);
+                if (favArtwork.getArtworkThumbnailPath() != null) {
+                    String favThumbnailPathString = favArtwork.getArtworkThumbnailPath();
+                    Picasso.get()
+                            .load(Uri.parse(favThumbnailPathString))
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
+                            .into(favThumbnail);
+                } else {
+                    Picasso.get()
+                            .load(R.drawable.placeholder)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
+                            .into(favThumbnail);
+                }
             }
         }
 

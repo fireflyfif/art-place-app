@@ -144,30 +144,39 @@ public class FavDetailActivity extends AppCompatActivity {
             favDimensIn.setText(favDimensInchString);
             favDimensCm.setText(favDimensCmString);
 
-
             // Initialize Blur Post Processor
             // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
             mPostprocessor = new BlurPostprocessor(this, 20);
 
             // Instantiate Image Request using Post Processor as parameter
-            mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(favImageString))
-                    .setPostprocessor(mPostprocessor)
-                    .build();
+            if (favImageString == null || favImageString.isEmpty()) {
+                Picasso.get()
+                        .load(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder)
+                        .into(favImage);
 
-            // Instantiate Controller
-            mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(mImageRequest)
-                    .setOldController(blurryImage.getController())
-                    .build();
+            } else {
 
-            // Load the blurred image
-            blurryImage.setController(mController);
+                mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(favImageString))
+                        .setPostprocessor(mPostprocessor)
+                        .build();
 
-            Picasso.get()
-                    .load(Uri.parse(favImageString))
-                    .error(R.drawable.placeholder)
-                    .placeholder(R.drawable.placeholder)
-                    .into(favImage);
+                // Instantiate Controller
+                mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(mImageRequest)
+                        .setOldController(blurryImage.getController())
+                        .build();
+
+                // Load the blurred image
+                blurryImage.setController(mController);
+
+                Picasso.get()
+                        .load(Uri.parse(favImageString))
+                        .error(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder)
+                        .into(favImage);
+            }
 
         }
     }

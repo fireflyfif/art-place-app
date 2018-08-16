@@ -292,79 +292,93 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
         }
 
-        List<String> imageVersionList = currentArtwork.getImageVersions();
-
-        String versionLargeString;
-        // Check if the list with image version contains "large"
-        if (imageVersionList.contains("large")) {
-
-            // Set the version to "large"
-            versionLargeString = "large";
-            Log.d(TAG, "Version of the image: " + versionLargeString);
-        } else {
-
-            // Set the first String from the version list
-            versionLargeString = imageVersionList.get(0);
-            Log.d(TAG, "Version of the image: " + versionLargeString);
-        }
-
-        // Get the sixth entry from this list, which corresponds to "square"
-        String versionSquareString;
-        if (imageVersionList.contains("square")) {
-
-            versionSquareString = "square";
-            Log.d(TAG, "Version of the square image: " + versionSquareString);
-        } else {
-
-            versionSquareString = imageVersionList.get(0);
-            Log.d(TAG, "Version of the square image: " + versionSquareString);
-        }
-
         ImageLinks imageLinksObject = currentArtwork.getLinks();
-
         MainImage mainImageObject = imageLinksObject.getImage();
-        // Get the link for the current artwork,
-        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-        String artworkImgLinkString = mainImageObject.getHref();
 
-        // Replace the {image_version} from the artworkImgLinkString with
-        // the wanted version, e.g. "large"
-        mNewArtworkLinkString = artworkImgLinkString
-                .replaceAll("\\{.*?\\}", versionLargeString);
-        Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
+        if (currentArtwork.getImageVersions() != null) {
 
-        // Get the first entry from this list, which corresponds to "large"
-        mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}", versionSquareString);
-        Log.d(TAG, "New link to the square image: " + mNewSquareArtworkLinkString);
+            List<String> imageVersionList = currentArtwork.getImageVersions();
 
-        // Extract the string to thumbnail so that it is saved in favorites
-        Thumbnail thumbnail = imageLinksObject.getThumbnail();
-        mArtworkThumbnailString = thumbnail.getHref();
+            String versionLargeString;
+            // Check if the list with image version contains "large"
+            if (imageVersionList.contains("large")) {
 
-        // Initialize Blur Post Processor
-        // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-        mPostprocessor = new BlurPostprocessor(this, 20);
+                // Set the version to "large"
+                versionLargeString = "large";
+                Log.d(TAG, "Version of the image: " + versionLargeString);
+            } else {
 
-        // Instantiate Image Request using Post Processor as parameter
-        mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mNewArtworkLinkString))
-                .setPostprocessor(mPostprocessor)
-                .build();
+                // Set the first String from the version list
+                versionLargeString = imageVersionList.get(0);
+                Log.d(TAG, "Version of the image: " + versionLargeString);
+            }
 
-        // Instantiate Controller
-        mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
-                .setImageRequest(mImageRequest)
-                .setOldController(blurryImage.getController())
-                .build();
+            // Get the sixth entry from this list, which corresponds to "square"
+            String versionSquareString;
+            if (imageVersionList.contains("square")) {
 
-        // Load the blurred image
-        blurryImage.setController(mController);
+                versionSquareString = "square";
+                Log.d(TAG, "Version of the square image: " + versionSquareString);
+            } else {
+
+                versionSquareString = imageVersionList.get(0);
+                Log.d(TAG, "Version of the square image: " + versionSquareString);
+            }
+
+
+            // Get the link for the current artwork,
+            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+            String artworkImgLinkString = mainImageObject.getHref();
+
+            // Replace the {image_version} from the artworkImgLinkString with
+            // the wanted version, e.g. "large"
+            mNewArtworkLinkString = artworkImgLinkString
+                    .replaceAll("\\{.*?\\}", versionLargeString);
+            Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
+
+            // Get the first entry from this list, which corresponds to "large"
+            mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}", versionSquareString);
+            Log.d(TAG, "New link to the square image: " + mNewSquareArtworkLinkString);
+
+            // Extract the string to thumbnail so that it is saved in favorites
+            Thumbnail thumbnail = imageLinksObject.getThumbnail();
+            mArtworkThumbnailString = thumbnail.getHref();
+
+            // Initialize Blur Post Processor
+            // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
+            mPostprocessor = new BlurPostprocessor(this, 20);
+
+            // Instantiate Image Request using Post Processor as parameter
+            mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mNewArtworkLinkString))
+                    .setPostprocessor(mPostprocessor)
+                    .build();
+
+            // Instantiate Controller
+            mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(mImageRequest)
+                    .setOldController(blurryImage.getController())
+                    .build();
+
+            // Load the blurred image
+            blurryImage.setController(mController);
+
+        }
+
 
         // Set the square image with Picasso
-        Picasso.get()
-                .load(Uri.parse(mNewSquareArtworkLinkString))
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .into(artworkImage);
+        if (mNewSquareArtworkLinkString == null || mNewSquareArtworkLinkString.isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.placeholder)
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
+                    .into(artworkImage);
+        } else {
+            Picasso.get()
+                    .load(Uri.parse(mNewSquareArtworkLinkString))
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
+                    .into(artworkImage);
+        }
 
         if (imageLinksObject.getArtists() != null) {
             ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
