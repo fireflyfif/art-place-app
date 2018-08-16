@@ -293,10 +293,32 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
         List<String> imageVersionList = currentArtwork.getImageVersions();
-        // Get the first entry from this list, which corresponds to "large"
-        String versionLargeString = imageVersionList.get(0);
+
+        String versionLargeString;
+        // Check if the list with image version contains "large"
+        if (imageVersionList.contains("large")) {
+
+            // Set the version to "large"
+            versionLargeString = "large";
+            Log.d(TAG, "Version of the image: " + versionLargeString);
+        } else {
+
+            // Set the first String from the version list
+            versionLargeString = imageVersionList.get(0);
+            Log.d(TAG, "Version of the image: " + versionLargeString);
+        }
+
         // Get the sixth entry from this list, which corresponds to "square"
-        String versionSquareString = imageVersionList.get(6);
+        String versionSquareString;
+        if (imageVersionList.contains("square")) {
+
+            versionSquareString = "square";
+            Log.d(TAG, "Version of the square image: " + versionSquareString);
+        } else {
+
+            versionSquareString = imageVersionList.get(0);
+            Log.d(TAG, "Version of the square image: " + versionSquareString);
+        }
 
         ImageLinks imageLinksObject = currentArtwork.getLinks();
 
@@ -304,6 +326,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Get the link for the current artwork,
         // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
         String artworkImgLinkString = mainImageObject.getHref();
+
         // Replace the {image_version} from the artworkImgLinkString with
         // the wanted version, e.g. "large"
         mNewArtworkLinkString = artworkImgLinkString

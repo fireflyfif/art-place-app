@@ -60,6 +60,7 @@ import android.widget.TextView;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
@@ -69,6 +70,7 @@ import com.example.android.artplace.utils.StringUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -188,20 +190,55 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                 ImageLinks currentImageLink = artwork.getLinks();
 
-                if (currentImageLink.getThumbnail() != null) {
-
-                }
-                Thumbnail currentThumbnail = currentImageLink.getThumbnail();
-
-                String artworkThumbnailString;
-                if (currentThumbnail.getHref() != null) {
+                String artworkThumbnailString = null;
+                // Handle case where no thumbnail is provided!!!
+                try {
+                    Thumbnail currentThumbnail = currentImageLink.getThumbnail();
                     artworkThumbnailString = currentThumbnail.getHref();
-                } else {
-                    // Set a default link if there isn't any
-                    artworkThumbnailString = "https://d32dm0rphc51dk.cloudfront.net/9CUbor0r1aIP-WQX3OjE2A/medium.jpg";
-                }
-                Log.d(TAG, "Link to the thumbnail: " + artworkThumbnailString);
 
+                    Log.d(TAG, "Link to the thumbnail: " + artworkThumbnailString);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Error obtaining thumbnail from the JSON: " + e.getMessage());
+                }
+
+                if (artworkThumbnailString == null) {
+
+                    // TODO: Handle case where no "image_version" is provided by the JSON
+                    if (artwork.getImageVersions() != null) {
+
+                        List<String> imageVersionList = artwork.getImageVersions();
+
+                        String versionMediumString;
+                        // Check if the list with image version contains "medium"
+                        if (imageVersionList.contains("medium") || imageVersionList.contains("medium_rectangle")) {
+
+                            // Set the version to "medium"
+                            versionMediumString = "medium";
+                            Log.d(TAG, "Version of the image: " + versionMediumString);
+                        } else {
+
+                            // Set the sixth String from the version list
+                            versionMediumString = imageVersionList.get(0);
+                            Log.d(TAG, "Version of the image: " + versionMediumString);
+                        }
+
+                        MainImage mainImage = currentImageLink.getImage();
+                        String artworkImgLinkString = mainImage.getHref();
+
+                        // Replace the {image_version} from the artworkImgLinkString with
+                        // the wanted version, e.g. "large"
+                        artworkThumbnailString = artworkImgLinkString
+                                .replaceAll("\\{.*?\\}", versionMediumString);
+
+                        Log.d(TAG, "New link to the image: " + artworkThumbnailString);
+                    } else {
+
+                    }
+
+                }
+
+                Log.d(TAG, "artworkThumbnailString: " + artworkThumbnailString);
 
                 // Get the title from the response
                 String artworkTitleString = artwork.getTitle();
@@ -213,34 +250,45 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                 artworkArtist.setText(artistNameString);
 
                 // Set the image with Picasso
-                Picasso.get()
-                        .load(Uri.parse(artworkThumbnailString))
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.placeholder)
-                        .into(artworkThumbnail, new Callback() {
-                            @Override
-                            public void onSuccess() {
+                // Check first if the url in null or empty
+                if (artworkThumbnailString == null || artworkThumbnailString.isEmpty()) {
+                    // If it's empty or null -> set the placeholder
+                    Picasso.get()
+                            .load(R.drawable.placeholder)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
+                            .into(artworkThumbnail);
+                } else {
+                    // If it's not empty -> load the image
+                    Picasso.get()
+                            .load(Uri.parse(artworkThumbnailString))
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
+                            .into(artworkThumbnail, new Callback() {
+                                @Override
+                                public void onSuccess() {
 
-                                Bitmap bitmap = ((BitmapDrawable)
-                                        artworkThumbnail.getDrawable()).getBitmap();
-                                artworkThumbnail.setImageBitmap(bitmap);
+                                    Bitmap bitmap = ((BitmapDrawable)
+                                            artworkThumbnail.getDrawable()).getBitmap();
+                                    artworkThumbnail.setImageBitmap(bitmap);
 
-                                Palette palette = Palette.from(bitmap).generate();
-                                int generatedMutedColor = palette.getMutedColor(mMutedColor);
-                                int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+                                    Palette palette = Palette.from(bitmap).generate();
+                                    int generatedMutedColor = palette.getMutedColor(mMutedColor);
+                                    int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
 
-                                artworkCard.setCardBackgroundColor(generatedMutedColor);
-                                //artworkArtist.setTextColor(generatedLightColor);
+                                    artworkCard.setCardBackgroundColor(generatedMutedColor);
+                                    //artworkArtist.setTextColor(generatedLightColor);
 
-                                // Set the item animator here
-                                setItemAnimator(itemView, position);
-                            }
+                                    // Set the item animator here
+                                    setItemAnimator(itemView, position);
+                                }
 
-                            @Override
-                            public void onError(Exception e) {
+                                @Override
+                                public void onError(Exception e) {
 
-                            }
-                        });
+                                }
+                            });
+                }
 
             }
         }
