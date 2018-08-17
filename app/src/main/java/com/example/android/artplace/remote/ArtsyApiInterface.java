@@ -35,8 +35,8 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.model.Artists.EmbeddedArtists;
-import com.example.android.artplace.model.ArtsyResponse;
+import com.example.android.artplace.model.Artists.ArtistWrapperResponse;
+import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 
 import retrofit2.Call;
@@ -55,19 +55,19 @@ public interface ArtsyApiInterface {
      * @return a call to the Artsy Response
      */
     @GET("/api/artworks")
-    Call<ArtsyResponse> getArtsyResponse(@Query("size") int itemSize);
+    Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
 
     @GET
-    Call<ArtsyResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
+    Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
     @GET
-    Call<ArtsyResponse> getArtistLink(@Url String artistLink);
+    Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
     /**
      * Endpoint for fetching Artist of the current Artwork
      */
     @GET("/api/artists")
-    Call<EmbeddedArtists> getArtist(@Query("artwork_id") String artworkId);
+    Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
 
     /**
      *  Endpoint for fetching Artworks

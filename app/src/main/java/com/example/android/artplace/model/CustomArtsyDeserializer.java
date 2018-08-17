@@ -35,7 +35,7 @@
 
 package com.example.android.artplace.model;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -44,16 +44,16 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-public class CustomArtsyDeserializer implements JsonDeserializer<ArtsyResponse> {
+public class CustomArtsyDeserializer implements JsonDeserializer<ArtworkWrapperResponse> {
 
     @Override
-    public ArtsyResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public ArtworkWrapperResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         // Get the "_links" element from the parsed JSON
         JsonElement linksElement = json.getAsJsonObject().get("_links");
 
         // Deserialize it by using a new instance of Gson to avoid infinite recursion
         // to this deserializer
-        return new Gson().fromJson(linksElement, ArtsyResponse.class);
+        return new Gson().fromJson(linksElement, ArtworkWrapperResponse.class);
     }
 }

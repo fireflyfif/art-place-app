@@ -41,7 +41,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.ArtsyResponse;
+import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.Links;
@@ -90,21 +90,21 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi().getArtsyResponse(params.requestedLoadSize).enqueue(new Callback<ArtsyResponse>() {
-            ArtsyResponse artsyResponse = new ArtsyResponse();
+        mAppController.getArtsyApi().getArtsyResponse(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+            ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
             List<Artwork> artworkList = new ArrayList<>();
 
             Links links = new Links();
             Next next = new Next();
 
             @Override
-            public void onResponse(@NonNull Call<ArtsyResponse> call, @NonNull Response<ArtsyResponse> response) {
+            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
                 if (response.isSuccessful()) {
-                    artsyResponse = response.body();
-                    if (artsyResponse != null) {
-                        EmbeddedArtworks embeddedArtworks = artsyResponse.getEmbeddedArtworks();
+                    artworkWrapperResponse = response.body();
+                    if (artworkWrapperResponse != null) {
+                        EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
 
-                        links = artsyResponse.getLinks();
+                        links = artworkWrapperResponse.getLinks();
                         if (links != null) {
                             next = links.getNext();
                             mNextUrl = next.getHref();
@@ -130,7 +130,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArtsyResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
 
                 mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
@@ -155,22 +155,22 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
         // TODO: Add a while loop here or other loop that will get the next key and the next one?
 
-            mAppController.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtsyResponse>() {
-                ArtsyResponse artsyResponse = new ArtsyResponse();
+            mAppController.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+                ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
                 List<Artwork> artworkList = new ArrayList<>();
 
                 Links links = new Links();
                 Next next = new Next();
 
                 @Override
-                public void onResponse(@NonNull Call<ArtsyResponse> call, @NonNull Response<ArtsyResponse> response) {
+                public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
 
                     if (response.isSuccessful()) {
-                        artsyResponse = response.body();
-                        if (artsyResponse != null) {
-                            EmbeddedArtworks embeddedArtworks = artsyResponse.getEmbeddedArtworks();
+                        artworkWrapperResponse = response.body();
+                        if (artworkWrapperResponse != null) {
+                            EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
 
-                            links = artsyResponse.getLinks();
+                            links = artworkWrapperResponse.getLinks();
                             if (links != null) {
 
                                 next = links.getNext();
@@ -207,7 +207,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<ArtsyResponse> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
 
                     mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                     Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());

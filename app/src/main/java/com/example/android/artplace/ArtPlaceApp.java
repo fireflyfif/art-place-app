@@ -111,7 +111,7 @@ public class ArtPlaceApp extends Application {
         if (mArtsyApi == null) {
             mArtsyApi = ArtsyApiManager.create();
         }
-        return mArtsyApi = ArtsyApiManager.create();
+        return mArtsyApi;
     }
 
 }

@@ -33,17 +33,16 @@
  *
  */
 
-package com.example.android.artplace.model;
+package com.example.android.artplace.model.Artists;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.Links;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-// Model class for the response of the Artsy API
-public class ArtsyResponse implements Parcelable {
+public class ArtistWrapperResponse implements Parcelable {
 
     @SerializedName("total_count")
     @Expose
@@ -55,7 +54,7 @@ public class ArtsyResponse implements Parcelable {
 
     @SerializedName("_embedded")
     @Expose
-    private EmbeddedArtworks embeddedArtworks;
+    private EmbeddedArtists embeddedArtist;
 
     public Integer getTotalCount() {
         return totalCount;
@@ -73,12 +72,12 @@ public class ArtsyResponse implements Parcelable {
         this.links = links;
     }
 
-    public EmbeddedArtworks getEmbeddedArtworks() {
-        return embeddedArtworks;
+    public EmbeddedArtists getEmbeddedArtist() {
+        return embeddedArtist;
     }
 
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
+    public void setEmbedded(EmbeddedArtists embeddedArtist) {
+        this.embeddedArtist = embeddedArtist;
     }
 
 
@@ -91,27 +90,27 @@ public class ArtsyResponse implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.totalCount);
         dest.writeParcelable(this.links, flags);
-        dest.writeParcelable(this.embeddedArtworks, flags);
+        dest.writeParcelable(this.embeddedArtist, flags);
     }
 
-    public ArtsyResponse() {
+    public ArtistWrapperResponse() {
     }
 
-    protected ArtsyResponse(Parcel in) {
+    protected ArtistWrapperResponse(Parcel in) {
         this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
         this.links = in.readParcelable(Links.class.getClassLoader());
-        this.embeddedArtworks = in.readParcelable(EmbeddedArtworks.class.getClassLoader());
+        this.embeddedArtist = in.readParcelable(EmbeddedArtists.class.getClassLoader());
     }
 
-    public static final Creator<ArtsyResponse> CREATOR = new Creator<ArtsyResponse>() {
+    public static final Parcelable.Creator<ArtistWrapperResponse> CREATOR = new Parcelable.Creator<ArtistWrapperResponse>() {
         @Override
-        public ArtsyResponse createFromParcel(Parcel source) {
-            return new ArtsyResponse(source);
+        public ArtistWrapperResponse createFromParcel(Parcel source) {
+            return new ArtistWrapperResponse(source);
         }
 
         @Override
-        public ArtsyResponse[] newArray(int size) {
-            return new ArtsyResponse[size];
+        public ArtistWrapperResponse[] newArray(int size) {
+            return new ArtistWrapperResponse[size];
         }
     };
 }

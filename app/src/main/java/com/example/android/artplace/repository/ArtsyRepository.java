@@ -40,17 +40,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.Artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.Artists.Artist;
 import com.example.android.artplace.model.Artists.EmbeddedArtists;
-import com.example.android.artplace.model.ArtsyResponse;
-import com.example.android.artplace.model.Artworks.ArtistsLink;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
-import com.example.android.artplace.model.ImageLinks;
-import com.example.android.artplace.model.Links;
-import com.example.android.artplace.model.Next;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,47 +91,27 @@ public class ArtsyRepository {
         return loadArtist(artworkId);
     }
 
-    public LiveData<List<Artist>> getArtistLink(String artistUrl) {
-        return loadArtistLink(artistUrl);
+    public LiveData<List<Artist>> getArtistFromLink(String artistUrl) {
+        return loadArtistFromLink(artistUrl);
     }
 
-    private LiveData<List<Artist>> loadArtistLink(String artistUrl) {
+    private LiveData<List<Artist>> loadArtistFromLink(String artistUrl) {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtsyResponse>() {
-            ArtsyResponse artsyResponse = new ArtsyResponse();
-            List<Artwork> artworkList = new ArrayList<>();
-            Artwork currentArtwork = new Artwork();
-            ImageLinks imageLinks = new ImageLinks();
+        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtistWrapperResponse>() {
+            ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
             EmbeddedArtists embeddedArtists = new EmbeddedArtists();
             List<Artist> artistList = new ArrayList<>();
-            ArtistsLink artistsLink = new ArtistsLink();
-            String artistUrlString;
 
             @Override
-            public void onResponse(@NonNull Call<ArtsyResponse> call, @NonNull Response<ArtsyResponse> response) {
+            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
                 if (response.isSuccessful()) {
 
-                    artsyResponse = response.body();
+                    artistWrapperResponse = response.body();
 
-                    if (artsyResponse != null) {
-
-                        EmbeddedArtworks embeddedArtworks = artsyResponse.getEmbeddedArtworks();
-                        artworkList = embeddedArtworks.getArtworks();
-
-                        imageLinks = currentArtwork.getLinks();
-
-                        if (artistsLink != null) {
-
-                            if (imageLinks.getArtists() != null) {
-                                artistsLink = imageLinks.getArtists();
-                                artistUrlString = artistsLink.getHref();
-
-                                Log.d(TAG, "Link to artist: " + artistUrlString);
-                            }
-                        }
-
+                    if (artistWrapperResponse != null) {
+                        embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
 
                         if (embeddedArtists != null) {
                             artistList = embeddedArtists.getArtists();
@@ -157,7 +130,7 @@ public class ArtsyRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArtsyResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
                 Log.d(TAG, "OnFailure! " + t.getMessage());
             }
         });
@@ -176,16 +149,20 @@ public class ArtsyRepository {
 
         // No need of a networkIO Executors here, as Retrofit is doing its call asynchronously
         // Get the Instance of the ArtPlaceApp to create the Retrofit call
-        ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<EmbeddedArtists>() {
+        ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<ArtistWrapperResponse>() {
+            ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
             EmbeddedArtists embeddedArtists = new EmbeddedArtists();
             List<Artist> artistList = new ArrayList<>();
 
             @Override
-            public void onResponse(@NonNull Call<EmbeddedArtists> call, @NonNull Response<EmbeddedArtists> response) {
+            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
                 if (response.isSuccessful()) {
-                    embeddedArtists = response.body();
 
-                    if (embeddedArtists != null) {
+                    artistWrapperResponse = response.body();
+
+                    if (artistWrapperResponse != null) {
+                        embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
+
                         artistList = embeddedArtists.getArtists();
 
                         artistLiveData.setValue(artistList);
@@ -199,7 +176,7 @@ public class ArtsyRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<EmbeddedArtists> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
                 Log.d(TAG, "OnFailure! " + t.getMessage());
             }
         });

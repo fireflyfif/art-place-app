@@ -122,16 +122,15 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 String receivedArtistUrlString = getIntent().getStringExtra(ARTIST_URL_KEY);
 
                 Log.d(TAG, "Received id from the intent: " + receivedArtworkId);
+                Log.d(TAG, "Received artist url from the intent: " + receivedArtistUrlString);
 
                 clickedArtworkTitle.setText(receivedArtworkTitle);
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-                //mArtistViewModel.initArtistLink(receivedArtistUrlString);
+                mArtistViewModel.initArtistLink(receivedArtistUrlString);
 
-                mArtistViewModel.init(receivedArtworkId);
-
-                /*mArtistViewModel.getArtistLink().observe(this, new Observer<List<Artist>>() {
+                mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
                     @Override
                     public void onChanged(@Nullable List<Artist> artists) {
                         if (artists != null) {
@@ -140,25 +139,6 @@ public class ArtistDetailActivity extends AppCompatActivity {
                                 Artist artistCurrent = artists.get(i);
                                 setupUi(artistCurrent);
                             }
-                        }
-                    }
-                });*/
-
-                mArtistViewModel.getArtist().observe(this, new Observer<List<Artist>>() {
-                    @Override
-                    public void onChanged(@Nullable List<Artist> artists) {
-                        if (artists != null) {
-                            // Check if the list of artist is not 0
-                            if (artists.size() == 0) {
-                                // Show a message to the user that there is no artist for the selected artwork
-                                Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_for_artist, Snackbar.LENGTH_SHORT).show();
-                            }
-
-                            for (int i = 0; i < artists.size(); i++) {
-                                Artist artistCurrent = artists.get(i);
-                                setupUi(artistCurrent);
-                            }
-                            Log.d(TAG, "Fetched Artists: " + artists.size());
                         }
                     }
                 });
