@@ -37,7 +37,6 @@ package com.example.android.artplace.remote;
 
 import com.example.android.artplace.model.Artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -57,6 +56,12 @@ public interface ArtsyApiInterface {
     @GET("/api/artworks")
     Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
 
+    /**
+     * Make call according to the url that is received from the json response
+     * @param nextUrl
+     * @param itemSize
+     * @return
+     */
     @GET
     Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
@@ -69,10 +74,4 @@ public interface ArtsyApiInterface {
     @GET("/api/artists")
     Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
 
-    /**
-     *  Endpoint for fetching Artworks
-     *  link: https://api.artsy.net/api/artworks?size=10 + header with token
-     */
-    @GET("/api/artworks")
-    Call<EmbeddedArtworks> getEmbedded(@Query("size") int itemSize);
 }

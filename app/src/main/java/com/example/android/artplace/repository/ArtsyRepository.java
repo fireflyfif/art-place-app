@@ -119,7 +119,6 @@ public class ArtsyRepository {
                             artistLiveData.setValue(artistList);
                         }
                     }
-
                     Log.d(TAG, "Loaded successfully! " + response.code());
 
                 } else {
@@ -140,6 +139,7 @@ public class ArtsyRepository {
 
     /**
      * Fetch data from the Artists endpoint with selected artwork ID
+     * Not in use now
      *
      * @param artworkId is the current artwork ID
      */
