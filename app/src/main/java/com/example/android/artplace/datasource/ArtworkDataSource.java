@@ -172,16 +172,11 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                             links = artsyResponse.getLinks();
                             if (links != null) {
-                                next = links.getNext();
 
+                                next = links.getNext();
                                 mNextUrl = next.getHref();
 
                                 Log.d(TAG, "Link to next: " + mNextUrl);
-
-                                /*while (mNextUrl != null) {
-
-                                }*/
-
                             }
 
                             if (embeddedArtworks.getArtworks() != null) {

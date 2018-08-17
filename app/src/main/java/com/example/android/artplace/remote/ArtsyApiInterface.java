@@ -48,6 +48,8 @@ public interface ArtsyApiInterface {
 
     /**
      * New call to the API that will use the next dynamic link for next page
+     * Endpoint for fetching Artworks
+     * link: https://api.artsy.net/api/artworks?size=10 + header with token
      *
      * @param itemSize displayed items to the user
      * @return a call to the Artsy Response
@@ -57,6 +59,9 @@ public interface ArtsyApiInterface {
 
     @GET
     Call<ArtsyResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
+
+    @GET
+    Call<ArtsyResponse> getArtistLink(@Url String artistLink);
 
     /**
      * Endpoint for fetching Artist of the current Artwork

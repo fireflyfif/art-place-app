@@ -90,6 +90,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
+    private static final String ARTIST_URL_KEY = "artist_url";
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
     private static final int NON_FAV_TAG = 1;
@@ -381,6 +382,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
         if (imageLinksObject.getArtists() != null) {
+
             ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
             String artistLinkString = artistsLinkObject.getHref(); // This link needs a token!!!
             Log.d(TAG, "Link to the artist: " + artistLinkString);
@@ -409,6 +411,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     // Send the name of the artwork as extra
                     intent.putExtra(ARTWORK_TITLE_KEY, finalTitleString);
                     intent.putExtra(ARTWORK_ID_KEY, artworkId);
+                    intent.putExtra(ARTIST_URL_KEY, artistLinkString);
                     startActivity(intent);
                 }
             });

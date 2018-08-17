@@ -44,6 +44,13 @@ import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.Artists.Artist;
 import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.ArtsyResponse;
+import com.example.android.artplace.model.Artworks.ArtistsLink;
+import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.model.Links;
+import com.example.android.artplace.model.Next;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +96,73 @@ public class ArtsyRepository {
 
     public LiveData<List<Artist>> getArtist(String artworkId) {
         return loadArtist(artworkId);
+    }
+
+    public LiveData<List<Artist>> getArtistLink(String artistUrl) {
+        return loadArtistLink(artistUrl);
+    }
+
+    private LiveData<List<Artist>> loadArtistLink(String artistUrl) {
+
+        MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
+
+        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtsyResponse>() {
+            ArtsyResponse artsyResponse = new ArtsyResponse();
+            List<Artwork> artworkList = new ArrayList<>();
+            Artwork currentArtwork = new Artwork();
+            ImageLinks imageLinks = new ImageLinks();
+            EmbeddedArtists embeddedArtists = new EmbeddedArtists();
+            List<Artist> artistList = new ArrayList<>();
+            ArtistsLink artistsLink = new ArtistsLink();
+            String artistUrlString;
+
+            @Override
+            public void onResponse(@NonNull Call<ArtsyResponse> call, @NonNull Response<ArtsyResponse> response) {
+                if (response.isSuccessful()) {
+
+                    artsyResponse = response.body();
+
+                    if (artsyResponse != null) {
+
+                        EmbeddedArtworks embeddedArtworks = artsyResponse.getEmbeddedArtworks();
+                        artworkList = embeddedArtworks.getArtworks();
+
+                        imageLinks = currentArtwork.getLinks();
+
+                        if (artistsLink != null) {
+
+                            if (imageLinks.getArtists() != null) {
+                                artistsLink = imageLinks.getArtists();
+                                artistUrlString = artistsLink.getHref();
+
+                                Log.d(TAG, "Link to artist: " + artistUrlString);
+                            }
+                        }
+
+
+                        if (embeddedArtists != null) {
+                            artistList = embeddedArtists.getArtists();
+
+                            artistLiveData.setValue(artistList);
+                        }
+                    }
+
+                    Log.d(TAG, "Loaded successfully! " + response.code());
+
+                } else {
+
+                    artistLiveData.setValue(null);
+                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArtsyResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+
+        return artistLiveData;
     }
 
     /**

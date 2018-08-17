@@ -46,9 +46,19 @@ import java.util.List;
 public class ArtistsDetailViewModel extends ViewModel {
 
     private LiveData<List<Artist>> mArtistLiveData;
+    private LiveData<List<Artist>> mArtistLink;
 
 
     public ArtistsDetailViewModel() {
+    }
+
+    public void initArtistLink(String artistUrl) {
+
+        if (mArtistLink != null) {
+            return;
+        }
+
+        mArtistLink = ArtsyRepository.getInstance().getArtistLink(artistUrl);
     }
 
     public void init(String artworkId) {
@@ -61,6 +71,10 @@ public class ArtistsDetailViewModel extends ViewModel {
 
     public LiveData<List<Artist>> getArtist() {
         return mArtistLiveData;
+    }
+
+    public LiveData<List<Artist>> getArtistLink() {
+        return mArtistLink;
     }
 
 }
