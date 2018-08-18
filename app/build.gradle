@@ -74,6 +74,7 @@ dependencies {
 
     // ButterKnife Dependency
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     // Room Library Dependencies
@@ -92,6 +93,9 @@ dependencies {
     // Fresco Library for blurring images Dependencies
     implementation "com.facebook.fresco:fresco:$rootProject.frescoVersion"
     implementation "jp.wasabeef:fresco-processors:$rootProject.frescoProcessorsVersion"
+
+    // Bottom Navigation Library Dependency
+    implementation 'com.aurelhubert:ahbottomnavigation:2.1.0'
 
     // Test dependencies
     testImplementation 'junit:junit:4.12'

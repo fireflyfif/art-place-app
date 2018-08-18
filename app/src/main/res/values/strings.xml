@@ -36,4 +36,7 @@
     <string name="analytics_artwork_screenname">Artworks-Gridview</string>
     <string name="network_ok">All good with your Network connection!</string>
     <string name="no_network">No Network connection!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
