@@ -35,13 +35,40 @@
 
 package com.example.android.artplace;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.example.android.artplace.callbacks.OnArtworkClickListener;
+import com.example.android.artplace.callbacks.OnRefreshListener;
+import com.example.android.artplace.callbacks.SnackMessageListener;
+import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.artworksMainActivity.ArtworksViewModel;
+import com.example.android.artplace.ui.artworksMainActivity.MainActivity;
+import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
+import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
+import com.google.android.gms.analytics.Tracker;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -52,11 +79,27 @@ import android.view.ViewGroup;
  * Use the {@link ArtworksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArtworksFragment extends Fragment {
+public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener, SnackMessageListener {
+
+    private static final String TAG = ArtworksFragment.class.getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
+
+    @BindView(R.id.coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.artworks_rv)
+    RecyclerView artworksRv;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView(R.id.error_message)
+    TextView errorMessage;
+
+    private ArtworkListAdapter mPagedListAdapter;
+    private ArtworksViewModel mViewModel;
+    private Tracker mTracker;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -98,8 +141,103 @@ public class ArtworksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_artworks, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_artworks, container, false);
+
+        ButterKnife.bind(this, rootView);
+
+        // Initialize the ViewModel
+        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+
+        // Setup the RecyclerView
+        setRecyclerView();
+
+        // Call submitList() method of the PagedListAdapter when a new page is available
+        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Artwork> artworks) {
+                if (artworks != null) {
+                    // When a new page is available, call submitList() method of the PagedListAdapter
+                    mPagedListAdapter.submitList(artworks);
+
+                }
+            }
+        });
+
+        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
+        mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                mPagedListAdapter.setNetworkState(networkState);
+            }
+        });
+
+        mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                // When the NetworkStatus is Successful
+                // hide both the Progress Bar and the error message
+                if (networkState != null &&
+                        networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    errorMessage.setVisibility(View.INVISIBLE);
+                }
+                // When the NetworkStatus is Failed
+                // show the error message and hide the Progress Bar
+                else if (networkState != null &&
+                        networkState.getStatus() == NetworkState.Status.FAILED) {
+                    progressBar.setVisibility(View.GONE);
+                    // TODO: Hide this message when no connection but some cache results still visible
+                    errorMessage.setVisibility(View.VISIBLE);
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
+                }
+                // When the NetworkStatus is Running/Loading
+                // show the Loading Progress Bar and hide the error message
+                else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        artworksRv.setAdapter(mPagedListAdapter);
+
+        return rootView;
+    }
+
+    private void setRecyclerView() {
+
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+
+        artworksRv.setLayoutManager(staggeredGridLayoutManager);
+
+        // Set the PagedListAdapter
+        mPagedListAdapter = new ArtworkListAdapter(getContext(), this, this);
+    }
+
+    public synchronized void refreshArtworks() {
+
+        // Setup the RecyclerView
+        setRecyclerView();
+
+        mViewModel.refreshArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Artwork> artworks) {
+                if (artworks != null) {
+                    mPagedListAdapter.submitList(null);
+                    // When a new page is available, call submitList() method of the PagedListAdapter
+                    mPagedListAdapter.submitList(artworks);
+                }
+            }
+        });
+
+        // Setup the Adapter on the RecyclerView
+        artworksRv.setAdapter(mPagedListAdapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -124,6 +262,33 @@ public class ArtworksFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork) {
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
+
+        Intent intent = new Intent(getContext(), ArtworkDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+    }
+
+    @Override
+    public void onRefreshConnection() {
+        Log.d(TAG, "onRefreshConnection is now triggered");
+
+        new RetrieveNetworkConnectivity(this, this).execute();
+    }
+
+    @Override
+    public void showSnackMessage(String resultMessage) {
+
+        // TODO: Show the AppBar so that the Refresh icon be visible!!
+        Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
+        refreshArtworks();
     }
 
     /**

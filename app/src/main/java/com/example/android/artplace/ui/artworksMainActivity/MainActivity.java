@@ -40,13 +40,16 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -60,7 +63,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.ArtworksFragment;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
@@ -79,7 +85,7 @@ import java.lang.ref.WeakReference;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener, SnackMessageListener {
+public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
@@ -88,17 +94,13 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     AppBarLayout appBarLayout;
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
-    @BindView(R.id.artworks_rv)
-    RecyclerView artworksRv;
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
-    @BindView(R.id.error_message)
-    TextView errorMessage;
+
+    @BindView(R.id.bottom_navigation)
+    AHBottomNavigation bottomNavigation;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private ArtworkListAdapter mPagedListAdapter;
-    private ArtworksViewModel mViewModel;
     private Tracker mTracker;
 
 
@@ -116,75 +118,50 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
         mTracker = application.getDefaultTracker();
 
-        // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+        // Add items to the Bottom Navigation
+        addBottomNavigationItems();
+        // Setting the very 1st item as home screen.
+        bottomNavigation.setCurrentItem(0);
 
-        // Setup the RecyclerView
-        setRecyclerView();
-
-        // Call submitList() method of the PagedListAdapter when a new page is available
-        mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
+        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
-            public void onChanged(@Nullable PagedList<Artwork> artworks) {
-                if (artworks != null) {
-                    // When a new page is available, call submitList() method of the PagedListAdapter
-                    mPagedListAdapter.submitList(artworks);
+            public boolean onTabSelected(int position, boolean wasSelected) {
 
-                }
+
+                return false;
             }
         });
-
-        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
-        mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
-            @Override
-            public void onChanged(@Nullable NetworkState networkState) {
-                mPagedListAdapter.setNetworkState(networkState);
-            }
-        });
-
-        mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
-            @Override
-            public void onChanged(@Nullable NetworkState networkState) {
-                // When the NetworkStatus is Successful
-                // hide both the Progress Bar and the error message
-                if (networkState != null &&
-                        networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    errorMessage.setVisibility(View.INVISIBLE);
-                }
-                // When the NetworkStatus is Failed
-                // show the error message and hide the Progress Bar
-                else if (networkState != null &&
-                        networkState.getStatus() == NetworkState.Status.FAILED) {
-                    progressBar.setVisibility(View.GONE);
-                    // TODO: Hide this message when no connection but some cache results still visible
-                    errorMessage.setVisibility(View.VISIBLE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                            Snackbar.LENGTH_LONG).show();
-                }
-                // When the NetworkStatus is Running/Loading
-                // show the Loading Progress Bar and hide the error message
-                else {
-                    progressBar.setVisibility(View.VISIBLE);
-                    errorMessage.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        artworksRv.setAdapter(mPagedListAdapter);
     }
 
-    private void setRecyclerView() {
+    private void addBottomNavigationItems() {
 
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem("Artworks", R.drawable.ic_launch_24dp);
+        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem("Artists", R.drawable.ic_clear_24dp);
+        AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem("Favorites", R.drawable.ic_favorite_24dp);
 
-        StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        bottomNavigation.addItem(artworksItem);
+        bottomNavigation.addItem(artistsItem);
+        bottomNavigation.addItem(favoritesItem);
+    }
 
-        artworksRv.setLayoutManager(staggeredGridLayoutManager);
+    private ArtworksFragment createFragment() {
+        ArtworksFragment artworksFragment = new ArtworksFragment();
+        //artworksFragment.setArguments();
+        return artworksFragment;
+    }
 
-        // Set the PagedListAdapter
-        mPagedListAdapter = new ArtworkListAdapter(getApplicationContext(), this, this);
+    private void setupBottomNavStyle() {
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorBottomNavigationInactive));
+
+        bottomNavigation.setColoredModeColors(Color.WHITE,
+                fetchColor(R.color.colorBottomNavigationInactiveColored));
+
+        bottomNavigation.setColored(true);
+
+        // Hide the navigation when the user scroll the Rv
+        bottomNavigation.setBehaviorTranslationEnabled(true);
     }
 
 
@@ -203,29 +180,9 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     public void onRefreshConnection() {
         Log.d(TAG, "onRefreshConnection is now triggered");
         setAppBarVisible();
-        new RetrieveNetworkConnectivity(this, this).execute();
-
+        //new RetrieveNetworkConnectivity(this, this).execute();
     }
 
-    public synchronized void refreshArtworks() {
-
-        // Setup the RecyclerView
-        setRecyclerView();
-
-        mViewModel.refreshArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Artwork> artworks) {
-                if (artworks != null) {
-                    mPagedListAdapter.submitList(null);
-                    // When a new page is available, call submitList() method of the PagedListAdapter
-                    mPagedListAdapter.submitList(artworks);
-                }
-            }
-        });
-
-        // Setup the Adapter on the RecyclerView
-        artworksRv.setAdapter(mPagedListAdapter);
-    }
 
     @Override
     protected void onResume() {
@@ -274,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
             case R.id.action_refresh:
                 // Refresh the list if there is connectivity
-                refreshArtworks();
+                //refreshArtworks();
 
                 return true;
             default:
@@ -284,81 +241,16 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void showSnackMessage(String resultMessage) {
-        // Show the AppBar so that the Refresh icon be visible!!
-        setAppBarVisible();
-        Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
-        refreshArtworks();
-    }
-
-
     /**
-     * AsyncTask that is used for requesting a network connection upon a Refresh button click from the user
+     * Simple method for fetching colors
+     * source: https://android.jlelse.eu/ultimate-guide-to-bottom-navigation-on-android-75e4efb8105f
      *
-     * Note: It's not ideal in this case, because it's being destroyed with the Lifecylce of the Activity,
-     * but it demonstrate a use case of AsyncTask that is needed for passing the Rubrics fro Capstone Stage 2
+     * @param color to fetch
+     * @return int color value
      */
-    private static class RetrieveNetworkConnectivity extends AsyncTask<String, Void, String> {
-
-        private WeakReference<MainActivity> mContext;
-        private SnackMessageListener mListener;
-
-        boolean flag = false;
-        private Exception mException;
-
-
-        private RetrieveNetworkConnectivity(MainActivity context, SnackMessageListener snackMessageListener) {
-            mContext = new WeakReference<>(context);
-            mListener = snackMessageListener;
-        }
-
-        @Override
-        protected String doInBackground(String... result) {
-
-            String snackMessage;
-            try {
-                boolean isConnected = ConnectivityUtils.isConnected();
-                if (isConnected) {
-                    flag = true;
-                    Log.d(TAG, "doInBackground, network=true ");
-
-                    // Cannot extract the string here, because it's a static method
-                    snackMessage = ArtPlaceApp.getInstance().getString(R.string.network_ok);
-
-                    return snackMessage;
-                } else {
-                    flag = false;
-                    Log.d(TAG, "doInBackground, network= false");
-
-                    // Cannot extract the string here, because it's a static method
-                    snackMessage = ArtPlaceApp.getInstance().getString(R.string.no_network);
-
-                    return snackMessage;
-                }
-            } catch (Exception e) {
-                this.mException = e;
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (mListener != null) {
-                if (flag) {
-                    // Show a message to the user there is an internet connection
-                    mListener.showSnackMessage(result);
-
-                    Log.d(TAG, "onPostExecute called with connectivity ON");
-
-                } else {
-                    // Show a message to the user there is No internet connection
-                    mListener.showSnackMessage(result);
-
-                    Log.d(TAG, "onPostExecute called with NO connectivity");
-                }
-            }
-        }
+    private int fetchColor(@ColorRes int color) {
+        return ContextCompat.getColor(this, color);
     }
+
 
 }
