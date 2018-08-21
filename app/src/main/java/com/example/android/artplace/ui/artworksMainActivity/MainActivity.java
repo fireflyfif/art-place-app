@@ -50,6 +50,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -70,6 +71,7 @@ import com.example.android.artplace.ArtworksFragment;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.BottomNavAdapter;
 import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
@@ -97,11 +99,14 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
     @BindView(R.id.bottom_navigation)
     AHBottomNavigation bottomNavigation;
+    @BindView(R.id.view_pager_content)
+    ViewPager viewPager;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private Tracker mTracker;
+    private BottomNavAdapter mPagerAdapter;
 
 
     @Override
@@ -113,10 +118,15 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         setSupportActionBar(toolbar);
 
+
+
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
         mTracker = application.getDefaultTracker();
+
+        setupViewPager();
+        setupBottomNavStyle();
 
         // Add items to the Bottom Navigation
         addBottomNavigationItems();
@@ -127,8 +137,9 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
 
+                viewPager.setCurrentItem(position);
 
-                return false;
+                return true;
             }
         });
     }
@@ -162,6 +173,14 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         // Hide the navigation when the user scroll the Rv
         bottomNavigation.setBehaviorTranslationEnabled(true);
+    }
+
+    private void setupViewPager() {
+
+        mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
+        mPagerAdapter.addFragments(createFragment());
+
+        viewPager.setAdapter(mPagerAdapter);
     }
 
 

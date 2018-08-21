@@ -40,7 +40,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -61,7 +60,6 @@ import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworksMainActivity.ArtworksViewModel;
-import com.example.android.artplace.ui.artworksMainActivity.MainActivity;
 import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
@@ -74,7 +72,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ArtworksFragment.OnFragmentInteractionListener} interface
+ *
  * to handle interaction events.
  * Use the {@link ArtworksFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -105,7 +103,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
 
     public ArtworksFragment() {
         // Required empty public constructor
@@ -240,28 +237,17 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         artworksRv.setAdapter(mPagedListAdapter);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+
     }
 
     @Override
@@ -291,18 +277,4 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         refreshArtworks();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }
