@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.artistDetailActivity;
+package com.example.android.artplace.ui.artistdetail;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;

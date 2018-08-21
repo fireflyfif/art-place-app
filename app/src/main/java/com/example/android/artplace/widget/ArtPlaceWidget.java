@@ -49,9 +49,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.ui.FavDetailActivity;
-import com.example.android.artplace.ui.artworksMainActivity.MainActivity;
-import com.example.android.artplace.ui.favoriteArtworks.FavArtworksActivity;
+import com.example.android.artplace.ui.mainactivity.MainActivity;
+import com.example.android.artplace.ui.favorites.FavArtworksActivity;
 
 import java.util.Objects;
 

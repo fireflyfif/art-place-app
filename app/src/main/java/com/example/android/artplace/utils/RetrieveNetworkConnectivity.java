@@ -39,7 +39,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.ArtworksFragment;
+import com.example.android.artplace.ui.artworks.ArtworksFragment;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.SnackMessageListener;
 

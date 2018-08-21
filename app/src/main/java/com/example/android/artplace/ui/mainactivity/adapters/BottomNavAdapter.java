@@ -33,46 +33,33 @@
  *
  */
 
-package com.example.android.artplace.ui;
+package com.example.android.artplace.ui.mainactivity.adapters;
 
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.SparseArray;
-import android.view.ViewGroup;
 
-/**
- * Source: https://gist.github.com/nesquena/c715c9b22fb873b1d259
- */
-public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
+import java.util.ArrayList;
+import java.util.List;
 
-    private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+public class BottomNavAdapter extends SmartFragmentStatePagerAdapter {
 
-    public SmartFragmentStatePagerAdapter(FragmentManager fm) {
+    private final List<Fragment> fragments = new ArrayList<>();
+
+    public BottomNavAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    @NonNull
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Fragment fragment = (Fragment) super.instantiateItem(container, position);
-        registeredFragments.put(position,fragment);
-        return fragment;
+    public void addFragments(Fragment fragment) {
+        fragments.add(fragment);
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        registeredFragments.remove(position);
-        super.destroyItem(container, position, object);
+    public Fragment getItem(int position) {
+        return fragments.get(position);
     }
 
     @Override
     public int getCount() {
-        return 0;
-    }
-
-    public Fragment getRegisteredFragment(int position) {
-        return registeredFragments.get(position);
+        return fragments.size();
     }
 }

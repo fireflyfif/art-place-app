@@ -33,28 +33,28 @@
  *
  */
 
-package com.example.android.artplace.ui.favoriteArtworks;
+package com.example.android.artplace.ui.favorites;
 
+import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -63,16 +63,18 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.ui.FavDetailActivity;
-import com.example.android.artplace.ui.favoriteArtworks.adapter.FavArtworkListAdapter;
+import com.example.android.artplace.ui.favorites.adapter.FavArtworkListAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavArtworksActivity extends AppCompatActivity implements OnFavItemClickListener {
+public class FavoritesFragment extends Fragment implements OnFavItemClickListener {
 
-    private static final String TAG = FavArtworksActivity.class.getSimpleName();
+    private static final String TAG = FavoritesFragment.class.getSimpleName();
 
     public static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
@@ -103,32 +105,32 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
     private Tracker mTracker;
     private FavArtworksViewModel mFavArtworksViewModel;
 
+    // Required empty public constructor
+    public FavoritesFragment() {}
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav_artworks);
+    }
 
-        ButterKnife.bind(this);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(R.string.favorites_title);
-        }
+        ButterKnife.bind(this, rootView);
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) getApplication();
+        ArtPlaceApp application = (ArtPlaceApp) Objects.requireNonNull(getActivity()).getApplication();
         mTracker = application.getDefaultTracker();
 
         mFavArtworksViewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         favArtworksRv.setLayoutManager(layoutManager);
 
-        mAdapter = new FavArtworkListAdapter(this, this);
+        mAdapter = new FavArtworkListAdapter(getContext(), this);
         emptyText.setVisibility(View.INVISIBLE);
 
         // Show the whole list of Favorite Artworks via the ViewModel
@@ -139,6 +141,18 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         // Delete a single item by swiping to left or right
         deleteItemBySwiping();
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName(TAG);
+        // Send initial screen screen view hit.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        refreshFavList();
     }
 
     private void getFavArtworks() {
@@ -192,20 +206,9 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         }).attachToRecyclerView(favArtworksRv);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mTracker.setScreenName(TAG);
-        // Send initial screen screen view hit.
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-
-        refreshFavList();
-    }
-
     private void refreshFavList() {
 
-        mFavArtworksViewModel.refreshFavArtworkList(getApplication()).observe(this, new Observer<PagedList<FavoriteArtworks>>() {
+        mFavArtworksViewModel.refreshFavArtworkList(Objects.requireNonNull(getActivity()).getApplication()).observe(this, new Observer<PagedList<FavoriteArtworks>>() {
             @Override
             public void onChanged(@Nullable PagedList<FavoriteArtworks> favoriteArtworks) {
                 mAdapter.submitList(favoriteArtworks);
@@ -216,8 +219,9 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
 
     @Override
     public void onFavItemClick(FavoriteArtworks favArtworks) {
+
         // Set Intent to the DetailActivity
-        Intent favIntent = new Intent(FavArtworksActivity.this, FavDetailActivity.class);
+        Intent favIntent = new Intent(getActivity(), FavDetailActivity.class);
         favIntent.putExtra(ARTWORK_ID_KEY, favArtworks.getId());
         favIntent.putExtra(ARTWORK_IMAGE_KEY, favArtworks.getArtworkImagePath());
         favIntent.putExtra(ARTWORK_TITLE_KEY, favArtworks.getArtworkTitle());
@@ -230,61 +234,5 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         favIntent.putExtra(ARTWORK_DIMENS_CM_KEY, favArtworks.getArtworkDimensCm());
 
         startActivity(favIntent);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fav_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-
-                return false;
-            case R.id.action_delete_all:
-                // Show warning dialog to the user before deleting all data from the db
-                deleteItemsWithConfirmation();
-                return true;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void deleteItemsWithConfirmation() {
-
-        if (mFavoriteArtworksList.size() > 0) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.delete_all_message);
-            builder.setTitle(R.string.delete_all_title);
-            builder.setIcon(R.drawable.ic_delete_24dp);
-
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mFavArtworksViewModel.deleteAllItems();
-                    // Swapping the data doesn't refresh the list?
-                    mAdapter.swapData(mFavoriteArtworksList);
-                    // Instead - Refresh the list
-                    refreshFavList();
-                }
-            });
-
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
-                }
-            });
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
     }
 }

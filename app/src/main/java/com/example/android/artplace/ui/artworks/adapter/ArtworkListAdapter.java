@@ -33,16 +33,14 @@
  *
  */
 
-package com.example.android.artplace.ui.artworksMainActivity.adapter;
+package com.example.android.artplace.ui.artworks.adapter;
 
-import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -70,8 +68,6 @@ import com.example.android.artplace.utils.StringUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.text.Normalizer;
 import java.util.List;
 
 import butterknife.BindView;

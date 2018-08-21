@@ -40,7 +40,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".ui.favoriteArtworks.FavArtworksActivity">
+    tools:context=".ui.favorites.FavArtworksActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/fav_appbar"

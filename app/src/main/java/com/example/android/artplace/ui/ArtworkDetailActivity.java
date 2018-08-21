@@ -63,7 +63,7 @@ import com.example.android.artplace.model.Artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.repository.FavArtRepository;
-import com.example.android.artplace.ui.artistDetailActivity.ArtistDetailActivity;
+import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.utils.StringUtils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;

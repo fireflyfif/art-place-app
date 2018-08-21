@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.favoriteArtworks.adapter;
+package com.example.android.artplace.ui.favorites.adapter;
 
 import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;

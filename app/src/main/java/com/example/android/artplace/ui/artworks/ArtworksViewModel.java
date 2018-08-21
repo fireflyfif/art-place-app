@@ -33,17 +33,15 @@
  *
  */
 
-package com.example.android.artplace.ui.artworksMainActivity;
+package com.example.android.artplace.ui.artworks;
 
 import android.app.Application;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.support.annotation.NonNull;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;

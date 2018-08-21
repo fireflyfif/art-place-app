@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace;
+package com.example.android.artplace.ui.artworks;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -54,13 +54,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
-import com.example.android.artplace.ui.artworksMainActivity.ArtworksViewModel;
-import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
+import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
 import com.google.android.gms.analytics.Tracker;

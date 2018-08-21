@@ -33,56 +33,36 @@
  *
  */
 
-package com.example.android.artplace.ui.artworksMainActivity;
+package com.example.android.artplace.ui.mainactivity;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.ArtworksFragment;
 import com.example.android.artplace.R;
-import com.example.android.artplace.callbacks.SnackMessageListener;
-import com.example.android.artplace.ui.ArtworkDetailActivity;
-import com.example.android.artplace.ui.BottomNavAdapter;
-import com.example.android.artplace.ui.artworksMainActivity.adapter.ArtworkListAdapter;
 import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
-import com.example.android.artplace.ui.favoriteArtworks.FavArtworksActivity;
-import com.example.android.artplace.utils.ConnectivityUtils;
-import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.artworks.ArtworksFragment;
+import com.example.android.artplace.ui.favorites.FavArtworksActivity;
+import com.example.android.artplace.ui.favorites.FavoritesFragment;
+import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -161,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         return artworksFragment;
     }
 
+    private FavoritesFragment createFavFragment() {
+        return new FavoritesFragment();
+    }
+
     private void setupBottomNavStyle() {
         bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
         bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
@@ -179,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
         mPagerAdapter.addFragments(createFragment());
+        mPagerAdapter.addFragments(createFavFragment());
 
         viewPager.setAdapter(mPagerAdapter);
     }

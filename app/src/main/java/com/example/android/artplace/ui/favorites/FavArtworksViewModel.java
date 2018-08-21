@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.favoriteArtworks;
+package com.example.android.artplace.ui.favorites;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
