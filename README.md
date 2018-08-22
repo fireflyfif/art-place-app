@@ -24,7 +24,10 @@ Find out who are their artists and see more details about them too.
 
 ## Screenshots
 
-![text](https://github.com/fireflyfif/cookbook-app/blob/master/art/device-artwork-01.png)
+![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_01.png)
+
+
+![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_02.png)
 
 
 # License
