@@ -58,6 +58,7 @@ import com.example.android.artplace.ui.favorites.FavArtworksActivity;
 import com.example.android.artplace.ui.favorites.FavoritesFragment;
 import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
 import com.example.android.artplace.ui.mainactivity.adapters.MainViewPager;
+import com.example.android.artplace.ui.search.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void addBottomNavigationItems() {
 
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem("Artworks", R.drawable.ic_launch_24dp);
-        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem("Artists", R.drawable.ic_clear_24dp);
+        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem("Search", R.drawable.ic_search_24dp);
         AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem("Favorites", R.drawable.ic_favorite_24dp);
 
         bottomNavigation.addItem(artworksItem);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.addItem(favoritesItem);
     }
 
-    private ArtworksFragment createFragment() {
+    private ArtworksFragment createArtworksFragment() {
         ArtworksFragment artworksFragment = new ArtworksFragment();
         //artworksFragment.setArguments();
         return artworksFragment;
@@ -137,6 +138,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private FavoritesFragment createFavFragment() {
         return new FavoritesFragment();
+    }
+
+    private SearchFragment createSearchFragment() {
+        return new SearchFragment();
     }
 
     private void setupBottomNavStyle() {
@@ -157,7 +162,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void setupViewPager() {
         viewPager.setPagingEnabled(false);
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
-        mPagerAdapter.addFragments(createFragment());
+
+        mPagerAdapter.addFragments(createArtworksFragment());
+        mPagerAdapter.addFragments(createSearchFragment());
         mPagerAdapter.addFragments(createFavFragment());
 
         viewPager.setAdapter(mPagerAdapter);
