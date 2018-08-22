@@ -33,68 +33,49 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.search;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.example.android.artplace.model.Self;
+import com.example.android.artplace.model.Thumbnail;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Dimensions implements Parcelable {
+public class LinksResult {
 
-    @SerializedName("in")
+    @SerializedName("self")
     @Expose
-    private InSize inSize;
-    @SerializedName("cm")
+    private Self self;
+
+    @SerializedName("permalink")
     @Expose
-    private CmSize cmSize;
+    private Permalink permalink;
 
-    public InSize getInSize() {
-        return inSize;
+    @SerializedName("thumbnail")
+    @Expose
+    private Thumbnail thumbnail;
+
+    public Self getSelf() {
+        return self;
     }
 
-    public void setInSize(InSize inSize) {
-        this.inSize = inSize;
+    public void setSelf(Self self) {
+        this.self = self;
     }
 
-    public CmSize getCmSize() {
-        return cmSize;
+    public Permalink getPermalink() {
+        return permalink;
     }
 
-    public void setCmSize(CmSize cmSize) {
-        this.cmSize = cmSize;
+    public void setPermalink(Permalink permalink) {
+        this.permalink = permalink;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public Thumbnail getThumbnail() {
+        return thumbnail;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.inSize, flags);
-        dest.writeParcelable(this.cmSize, flags);
+    public void setThumbnail(Thumbnail thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
-    public Dimensions() {
-    }
-
-    protected Dimensions(Parcel in) {
-        this.inSize = in.readParcelable(InSize.class.getClassLoader());
-        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
-        @Override
-        public Dimensions createFromParcel(Parcel source) {
-            return new Dimensions(source);
-        }
-
-        @Override
-        public Dimensions[] newArray(int size) {
-            return new Dimensions[size];
-        }
-    };
 }

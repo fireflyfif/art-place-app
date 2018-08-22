@@ -50,8 +50,8 @@ import android.widget.TextView;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artists.Artist;
-import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.artists.Artist;
+import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;

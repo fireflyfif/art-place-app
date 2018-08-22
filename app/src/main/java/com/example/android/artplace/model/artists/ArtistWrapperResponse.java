@@ -33,31 +33,51 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.artists;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.android.artplace.model.Links;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MainImage implements Parcelable {
+public class ArtistWrapperResponse implements Parcelable {
 
-    /*
-    Link to the image
-    TODO: needs {image_versions} always to be "large"
-     */
-    @SerializedName("href")
+    @SerializedName("total_count")
     @Expose
-    private String href;
+    private Integer totalCount;
 
+    @SerializedName("_links")
+    @Expose
+    private Links links;
 
-    public String getHref() {
-        return href;
+    @SerializedName("_embedded")
+    @Expose
+    private EmbeddedArtists embeddedArtist;
+
+    public Integer getTotalCount() {
+        return totalCount;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public Links getLinks() {
+        return links;
+    }
+
+    public void setLinks(Links links) {
+        this.links = links;
+    }
+
+    public EmbeddedArtists getEmbeddedArtist() {
+        return embeddedArtist;
+    }
+
+    public void setEmbedded(EmbeddedArtists embeddedArtist) {
+        this.embeddedArtist = embeddedArtist;
     }
 
 
@@ -68,25 +88,29 @@ public class MainImage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
+        dest.writeValue(this.totalCount);
+        dest.writeParcelable(this.links, flags);
+        dest.writeParcelable(this.embeddedArtist, flags);
     }
 
-    public MainImage() {
+    public ArtistWrapperResponse() {
     }
 
-    protected MainImage(Parcel in) {
-        this.href = in.readString();
+    protected ArtistWrapperResponse(Parcel in) {
+        this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.links = in.readParcelable(Links.class.getClassLoader());
+        this.embeddedArtist = in.readParcelable(EmbeddedArtists.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<MainImage> CREATOR = new Parcelable.Creator<MainImage>() {
+    public static final Parcelable.Creator<ArtistWrapperResponse> CREATOR = new Parcelable.Creator<ArtistWrapperResponse>() {
         @Override
-        public MainImage createFromParcel(Parcel source) {
-            return new MainImage(source);
+        public ArtistWrapperResponse createFromParcel(Parcel source) {
+            return new ArtistWrapperResponse(source);
         }
 
         @Override
-        public MainImage[] newArray(int size) {
-            return new MainImage[size];
+        public ArtistWrapperResponse[] newArray(int size) {
+            return new ArtistWrapperResponse[size];
         }
     };
 }

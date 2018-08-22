@@ -33,51 +33,57 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.model.artworks;
 
-import com.example.android.artplace.model.artists.ArtistWrapperResponse;
-import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
-import com.example.android.artplace.model.search.SearchWrapperResponse;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public interface ArtsyApiInterface {
+import java.util.List;
 
-    /**
-     * Endpoint for fetching Artworks
-     * link: https://api.artsy.net/api/artworks?size=10 + header with token
-     *
-     * @param itemSize displayed items to the user
-     * @return a call to the Artsy Response
-     */
-    @GET("/api/artworks")
-    Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
+public class EmbeddedArtworks implements Parcelable {
 
-    /**
-     * Make call according to the url that is received from the json response
-     * @param nextUrl is dynamic link for next page with items
-     * @param itemSize is the size of requested items at once
-     * @return the response for the next page
-     */
-    @GET
-    Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
+    @SerializedName("artworks")
+    @Expose
+    private List<Artwork> artworks;
 
-    @GET
-    Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
+    public List<Artwork> getArtworks() {
+        return artworks;
+    }
 
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
+    public void setArtworks(List<Artwork> artworks) {
+        this.artworks = artworks;
+    }
 
-    /**
-     * Endpoint for Search results
-     */
-    @GET("/api/search")
-    Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("type") String type);
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(this.artworks);
+    }
+
+    public EmbeddedArtworks() {
+    }
+
+    protected EmbeddedArtworks(Parcel in) {
+        this.artworks = in.createTypedArrayList(Artwork.CREATOR);
+    }
+
+    public static final Parcelable.Creator<EmbeddedArtworks> CREATOR = new Parcelable.Creator<EmbeddedArtworks>() {
+        @Override
+        public EmbeddedArtworks createFromParcel(Parcel source) {
+            return new EmbeddedArtworks(source);
+        }
+
+        @Override
+        public EmbeddedArtworks[] newArray(int size) {
+            return new EmbeddedArtworks[size];
+        }
+    };
 }

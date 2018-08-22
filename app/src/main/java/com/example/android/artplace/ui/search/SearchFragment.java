@@ -33,51 +33,23 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.ui.search;
 
-import com.example.android.artplace.model.artists.ArtistWrapperResponse;
-import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
-import com.example.android.artplace.model.search.SearchWrapperResponse;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
+public class SearchFragment extends Fragment {
 
-public interface ArtsyApiInterface {
+    public SearchFragment() {}
 
-    /**
-     * Endpoint for fetching Artworks
-     * link: https://api.artsy.net/api/artworks?size=10 + header with token
-     *
-     * @param itemSize displayed items to the user
-     * @return a call to the Artsy Response
-     */
-    @GET("/api/artworks")
-    Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
-
-    /**
-     * Make call according to the url that is received from the json response
-     * @param nextUrl is dynamic link for next page with items
-     * @param itemSize is the size of requested items at once
-     * @return the response for the next page
-     */
-    @GET
-    Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
-
-    @GET
-    Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
-
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
-
-    /**
-     * Endpoint for Search results
-     */
-    @GET("/api/search")
-    Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("type") String type);
-
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 }

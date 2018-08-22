@@ -57,8 +57,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;

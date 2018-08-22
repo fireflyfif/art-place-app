@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model.Artists;
+package com.example.android.artplace.model.artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,20 +41,29 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class Dimensions implements Parcelable {
 
-public class EmbeddedArtists implements Parcelable {
-
-    @SerializedName("artists")
+    @SerializedName("in")
     @Expose
-    private List<Artist> artists = null;
+    private InSize inSize;
+    @SerializedName("cm")
+    @Expose
+    private CmSize cmSize;
 
-    public List<Artist> getArtists() {
-        return artists;
+    public InSize getInSize() {
+        return inSize;
     }
 
-    public void setArtists(List<Artist> artists) {
-        this.artists = artists;
+    public void setInSize(InSize inSize) {
+        this.inSize = inSize;
+    }
+
+    public CmSize getCmSize() {
+        return cmSize;
+    }
+
+    public void setCmSize(CmSize cmSize) {
+        this.cmSize = cmSize;
     }
 
 
@@ -65,25 +74,27 @@ public class EmbeddedArtists implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(this.artists);
+        dest.writeParcelable(this.inSize, flags);
+        dest.writeParcelable(this.cmSize, flags);
     }
 
-    public EmbeddedArtists() {
+    public Dimensions() {
     }
 
-    protected EmbeddedArtists(Parcel in) {
-        this.artists = in.createTypedArrayList(Artist.CREATOR);
+    protected Dimensions(Parcel in) {
+        this.inSize = in.readParcelable(InSize.class.getClassLoader());
+        this.cmSize = in.readParcelable(CmSize.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<EmbeddedArtists> CREATOR = new Parcelable.Creator<EmbeddedArtists>() {
+    public static final Parcelable.Creator<Dimensions> CREATOR = new Parcelable.Creator<Dimensions>() {
         @Override
-        public EmbeddedArtists createFromParcel(Parcel source) {
-            return new EmbeddedArtists(source);
+        public Dimensions createFromParcel(Parcel source) {
+            return new Dimensions(source);
         }
 
         @Override
-        public EmbeddedArtists[] newArray(int size) {
-            return new EmbeddedArtists[size];
+        public Dimensions[] newArray(int size) {
+            return new Dimensions[size];
         }
     };
 }

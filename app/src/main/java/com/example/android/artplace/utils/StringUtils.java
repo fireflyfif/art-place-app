@@ -37,7 +37,7 @@ package com.example.android.artplace.utils;
 
 import android.util.Log;
 
-import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.artworks.Artwork;
 
 import java.text.Normalizer;
 

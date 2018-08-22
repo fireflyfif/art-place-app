@@ -33,51 +33,55 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.model.artworks;
 
-import com.example.android.artplace.model.artists.ArtistWrapperResponse;
-import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
-import com.example.android.artplace.model.search.SearchWrapperResponse;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public interface ArtsyApiInterface {
+public class CmSize implements Parcelable {
 
-    /**
-     * Endpoint for fetching Artworks
-     * link: https://api.artsy.net/api/artworks?size=10 + header with token
-     *
-     * @param itemSize displayed items to the user
-     * @return a call to the Artsy Response
-     */
-    @GET("/api/artworks")
-    Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
+    @SerializedName("text")
+    @Expose
+    private String text;
 
-    /**
-     * Make call according to the url that is received from the json response
-     * @param nextUrl is dynamic link for next page with items
-     * @param itemSize is the size of requested items at once
-     * @return the response for the next page
-     */
-    @GET
-    Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
+    public String getText() {
+        return text;
+    }
 
-    @GET
-    Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
+    public void setText(String text) {
+        this.text = text;
+    }
 
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
 
-    /**
-     * Endpoint for Search results
-     */
-    @GET("/api/search")
-    Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("type") String type);
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.text);
+    }
+
+    public CmSize() {
+    }
+
+    protected CmSize(Parcel in) {
+        this.text = in.readString();
+    }
+
+    public static final Parcelable.Creator<CmSize> CREATOR = new Parcelable.Creator<CmSize>() {
+        @Override
+        public CmSize createFromParcel(Parcel source) {
+            return new CmSize(source);
+        }
+
+        @Override
+        public CmSize[] newArray(int size) {
+            return new CmSize[size];
+        }
+    };
 }

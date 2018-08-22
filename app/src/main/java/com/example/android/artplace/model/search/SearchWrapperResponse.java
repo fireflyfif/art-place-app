@@ -33,57 +33,71 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.search;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.example.android.artplace.model.Links;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class SearchWrapperResponse {
 
-public class EmbeddedArtworks implements Parcelable {
-
-    @SerializedName("artworks")
+    @SerializedName("total_count")
     @Expose
-    private List<Artwork> artworks;
+    private Integer totalCount;
 
-    public List<Artwork> getArtworks() {
-        return artworks;
+    @SerializedName("offset")
+    @Expose
+    private Integer offset;
+
+    @SerializedName("q")
+    @Expose
+    private String q;
+
+    @SerializedName("_links")
+    @Expose
+    private Links links;
+
+    @SerializedName("_embedded")
+    @Expose
+    private EmbeddedResults embedded;
+
+    public Integer getTotalCount() {
+        return totalCount;
     }
 
-    public void setArtworks(List<Artwork> artworks) {
-        this.artworks = artworks;
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public Integer getOffset() {
+        return offset;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(this.artworks);
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 
-    public EmbeddedArtworks() {
+    public String getQ() {
+        return q;
     }
 
-    protected EmbeddedArtworks(Parcel in) {
-        this.artworks = in.createTypedArrayList(Artwork.CREATOR);
+    public void setQ(String q) {
+        this.q = q;
     }
 
-    public static final Parcelable.Creator<EmbeddedArtworks> CREATOR = new Parcelable.Creator<EmbeddedArtworks>() {
-        @Override
-        public EmbeddedArtworks createFromParcel(Parcel source) {
-            return new EmbeddedArtworks(source);
-        }
+    public Links getLinks() {
+        return links;
+    }
 
-        @Override
-        public EmbeddedArtworks[] newArray(int size) {
-            return new EmbeddedArtworks[size];
-        }
-    };
+    public void setLinks(Links links) {
+        this.links = links;
+    }
+
+    public EmbeddedResults getEmbedded() {
+        return embedded;
+    }
+
+    public void setEmbedded(EmbeddedResults embedded) {
+        this.embedded = embedded;
+    }
 }

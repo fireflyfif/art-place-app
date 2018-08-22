@@ -33,21 +33,13 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.example.android.artplace.model.search;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ArtistsLink implements Parcelable {
+public class Permalink {
 
-    /*
-    Link to the artists endpoint, e.g.:
-    "https://api.artsy.net/api/artists?artwork_id=4d8b92eb4eb68a1b2c000968"
-    Note: needs a token added to the Header!
-     */
     @SerializedName("href")
     @Expose
     private String href;
@@ -59,34 +51,4 @@ public class ArtistsLink implements Parcelable {
     public void setHref(String href) {
         this.href = href;
     }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
-    }
-
-    public ArtistsLink() {
-    }
-
-    protected ArtistsLink(Parcel in) {
-        this.href = in.readString();
-    }
-
-    public static final Parcelable.Creator<ArtistsLink> CREATOR = new Parcelable.Creator<ArtistsLink>() {
-        @Override
-        public ArtistsLink createFromParcel(Parcel source) {
-            return new ArtistsLink(source);
-        }
-
-        @Override
-        public ArtistsLink[] newArray(int size) {
-            return new ArtistsLink[size];
-        }
-    };
 }

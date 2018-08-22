@@ -33,30 +33,70 @@
  *
  */
 
-package com.example.android.artplace.model.Artists;
+package com.example.android.artplace.model.search;
 
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.lang.reflect.Type;
+public class Result {
 
-// Custom Deserializer gets the JSON and deserialize it to access the EmbeddedArtworks element
-// resource: https://stackoverflow.com/a/23071080/8132331
-public class CustomArtistsDeserializer implements JsonDeserializer<EmbeddedArtists> {
+    @SerializedName("type")
+    @Expose
+    private String type;
 
-    @Override
-    public EmbeddedArtists deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+    @SerializedName("title")
+    @Expose
+    private String title;
 
-        // Get the "embedded" element from the parsed JSON
-        JsonElement embeddedElement = json.getAsJsonObject().get("_embedded");
+    @SerializedName("description")
+    @Expose
+    private Object description;
 
-        // Deserialize it by using a new instance of Gson to avoid infinite recursion
-        // to this deserializer
-        return new Gson().fromJson(embeddedElement, EmbeddedArtists.class);
+    @SerializedName("og_type")
+    @Expose
+    private String ogType;
+
+    @SerializedName("_links")
+    @Expose
+    private LinksResult links;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Object getDescription() {
+        return description;
+    }
+
+    public void setDescription(Object description) {
+        this.description = description;
+    }
+
+    public String getOgType() {
+        return ogType;
+    }
+
+    public void setOgType(String ogType) {
+        this.ogType = ogType;
+    }
+
+    public LinksResult getLinks() {
+        return links;
+    }
+
+    public void setLinks(LinksResult links) {
+        this.links = links;
     }
 }

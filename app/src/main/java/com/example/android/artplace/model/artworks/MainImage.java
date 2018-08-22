@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model.Artworks;
+package com.example.android.artplace.model.artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,18 +41,23 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InSize implements Parcelable {
+public class MainImage implements Parcelable {
 
-    @SerializedName("text")
+    /*
+    Link to the image
+    TODO: needs {image_versions} always to be "large"
+     */
+    @SerializedName("href")
     @Expose
-    private String text;
+    private String href;
 
-    public String getText() {
-        return text;
+
+    public String getHref() {
+        return href;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 
@@ -63,25 +68,25 @@ public class InSize implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.text);
+        dest.writeString(this.href);
     }
 
-    public InSize() {
+    public MainImage() {
     }
 
-    protected InSize(Parcel in) {
-        this.text = in.readString();
+    protected MainImage(Parcel in) {
+        this.href = in.readString();
     }
 
-    public static final Parcelable.Creator<InSize> CREATOR = new Parcelable.Creator<InSize>() {
+    public static final Parcelable.Creator<MainImage> CREATOR = new Parcelable.Creator<MainImage>() {
         @Override
-        public InSize createFromParcel(Parcel source) {
-            return new InSize(source);
+        public MainImage createFromParcel(Parcel source) {
+            return new MainImage(source);
         }
 
         @Override
-        public InSize[] newArray(int size) {
-            return new InSize[size];
+        public MainImage[] newArray(int size) {
+            return new MainImage[size];
         }
     };
 }

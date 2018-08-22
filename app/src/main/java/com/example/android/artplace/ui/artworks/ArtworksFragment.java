@@ -58,7 +58,7 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.callbacks.SnackMessageListener;
-import com.example.android.artplace.model.Artworks.Artwork;
+import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;

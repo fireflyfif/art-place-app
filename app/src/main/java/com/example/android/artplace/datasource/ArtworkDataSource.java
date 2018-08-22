@@ -41,9 +41,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
-import com.example.android.artplace.model.Artworks.Artwork;
-import com.example.android.artplace.model.Artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.Links;
 import com.example.android.artplace.model.Next;
 import com.example.android.artplace.utils.NetworkState;

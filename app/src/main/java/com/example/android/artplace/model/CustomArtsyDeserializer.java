@@ -35,7 +35,7 @@
 
 package com.example.android.artplace.model;
 
-import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.model.Artists;
+package com.example.android.artplace.model.artists;
 
 import android.os.Parcel;
 import android.os.Parcelable;
