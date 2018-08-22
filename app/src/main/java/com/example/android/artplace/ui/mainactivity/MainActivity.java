@@ -42,35 +42,34 @@ import android.support.annotation.ColorRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v7.widget.Toolbar;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
+import com.example.android.artplace.model.Artworks.Artwork;
 import com.example.android.artplace.ui.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.ArtworksFragment;
 import com.example.android.artplace.ui.favorites.FavArtworksActivity;
 import com.example.android.artplace.ui.favorites.FavoritesFragment;
 import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
+import com.example.android.artplace.ui.mainactivity.adapters.MainViewPager;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements OnArtworkClickListener, OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     @BindView(R.id.bottom_navigation)
     AHBottomNavigation bottomNavigation;
     @BindView(R.id.view_pager_content)
-    ViewPager viewPager;
+    MainViewPager viewPager;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -97,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
-
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -146,21 +143,22 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     }
 
     private void setupBottomNavStyle() {
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
+        bottomNavigation.setDefaultBackgroundColor(Color.WHITE);
         bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorBottomNavigationInactive));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorPrimary));
 
-        bottomNavigation.setColoredModeColors(Color.WHITE,
-                fetchColor(R.color.colorBottomNavigationInactiveColored));
+        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPrimary),
+                fetchColor(R.color.colorAccent));
 
         bottomNavigation.setColored(true);
 
         // Hide the navigation when the user scroll the Rv
-        bottomNavigation.setBehaviorTranslationEnabled(true);
+        //bottomNavigation.setBehaviorTranslationEnabled(true);
+        bottomNavigation.setTranslucentNavigationEnabled(true);
     }
 
     private void setupViewPager() {
-
+        viewPager.setPagingEnabled(false);
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
         mPagerAdapter.addFragments(createFragment());
         mPagerAdapter.addFragments(createFavFragment());
@@ -170,21 +168,9 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
 
 
     @Override
-    public void onArtworkClick(Artwork artwork) {
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
-
-        Intent intent = new Intent(MainActivity.this, ArtworkDetailActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
-    @Override
     public void onRefreshConnection() {
         Log.d(TAG, "onRefreshConnection is now triggered");
         setAppBarVisible();
-        //new RetrieveNetworkConnectivity(this, this).execute();
     }
 
 
@@ -192,10 +178,6 @@ public class MainActivity extends AppCompatActivity implements OnArtworkClickLis
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume is called now!");
-
-        /*if (recyclerViewState != null) {
-            artworksRv.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-        }*/
 
         mTracker.setScreenName(getString(R.string.analytics_artwork_screenname));
         // Send initial screen screen view hit.
