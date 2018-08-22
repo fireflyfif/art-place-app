@@ -12,7 +12,7 @@ def apiToken = project.hasProperty('token') ? apiToken : (System.getenv('TOKEN')
 Art Place is an app for art lovers, artists or people who just enjoy seeing a piece of artwork. Browse through famous artworks and see their location and other details. Find out who are their artists and see more details about them too.
 
 - The App fetches data from the Artsy API and displays an endless scroll with Artworks. 
-- It allows saving favorite items into a local database, using the [Room Persistence Library](https://developer.android.com/topic/libraries/architecture/room). 
+- The App allows saving favorite items into a local database, using the [Room Persistence Library](https://developer.android.com/topic/libraries/architecture/room). 
 - The App displays a reasonable subset of the data, thanks to the [Paging Library](https://developer.android.com/topic/libraries/architecture/paging/) that requests a small portion of data at a time and provides pagination. That way the app consumes less network bandwidth and fewer system resources.
 
 ## Libraries
