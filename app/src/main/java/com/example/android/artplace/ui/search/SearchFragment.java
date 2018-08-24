@@ -35,6 +35,8 @@
 
 package com.example.android.artplace.ui.search;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,10 +44,15 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.example.android.artplace.R;
 
@@ -74,8 +81,43 @@ public class SearchFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
+
 
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.search_menu, menu);
+        try {
+            SearchManager searchManager =
+                    (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+            searchView.setQueryHint("Search some art");
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

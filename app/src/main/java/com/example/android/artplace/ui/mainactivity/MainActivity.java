@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -54,7 +53,6 @@ import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.ui.artworks.ArtworksFragment;
-import com.example.android.artplace.ui.favorites.FavArtworksActivity;
 import com.example.android.artplace.ui.favorites.FavoritesFragment;
 import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
 import com.example.android.artplace.ui.mainactivity.adapters.MainViewPager;
@@ -201,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        //getMenuInflater().inflate(R.menu.artworks_menu, menu);
         return true;
     }
 
@@ -210,20 +208,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         switch (item.getItemId()) {
             case android.R.id.home:
-
                 return false;
-
-            case R.id.action_favorites:
-                Intent intent = new Intent(MainActivity.this, FavArtworksActivity.class);
-                // TODO: Put as an extra key from this parent activity so that the next activity knows where to go back!!!
-                startActivity(intent);
-                return true;
 
             case R.id.action_refresh:
                 // Refresh the list if there is connectivity
                 //refreshArtworks();
 
-                return true;
+                return false;
             default:
                 break;
         }

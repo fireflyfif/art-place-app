@@ -49,6 +49,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -139,6 +142,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         View rootView = inflater.inflate(R.layout.fragment_artworks, container, false);
 
         ButterKnife.bind(this, rootView);
+
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
@@ -273,4 +279,27 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         refreshArtworks();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.artworks_menu, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                // Refresh Artworks
+                refreshArtworks();
+                return true;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

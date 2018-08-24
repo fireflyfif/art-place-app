@@ -39,6 +39,7 @@ import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,12 +48,16 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -93,10 +98,6 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     TextView emptyText;
     @BindView(R.id.fav_progress_bar)
     ProgressBar favProgressBar;
-    @BindView(R.id.fav_appbar)
-    AppBarLayout appBarLayout;
-    @BindView(R.id.fav_toolbar)
-    Toolbar toolbar;
     @BindView(R.id.fav_coordinator_layout)
     CoordinatorLayout coordinatorLayout;
 
@@ -119,6 +120,9 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         ButterKnife.bind(this, rootView);
+
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -234,5 +238,61 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         favIntent.putExtra(ARTWORK_DIMENS_CM_KEY, favArtworks.getArtworkDimensCm());
 
         startActivity(favIntent);
+    }
+
+    private void deleteItemsWithConfirmation() {
+
+        if (mFavoriteArtworksList.size() > 0) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
+            builder.setMessage(R.string.delete_all_message);
+            builder.setTitle(R.string.delete_all_title);
+            builder.setIcon(R.drawable.ic_delete_24dp);
+
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mFavArtworksViewModel.deleteAllItems();
+                    // Swapping the data doesn't refresh the list?
+                    mAdapter.swapData(mFavoriteArtworksList);
+                    // Instead - Refresh the list
+                    refreshFavList();
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.fav_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete_all:
+                // Show warning dialog to the user before deleting all data from the db
+                deleteItemsWithConfirmation();
+                return true;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
