@@ -33,38 +33,35 @@
  *
  */
 
-package com.example.android.artplace.datasource;
+package com.example.android.artplace.ui.search.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.DataSource;
 
-import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.model.search.Result;
 
-public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
+public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 
-    private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
-    private ArtworkDataSource mDataSource;
+    private MutableLiveData<SearchDataSource> mSearchDataSourceMutableLiveData;
+    private SearchDataSource mSearchDataSource;
     private ArtPlaceApp mArtPlaceApp;
-    private ArtsyApiInterface apiInterface;
 
-
-
-    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp) {
+    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp) {
         mArtPlaceApp = artPlaceApp;
-        mArtworksDataSourceLiveData = new MutableLiveData<ArtworkDataSource>();
+        mSearchDataSourceMutableLiveData = new MutableLiveData<>();
     }
+
 
     @Override
-    public DataSource<Long, Artwork> create() {
-        mDataSource = new ArtworkDataSource(mArtPlaceApp);
-        mArtworksDataSourceLiveData.postValue(mDataSource);
+    public DataSource<Long, Result> create() {
+        mSearchDataSource = new SearchDataSource(mArtPlaceApp);
+        mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
 
-        return mDataSource;
+        return mSearchDataSource;
     }
 
-    public MutableLiveData<ArtworkDataSource> getArtworksDataSourceLiveData() {
-        return mArtworksDataSourceLiveData;
+    public MutableLiveData<SearchDataSource> getSearchDataSourceMutableLiveData() {
+        return mSearchDataSourceMutableLiveData;
     }
 }

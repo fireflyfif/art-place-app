@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.datasource;
+package com.example.android.artplace.ui.artworks.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PageKeyedDataSource;
@@ -152,8 +152,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
-
-        // TODO: Add a while loop here or other loop that will get the next key and the next one?
 
             mAppController.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
                 ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();

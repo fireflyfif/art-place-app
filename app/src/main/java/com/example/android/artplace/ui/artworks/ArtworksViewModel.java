@@ -45,8 +45,8 @@ import android.arch.paging.PagedList;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.datasource.ArtworkDataSourceFactory;
-import com.example.android.artplace.datasource.ArtworkDataSource;
+import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSourceFactory;
+import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
 
