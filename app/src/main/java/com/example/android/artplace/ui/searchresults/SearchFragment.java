@@ -33,9 +33,12 @@
  *
  */
 
-package com.example.android.artplace.ui.search;
+package com.example.android.artplace.ui.searchresults;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,6 +46,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,10 +55,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,11 +69,14 @@ public class SearchFragment extends Fragment {
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.search_rv)
-    RecyclerView artworksRv;
+    RecyclerView searchResultsRv;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.error_message)
     TextView errorMessage;
+
+    private SearchFragmentViewModel mViewModel;
+    private SearchListAdapter mSearchAdapter;
 
     // Required empty public constructor
     public SearchFragment() {}
@@ -84,10 +92,42 @@ public class SearchFragment extends Fragment {
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
 
-
+        setupRecyclerView();
+        setupUi();
 
         return rootView;
     }
+
+    private void setupRecyclerView() {
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
+
+        mSearchAdapter = new SearchListAdapter(getContext());
+    }
+
+    private void setupUi() {
+
+        // Initialize the ViewModel
+        mViewModel = ViewModelProviders.of(this).get(SearchFragmentViewModel.class);
+
+        mViewModel.getSearchResultsLiveData().observe(this, new Observer<PagedList<Result>>() {
+
+            @Override
+            public void onChanged(@Nullable PagedList<Result> results) {
+                if (results != null) {
+                    // Submit the list to the PagedListAdapter
+                    mSearchAdapter.submitList(results);
+                }
+            }
+        });
+
+        // Set the Adapter on the RecyclerView
+        searchResultsRv.setAdapter(mSearchAdapter);
+
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

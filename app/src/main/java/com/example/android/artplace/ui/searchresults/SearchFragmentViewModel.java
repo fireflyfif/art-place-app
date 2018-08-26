@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.artworks;
+package com.example.android.artplace.ui.searchresults;
 
 import android.app.Application;
 import android.arch.core.util.Function;
@@ -42,73 +42,68 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.support.annotation.NonNull;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSourceFactory;
-import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSource;
-import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource;
+import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
 import com.example.android.artplace.utils.NetworkState;
 
-public class ArtworksViewModel extends AndroidViewModel {
+public class SearchFragmentViewModel extends AndroidViewModel {
+
+    private static final int PAGE_SIZE = 10;
+    private static final int INITIAL_SIZE_HINT = 10;
+    private static final int PREFETCH_DISTANCE_HINT = 10;
+
+    private SearchDataSourceFactory mSearchDataSourceFactory;
 
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
-    public LiveData<PagedList<Artwork>> mArtworkLiveData;
-    private ArtworkDataSourceFactory mArtworkDataSourceFactory;
-
-    private static final int PAGE_SIZE = 80;
-    private static final int INITIAL_SIZE_HINT = 50;
-    private static final int PREFETCH_DISTANCE_HINT = 20;
+    public LiveData<PagedList<Result>> mResultPagedList;
 
 
-    public ArtworksViewModel(Application application) {
+    public SearchFragmentViewModel(@NonNull Application application) {
         super(application);
 
         init(application);
     }
 
-    /*
-     Method for initializing the DataSourceFactory and for building the LiveData
-    */
     private void init(Application application) {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory((ArtPlaceApp) application);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application);
 
         // Initialize the network state liveData
-        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+        mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
+                new Function<SearchDataSource, LiveData<NetworkState>>() {
             @Override
-            public LiveData<NetworkState> apply(ArtworkDataSource input) {
+            public LiveData<NetworkState> apply(SearchDataSource input) {
                 return input.getNetworkState();
             }
         });
 
         // Initialize the Loading state liveData
-        mInitialLoading = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
+        mInitialLoading = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
+                new Function<SearchDataSource, LiveData<NetworkState>>() {
                     @Override
-                    public LiveData<NetworkState> apply(ArtworkDataSource input) {
-                        return input.getInitialLoading();
+                    public LiveData<NetworkState> apply(SearchDataSource input) {
+                        return input.getLoadingState();
                     }
                 });
 
+
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
-                        .setEnablePlaceholders(false)
-                        .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
-                        // If not set, defaults to page size.
-                        //A value of 0 indicates that no list items
-                        // will be loaded until they are specifically requested
-                        .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
-                        .setPageSize(PAGE_SIZE)
-                        .build();
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
+                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
+                .setPageSize(PAGE_SIZE)
+                .build();
 
-
-        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
-                //.setInitialLoadKey()
+        mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
     }
@@ -121,26 +116,7 @@ public class ArtworksViewModel extends AndroidViewModel {
         return mNetworkState;
     }
 
-    public LiveData<PagedList<Artwork>> getArtworkLiveData() {
-        return mArtworkLiveData;
-    }
-
-    public LiveData<PagedList<Artwork>> refreshArtworkLiveData() {
-        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
-                // If not set, defaults to page size.
-                //A value of 0 indicates that no list items
-                // will be loaded until they are specifically requested
-                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
-                .setPageSize(PAGE_SIZE)
-                .build();
-
-
-        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
-                .setFetchExecutor(AppExecutors.getInstance().networkIO())
-                .build();
-
-        return mArtworkLiveData;
+    public LiveData<PagedList<Result>> getSearchResultsLiveData() {
+        return mResultPagedList;
     }
 }

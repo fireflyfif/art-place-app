@@ -56,7 +56,7 @@ import com.example.android.artplace.ui.artworks.ArtworksFragment;
 import com.example.android.artplace.ui.favorites.FavoritesFragment;
 import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
 import com.example.android.artplace.ui.mainactivity.adapters.MainViewPager;
-import com.example.android.artplace.ui.search.SearchFragment;
+import com.example.android.artplace.ui.searchresults.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 

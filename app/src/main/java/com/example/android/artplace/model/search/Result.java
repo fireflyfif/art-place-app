@@ -35,10 +35,35 @@
 
 package com.example.android.artplace.model.search;
 
+import android.support.v7.util.DiffUtil;
+
+import com.example.android.artplace.model.artworks.Artwork;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Result {
+
+    public static DiffUtil.ItemCallback<Result> DIFF_CALLBACK = new DiffUtil.ItemCallback<Result>() {
+        @Override
+        public boolean areItemsTheSame(Result oldItem, Result newItem) {
+            return oldItem.title.equals(newItem.title);
+        }
+
+        @Override
+        public boolean areContentsTheSame(Result oldItem, Result newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == getClass()) {
+            return true;
+        }
+
+        Result result = (Result) obj;
+        return result.title.equals(this.title);
+    }
 
     @SerializedName("type")
     @Expose
@@ -50,7 +75,7 @@ public class Result {
 
     @SerializedName("description")
     @Expose
-    private Object description;
+    private String description;
 
     @SerializedName("og_type")
     @Expose
@@ -80,7 +105,7 @@ public class Result {
         return description;
     }
 
-    public void setDescription(Object description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -99,4 +124,6 @@ public class Result {
     public void setLinks(LinksResult links) {
         this.links = links;
     }
+
+
 }

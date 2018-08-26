@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.search.datasource;
+package com.example.android.artplace.ui.searchresults.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.DataSource;
@@ -46,16 +46,18 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
     private MutableLiveData<SearchDataSource> mSearchDataSourceMutableLiveData;
     private SearchDataSource mSearchDataSource;
     private ArtPlaceApp mArtPlaceApp;
+    private String mArtQuery;
 
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp) {
+    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String artQuery) {
         mArtPlaceApp = artPlaceApp;
+        mArtQuery = artQuery;
         mSearchDataSourceMutableLiveData = new MutableLiveData<>();
     }
 
 
     @Override
     public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp);
+        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery);
         mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
 
         return mSearchDataSource;

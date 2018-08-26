@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.search.datasource;
+package com.example.android.artplace.ui.searchresults.datasource;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PageKeyedDataSource;
@@ -64,8 +64,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mQueryString;
     private String mTypeString;
 
-    public SearchDataSource(ArtPlaceApp appController) {
+
+    public SearchDataSource(ArtPlaceApp appController, String artQuery) {
         mAppController = appController;
+        mQueryString = artQuery;
 
         mNetworkState = new MutableLiveData<>();
         mInitialLoading = new MutableLiveData<>();
