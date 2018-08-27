@@ -54,7 +54,7 @@
         <ImageView
             android:id="@+id/search_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="160dp"
             android:layout_marginBottom="@dimen/margin_4dp"
             android:background="@color/colorPrimaryDark"
             android:contentDescription="@string/current_artwork_description"

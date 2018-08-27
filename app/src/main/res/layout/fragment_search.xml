@@ -64,6 +64,7 @@
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:padding="@dimen/padding_16dp"
+            android:visibility="invisible"
             android:text="@string/error_msg"
             android:textColor="@color/colorAccent" />
 
@@ -71,6 +72,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:padding="@dimen/padding_10dp" />
 
     </LinearLayout>

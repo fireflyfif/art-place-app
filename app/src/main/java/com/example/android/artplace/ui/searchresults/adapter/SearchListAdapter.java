@@ -81,6 +81,11 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        if (holder instanceof SearchResultViewHolder) {
+            if (getItem(position) != null) {
+                ((SearchResultViewHolder) holder).bindTo(getItem(position), position);
+            }
+        }
     }
 
     public class SearchResultViewHolder extends RecyclerView.ViewHolder {
@@ -100,19 +105,36 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
             ButterKnife.bind(this, itemView);
         }
 
-        private void bindTo(Result result) {
+        private void bindTo(Result result, int position) {
 
             if (result != null) {
 
                 if (result.getLinks() != null) {
                     LinksResult linksResult = result.getLinks();
 
-                    Thumbnail thumbnail = linksResult.getThumbnail();
-                    String thumbnailPathString = thumbnail.getHref();
-                    Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
+                    if (linksResult.getThumbnail() != null) {
+                        Thumbnail thumbnail = linksResult.getThumbnail();
+                        String thumbnailPathString = thumbnail.getHref();
+                        Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
-                    // TODO: Handle cases for null thumbnailPathString
-                    Picasso.get().load(thumbnailPathString).into(searchThumbnail);
+                        if (thumbnailPathString == null || thumbnailPathString.isEmpty()) {
+                            // If it's empty or null -> set the placeholder
+                            Picasso.get()
+                                    .load(R.drawable.placeholder)
+                                    .placeholder(R.drawable.placeholder)
+                                    .error(R.drawable.placeholder)
+                                    .into(searchThumbnail);
+                        } else {
+                            // If it's not empty -> load the image
+                            Picasso.get()
+                                    .load(thumbnailPathString)
+                                    .placeholder(R.drawable.placeholder)
+                                    .error(R.drawable.placeholder)
+                                    .into(searchThumbnail);
+                        }
+
+                    }
+
                 }
 
 

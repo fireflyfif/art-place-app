@@ -47,6 +47,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,6 +66,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SearchFragment extends Fragment {
+
+    private static final String TAG = SearchFragment.class.getSimpleName();
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -144,11 +147,14 @@ public class SearchFragment extends Fragment {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    Log.d(TAG, "SearchFragment: onQueryTextSubmit called");
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    Log.d(TAG, "SearchFragment: onQueryTextChange called");
+
                     Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
                     return true;
                 }

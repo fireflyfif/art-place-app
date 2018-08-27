@@ -65,9 +65,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mTypeString;
 
 
-    public SearchDataSource(ArtPlaceApp appController, String artQuery) {
+    public SearchDataSource(ArtPlaceApp appController) {
         mAppController = appController;
-        mQueryString = artQuery;
+        //mQueryString = artQuery;
 
         mNetworkState = new MutableLiveData<>();
         mInitialLoading = new MutableLiveData<>();
@@ -87,6 +87,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         // Update NetworkState
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
+
+        mQueryString = "Andy Warhol";
 
         mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
