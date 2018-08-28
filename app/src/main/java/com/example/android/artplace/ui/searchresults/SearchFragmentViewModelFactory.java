@@ -33,37 +33,33 @@
  *
  */
 
-package com.example.android.artplace.ui.searchresults.datasource;
+package com.example.android.artplace.ui.searchresults;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.DataSource;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 
-public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
+public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory {
 
-    private MutableLiveData<SearchDataSource> mSearchDataSourceMutableLiveData;
-    private SearchDataSource mSearchDataSource;
-    private ArtPlaceApp mArtPlaceApp;
-    private String mArtQuery;
+    private ArtPlaceApp mApplication;
+    private String mQueryWord;
 
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord) {
-        mArtPlaceApp = artPlaceApp;
-        mArtQuery = queryWord;
-        mSearchDataSourceMutableLiveData = new MutableLiveData<>();
+    public SearchFragmentViewModelFactory(ArtPlaceApp application, String queryWord) {
+
+        mApplication = application;
+        mQueryWord = queryWord;
     }
 
-
+    @SuppressWarnings("unchecked")
+    @NonNull
     @Override
-    public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery);
-        mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
-
-        return mSearchDataSource;
-    }
-
-    public MutableLiveData<SearchDataSource> getSearchDataSourceMutableLiveData() {
-        return mSearchDataSourceMutableLiveData;
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        if (modelClass.isAssignableFrom(SearchFragmentViewModel.class)) {
+            return (T) new SearchFragmentViewModel(mApplication, mQueryWord);
+        }
+        throw new IllegalArgumentException("Unknown ViewModel class.");
     }
 }

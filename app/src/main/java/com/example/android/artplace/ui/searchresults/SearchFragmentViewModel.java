@@ -40,6 +40,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
@@ -51,7 +52,7 @@ import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
 import com.example.android.artplace.utils.NetworkState;
 
-public class SearchFragmentViewModel extends AndroidViewModel {
+public class SearchFragmentViewModel extends ViewModel {
 
     private static final int PAGE_SIZE = 10;
     private static final int INITIAL_SIZE_HINT = 10;
@@ -63,18 +64,21 @@ public class SearchFragmentViewModel extends AndroidViewModel {
     private LiveData<NetworkState> mInitialLoading;
 
     public LiveData<PagedList<Result>> mResultPagedList;
+    private ArtPlaceApp mApplication;
+    private String mQueryWord;
 
 
-    public SearchFragmentViewModel(@NonNull Application application) {
-        super(application);
+    public SearchFragmentViewModel(ArtPlaceApp application, String queryWord) {
+        mApplication = application;
+        mQueryWord = queryWord;
 
-        init(application);
+        init(application, queryWord);
     }
 
-    private void init(Application application) {
+    private void init(Application application, String queryWord) {
 
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),

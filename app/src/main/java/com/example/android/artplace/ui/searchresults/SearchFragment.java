@@ -51,13 +51,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
@@ -80,6 +82,9 @@ public class SearchFragment extends Fragment {
 
     private SearchFragmentViewModel mViewModel;
     private SearchListAdapter mSearchAdapter;
+    private SearchView mSearchView;
+    private String mQueryWordString;
+    private SearchFragmentViewModelFactory mViewModelFactory;
 
     // Required empty public constructor
     public SearchFragment() {}
@@ -110,10 +115,25 @@ public class SearchFragment extends Fragment {
         mSearchAdapter = new SearchListAdapter(getContext());
     }
 
+    private void getSearchWord(String query) {
+        mQueryWordString = query;
+    }
+
     private void setupUi() {
 
+        if (mQueryWordString != null) {
+            if (mSearchView.getQuery().length() != 0) {
+                mQueryWordString = String.valueOf(mSearchView.getQuery());
+                Log.d(TAG, "Query word: " + mQueryWordString);
+            }
+        }
+
+        Log.d(TAG, "Query word: " + mQueryWordString);
+
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString);
+
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this).get(SearchFragmentViewModel.class);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
         mViewModel.getSearchResultsLiveData().observe(this, new Observer<PagedList<Result>>() {
 
@@ -137,33 +157,45 @@ public class SearchFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.search_menu, menu);
-        try {
-            SearchManager searchManager =
-                    (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-            searchView.setQueryHint("Search some art");
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    Log.d(TAG, "SearchFragment: onQueryTextSubmit called");
-                    return false;
+        SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        mSearchView.setSubmitButtonEnabled(true);
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                query = String.valueOf(mSearchView.getQuery());
+                getSearchWord(query);
+                Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "SearchFragment: onQueryTextChange called");
+                if (mSearchView.getQuery().length() == 0) {
+
                 }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    Log.d(TAG, "SearchFragment: onQueryTextChange called");
+                Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+    }
 
-                    Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (id == R.id.action_search) {
+            return true;
         }
 
+        return super.onOptionsItemSelected(item);
     }
 }
