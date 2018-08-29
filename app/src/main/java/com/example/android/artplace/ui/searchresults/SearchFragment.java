@@ -123,12 +123,14 @@ public class SearchFragment extends Fragment {
 
         if (mQueryWordString != null) {
             if (mSearchView.getQuery().length() != 0) {
-                mQueryWordString = String.valueOf(mSearchView.getQuery());
-                Log.d(TAG, "Query word: " + mQueryWordString);
+                getSearchWord(mQueryWordString);
+
+                //mQueryWordString = String.valueOf(mSearchView.getQuery());
+                Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
             }
         }
 
-        Log.d(TAG, "Query word: " + mQueryWordString);
+        Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
 
         mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString);
 
@@ -178,8 +180,9 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "SearchFragment: onQueryTextChange called");
-                if (mSearchView.getQuery().length() == 0) {
 
+                if (newText.length() > 0) {
+                    getSearchWord(newText);
                 }
 
                 Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
