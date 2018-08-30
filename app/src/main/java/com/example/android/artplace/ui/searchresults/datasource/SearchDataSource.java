@@ -92,6 +92,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
             mQueryString = "Andy Warhol";
         }
 
+        Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
+
         mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();

@@ -153,6 +153,39 @@ public class SearchFragment extends Fragment {
 
     }
 
+    public synchronized void requestNewCall() {
+
+        if (mQueryWordString != null) {
+            if (mSearchView.getQuery().length() != 0) {
+                getSearchWord(mQueryWordString);
+
+                //mQueryWordString = String.valueOf(mSearchView.getQuery());
+                Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
+            }
+        }
+
+        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
+
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString);
+
+        // Initialize the ViewModel
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
+
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString).observe(this, new Observer<PagedList<Result>>() {
+
+            @Override
+            public void onChanged(@Nullable PagedList<Result> results) {
+                if (results != null) {
+                    // Submit the list to the PagedListAdapter
+                    mSearchAdapter.submitList(results);
+                }
+            }
+        });
+
+        // Set the Adapter on the RecyclerView
+        searchResultsRv.setAdapter(mSearchAdapter);
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -172,6 +205,8 @@ public class SearchFragment extends Fragment {
 
                 query = String.valueOf(mSearchView.getQuery());
                 getSearchWord(query);
+
+                requestNewCall();
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
                 return true;
@@ -183,6 +218,8 @@ public class SearchFragment extends Fragment {
 
                 if (newText.length() > 0) {
                     getSearchWord(newText);
+
+                    requestNewCall();
                 }
 
                 Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();

@@ -47,6 +47,7 @@ import android.support.annotation.NonNull;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
@@ -121,6 +122,24 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public LiveData<PagedList<Result>> getSearchResultsLiveData() {
+        return mResultPagedList;
+    }
+
+    public LiveData<PagedList<Result>> refreshSearchLiveData(Application application, String queryWord) {
+        // Get an instance of the DataSourceFactory class
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord);
+
+        // Configure the PagedList.Config
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
+                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
+                .setPageSize(PAGE_SIZE)
+                .build();
+
+        mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
+                .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                .build();
         return mResultPagedList;
     }
 }
