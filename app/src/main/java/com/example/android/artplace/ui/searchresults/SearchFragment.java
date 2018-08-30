@@ -100,7 +100,7 @@ public class SearchFragment extends Fragment {
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
 
-        setupRecyclerView();
+
         setupUi();
 
         return rootView;
@@ -120,15 +120,17 @@ public class SearchFragment extends Fragment {
     }
 
     private void setupUi() {
+        // Setup the RecyclerView first
+        setupRecyclerView();
 
-        if (mQueryWordString != null) {
+        /*if (mQueryWordString != null) {
             if (mSearchView.getQuery().length() != 0) {
                 getSearchWord(mQueryWordString);
 
                 //mQueryWordString = String.valueOf(mSearchView.getQuery());
                 Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
             }
-        }
+        }*/
 
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
 
@@ -153,25 +155,28 @@ public class SearchFragment extends Fragment {
 
     }
 
-    public synchronized void requestNewCall() {
+    public synchronized void requestNewCall(String queryWord) {
 
-        if (mQueryWordString != null) {
+        // Setup the RecyclerView first
+        setupRecyclerView();
+
+        /*if (mQueryWordString != null) {
             if (mSearchView.getQuery().length() != 0) {
-                getSearchWord(mQueryWordString);
+                //getSearchWord(mQueryWordString);
 
                 //mQueryWordString = String.valueOf(mSearchView.getQuery());
                 Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
             }
-        }
+        }*/
 
-        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
+        Log.d(TAG, "requestNewCall: Query word: " + queryWord);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), queryWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
-        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString).observe(this, new Observer<PagedList<Result>>() {
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), queryWord).observe(this, new Observer<PagedList<Result>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
@@ -204,9 +209,9 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
 
                 query = String.valueOf(mSearchView.getQuery());
-                getSearchWord(query);
+                //getSearchWord(query);
 
-                requestNewCall();
+                requestNewCall(query);
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
                 return true;
@@ -217,12 +222,12 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "SearchFragment: onQueryTextChange called");
 
                 if (newText.length() > 0) {
-                    getSearchWord(newText);
+                    //getSearchWord(newText);
 
-                    requestNewCall();
+                    requestNewCall(newText);
                 }
 
-                Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
