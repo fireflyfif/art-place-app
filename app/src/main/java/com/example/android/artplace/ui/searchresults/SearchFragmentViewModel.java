@@ -37,17 +37,14 @@ package com.example.android.artplace.ui.searchresults;
 
 import android.app.Application;
 import android.arch.core.util.Function;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.support.annotation.NonNull;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
@@ -64,7 +61,7 @@ public class SearchFragmentViewModel extends ViewModel {
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
-    public LiveData<PagedList<Result>> mResultPagedList;
+    private LiveData<PagedList<Result>> mResultPagedList;
     private ArtPlaceApp mApplication;
     private String mQueryWord;
 

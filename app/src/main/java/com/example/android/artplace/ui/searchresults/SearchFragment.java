@@ -99,8 +99,7 @@ public class SearchFragment extends Fragment {
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
-
-
+        // Set the UI
         setupUi();
 
         return rootView;
@@ -123,14 +122,9 @@ public class SearchFragment extends Fragment {
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        /*if (mQueryWordString != null) {
-            if (mSearchView.getQuery().length() != 0) {
-                getSearchWord(mQueryWordString);
-
-                //mQueryWordString = String.valueOf(mSearchView.getQuery());
-                Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
-            }
-        }*/
+        if (mQueryWordString == null) {
+            mQueryWordString = "Andy Warhol";
+        }
 
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
 
@@ -160,14 +154,9 @@ public class SearchFragment extends Fragment {
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        /*if (mQueryWordString != null) {
-            if (mSearchView.getQuery().length() != 0) {
-                //getSearchWord(mQueryWordString);
-
-                //mQueryWordString = String.valueOf(mSearchView.getQuery());
-                Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
-            }
-        }*/
+        if (queryWord == null) {
+            queryWord = "Andy Warhol";
+        }
 
         Log.d(TAG, "requestNewCall: Query word: " + queryWord);
 
@@ -198,11 +187,13 @@ public class SearchFragment extends Fragment {
 
         inflater.inflate(R.menu.search_menu, menu);
 
+        // Set the SearchView
         SearchManager searchManager =
                 (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        mSearchView.setSubmitButtonEnabled(true);
+        // Set the Submit Button
+        mSearchView.setSubmitButtonEnabled(false);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

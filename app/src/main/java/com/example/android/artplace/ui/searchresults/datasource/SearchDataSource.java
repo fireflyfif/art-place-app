@@ -88,9 +88,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        if (mQueryString == null) {
+        /*if (mQueryString == null) {
             mQueryString = "Andy Warhol";
-        }
+        }*/
 
         Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
 
