@@ -65,6 +65,12 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
+    /**
+     * Make call according to the url that is received from the json response
+     *
+     * @param artistLink is dynamic link for artist page
+     * @return the response for the artist page
+     */
     @GET
     Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
@@ -79,5 +85,8 @@ public interface ArtsyApiInterface {
      */
     @GET("/api/search")
     Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("size") int itemSize, @Query("type") String type);
+
+    @GET
+    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("size") int itemSize);
 
 }

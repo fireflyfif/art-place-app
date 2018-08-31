@@ -114,10 +114,6 @@ public class SearchFragment extends Fragment {
         mSearchAdapter = new SearchListAdapter(getContext());
     }
 
-    private void getSearchWord(String query) {
-        mQueryWordString = query;
-    }
-
     private void setupUi() {
         // Setup the RecyclerView first
         setupRecyclerView();
@@ -200,7 +196,6 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
 
                 query = String.valueOf(mSearchView.getQuery());
-                //getSearchWord(query);
 
                 requestNewCall(query);
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
@@ -213,7 +208,6 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "SearchFragment: onQueryTextChange called");
 
                 if (newText.length() > 0) {
-                    //getSearchWord(newText);
 
                     requestNewCall(newText);
                 }

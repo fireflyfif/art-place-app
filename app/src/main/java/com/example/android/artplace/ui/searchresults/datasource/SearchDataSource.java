@@ -41,6 +41,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.Links;
+import com.example.android.artplace.model.Next;
 import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
@@ -63,6 +65,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     private String mQueryString;
     private String mTypeString;
+    private String mNextUrl;
 
 
     public SearchDataSource(ArtPlaceApp appController, String queryWord) {
@@ -88,16 +91,15 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        /*if (mQueryString == null) {
-            mQueryString = "Andy Warhol";
-        }*/
-
         Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
 
         mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
             List<Result> resultList = new ArrayList<>();
+
+            Links links = new Links();
+            Next next = new Next();
 
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
@@ -106,6 +108,15 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                     searchResponse = response.body();
 
                     if (searchResponse != null) {
+
+                        links = searchResponse.getLinks();
+                        if (links != null) {
+                            next = links.getNext();
+                            mNextUrl = next.getHref();
+
+                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                        }
+
                         String receivedQuery = searchResponse.getQ();
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
 
@@ -149,6 +160,80 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
 
+        Log.i(LOG_TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
+
+        // Set Network State to Loading
+        mNetworkState.postValue(NetworkState.LOADING);
+
+        mAppController.getArtsyApi().getNextLinkForSearch(mNextUrl, params.requestedLoadSize).enqueue(new Callback<SearchWrapperResponse>() {
+
+            SearchWrapperResponse searchResponse = new SearchWrapperResponse();
+            List<Result> resultList = new ArrayList<>();
+
+            Links links = new Links();
+            Next next = new Next();
+
+            @Override
+            public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
+                if (response.isSuccessful()) {
+
+                    searchResponse = response.body();
+
+                    if (searchResponse != null) {
+
+                        EmbeddedResults embeddedResults = searchResponse.getEmbedded();
+
+                        links = searchResponse.getLinks();
+                        if (links != null) {
+                            next = links.getNext();
+                            mNextUrl = next.getHref();
+
+                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                        }
+
+                        String receivedQuery = searchResponse.getQ();
+                        Log.d(LOG_TAG, "Query word: " + receivedQuery);
+
+                        if (embeddedResults.getResults() != null) {
+                            long nextKey;
+
+                            if (params.key == embeddedResults.getResults().size()) {
+                                nextKey = 0;
+                            } else {
+                                nextKey = params.key + 100;
+                            }
+
+                            Log.d(LOG_TAG, "Next key : " + nextKey);
+
+                            resultList = embeddedResults.getResults();
+
+                            callback.onResult(resultList, nextKey);
+
+                            Log.d(LOG_TAG, "List of Search Result loadAfter : " + resultList.size());
+                        }
+
+
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+                    }
+
+                    Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
+
+                } else {
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    Log.d(LOG_TAG, "Response code from initial load: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
+                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
+            }
+        });
 
     }
 }
