@@ -185,10 +185,17 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         links = searchResponse.getLinks();
                         if (links != null) {
-                            next = links.getNext();
-                            mNextUrl = next.getHref();
 
-                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                            if (next != null) {
+                                next = links.getNext();
+
+                                if (next.getHref() != null) {
+                                    mNextUrl = next.getHref();
+                                }
+
+                                Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                            }
+
                         }
 
                         String receivedQuery = searchResponse.getQ();
