@@ -183,19 +183,25 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
 
+                        //TODO: Find out how to stop fetching more results!
                         links = searchResponse.getLinks();
                         if (links != null) {
 
-                            if (next != null) {
+                            if (links.getNext() != null) {
                                 next = links.getNext();
-
-                                if (next.getHref() != null) {
-                                    mNextUrl = next.getHref();
-                                }
-
-                                Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                                mNextUrl = next.getHref();
                             }
 
+                            /*try {
+                                next = links.getNext();
+                                mNextUrl = next.getHref();
+
+                            } catch (Exception e) {
+                                // TODO: Catches the exception without crashing the app, but returns same results
+                                Log.e(LOG_TAG, "Error obtaining thumbnail from the JSON: " + e.getMessage());
+                            }*/
+
+                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
                         }
 
                         String receivedQuery = searchResponse.getQ();
@@ -214,11 +220,15 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                             resultList = embeddedResults.getResults();
 
+                            long noNextKey = 0;
+                            if (mNextUrl == null) {
+                                callback.onResult(resultList, noNextKey);
+                            }
+
                             callback.onResult(resultList, nextKey);
 
                             Log.d(LOG_TAG, "List of Search Result loadAfter : " + resultList.size());
                         }
-
 
                         mNetworkState.postValue(NetworkState.LOADED);
                         mInitialLoading.postValue(NetworkState.LOADED);
