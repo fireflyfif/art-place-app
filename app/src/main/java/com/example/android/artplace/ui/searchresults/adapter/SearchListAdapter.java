@@ -44,13 +44,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.utils.NetworkState;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -60,7 +65,12 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
     private static final String TAG = SearchListAdapter.class.getSimpleName();
 
+    private static final int TYPE_PROGRESS = 0;
+    private static final int TYPE_ITEM = 1;
+
     private Context mContext;
+    private NetworkState mNetworkState;
+    private OnRefreshListener mRefreshHandler;
 
     public SearchListAdapter(Context context) {
         super(Result.DIFF_CALLBACK);
@@ -72,10 +82,13 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
-        View view = layoutInflater.inflate(R.layout.search_result_item, parent, false);
-
-
-        return new SearchResultViewHolder(view);
+        if (viewType == TYPE_PROGRESS) {
+            View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
+            return new NetworkStateItemViewHolder(view);
+        } else {
+            View view = layoutInflater.inflate(R.layout.search_result_item, parent, false);
+            return new SearchResultViewHolder(view);
+        }
     }
 
     @Override
@@ -85,6 +98,38 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
             if (getItem(position) != null) {
                 ((SearchResultViewHolder) holder).bindTo(getItem(position), position);
             }
+        } else {
+            ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
+        }
+    }
+
+    private boolean hasExtraRow() {
+        return mNetworkState != null && mNetworkState != NetworkState.LOADED;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (hasExtraRow() && position == getItemCount() -1) {
+            return TYPE_PROGRESS;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
+    public void setNetworkState(NetworkState newNetworkState) {
+        NetworkState previousState = mNetworkState;
+        boolean previousExtraRow = hasExtraRow();
+        mNetworkState = newNetworkState;
+        boolean newExtraRow = hasExtraRow();
+
+        if (previousExtraRow != newExtraRow) {
+            if (previousExtraRow) {
+                notifyItemRemoved(getItemCount());
+            } else {
+                notifyItemInserted(getItemCount());
+            }
+        } else if (newExtraRow && previousState != newNetworkState){
+            notifyItemChanged(getItemCount() - 1);
         }
     }
 
@@ -132,11 +177,8 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                                     .error(R.drawable.placeholder)
                                     .into(searchThumbnail);
                         }
-
                     }
-
                 }
-
 
                 String titleString = result.getTitle();
                 searchTitle.setText(titleString);
@@ -147,6 +189,61 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                 Log.d(TAG, "Current search type: " + typeString);
             }
 
+        }
+    }
+
+    public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        @BindView(R.id.network_state_layout)
+        LinearLayout networkLayout;
+        @BindView(R.id.network_state_pb)
+        ProgressBar progressBar;
+        @BindView(R.id.network_state_error_msg)
+        TextView errorMessage;
+        @BindView(R.id.network_state_refresh_bt)
+        ImageButton refreshButton;
+
+        private NetworkStateItemViewHolder(View itemView) {
+            super(itemView);
+
+            ButterKnife.bind(this, itemView);
+        }
+
+        private void bindView(NetworkState networkState) {
+
+            if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.RUNNING) {
+                networkLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
+                errorMessage.setVisibility(View.GONE);
+                refreshButton.setVisibility(View.GONE);
+            } else if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                networkLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.GONE);
+                refreshButton.setVisibility(View.GONE);
+            } else if (networkState != null &&
+                    networkState.getStatus() == NetworkState.Status.FAILED) {
+                networkLayout.setVisibility(View.VISIBLE);
+
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.VISIBLE);
+                refreshButton.setVisibility(View.VISIBLE);
+                // Set the click listener here
+                refreshButton.setOnClickListener(this::onClick);
+            } else {
+                networkLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setVisibility(View.GONE);
+                refreshButton.setVisibility(View.GONE);
+            }
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            mRefreshHandler.onRefreshConnection();
         }
     }
 }

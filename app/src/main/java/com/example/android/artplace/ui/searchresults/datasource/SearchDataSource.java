@@ -112,9 +112,12 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         links = searchResponse.getLinks();
                         if (links != null) {
                             next = links.getNext();
-                            mNextUrl = next.getHref();
 
-                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                            if (next != null) {
+                                mNextUrl = next.getHref();
+                            }
+
+                            Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
                         }
 
                         String receivedQuery = searchResponse.getQ();
@@ -122,6 +125,13 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
                         resultList = embeddedResults.getResults();
+
+                        if (resultList.size() == 0) {
+                            // TODO: Show a message there is no data for this query
+
+                            mNetworkState.postValue(NetworkState.LOADED);
+                        }
+
                         Log.d(LOG_TAG, "List of results: " + resultList.size());
 
                         callback.onResult(resultList, null, 2L);
@@ -186,9 +196,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         //TODO: Find out how to stop fetching more results!
                         links = searchResponse.getLinks();
                         if (links != null) {
+                            next = links.getNext();
 
-                            if (links.getNext() != null) {
-                                next = links.getNext();
+                            if (next != null) {
                                 mNextUrl = next.getHref();
                             }
 
@@ -201,7 +211,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                                 Log.e(LOG_TAG, "Error obtaining thumbnail from the JSON: " + e.getMessage());
                             }*/
 
-                            Log.d(LOG_TAG, "Next page link: " + mNextUrl);
+                            Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
                         }
 
                         String receivedQuery = searchResponse.getQ();

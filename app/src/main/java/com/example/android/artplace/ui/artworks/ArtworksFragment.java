@@ -177,15 +177,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
             public void onChanged(@Nullable NetworkState networkState) {
                 // When the NetworkStatus is Successful
                 // hide both the Progress Bar and the error message
-                if (networkState != null &&
-                        networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                if (networkState != null && networkState.getStatus() == NetworkState.Status.SUCCESS) {
                     progressBar.setVisibility(View.INVISIBLE);
                     errorMessage.setVisibility(View.INVISIBLE);
                 }
                 // When the NetworkStatus is Failed
                 // show the error message and hide the Progress Bar
-                else if (networkState != null &&
-                        networkState.getStatus() == NetworkState.Status.FAILED) {
+                else if (networkState != null && networkState.getStatus() == NetworkState.Status.FAILED) {
                     progressBar.setVisibility(View.GONE);
                     // TODO: Hide this message when no connection but some cache results still visible
                     errorMessage.setVisibility(View.VISIBLE);

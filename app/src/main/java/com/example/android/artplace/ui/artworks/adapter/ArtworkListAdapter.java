@@ -273,7 +273,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                                     //artworkArtist.setTextColor(generatedLightColor);
 
                                     // Set the item animator here
-                                    setItemAnimator(itemView, position);
+                                    //setItemAnimator(itemView, position);
                                 }
 
                                 @Override
@@ -356,4 +356,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         public void onClick(View v) {
             mRefreshHandler.onRefreshConnection();
         }
-    }}
+    }
+
+}

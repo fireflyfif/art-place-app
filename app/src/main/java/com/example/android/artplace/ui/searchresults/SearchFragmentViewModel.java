@@ -42,6 +42,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
@@ -51,6 +52,8 @@ import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource
 import com.example.android.artplace.utils.NetworkState;
 
 public class SearchFragmentViewModel extends ViewModel {
+
+    private static final String TAG = SearchFragmentViewModel.class.getSimpleName();
 
     private static final int PAGE_SIZE = 10;
     private static final int INITIAL_SIZE_HINT = 10;
@@ -105,6 +108,8 @@ public class SearchFragmentViewModel extends ViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
+        Log.d(TAG, "SearchFragmentViewModel: PagedListConfig: " + mResultPagedList);
+
         mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
@@ -133,6 +138,8 @@ public class SearchFragmentViewModel extends ViewModel {
                 .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
                 .setPageSize(PAGE_SIZE)
                 .build();
+
+        Log.d(TAG, "SearchFragmentViewModel: PagedListConfig: " + pagedListConfig);
 
         mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())

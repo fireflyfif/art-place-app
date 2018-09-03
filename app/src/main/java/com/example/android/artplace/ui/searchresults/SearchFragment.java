@@ -44,6 +44,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -63,6 +64,7 @@ import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
+import com.example.android.artplace.utils.NetworkState;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -133,9 +135,41 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
+
                 if (results != null) {
+                    Log.d(TAG, "Size of the result: " + results.size());
                     // Submit the list to the PagedListAdapter
                     mSearchAdapter.submitList(results);
+                } else {
+                    // TODO: Show message for no data found
+                    errorMessage.setText("No data found for the current word.");
+                    errorMessage.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                mSearchAdapter.setNetworkState(networkState);
+            }
+        });
+
+        mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
+            @Override
+            public void onChanged(@Nullable NetworkState networkState) {
+                if (networkState != null && networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    errorMessage.setVisibility(View.INVISIBLE);
+                } else if (networkState != null && networkState.getStatus() == NetworkState.Status.FAILED) {
+                    progressBar.setVisibility(View.GONE);
+                    // TODO: Hide this message when no connection but some cache results still visible
+                    errorMessage.setVisibility(View.VISIBLE);
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setVisibility(View.GONE);
                 }
             }
         });
@@ -166,8 +200,13 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
                 if (results != null) {
+                    Log.d(TAG, "Size of the result: " + results.size());
                     // Submit the list to the PagedListAdapter
                     mSearchAdapter.submitList(results);
+                } else {
+                    // TODO: Show message for no data found
+                    errorMessage.setText("No data found for the current word.");
+                    errorMessage.setVisibility(View.VISIBLE);
                 }
             }
         });
