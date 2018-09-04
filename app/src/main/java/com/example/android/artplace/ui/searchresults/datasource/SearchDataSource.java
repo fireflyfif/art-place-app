@@ -48,6 +48,7 @@ import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
 import com.example.android.artplace.utils.NetworkState;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +129,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         if (resultList.size() == 0) {
                             // TODO: Show a message there is no data for this query
-
+                            // only temporary here
                             mNetworkState.postValue(NetworkState.LOADED);
                         }
 
@@ -193,25 +194,33 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
 
-                        //TODO: Find out how to stop fetching more results!
-                        links = searchResponse.getLinks();
-                        if (links != null) {
-                            next = links.getNext();
+                        int totalCount = searchResponse.getTotalCount();
+                        Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
 
-                            if (next != null) {
-                                mNextUrl = next.getHref();
+                        if (totalCount != 0) {
+                            links = searchResponse.getLinks();
+                            if (links != null) {
+                                next = links.getNext();
+
+                                // Try and catch block doesn't crash the app,
+                                // and stops when there is no more next urls for next page
+                                try {
+                                    mNextUrl = next.getHref();
+                                } catch (NullPointerException e) {
+                                    Log.e(LOG_TAG, "The next.getHref() is null: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                } catch (Exception e) {
+                                    Log.e(LOG_TAG, "The general exception is: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                }
+
+                                Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
                             }
 
-                            /*try {
-                                next = links.getNext();
-                                mNextUrl = next.getHref();
-
-                            } catch (Exception e) {
-                                // TODO: Catches the exception without crashing the app, but returns same results
-                                Log.e(LOG_TAG, "Error obtaining thumbnail from the JSON: " + e.getMessage());
-                            }*/
-
-                            Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
+                        } else {
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
 
                         String receivedQuery = searchResponse.getQ();
@@ -229,11 +238,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             Log.d(LOG_TAG, "Next key : " + nextKey);
 
                             resultList = embeddedResults.getResults();
-
-                            long noNextKey = 0;
-                            if (mNextUrl == null) {
-                                callback.onResult(resultList, noNextKey);
-                            }
 
                             callback.onResult(resultList, nextKey);
 

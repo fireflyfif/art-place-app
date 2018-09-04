@@ -170,9 +170,21 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                             links = artworkWrapperResponse.getLinks();
                             if (links != null) {
-
                                 next = links.getNext();
-                                mNextUrl = next.getHref();
+
+                                // Try and catch block doesn't crash the app,
+                                // and stops when there is no more next urls for next page
+                                try {
+                                    mNextUrl = next.getHref();
+                                } catch (NullPointerException e) {
+                                    Log.e(TAG, "The next.getHref() is null: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                } catch (Exception e) {
+                                    Log.e(TAG, "The general exception is: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                }
 
                                 Log.d(TAG, "Link to next: " + mNextUrl);
                             }
