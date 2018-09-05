@@ -43,4 +43,44 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
+    <item
+        android:id="@+id/action_type_artist"
+        android:title="Artist"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_check_24dp"
+        app:showAsAction="never"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/action_type_artwork"
+        android:title="Artwork"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_check_24dp"
+        app:showAsAction="never"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/action_type_profile"
+        android:title="Profile"
+        android:orderInCategory="3"
+        android:icon="@drawable/ic_check_24dp"
+        app:showAsAction="never"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/action_type_gene"
+        android:title="Gene"
+        android:orderInCategory="4"
+        android:icon="@drawable/ic_check_24dp"
+        app:showAsAction="never"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/action_type_show"
+        android:title="Show"
+        android:orderInCategory="5"
+        android:icon="@drawable/ic_check_24dp"
+        app:showAsAction="never"
+        android:checkable="true" />
+
 </menu>

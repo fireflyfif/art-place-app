@@ -47,17 +47,20 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
     private SearchDataSource mSearchDataSource;
     private ArtPlaceApp mArtPlaceApp;
     private String mArtQuery;
+    private String mTypeString;
 
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord) {
+    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord, String typeWord) {
         mArtPlaceApp = artPlaceApp;
         mArtQuery = queryWord;
+        mTypeString = typeWord;
+
         mSearchDataSourceMutableLiveData = new MutableLiveData<>();
     }
 
 
     @Override
     public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery);
+        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery, mTypeString);
         mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
 
         return mSearchDataSource;

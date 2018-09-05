@@ -87,6 +87,12 @@ public class SearchFragment extends Fragment {
     private SearchView mSearchView;
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
+    private String mTypeString;
+
+    private boolean isTypeArtist = false;
+    private boolean isTypeArtwork = false;
+    private boolean isTypeGene = false;
+    private boolean isTypeShow = false;
 
     // Required empty public constructor
     public SearchFragment() {}
@@ -125,8 +131,9 @@ public class SearchFragment extends Fragment {
         }
 
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
+        Log.d(TAG, "setupUi: Type word: " + mTypeString);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString, mTypeString);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
@@ -179,7 +186,7 @@ public class SearchFragment extends Fragment {
 
     }
 
-    public synchronized void requestNewCall(String queryWord) {
+    public synchronized void requestNewCall(String queryWord, String typeWord) {
 
         // Setup the RecyclerView first
         setupRecyclerView();
@@ -189,13 +196,14 @@ public class SearchFragment extends Fragment {
         }
 
         Log.d(TAG, "requestNewCall: Query word: " + queryWord);
+        Log.d(TAG, "requestNewCall: Type word: " + typeWord);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), queryWord);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), queryWord, typeWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
-        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), queryWord).observe(this, new Observer<PagedList<Result>>() {
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), queryWord, typeWord).observe(this, new Observer<PagedList<Result>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
@@ -215,6 +223,26 @@ public class SearchFragment extends Fragment {
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
+    private void updateType() {
+        if (isTypeArtist) {
+            mTypeString += "artist";
+        } else if (isTypeArtwork) {
+            mTypeString += "artwork";
+        } else if (isTypeGene) {
+            mTypeString += "gene";
+        } else if (isTypeShow) {
+            mTypeString += "show";
+        } else {
+            mTypeString = "";
+        }
+        Log.d(TAG, "updateType: Type word: " + mTypeString);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        Log.d(TAG, "onPrepareOptionsMenu called");
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -236,7 +264,7 @@ public class SearchFragment extends Fragment {
 
                 query = String.valueOf(mSearchView.getQuery());
 
-                requestNewCall(query);
+                requestNewCall(query, mTypeString);
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
                 return true;
@@ -248,7 +276,7 @@ public class SearchFragment extends Fragment {
 
                 if (newText.length() > 0) {
 
-                    requestNewCall(newText);
+                    requestNewCall(newText, mTypeString);
                 }
 
                 //Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
@@ -261,10 +289,84 @@ public class SearchFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_search) {
-            return true;
+        switch (id) {
+            case R.id.action_search:
+                return true;
+            case R.id.action_type_artist:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    isTypeArtist = false;
+                    // Set the type to artist, nothing happens here
+
+                } else {
+                    item.setChecked(true);
+                    isTypeArtist = true;
+                }
+
+                updateType();
+                requestNewCall(mQueryWordString, mTypeString);
+                return true;
+            case R.id.action_type_artwork:
+                if (item.isChecked()) {
+                    // Set the type to artwork
+                    item.setChecked(false);
+                    isTypeArtwork = false;
+
+                    mTypeString = String.valueOf(item.getTitle());
+                } else {
+                    item.setChecked(true);
+                    isTypeArtwork = true;
+                }
+
+                updateType();
+                requestNewCall(mQueryWordString, mTypeString);
+                return true;
+            case R.id.action_type_profile:
+                if (item.isChecked()) {
+                    // Set the type to profile
+                    item.setChecked(false);
+
+                } else {
+                    item.setChecked(true);
+                }
+
+                updateType();
+                requestNewCall(mQueryWordString, mTypeString);
+                return true;
+            case R.id.action_type_gene:
+                if (item.isChecked()) {
+                    // Set the type to gene
+                    item.setChecked(false);
+                    isTypeGene = false;
+                    mTypeString = String.valueOf(item.getTitle());
+
+                    Log.d(TAG, "Selected menu isTypeGene: " + isTypeGene);
+                } else {
+                    item.setChecked(true);
+                    isTypeGene = true;
+                }
+
+                updateType();
+                requestNewCall(mQueryWordString, mTypeString);
+                return true;
+            case R.id.action_type_show:
+                if (item.isChecked()) {
+                    // Set the type to show
+                    item.setChecked(false);
+                    isTypeShow = false;
+                    mTypeString = String.valueOf(item.getTitle());
+                } else {
+                    item.setChecked(true);
+                    isTypeShow = true;
+                }
+
+                updateType();
+                requestNewCall(mQueryWordString, mTypeString);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }
