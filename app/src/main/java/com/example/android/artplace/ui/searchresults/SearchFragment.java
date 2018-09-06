@@ -89,6 +89,7 @@ public class SearchFragment extends Fragment {
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
 
+    private boolean isTypeArticle = false;
     private boolean isTypeArtist = false;
     private boolean isTypeArtwork = false;
     private boolean isTypeGene = false;
@@ -224,17 +225,26 @@ public class SearchFragment extends Fragment {
     }
 
     private void updateType() {
-        if (isTypeArtist) {
-            mTypeString += "artist";
+
+        // Set the Type String to "" empty so that it's not null first
+        mTypeString = "";
+        StringBuilder stringBuilder = new StringBuilder(mTypeString);
+
+        if (isTypeArticle) {
+            stringBuilder.append("article");
+        } else if (isTypeArtist) {
+            stringBuilder.append("artist");
         } else if (isTypeArtwork) {
-            mTypeString += "artwork";
+            stringBuilder.append("artwork");
         } else if (isTypeGene) {
-            mTypeString += "gene";
+            stringBuilder.append("gene");
         } else if (isTypeShow) {
-            mTypeString += "show";
+            stringBuilder.append("show");
         } else {
             mTypeString = "";
         }
+
+        mTypeString = stringBuilder.toString();
         Log.d(TAG, "updateType: Type word: " + mTypeString);
     }
 
@@ -289,80 +299,69 @@ public class SearchFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        //mTypeString = "";
+
         switch (id) {
             case R.id.action_search:
                 return true;
+
+            case R.id.action_type_article:
+
+                item.setChecked(true);
+                isTypeArticle = true;
+                // Set the type to article
+                mTypeString = "article";
+
+                requestNewCall(mQueryWordString, mTypeString);
+
+                Log.d(TAG, "Type word: " + mTypeString);
+                return true;
+
             case R.id.action_type_artist:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                    isTypeArtist = false;
-                    // Set the type to artist, nothing happens here
+                item.setChecked(true);
+                isTypeArtist = true;
+                // Set the type to artist
+                mTypeString = "artist";
 
-                } else {
-                    item.setChecked(true);
-                    isTypeArtist = true;
-                }
-
-                updateType();
                 requestNewCall(mQueryWordString, mTypeString);
+
+                Log.d(TAG, "Type word: " + mTypeString);
                 return true;
+
             case R.id.action_type_artwork:
-                if (item.isChecked()) {
-                    // Set the type to artwork
-                    item.setChecked(false);
-                    isTypeArtwork = false;
+                item.setChecked(true);
+                isTypeArtwork = true;
+                // Set the type to artwork
+                mTypeString = "artwork";
 
-                    mTypeString = String.valueOf(item.getTitle());
-                } else {
-                    item.setChecked(true);
-                    isTypeArtwork = true;
-                }
-
-                updateType();
                 requestNewCall(mQueryWordString, mTypeString);
-                return true;
-            case R.id.action_type_profile:
-                if (item.isChecked()) {
-                    // Set the type to profile
-                    item.setChecked(false);
 
-                } else {
-                    item.setChecked(true);
-                }
-
-                updateType();
-                requestNewCall(mQueryWordString, mTypeString);
+                Log.d(TAG, "Type word: " + mTypeString);
                 return true;
+
             case R.id.action_type_gene:
-                if (item.isChecked()) {
-                    // Set the type to gene
-                    item.setChecked(false);
-                    isTypeGene = false;
-                    mTypeString = String.valueOf(item.getTitle());
 
-                    Log.d(TAG, "Selected menu isTypeGene: " + isTypeGene);
-                } else {
-                    item.setChecked(true);
-                    isTypeGene = true;
-                }
+                item.setChecked(true);
+                isTypeGene = true;
+                // Set the type to gene
+                mTypeString = "gene";
 
-                updateType();
                 requestNewCall(mQueryWordString, mTypeString);
+
+                Log.d(TAG, "Type word: " + mTypeString);
                 return true;
+
             case R.id.action_type_show:
-                if (item.isChecked()) {
-                    // Set the type to show
-                    item.setChecked(false);
-                    isTypeShow = false;
-                    mTypeString = String.valueOf(item.getTitle());
-                } else {
-                    item.setChecked(true);
-                    isTypeShow = true;
-                }
+                item.setChecked(true);
+                isTypeShow = true;
+                // Set the type to show
+                mTypeString = "show";
 
-                updateType();
                 requestNewCall(mQueryWordString, mTypeString);
+
+                Log.d(TAG, "Type word: " + mTypeString);
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
