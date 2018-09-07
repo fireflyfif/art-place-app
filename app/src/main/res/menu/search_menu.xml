@@ -47,39 +47,39 @@
 
         <item
             android:id="@+id/action_type_article"
-            android:icon="@drawable/ic_check_24dp"
             android:orderInCategory="1"
-            android:title="Article"
+            android:title="@string/action_article"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_artist"
-            android:icon="@drawable/ic_check_24dp"
             android:orderInCategory="2"
-            android:title="Artist"
+            android:title="@string/action_artist"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_artwork"
-            android:icon="@drawable/ic_check_24dp"
             android:orderInCategory="3"
-            android:title="Artwork"
+            android:title="@string/action_artwork"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_gene"
-            android:icon="@drawable/ic_check_24dp"
             android:orderInCategory="4"
             android:title="Gene"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_show"
-            android:icon="@drawable/ic_check_24dp"
             android:orderInCategory="5"
             android:title="Show"
             app:showAsAction="never" />
 
-    </group>
+        <item
+            android:id="@+id/action_type_none"
+            android:orderInCategory="6"
+            android:title="All"
+            app:showAsAction="never" />
 
+    </group>
 </menu>

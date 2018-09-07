@@ -40,7 +40,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -53,6 +56,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -69,9 +73,12 @@ import com.example.android.artplace.utils.NetworkState;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
+    private static final String PREFERENCE_SEARCH_NAME = "search_prefs";
+    private static final String PREFERENCE_SEARCH_KEY = "search_key";
+    private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -89,14 +96,33 @@ public class SearchFragment extends Fragment {
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
 
-    private boolean isTypeArticle = false;
-    private boolean isTypeArtist = false;
-    private boolean isTypeArtwork = false;
-    private boolean isTypeGene = false;
-    private boolean isTypeShow = false;
+    private SharedPreferences mSharedPreferences;
+
 
     // Required empty public constructor
     public SearchFragment() {}
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
+        }
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
+    }
 
     @Nullable
     @Override
@@ -106,8 +132,6 @@ public class SearchFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-        // Add a menu to the current Fragment
-        setHasOptionsMenu(true);
         // Set the UI
         setupUi();
 
@@ -184,13 +208,29 @@ public class SearchFragment extends Fragment {
 
         // Set the Adapter on the RecyclerView
         searchResultsRv.setAdapter(mSearchAdapter);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause called" );
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called" );
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     public synchronized void requestNewCall(String queryWord, String typeWord) {
 
         // Setup the RecyclerView first
         setupRecyclerView();
+
+        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+        queryWord = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
 
         if (queryWord == null) {
             queryWord = "Andy Warhol";
@@ -224,28 +264,14 @@ public class SearchFragment extends Fragment {
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    private void updateType() {
-
-        // Set the Type String to "" empty so that it's not null first
-        mTypeString = "";
-        StringBuilder stringBuilder = new StringBuilder(mTypeString);
-
-        if (isTypeArticle) {
-            stringBuilder.append("article");
-        } else if (isTypeArtist) {
-            stringBuilder.append("artist");
-        } else if (isTypeArtwork) {
-            stringBuilder.append("artwork");
-        } else if (isTypeGene) {
-            stringBuilder.append("gene");
-        } else if (isTypeShow) {
-            stringBuilder.append("show");
-        } else {
-            mTypeString = "";
-        }
-
-        mTypeString = stringBuilder.toString();
-        Log.d(TAG, "updateType: Type word: " + mTypeString);
+    private void saveToSharedPreference(String searchQuery) {
+        mSharedPreferences = getActivity().getApplicationContext()
+                .getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(PREFERENCE_SEARCH_KEY, searchQuery);
+        // Use apply() instead of commit(), because it is being saved on the background
+        editor.apply();
+        Log.d(TAG, "Saved into shared prefs");
     }
 
     @Override
@@ -273,7 +299,8 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
 
                 query = String.valueOf(mSearchView.getQuery());
-
+                // Save the search query into SharedPreference
+                saveToSharedPreference(query);
                 requestNewCall(query, mTypeString);
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
@@ -289,7 +316,6 @@ public class SearchFragment extends Fragment {
                     requestNewCall(newText, mTypeString);
                 }
 
-                //Toast.makeText(getContext(), "Search art word here", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -299,16 +325,12 @@ public class SearchFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //mTypeString = "";
-
         switch (id) {
             case R.id.action_search:
                 return true;
 
             case R.id.action_type_article:
-
                 item.setChecked(true);
-                isTypeArticle = true;
                 // Set the type to article
                 mTypeString = "article";
 
@@ -319,7 +341,6 @@ public class SearchFragment extends Fragment {
 
             case R.id.action_type_artist:
                 item.setChecked(true);
-                isTypeArtist = true;
                 // Set the type to artist
                 mTypeString = "artist";
 
@@ -330,7 +351,6 @@ public class SearchFragment extends Fragment {
 
             case R.id.action_type_artwork:
                 item.setChecked(true);
-                isTypeArtwork = true;
                 // Set the type to artwork
                 mTypeString = "artwork";
 
@@ -342,7 +362,6 @@ public class SearchFragment extends Fragment {
             case R.id.action_type_gene:
 
                 item.setChecked(true);
-                isTypeGene = true;
                 // Set the type to gene
                 mTypeString = "gene";
 
@@ -353,7 +372,6 @@ public class SearchFragment extends Fragment {
 
             case R.id.action_type_show:
                 item.setChecked(true);
-                isTypeShow = true;
                 // Set the type to show
                 mTypeString = "show";
 
@@ -362,9 +380,29 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
 
+            case R.id.action_type_none:
+                item.setChecked(true);
+                requestNewCall(mQueryWordString, null);
+
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        if (key.equals(PREFERENCE_SEARCH_KEY)) {
+            mSharedPreferences = getActivity()
+                    .getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+
+            if (mSharedPreferences.contains(PREFERENCE_SEARCH_KEY)) {
+                mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
+
+                Log.d(TAG, "onSharedPreferenceChanged: Saved search query: " + mQueryWordString);
+            }
         }
 
     }
