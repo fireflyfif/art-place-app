@@ -112,6 +112,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                     if (searchResponse != null) {
 
+                        mNetworkState.postValue(NetworkState.LOADED);
+                        mInitialLoading.postValue(NetworkState.LOADED);
+
+                        // Get the next link for paging the results
                         links = searchResponse.getLinks();
                         if (links != null) {
                             next = links.getNext();
@@ -129,18 +133,20 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
                         resultList = embeddedResults.getResults();
 
+                        Log.d(LOG_TAG, "List of results: " + resultList.size());
+
+                        // The response code is 200, but because of a typo, the API returns an empty list
                         if (resultList.size() == 0) {
                             // TODO: Show a message there is no data for this query
-                            // only temporary here
-                            mNetworkState.postValue(NetworkState.LOADED);
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                         }
-
-                        Log.d(LOG_TAG, "List of results: " + resultList.size());
 
                         callback.onResult(resultList, null, 2L);
 
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
+                    } else {
+                        mInitialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                        mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                     }
 
                     Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
@@ -149,6 +155,17 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                     mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                     mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
+                    switch (response.code()) {
+                        case 400:
+                            //TODO: Make display the following error message:
+                            // "Invalid type article,artist,artwork,city,fair,feature,gene,show,profile,sale,tag,page"
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            break;
+                        case 404:
+
+                            break;
+                    }
 
                     Log.d(LOG_TAG, "Response code from initial load: " + response.code());
                 }

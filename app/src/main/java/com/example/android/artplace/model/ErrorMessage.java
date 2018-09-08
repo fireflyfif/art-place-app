@@ -33,34 +33,34 @@
  *
  */
 
-package com.example.android.artplace.utils;
+package com.example.android.artplace.model;
 
-// Help from this tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
-public class NetworkState {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public enum Status {
-        RUNNING,
-        SUCCESS,
-        FAILED,
-        NO_RESULT
+public class ErrorMessage {
+
+    @SerializedName("type")
+    @Expose
+    private String type;
+
+    @SerializedName("message")
+    @Expose
+    private String message;
+
+    public String getType() {
+        return type;
     }
 
-    private final Status mStatus;
-
-    public static final NetworkState LOADED;
-    public static final NetworkState LOADING;
-
-    public NetworkState(Status status) {
-        mStatus = status;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    static {
-        LOADED = new NetworkState(Status.SUCCESS);
-        LOADING = new NetworkState(Status.RUNNING);
+    public String getMessage() {
+        return message;
     }
 
-    public Status getStatus() {
-        return mStatus;
+    public void setMessage(String message) {
+        this.message = message;
     }
-
 }

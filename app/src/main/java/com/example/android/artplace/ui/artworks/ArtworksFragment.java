@@ -128,6 +128,10 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -143,11 +147,29 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         ButterKnife.bind(this, rootView);
 
-        // Add a menu to the current Fragment
-        setHasOptionsMenu(true);
-
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+
+        // Set up the UI
+        setupUi();
+
+        return rootView;
+    }
+
+    private void setRecyclerView() {
+
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+
+        artworksRv.setLayoutManager(staggeredGridLayoutManager);
+
+        // Set the PagedListAdapter
+        mPagedListAdapter = new ArtworkListAdapter(getContext(), this, this);
+    }
+
+    private void setupUi() {
 
         // Setup the RecyclerView
         setRecyclerView();
@@ -200,22 +222,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         });
 
         artworksRv.setAdapter(mPagedListAdapter);
-
-        return rootView;
     }
 
-    private void setRecyclerView() {
-
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-
-        StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-
-        artworksRv.setLayoutManager(staggeredGridLayoutManager);
-
-        // Set the PagedListAdapter
-        mPagedListAdapter = new ArtworkListAdapter(getContext(), this, this);
-    }
 
     public synchronized void refreshArtworks() {
 

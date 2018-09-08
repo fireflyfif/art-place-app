@@ -211,34 +211,35 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
         private void bindView(NetworkState networkState) {
 
-            if (networkState != null &&
-                    networkState.getStatus() == NetworkState.Status.RUNNING) {
-                networkLayout.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
-                errorMessage.setVisibility(View.GONE);
-                refreshButton.setVisibility(View.GONE);
-            } else if (networkState != null &&
-                    networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                networkLayout.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                errorMessage.setVisibility(View.GONE);
-                refreshButton.setVisibility(View.GONE);
-            } else if (networkState != null &&
-                    networkState.getStatus() == NetworkState.Status.FAILED) {
-                networkLayout.setVisibility(View.VISIBLE);
+            if (networkState != null) {
 
-                progressBar.setVisibility(View.GONE);
-                errorMessage.setVisibility(View.VISIBLE);
-                refreshButton.setVisibility(View.VISIBLE);
-                // Set the click listener here
-                refreshButton.setOnClickListener(this::onClick);
-            } else {
-                networkLayout.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                errorMessage.setVisibility(View.GONE);
-                refreshButton.setVisibility(View.GONE);
+                if (networkState.getStatus() == NetworkState.Status.RUNNING) {
+                    networkLayout.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setVisibility(View.GONE);
+                    refreshButton.setVisibility(View.GONE);
+
+                } else if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    networkLayout.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.GONE);
+                    refreshButton.setVisibility(View.GONE);
+
+                } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                    networkLayout.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    refreshButton.setVisibility(View.VISIBLE);
+                    // Set the click listener here
+                    refreshButton.setOnClickListener(this::onClick);
+
+                } else {
+                    networkLayout.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.GONE);
+                    refreshButton.setVisibility(View.GONE);
+                }
             }
-
         }
 
         @Override

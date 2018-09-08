@@ -139,8 +139,10 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     }
 
     private void setupRecyclerView() {
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+
         StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
         searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
 
@@ -167,7 +169,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
-
                 if (results != null) {
                     Log.d(TAG, "Size of the result: " + results.size());
                     // Submit the list to the PagedListAdapter
@@ -190,18 +191,30 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
             @Override
             public void onChanged(@Nullable NetworkState networkState) {
-                if (networkState != null && networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    errorMessage.setVisibility(View.INVISIBLE);
-                } else if (networkState != null && networkState.getStatus() == NetworkState.Status.FAILED) {
-                    progressBar.setVisibility(View.GONE);
-                    // TODO: Hide this message when no connection but some cache results still visible
-                    errorMessage.setVisibility(View.VISIBLE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                            Snackbar.LENGTH_LONG).show();
-                } else {
-                    progressBar.setVisibility(View.VISIBLE);
-                    errorMessage.setVisibility(View.GONE);
+                if (networkState != null) {
+
+                    if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        errorMessage.setVisibility(View.INVISIBLE);
+
+                    } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                        progressBar.setVisibility(View.GONE);
+                        // TODO: Hide this message when no connection but some cache results still visible
+                        errorMessage.setVisibility(View.VISIBLE);
+                        Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                                Snackbar.LENGTH_LONG).show();
+
+                    } else if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                        progressBar.setVisibility(View.GONE);
+                        errorMessage.setVisibility(View.VISIBLE);
+                        errorMessage.setText("No results found.");
+                        Snackbar.make(coordinatorLayout, "Please search for another word.",
+                                Snackbar.LENGTH_LONG).show();
+
+                    } else {
+                        progressBar.setVisibility(View.VISIBLE);
+                        errorMessage.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -210,27 +223,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause called" );
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume called" );
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    public synchronized void requestNewCall(String queryWord, String typeWord) {
+    public synchronized void requestNewCall(String typeWord) {
 
         // Setup the RecyclerView first
         setupRecyclerView();
 
         mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
-        queryWord = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
+        String queryWord = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
 
         if (queryWord == null) {
             queryWord = "Andy Warhol";
@@ -252,10 +251,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                     Log.d(TAG, "Size of the result: " + results.size());
                     // Submit the list to the PagedListAdapter
                     mSearchAdapter.submitList(results);
-                } else {
-                    // TODO: Show message for no data found
-                    errorMessage.setText("No data found for the current word.");
-                    errorMessage.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -277,6 +272,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_search).setVisible(true);
         Log.d(TAG, "onPrepareOptionsMenu called");
     }
 
@@ -301,7 +297,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 query = String.valueOf(mSearchView.getQuery());
                 // Save the search query into SharedPreference
                 saveToSharedPreference(query);
-                requestNewCall(query, mTypeString);
+                requestNewCall(mTypeString);
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
                 return true;
@@ -313,7 +309,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
                 if (newText.length() > 0) {
 
-                    requestNewCall(newText, mTypeString);
+                    requestNewCall(mTypeString);
                 }
 
                 return true;
@@ -334,7 +330,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Set the type to article
                 mTypeString = "article";
 
-                requestNewCall(mQueryWordString, mTypeString);
+                requestNewCall(mTypeString);
 
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
@@ -344,7 +340,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Set the type to artist
                 mTypeString = "artist";
 
-                requestNewCall(mQueryWordString, mTypeString);
+                requestNewCall(mTypeString);
 
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
@@ -354,7 +350,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Set the type to artwork
                 mTypeString = "artwork";
 
-                requestNewCall(mQueryWordString, mTypeString);
+                requestNewCall(mTypeString);
 
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
@@ -365,7 +361,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Set the type to gene
                 mTypeString = "gene";
 
-                requestNewCall(mQueryWordString, mTypeString);
+                requestNewCall(mTypeString);
 
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
@@ -375,14 +371,14 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Set the type to show
                 mTypeString = "show";
 
-                requestNewCall(mQueryWordString, mTypeString);
+                requestNewCall(mTypeString);
 
                 Log.d(TAG, "Type word: " + mTypeString);
                 return true;
 
             case R.id.action_type_none:
                 item.setChecked(true);
-                requestNewCall(mQueryWordString, null);
+                requestNewCall(null);
 
                 return true;
 
@@ -404,6 +400,32 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 Log.d(TAG, "onSharedPreferenceChanged: Saved search query: " + mQueryWordString);
             }
         }
-
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause called" );
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called" );
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
 }
