@@ -143,10 +143,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         }
 
                         callback.onResult(resultList, null, 2L);
-
-                    } else {
-                        mInitialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
-                        mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                     }
 
                     Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());

@@ -57,22 +57,20 @@
         android:padding="@dimen/padding_16dp">
 
         <TextView
-            android:id="@+id/error_message"
+            android:id="@+id/error_message_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:padding="@dimen/padding_16dp"
-            android:visibility="invisible"
             android:text="@string/error_msg"
             android:textColor="@color/colorAccent" />
 
         <ProgressBar
-            android:id="@+id/progress_bar"
+            android:id="@+id/progress_bar_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:padding="@dimen/padding_10dp" />
 
     </LinearLayout>

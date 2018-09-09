@@ -197,26 +197,26 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
             @Override
             public void onChanged(@Nullable NetworkState networkState) {
-                // When the NetworkStatus is Successful
-                // hide both the Progress Bar and the error message
-                if (networkState != null && networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    errorMessage.setVisibility(View.INVISIBLE);
-                }
-                // When the NetworkStatus is Failed
-                // show the error message and hide the Progress Bar
-                else if (networkState != null && networkState.getStatus() == NetworkState.Status.FAILED) {
-                    progressBar.setVisibility(View.GONE);
-                    // TODO: Hide this message when no connection but some cache results still visible
-                    errorMessage.setVisibility(View.VISIBLE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                            Snackbar.LENGTH_LONG).show();
-                }
-                // When the NetworkStatus is Running/Loading
-                // show the Loading Progress Bar and hide the error message
-                else {
+                if (networkState != null) {
                     progressBar.setVisibility(View.VISIBLE);
-                    errorMessage.setVisibility(View.GONE);
+                    errorMessage.setText(R.string.loading_results_message);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    // When the NetworkStatus is Successful
+                    // hide both the Progress Bar and the error message
+                    if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        errorMessage.setVisibility(View.INVISIBLE);
+                    }
+                    // When the NetworkStatus is Failed
+                    // show the error message and hide the Progress Bar
+                    if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                        progressBar.setVisibility(View.GONE);
+                        // TODO: Hide this message when no connection but some cache results still visible
+                        errorMessage.setText(getString(R.string.error_msg));
+                        errorMessage.setVisibility(View.VISIBLE);
+                        Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                                Snackbar.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -290,7 +290,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.artworks_menu, menu);
-
     }
 
     @Override

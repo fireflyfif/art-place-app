@@ -84,9 +84,9 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.search_rv)
     RecyclerView searchResultsRv;
-    @BindView(R.id.progress_bar)
+    @BindView(R.id.progress_bar_search)
     ProgressBar progressBar;
-    @BindView(R.id.error_message)
+    @BindView(R.id.error_message_search)
     TextView errorMessage;
 
     private SearchFragmentViewModel mViewModel;
@@ -112,6 +112,11 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         if (savedInstanceState != null) {
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
         }
+
+        if (mQueryWordString != null) {
+            getActivity().setTitle(mQueryWordString);
+        }
+
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -170,13 +175,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
                 if (results != null) {
-                    Log.d(TAG, "Size of the result: " + results.size());
                     // Submit the list to the PagedListAdapter
                     mSearchAdapter.submitList(results);
-                } else {
-                    // TODO: Show message for no data found
-                    errorMessage.setText("No data found for the current word.");
-                    errorMessage.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -184,7 +184,9 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
             @Override
             public void onChanged(@Nullable NetworkState networkState) {
-                mSearchAdapter.setNetworkState(networkState);
+                if (networkState != null) {
+                    mSearchAdapter.setNetworkState(networkState);
+                }
             }
         });
 
@@ -192,28 +194,34 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             @Override
             public void onChanged(@Nullable NetworkState networkState) {
                 if (networkState != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setText(R.string.loading_results_message);
+                    errorMessage.setVisibility(View.VISIBLE);
+
+                    if (networkState.getStatus() == NetworkState.Status.SUCCESS
+                            && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                        Log.d(TAG, "Network Status: " + networkState.getStatus());
+                        progressBar.setVisibility(View.GONE);
+                        errorMessage.setText("No data found");
+                        errorMessage.setVisibility(View.VISIBLE);
+                        //errorMessage.setText("No results found.");
+                        Snackbar.make(coordinatorLayout, "Please search for another word.",
+                                Snackbar.LENGTH_LONG).show();
+                    }
 
                     if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                        Log.d(TAG, "Network Status: " + networkState.getStatus());
                         progressBar.setVisibility(View.INVISIBLE);
                         errorMessage.setVisibility(View.INVISIBLE);
+                    }
 
-                    } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                    if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                        Log.d(TAG, "Network Status: " + networkState.getStatus());
                         progressBar.setVisibility(View.GONE);
                         // TODO: Hide this message when no connection but some cache results still visible
                         errorMessage.setVisibility(View.VISIBLE);
                         Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                                 Snackbar.LENGTH_LONG).show();
-
-                    } else if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                        progressBar.setVisibility(View.GONE);
-                        errorMessage.setVisibility(View.VISIBLE);
-                        errorMessage.setText("No results found.");
-                        Snackbar.make(coordinatorLayout, "Please search for another word.",
-                                Snackbar.LENGTH_LONG).show();
-
-                    } else {
-                        progressBar.setVisibility(View.VISIBLE);
-                        errorMessage.setVisibility(View.GONE);
                     }
                 }
             }
