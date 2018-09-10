@@ -45,4 +45,5 @@
     <string name="action_artist">Artist</string>
     <string name="action_artwork">Artwork</string>
     <string name="loading_results_message">Loading results...</string>
+    <string name="no_data_found">No data found</string>
 </resources>

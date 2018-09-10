@@ -113,11 +113,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
         }
 
-        if (mQueryWordString != null) {
-            getActivity().setTitle(mQueryWordString);
-        }
-
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -162,6 +157,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mQueryWordString = "Andy Warhol";
         }
 
+        getActivity().setTitle(mQueryWordString);
+
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
         Log.d(TAG, "setupUi: Type word: " + mTypeString);
 
@@ -202,9 +199,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                             && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                         Log.d(TAG, "Network Status: " + networkState.getStatus());
                         progressBar.setVisibility(View.GONE);
-                        errorMessage.setText("No data found");
+                        errorMessage.setText(R.string.no_data_found);
                         errorMessage.setVisibility(View.VISIBLE);
-                        //errorMessage.setText("No results found.");
                         Snackbar.make(coordinatorLayout, "Please search for another word.",
                                 Snackbar.LENGTH_LONG).show();
                     }
@@ -237,21 +233,21 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         setupRecyclerView();
 
         mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
-        String queryWord = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
+        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
 
-        if (queryWord == null) {
-            queryWord = "Andy Warhol";
+        if (mQueryWordString == null) {
+            mQueryWordString = "Andy Warhol";
         }
 
-        Log.d(TAG, "requestNewCall: Query word: " + queryWord);
+        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
         Log.d(TAG, "requestNewCall: Type word: " + typeWord);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), queryWord, typeWord);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString, typeWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
-        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), queryWord, typeWord).observe(this, new Observer<PagedList<Result>>() {
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString, typeWord).observe(this, new Observer<PagedList<Result>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
