@@ -41,9 +41,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.Artists.ArtistWrapperResponse;
-import com.example.android.artplace.model.Artists.Artist;
-import com.example.android.artplace.model.Artists.EmbeddedArtists;
+import com.example.android.artplace.model.artists.ArtistWrapperResponse;
+import com.example.android.artplace.model.artists.Artist;
+import com.example.android.artplace.model.artists.EmbeddedArtists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +87,9 @@ public class ArtsyRepository {
         return INSTANCE;
     }
 
-    public LiveData<List<Artist>> getArtist(String artworkId) {
+    /*public LiveData<List<Artist>> getArtist(String artworkId) {
         return loadArtist(artworkId);
-    }
+    }*/
 
     public LiveData<List<Artist>> getArtistFromLink(String artistUrl) {
         return loadArtistFromLink(artistUrl);
@@ -143,7 +143,7 @@ public class ArtsyRepository {
      *
      * @param artworkId is the current artwork ID
      */
-    private LiveData<List<Artist>> loadArtist(String artworkId) {
+   /* private LiveData<List<Artist>> loadArtist(String artworkId) {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
@@ -183,5 +183,5 @@ public class ArtsyRepository {
 
         // Return LiveData<Artist>
         return artistLiveData;
-    }
+    }*/
 }

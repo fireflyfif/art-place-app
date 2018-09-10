@@ -14,42 +14,52 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.artworksMainActivity.MainActivity"
+            android:name=".ui.mainactivity.MainActivity"
             android:launchMode="singleTop">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".ui.ArtworkDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.artworksMainActivity.MainActivity">
+            android:parentActivityName=".ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.artworksMainActivity.MainActivity" />
+                android:value=".ui.mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.artistDetailActivity.ArtistDetailActivity"
+            android:name=".ui.artistdetail.ArtistDetailActivity"
             android:parentActivityName=".ui.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ArtworkDetailActivity" />
         </activity>
         <activity
-            android:name=".ui.favoriteArtworks.FavArtworksActivity"
-            android:parentActivityName=".ui.artworksMainActivity.MainActivity">
+            android:name=".ui.favorites.FavArtworksActivity"
+            android:parentActivityName=".ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.artworksMainActivity.MainActivity" />
+                android:value=".ui.mainactivity.MainActivity" />
         </activity>
         <activity
             android:name=".ui.FavDetailActivity"
-            android:parentActivityName=".ui.favoriteArtworks.FavArtworksActivity">
+            android:parentActivityName=".ui.favorites.FavArtworksActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.favoriteArtworks.FavArtworksActivity" />
+                android:value=".ui.favorites.FavArtworksActivity" />
         </activity>
 
         <receiver android:name=".widget.ArtPlaceWidget">

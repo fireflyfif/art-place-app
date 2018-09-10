@@ -41,7 +41,8 @@ public class NetworkState {
     public enum Status {
         RUNNING,
         SUCCESS,
-        FAILED
+        FAILED,
+        NO_RESULT
     }
 
     private final Status mStatus;

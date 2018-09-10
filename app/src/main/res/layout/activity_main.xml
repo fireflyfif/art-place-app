@@ -40,7 +40,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".ui.artworksMainActivity.MainActivity">
+    tools:context=".ui.mainactivity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_main"
@@ -59,36 +59,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/artworks_rv"
+    <com.example.android.artplace.ui.mainactivity.adapters.MainViewPager
+        android:id="@+id/view_pager_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <LinearLayout
+    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_16dp">
-
-        <TextView
-            android:id="@+id/error_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:padding="@dimen/padding_16dp"
-            android:text="@string/error_msg"
-            android:textColor="@color/colorAccent" />
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_10dp" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
 
 </android.support.design.widget.CoordinatorLayout>

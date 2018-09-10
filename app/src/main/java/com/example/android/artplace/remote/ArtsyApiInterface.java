@@ -35,8 +35,9 @@
 
 package com.example.android.artplace.remote;
 
-import com.example.android.artplace.model.Artists.ArtistWrapperResponse;
-import com.example.android.artplace.model.Artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.artists.ArtistWrapperResponse;
+import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.search.SearchWrapperResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -46,7 +47,6 @@ import retrofit2.http.Url;
 public interface ArtsyApiInterface {
 
     /**
-     * New call to the API that will use the next dynamic link for next page
      * Endpoint for fetching Artworks
      * link: https://api.artsy.net/api/artworks?size=10 + header with token
      *
@@ -58,13 +58,19 @@ public interface ArtsyApiInterface {
 
     /**
      * Make call according to the url that is received from the json response
-     * @param nextUrl
-     * @param itemSize
-     * @return
+     * @param nextUrl is dynamic link for next page with items
+     * @param itemSize is the size of requested items at once
+     * @return the response for the next page
      */
     @GET
     Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
+    /**
+     * Make call according to the url that is received from the json response
+     *
+     * @param artistLink is dynamic link for artist page
+     * @return the response for the artist page
+     */
     @GET
     Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
@@ -73,5 +79,14 @@ public interface ArtsyApiInterface {
      */
     @GET("/api/artists")
     Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
+
+    /**
+     * Endpoint for Search results
+     */
+    @GET("/api/search")
+    Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("size") int itemSize, @Query("type") String type);
+
+    @GET
+    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("size") int itemSize, @Query("type") String type);
 
 }

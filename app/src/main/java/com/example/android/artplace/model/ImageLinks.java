@@ -38,8 +38,8 @@ package com.example.android.artplace.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.artplace.model.Artworks.ArtistsLink;
-import com.example.android.artplace.model.Artworks.MainImage;
+import com.example.android.artplace.model.artworks.ArtistsLink;
+import com.example.android.artplace.model.artworks.MainImage;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
