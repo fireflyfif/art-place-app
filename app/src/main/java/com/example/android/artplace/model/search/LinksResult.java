@@ -35,12 +35,15 @@
 
 package com.example.android.artplace.model.search;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.android.artplace.model.Self;
 import com.example.android.artplace.model.Thumbnail;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LinksResult {
+public class LinksResult implements Parcelable {
 
     @SerializedName("self")
     @Expose
@@ -78,4 +81,37 @@ public class LinksResult {
         this.thumbnail = thumbnail;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.self, flags);
+        dest.writeParcelable(this.permalink, flags);
+        dest.writeParcelable(this.thumbnail, flags);
+    }
+
+    public LinksResult() {
+    }
+
+    protected LinksResult(Parcel in) {
+        this.self = in.readParcelable(Self.class.getClassLoader());
+        this.permalink = in.readParcelable(Permalink.class.getClassLoader());
+        this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<LinksResult> CREATOR = new Parcelable.Creator<LinksResult>() {
+        @Override
+        public LinksResult createFromParcel(Parcel source) {
+            return new LinksResult(source);
+        }
+
+        @Override
+        public LinksResult[] newArray(int size) {
+            return new LinksResult[size];
+        }
+    };
 }

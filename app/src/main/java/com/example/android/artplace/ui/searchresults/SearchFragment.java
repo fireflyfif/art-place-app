@@ -40,6 +40,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -66,19 +67,22 @@ import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
+import com.example.android.artplace.callbacks.OnResultClickListener;
 import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.ui.contentdetail.SearchDetailActivity;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
     private static final String PREFERENCE_SEARCH_NAME = "search_prefs";
     private static final String PREFERENCE_SEARCH_KEY = "search_key";
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
+    private static final String RESULT_PARCEL_KEY = "results_key";
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -146,7 +150,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
 
-        mSearchAdapter = new SearchListAdapter(getContext());
+        mSearchAdapter = new SearchListAdapter(getContext(), this);
     }
 
     private void setupUi() {
@@ -432,4 +436,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    public void onResultClick(Result result) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(RESULT_PARCEL_KEY, result);
+
+        Intent intent = new Intent(getActivity(), SearchDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 }

@@ -52,7 +52,9 @@ import android.widget.TextView;
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnRefreshListener;
+import com.example.android.artplace.callbacks.OnResultClickListener;
 import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.utils.NetworkState;
@@ -71,10 +73,12 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     private Context mContext;
     private NetworkState mNetworkState;
     private OnRefreshListener mRefreshHandler;
+    private OnResultClickListener mClickHandler;
 
-    public SearchListAdapter(Context context) {
+    public SearchListAdapter(Context context, OnResultClickListener clickHandler) {
         super(Result.DIFF_CALLBACK);
         mContext = context;
+        mClickHandler = clickHandler;
     }
 
     @NonNull
@@ -133,7 +137,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         }
     }
 
-    public class SearchResultViewHolder extends RecyclerView.ViewHolder {
+    public class SearchResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         @BindView(R.id.search_cardview)
         CardView cardView;
@@ -148,6 +152,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
             super(itemView);
 
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
 
         private void bindTo(Result result, int position) {
@@ -188,7 +193,12 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                 searchType.setText(typeString);
                 Log.d(TAG, "Current search type: " + typeString);
             }
+        }
 
+        @Override
+        public void onClick(View v) {
+            Result currentResult = getItem(getAdapterPosition());
+            mClickHandler.onResultClick(currentResult);
         }
     }
 

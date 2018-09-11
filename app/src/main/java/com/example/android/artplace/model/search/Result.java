@@ -35,13 +35,15 @@
 
 package com.example.android.artplace.model.search;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.util.DiffUtil;
 
 import com.example.android.artplace.model.artworks.Artwork;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Result {
+public class Result implements Parcelable {
 
     public static DiffUtil.ItemCallback<Result> DIFF_CALLBACK = new DiffUtil.ItemCallback<Result>() {
         @Override
@@ -126,4 +128,40 @@ public class Result {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.type);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.ogType);
+        dest.writeParcelable(this.links, flags);
+    }
+
+    public Result() {
+    }
+
+    protected Result(Parcel in) {
+        this.type = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.ogType = in.readString();
+        this.links = in.readParcelable(LinksResult.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel source) {
+            return new Result(source);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
 }

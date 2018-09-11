@@ -282,7 +282,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                                 }
                             });
                 }
-
             }
         }
 

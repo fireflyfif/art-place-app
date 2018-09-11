@@ -33,54 +33,22 @@
  *
  */
 
-package com.example.android.artplace.model.search;
+package com.example.android.artplace.ui.contentdetail;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.example.android.artplace.R;
 
-public class Permalink implements Parcelable {
+public class SearchDetailActivity extends AppCompatActivity {
 
-    @SerializedName("href")
-    @Expose
-    private String href;
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
 
     @Override
-    public int describeContents() {
-        return 0;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_detail);
+
+
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.href);
-    }
-
-    public Permalink() {
-    }
-
-    protected Permalink(Parcel in) {
-        this.href = in.readString();
-    }
-
-    public static final Parcelable.Creator<Permalink> CREATOR = new Parcelable.Creator<Permalink>() {
-        @Override
-        public Permalink createFromParcel(Parcel source) {
-            return new Permalink(source);
-        }
-
-        @Override
-        public Permalink[] newArray(int size) {
-            return new Permalink[size];
-        }
-    };
 }
