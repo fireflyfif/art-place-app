@@ -103,7 +103,7 @@ public class Result implements Parcelable {
         this.title = title;
     }
 
-    public Object getDescription() {
+    public String getDescription() {
         return description;
     }
 
