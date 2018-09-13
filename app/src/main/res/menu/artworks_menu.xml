@@ -44,4 +44,5 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_refresh_24dp"
         tools:ignore="HardcodedText" />
+
 </menu>

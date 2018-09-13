@@ -42,6 +42,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -86,6 +87,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Set the theme before creating the View
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            setTheme(R.style.ActivityTheme_Primary_Base_Dark);
+        } else {
+            setTheme(R.style.ActivityTheme_Primary_Base_Light);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -187,9 +195,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         // Show the AppBarLayout every time after resume
         setAppBarVisible();
-
-        // Refresh list if there is an internet connection
-        //refreshArtworks();
     }
 
     private void setAppBarVisible() {
@@ -199,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.artworks_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -215,6 +220,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 //refreshArtworks();
 
                 return false;
+
+            case R.id.action_switch_theme:
+
+
+                return true;
             default:
                 break;
         }

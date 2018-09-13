@@ -45,6 +45,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -300,7 +301,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 // Refresh Artworks
                 refreshArtworks();
                 return true;
-
             default:
                 break;
         }

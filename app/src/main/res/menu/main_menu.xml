@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -34,53 +35,14 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_24dp"
-        android:orderInCategory="100"
-        android:title="@string/search"
-        android:iconTint="?attr/"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
+        android:id="@+id/action_switch_theme"
+        android:title="Settings"
+        android:orderInCategory="200"
+        app:showAsAction="never"
+        tools:ignore="HardcodedText" />
 
-    <group android:checkableBehavior="single">
-
-        <item
-            android:id="@+id/action_type_article"
-            android:orderInCategory="1"
-            android:title="@string/action_article"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_type_artist"
-            android:orderInCategory="2"
-            android:title="@string/action_artist"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_type_artwork"
-            android:orderInCategory="3"
-            android:title="@string/action_artwork"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_type_gene"
-            android:orderInCategory="4"
-            android:title="Gene"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_type_show"
-            android:orderInCategory="5"
-            android:title="Show"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_type_none"
-            android:orderInCategory="6"
-            android:title="All"
-            app:showAsAction="never" />
-
-    </group>
 </menu>

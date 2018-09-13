@@ -42,7 +42,7 @@
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/colorPrimary">
+    app:cardBackgroundColor="?attr/backgroundCardColor">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,7 +73,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingTop="@dimen/padding_10dp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/primaryTextColor"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
         <TextView
@@ -89,7 +89,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingStart="@dimen/padding_10dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorWhiteTransparent"
+            android:textColor="?attr/secondaryTextColor"
             android:textStyle="bold"
             tools:text="Title of Artwork" />
 
