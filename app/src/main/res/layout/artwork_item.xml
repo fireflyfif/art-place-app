@@ -53,9 +53,9 @@
         <ImageView
             android:id="@+id/artwork_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginBottom="@dimen/margin_4dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
             android:scaleType="centerCrop" />
@@ -73,7 +73,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingTop="@dimen/padding_10dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorAccentLight"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
         <TextView
@@ -89,7 +89,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingStart="@dimen/padding_10dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorText"
             android:textStyle="bold"
             tools:text="Title of Artwork" />
 

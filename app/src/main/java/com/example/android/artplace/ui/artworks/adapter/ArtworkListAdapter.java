@@ -269,7 +269,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                                     int generatedMutedColor = palette.getMutedColor(mMutedColor);
                                     int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
 
-                                    artworkCard.setCardBackgroundColor(generatedMutedColor);
+                                    //artworkCard.setCardBackgroundColor(generatedMutedColor);
                                     //artworkArtist.setTextColor(generatedLightColor);
 
                                     // Set the item animator here

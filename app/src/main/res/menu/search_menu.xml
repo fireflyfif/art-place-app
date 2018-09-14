@@ -44,7 +44,10 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:orderInCategory="200"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_filter_list_black_24dp">
 
         <item
             android:id="@+id/action_type_article"

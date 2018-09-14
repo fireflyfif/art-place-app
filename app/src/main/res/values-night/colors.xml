@@ -34,16 +34,17 @@
   ~
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <item
-        android:id="@+id/action_switch_theme"
-        android:title="Day"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        android:checkable="true"
-        tools:ignore="HardcodedText" />
+    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#7c4dff</color>
+    <color name="colorBackground">#8e8e8e</color>
+    <color name="colorAccentLight">#b388ff</color>
+    <color name="colorAccentDark">#651fff</color>
 
-</menu>
+    <color name="colorText">#fafafa</color>
+    <color name="colorWhiteTransparent">#80FFFFFF</color>
+    <color name="colorIconsInactive">#a4a4a4</color>
+
+</resources>

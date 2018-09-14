@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -160,14 +160,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void setupBottomNavStyle() {
-        bottomNavigation.setDefaultBackgroundColor(Color.WHITE);
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
         bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorPrimary));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
 
         bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPrimary),
                 fetchColor(R.color.colorAccent));
 
-        bottomNavigation.setColored(true);
+        bottomNavigation.setColored(false);
 
         // Hide the navigation when the user scroll the Rv
         //bottomNavigation.setBehaviorTranslationEnabled(true);
@@ -184,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         viewPager.setAdapter(mPagerAdapter);
     }
-
 
     @Override
     public void onRefreshConnection() {
@@ -213,8 +212,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
+        //getMenuInflater().inflate(R.menu.main_menu, menu);
+        return false;
     }
 
     @Override
@@ -227,22 +226,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             case R.id.action_refresh:
                 return false;
 
-            case R.id.action_switch_theme:
-
-                if (item.isChecked()) {
-                    savePrefs(mIsDayMode);
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    item.setChecked(false);
-                    Toast.makeText(this, "It's Day", Toast.LENGTH_SHORT).show();
-                } else {
-                    savePrefs(mIsDayMode);
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    item.setChecked(true);
-                    Toast.makeText(this, "It's Night", Toast.LENGTH_SHORT).show();
-                    this.recreate();
-                }
-
-                return true;
             default:
                 break;
         }
