@@ -40,9 +40,10 @@
 
     <item
         android:id="@+id/action_switch_theme"
-        android:title="Settings"
+        android:title="Day"
         android:orderInCategory="200"
         app:showAsAction="never"
+        android:checkable="true"
         tools:ignore="HardcodedText" />
 
 </menu>

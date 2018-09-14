@@ -35,8 +35,12 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -47,6 +51,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -67,6 +72,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String THEME_PREFERENCE_KEY = "theme_prefs";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -83,16 +89,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private Tracker mTracker;
     private BottomNavAdapter mPagerAdapter;
+    private SharedPreferences mPreferences;
+    private boolean mIsDayMode;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            setTheme(R.style.ActivityTheme_Primary_Base_Dark);
-        } else {
-            setTheme(R.style.ActivityTheme_Primary_Base_Light);
-        }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -123,7 +127,12 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 return true;
             }
         });
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
+        //mPreferences.registerOnSharedPreferenceChangeListener(this);
     }
+
 
     private void addBottomNavigationItems() {
 
@@ -216,13 +225,22 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 return false;
 
             case R.id.action_refresh:
-                // Refresh the list if there is connectivity
-                //refreshArtworks();
-
                 return false;
 
             case R.id.action_switch_theme:
 
+                if (item.isChecked()) {
+                    savePrefs(mIsDayMode);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    item.setChecked(false);
+                    Toast.makeText(this, "It's Day", Toast.LENGTH_SHORT).show();
+                } else {
+                    savePrefs(mIsDayMode);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    item.setChecked(true);
+                    Toast.makeText(this, "It's Night", Toast.LENGTH_SHORT).show();
+                    this.recreate();
+                }
 
                 return true;
             default:
@@ -230,6 +248,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void savePrefs(boolean state) {
+        mPreferences = getApplicationContext()
+                        .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
+               SharedPreferences.Editor editor = mPreferences.edit();
+               editor.putBoolean(THEME_PREFERENCE_KEY, state);
+               editor.apply();
     }
 
     /**

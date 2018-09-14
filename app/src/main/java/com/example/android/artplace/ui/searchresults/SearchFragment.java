@@ -316,7 +316,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 Log.d(TAG, "SearchFragment: onQueryTextChange called");
 
                 if (newText.length() > 0) {
-
                     requestNewCall(mTypeString);
                 }
 

@@ -35,30 +35,31 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Light Base activity theme. -->
+    <!-- Light Base activity theme.
     <style name="ActivityTheme.Primary.Base.Light" parent="Theme.AppCompat.NoActionBar">
         <item name="primaryTextColor">@color/colorPrimaryDarker</item>
         <item name="secondaryTextColor">@color/colorPrimary</item>
         <item name="dividerColor">@color/colorAccent</item>
         <item name="backgroundCardColor">#FFFF</item>
         <item name="iconTintColor">@color/colorPrimaryDarker</item>
-    </style>
+    </style> -->
 
-    <!-- Dark Base activity theme. -->
+    <!-- Dark Base activity theme.
     <style name="ActivityTheme.Primary.Base.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="primaryTextColor">#FFFF</item>
         <item name="secondaryTextColor">@color/colorAccent</item>
         <item name="dividerColor">@color/colorAccent</item>
         <item name="backgroundCardColor">@color/colorPrimaryDarker</item>
         <item name="iconTintColor">#FFFF</item>
-    </style>
+    </style> -->
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
 
         <item name="windowActionBar">false</item>
         <item name="android:windowActionBarOverlay">true</item>

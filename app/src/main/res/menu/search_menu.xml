@@ -40,7 +40,7 @@
         android:icon="@drawable/ic_search_24dp"
         android:orderInCategory="100"
         android:title="@string/search"
-        android:iconTint="?attr/"
+        android:iconTint="?attr/iconTintColor"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
