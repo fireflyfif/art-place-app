@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

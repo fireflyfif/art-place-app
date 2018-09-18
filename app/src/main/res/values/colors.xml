@@ -39,6 +39,7 @@
     <color name="colorPrimaryDark">#c7c7c7</color>
     <color name="colorAccent">#7c4dff</color>
     <color name="colorBackground">#eeeeee</color>
+    <color name="cardBackground">#eeeeee</color>
     <color name="colorAccentLight">#b388ff</color>
     <color name="colorAccentDark">#651fff</color>
 

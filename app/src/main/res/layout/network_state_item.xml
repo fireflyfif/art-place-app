@@ -50,7 +50,7 @@
         android:gravity="center"
         android:padding="@dimen/padding_10dp"
         android:text="@string/error_msg"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorText" />
 
     <ImageButton
         android:id="@+id/network_state_refresh_bt"

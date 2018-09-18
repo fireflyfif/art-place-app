@@ -43,7 +43,7 @@
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/colorBackground">
+    app:cardBackgroundColor="@color/cardBackground">
 
     <LinearLayout
         android:layout_width="match_parent"

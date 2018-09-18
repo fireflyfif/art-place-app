@@ -106,7 +106,7 @@
             android:layout_marginLeft="@dimen/margin_8dp"
             android:layout_marginRight="@dimen/margin_8dp"
             android:layout_marginStart="@dimen/margin_8dp"
-            app:cardBackgroundColor="@android:color/white">
+            app:cardBackgroundColor="@color/cardBackground">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"

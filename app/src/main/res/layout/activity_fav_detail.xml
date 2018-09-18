@@ -121,17 +121,16 @@
                 android:id="@+id/fav_detail_card_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/margin_8dp"
+                android:layout_marginBottom="@dimen/margin_16dp"
                 android:layout_marginEnd="@dimen/margin_8dp"
                 android:layout_marginLeft="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
                 android:layout_marginStart="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_16dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="@color/cardBackground">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/white">
+                    android:layout_height="match_parent">
 
                     <LinearLayout
                         android:id="@+id/background_title_layout"
@@ -150,7 +149,7 @@
                             android:padding="@dimen/padding_6dp"
                             android:textAllCaps="true"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                            android:textColor="@color/colorWhiteTransparent"
+                            android:textColor="@color/colorText"
                             app:fontFamily="sans-serif"
                             tools:text="Artist" />
 
@@ -161,7 +160,7 @@
                             android:gravity="center_horizontal"
                             android:padding="@dimen/padding_6dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/colorText"
                             app:fontFamily="sans-serif-condensed"
                             tools:text="Artwork Title" />
 
@@ -184,6 +183,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginTop="@dimen/margin_16dp"
+                        android:textColor="@color/colorText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_detail_category"
                         app:layout_constraintTop_toBottomOf="@+id/fav_detail_category"
@@ -197,6 +197,7 @@
                         android:layout_marginLeft="@dimen/margin_32dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginStart="@dimen/margin_32dp"
+                        android:textColor="@color/colorText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/category_label"
                         app:layout_constraintTop_toTopOf="@+id/category_label"
@@ -211,6 +212,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginTop="@dimen/margin_16dp"
+                        android:textColor="@color/colorText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_cm"
@@ -224,6 +226,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginTop="@dimen/margin_8dp"
+                        android:textColor="@color/colorText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_in"
                         app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_in"
@@ -236,6 +239,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginTop="@dimen/margin_16dp"
+                        android:textColor="@color/colorText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_detail_medium"
                         app:layout_constraintTop_toBottomOf="@+id/fav_detail_medium"
@@ -250,6 +254,7 @@
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:text="@string/category_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@color/colorText"
                         app:fontFamily="sans-serif-condensed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/background_title_layout" />
@@ -262,6 +267,7 @@
                         android:layout_marginStart="16dp"
                         android:text="@string/medium_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/colorText"
                         app:fontFamily="sans-serif-condensed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_detail_medium" />
@@ -274,6 +280,7 @@
                         android:layout_marginStart="@dimen/margin_16dp"
                         android:text="@string/dimensions_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/colorText"
                         app:fontFamily="sans-serif-condensed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_artwork_dimens_in" />
@@ -286,6 +293,7 @@
                         android:layout_marginStart="@dimen/margin_16dp"
                         android:text="@string/location_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/colorText"
                         app:fontFamily="sans-serif-condensed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_detail_museum" />
