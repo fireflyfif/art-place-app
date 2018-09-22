@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private ArtworksFragment createArtworksFragment() {
         ArtworksFragment artworksFragment = new ArtworksFragment();
+        // Set arguments for the title here
         //artworksFragment.setArguments();
         return artworksFragment;
     }

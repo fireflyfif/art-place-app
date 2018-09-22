@@ -133,6 +133,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
 
+        getActivity().setTitle("Artworks");
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
