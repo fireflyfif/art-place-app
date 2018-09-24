@@ -47,12 +47,14 @@ import android.view.ViewGroup;
  */
 public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
 
+    // Sparse array is used to keep track of registered fragments in memory
     private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
     public SmartFragmentStatePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
+    // Register the fragment when the item is instantiated
     @NonNull
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
@@ -61,6 +63,7 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
         return fragment;
     }
 
+    // Unregister when the item is inactive
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         registeredFragments.remove(position);
@@ -72,6 +75,7 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
         return 0;
     }
 
+    // Returns the fragment for the position (if instantiated)
     public Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);
     }

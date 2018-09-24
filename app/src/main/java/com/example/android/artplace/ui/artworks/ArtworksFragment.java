@@ -69,6 +69,8 @@ import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
 import com.google.android.gms.analytics.Tracker;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -80,10 +82,7 @@ import butterknife.ButterKnife;
 public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener, SnackMessageListener {
 
     private static final String TAG = ArtworksFragment.class.getSimpleName();
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_ARTWORKS_TITLE = "artworks_title";
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.coordinator_layout)
@@ -100,8 +99,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private Tracker mTracker;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mTitle;
 
 
     public ArtworksFragment() {
@@ -113,15 +111,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ArtworksFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static ArtworksFragment newInstance(String param1, String param2) {
         ArtworksFragment fragment = new ArtworksFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_ARTWORKS_TITLE, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -133,11 +129,14 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
 
-        getActivity().setTitle("Artworks");
+        if (savedInstanceState != null) {
+            mTitle = savedInstanceState.getString(ARG_ARTWORKS_TITLE);
+        }
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mTitle = getArguments().getString(ARG_ARTWORKS_TITLE);
+            // Set the title of the Fragment here
+            Objects.requireNonNull(getActivity()).setTitle(mTitle);
         }
     }
 
@@ -253,12 +252,21 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        Log.d(TAG, "ArtworksFragment: onAttach called");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
 
+        Log.d(TAG, "ArtworksFragment: onDetach called");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.d(TAG, "ArtworksFragment: onResume called");
     }
 
     @Override

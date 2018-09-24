@@ -36,9 +36,7 @@
 package com.example.android.artplace.ui.mainactivity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
@@ -51,7 +49,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -73,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String THEME_PREFERENCE_KEY = "theme_prefs";
+    private static final String ARG_ARTWORKS_TITLE = "artworks_title";
+    private static final String ARG_FAV_TITLE = "fav_title";
+    private static final String ARG_SEARCH_TITLE = "search_title";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -148,16 +148,28 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private ArtworksFragment createArtworksFragment() {
         ArtworksFragment artworksFragment = new ArtworksFragment();
         // Set arguments for the title here
-        //artworksFragment.setArguments();
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_ARTWORKS_TITLE, "Artworks");
+        artworksFragment.setArguments(bundle);
         return artworksFragment;
     }
 
     private FavoritesFragment createFavFragment() {
-        return new FavoritesFragment();
+        FavoritesFragment favFragment = new FavoritesFragment();
+        // Set arguments for the title here
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_FAV_TITLE, "Favorites");
+        favFragment.setArguments(bundle);
+        return favFragment;
     }
 
     private SearchFragment createSearchFragment() {
-        return new SearchFragment();
+        SearchFragment searchFragment = new SearchFragment();
+        // Set arguments for the title here
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_SEARCH_TITLE, "Search the Art World");
+        searchFragment.setArguments(bundle);
+        return searchFragment;
     }
 
     private void setupBottomNavStyle() {

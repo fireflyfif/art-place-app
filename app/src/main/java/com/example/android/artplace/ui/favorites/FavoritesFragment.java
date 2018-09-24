@@ -80,6 +80,7 @@ import butterknife.ButterKnife;
 public class FavoritesFragment extends Fragment implements OnFavItemClickListener {
 
     private static final String TAG = FavoritesFragment.class.getSimpleName();
+    private static final String ARG_FAV_TITLE = "fav_title";
 
     public static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
@@ -105,6 +106,7 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     private PagedList<FavoriteArtworks> mFavoriteArtworksList;
     private Tracker mTracker;
     private FavArtworksViewModel mFavArtworksViewModel;
+    private String mTitle;
 
     // Required empty public constructor
     public FavoritesFragment() {}
@@ -112,6 +114,19 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Add a menu to the current Fragment
+        setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            mTitle = savedInstanceState.getString(ARG_FAV_TITLE);
+        }
+
+        if (getArguments() != null) {
+            mTitle = getArguments().getString(ARG_FAV_TITLE);
+            // Set the title of the Fragment here
+            Objects.requireNonNull(getActivity()).setTitle(mTitle);
+        }
     }
 
     @Nullable
@@ -120,9 +135,6 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         ButterKnife.bind(this, rootView);
-
-        // Add a menu to the current Fragment
-        setHasOptionsMenu(true);
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -149,12 +161,21 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(ARG_FAV_TITLE, mTitle);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         mTracker.setScreenName(TAG);
         // Send initial screen screen view hit.
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        Log.d(TAG, "FavoritesFragment: onResume called");
 
         refreshFavList();
     }
@@ -295,4 +316,13 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "FavoritesFragment: onPause called");
+    }
+
+
 }

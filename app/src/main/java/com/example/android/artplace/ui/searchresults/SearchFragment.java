@@ -73,12 +73,16 @@ import com.example.android.artplace.ui.contentdetail.SearchDetailActivity;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
+    private static final String ARG_SEARCH_TITLE = "search_title";
+
     private static final String PREFERENCE_SEARCH_NAME = "search_prefs";
     private static final String PREFERENCE_SEARCH_KEY = "search_key";
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
@@ -99,6 +103,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
+    private String mTitle;
 
     private SharedPreferences mSharedPreferences;
 
@@ -115,6 +120,12 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         if (savedInstanceState != null) {
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
+            mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
+        }
+
+        if (getArguments() != null) {
+            mTitle = getArguments().getString(ARG_SEARCH_TITLE);
+            Objects.requireNonNull(getActivity()).setTitle(mTitle);
         }
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -126,6 +137,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         super.onSaveInstanceState(outState);
 
         outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
+        outState.putString(ARG_SEARCH_TITLE, mTitle);
     }
 
     @Nullable
@@ -161,7 +173,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mQueryWordString = "Andy Warhol";
         }
 
-        getActivity().setTitle(mQueryWordString);
+        //getActivity().setTitle(mQueryWordString);
 
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
         Log.d(TAG, "setupUi: Type word: " + mTypeString);
@@ -412,14 +424,14 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause called" );
+        Log.d(TAG, "SearchFragment: onPause called" );
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume called" );
+        Log.d(TAG, "SearchFragment: onResume called" );
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
