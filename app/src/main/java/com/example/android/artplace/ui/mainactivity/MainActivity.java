@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Artworks");
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -121,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
+
+                Fragment fragment;
 
                 viewPager.setCurrentItem(position);
 
