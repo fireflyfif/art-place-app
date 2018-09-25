@@ -117,7 +117,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public static ArtworksFragment newInstance(String param1, String param2) {
         ArtworksFragment fragment = new ArtworksFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ARTWORKS_TITLE, param1);
+        //args.putString(ARG_ARTWORKS_TITLE, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -130,13 +130,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            mTitle = savedInstanceState.getString(ARG_ARTWORKS_TITLE);
+           // mTitle = savedInstanceState.getString(ARG_ARTWORKS_TITLE);
         }
 
         if (getArguments() != null) {
-            mTitle = getArguments().getString(ARG_ARTWORKS_TITLE);
+           // mTitle = getArguments().getString(ARG_ARTWORKS_TITLE);
             // Set the title of the Fragment here
-            Objects.requireNonNull(getActivity()).setTitle(mTitle);
+            //Objects.requireNonNull(getActivity()).setTitle(mTitle);
         }
     }
 

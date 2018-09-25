@@ -63,12 +63,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnFavItemClickListener;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
 import com.example.android.artplace.ui.FavDetailActivity;
 import com.example.android.artplace.ui.favorites.adapter.FavArtworkListAdapter;
+import com.example.android.artplace.ui.mainactivity.MainActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -122,11 +124,13 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
             mTitle = savedInstanceState.getString(ARG_FAV_TITLE);
         }
 
-        if (getArguments() != null) {
-            mTitle = getArguments().getString(ARG_FAV_TITLE);
-            // Set the title of the Fragment here
-            Objects.requireNonNull(getActivity()).setTitle(mTitle);
-        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(ARG_FAV_TITLE, mTitle);
     }
 
     @Nullable
@@ -158,13 +162,6 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         deleteItemBySwiping();
 
         return rootView;
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putString(ARG_FAV_TITLE, mTitle);
     }
 
     @Override

@@ -35,7 +35,7 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -64,6 +64,9 @@ import com.example.android.artplace.ui.searchresults.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -71,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String THEME_PREFERENCE_KEY = "theme_prefs";
-    private static final String ARG_ARTWORKS_TITLE = "artworks_title";
-    private static final String ARG_FAV_TITLE = "fav_title";
-    private static final String ARG_SEARCH_TITLE = "search_title";
+    private static final String TITLE_ARTWORKS = "Artworks";
+    private static final String TITLE_SEARCH = "Search";
+    private static final String TITLE_FAVORITES = "Favorites";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private BottomNavAdapter mPagerAdapter;
     private SharedPreferences mPreferences;
     private boolean mIsDayMode;
+    private String mTitle;
 
 
     @Override
@@ -104,8 +108,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         ButterKnife.bind(this);
 
+        if (savedInstanceState != null) {
+            mTitle = "ArtPlace";
+            Log.d(TAG, "onCreate: Current title: " + mTitle);
+            mTitle = savedInstanceState.getString(TITLE_ARTWORKS);
+        }
+
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Artworks");
+        //toolbar.setTitle("Artworks");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mTitle);
+        }
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -124,9 +137,25 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
 
-                Fragment fragment;
-
+                bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
                 viewPager.setCurrentItem(position);
+
+                switch (position) {
+                    case 0:
+                        mTitle = "Artworks";
+                        toolbar.setTitle(mTitle);
+                        break;
+                    case 1:
+                        mTitle = "Search";
+                        toolbar.setTitle(mTitle);
+                        break;
+                    case 2:
+                        mTitle = "Favorites";
+                        toolbar.setTitle(mTitle);
+                        break;
+                    default:
+                        break;
+                }
 
                 return true;
             }
@@ -137,6 +166,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         //mPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mTitle = (String) toolbar.getTitle();
+        Log.d(TAG, "onSaveInstanceState: Current title: " + mTitle);
+        outState.putString(TITLE_FAVORITES, mTitle);
+    }
 
     private void addBottomNavigationItems() {
 
@@ -149,11 +185,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.addItem(favoritesItem);
     }
 
-    private ArtworksFragment createArtworksFragment() {
-        ArtworksFragment artworksFragment = new ArtworksFragment();
+    private Fragment createArtworksFragment() {
+        Fragment artworksFragment = new ArtworksFragment();
         // Set arguments for the title here
         Bundle bundle = new Bundle();
-        bundle.putString(ARG_ARTWORKS_TITLE, "Artworks");
+        //bundle.putString(TITLE_ARTWORKS, "Artworks");
         artworksFragment.setArguments(bundle);
         return artworksFragment;
     }
@@ -162,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         FavoritesFragment favFragment = new FavoritesFragment();
         // Set arguments for the title here
         Bundle bundle = new Bundle();
-        bundle.putString(ARG_FAV_TITLE, "Favorites");
+        //bundle.putString(TITLE_ARTWORKS, "Favorites");
         favFragment.setArguments(bundle);
         return favFragment;
     }
@@ -171,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         SearchFragment searchFragment = new SearchFragment();
         // Set arguments for the title here
         Bundle bundle = new Bundle();
-        bundle.putString(ARG_SEARCH_TITLE, "Search the Art World");
+        //bundle.putString(TITLE_ARTWORKS, "Search the Art World");
         searchFragment.setArguments(bundle);
         return searchFragment;
     }
@@ -252,10 +288,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void savePrefs(boolean state) {
         mPreferences = getApplicationContext()
-                        .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
-               SharedPreferences.Editor editor = mPreferences.edit();
-               editor.putBoolean(THEME_PREFERENCE_KEY, state);
-               editor.apply();
+                .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putBoolean(THEME_PREFERENCE_KEY, state);
+        editor.apply();
     }
 
     /**

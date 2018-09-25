@@ -120,12 +120,12 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         if (savedInstanceState != null) {
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
-            mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
+            //mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
         }
 
         if (getArguments() != null) {
-            mTitle = getArguments().getString(ARG_SEARCH_TITLE);
-            Objects.requireNonNull(getActivity()).setTitle(mTitle);
+           // mTitle = getArguments().getString(ARG_SEARCH_TITLE);
+            //Objects.requireNonNull(getActivity()).setTitle(mTitle);
         }
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -137,7 +137,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         super.onSaveInstanceState(outState);
 
         outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
-        outState.putString(ARG_SEARCH_TITLE, mTitle);
+       // outState.putString(ARG_SEARCH_TITLE, mTitle);
     }
 
     @Nullable
