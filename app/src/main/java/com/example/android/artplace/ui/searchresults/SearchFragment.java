@@ -42,6 +42,7 @@ import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -50,6 +51,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -301,6 +304,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.search_menu, menu);
+
+        // Make the icon with a dynamic tint
+        // source: https://stackoverflow.com/a/29916353/8132331
+        Drawable drawable = menu.findItem(R.id.action_search).getIcon();
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.colorText));
+        menu.findItem(R.id.action_search).setIcon(drawable);
 
         // Set the SearchView
         SearchManager searchManager =

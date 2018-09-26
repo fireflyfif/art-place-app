@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void addBottomNavigationItems() {
 
-        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem("Artworks", R.drawable.ic_launch_24dp);
+        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem("Artworks", R.drawable.ic_frame);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem("Search", R.drawable.ic_search_24dp);
         AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem("Favorites", R.drawable.ic_favorite_24dp);
 

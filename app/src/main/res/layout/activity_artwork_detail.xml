@@ -142,12 +142,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:drawableEnd="@drawable/ic_launch_24dp"
-                            android:drawablePadding="@dimen/padding_6dp"
-                            android:drawableRight="@drawable/ic_launch_24dp"
                             android:textAllCaps="true"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                            android:textColor="@color/colorWhiteTransparent"
+                            android:textColor="@color/colorText"
                             app:fontFamily="sans-serif"
                             tools:text="Artist" />
 
@@ -310,6 +307,7 @@
         app:layout_anchorGravity="bottom|right|end"
         app:pressedTranslationZ="@dimen/fab_pressed_transition"
         android:contentDescription="@string/fab_contentDecription"
-        app:srcCompat="@drawable/ic_favorite_border_24dp" />
+        app:srcCompat="@drawable/ic_favorite_border_24dp"
+        android:tint="@android:color/white"/>
 
 </android.support.design.widget.CoordinatorLayout>

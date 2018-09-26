@@ -1,0 +1,56 @@
+<!--
+  ~ PROJECT LICENSE
+  ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
+  ~
+  ~ According to Udacity Honor Code we agree that we will not plagiarize (a form of cheating) the work of others. :
+  ~ Plagiarism at Udacity can range from submitting a project you didn’t create to copying code into a program without
+  ~ citation. Any action in which you misleadingly claim an idea or piece of work as your own when it is not constitutes
+  ~ plagiarism.
+  ~ Read more here: https://udacity.zendesk.com/hc/en-us/articles/360001451091-What-is-plagiarism-
+  ~
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Iva Ivanova
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  ~
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="m136,266c5.52,0 10,-4.48 10,-10s-4.48,-10 -10,-10 -10,4.48 -10,10 4.48,10 10,10zM136,266"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="m276,326c16.543,0 30,-13.457 30,-30s-13.457,-30 -30,-30 -30,13.457 -30,30 13.457,30 30,30zM276,286c5.516,0 10,4.484 10,10s-4.484,10 -10,10 -10,-4.484 -10,-10 4.484,-10 10,-10zM276,286"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="m336,266h40c5.523,0 10,-4.477 10,-10s-4.477,-10 -10,-10h-40c-5.523,0 -10,4.477 -10,10s4.477,10 10,10zM336,266"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="m176,266h40c5.523,0 10,-4.477 10,-10s-4.477,-10 -10,-10h-40c-5.523,0 -10,4.477 -10,10s4.477,10 10,10zM176,266"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="m482,120h-130.648l-55.492,-83.242c-1.66,-20.543 -18.895,-36.758 -39.859,-36.758s-38.199,16.215 -39.855,36.758l-55.496,83.242h-130.648c-16.574,0 -30,13.426 -30,30v332c0,13.523 8.875,21.328 8.809,21.23 5.664,5.656 13.191,8.77 21.191,8.77h452c16.574,0 30,-13.426 30,-30v-332c0,-16.332 -13.211,-30 -30,-30zM20,154.141 L66,200.145v231.715l-46,46zM477.855,140 L431.855,186h-351.711l-46,-46zM320.145,426 L290.145,396 346,340.141 426,420.141v5.859zM426,206v185.855l-72.93,-72.926c-3.906,-3.906 -10.234,-3.906 -14.141,0l-62.93,62.926 -82.93,-82.926c-3.906,-3.906 -10.234,-3.906 -14.141,0l-92.93,92.926v-185.855zM86,426v-5.855l100,-100 105.855,105.855zM80.145,446h351.715l46,46h-443.715zM446,431.855c0,-10.977 0,-216.016 0,-231.715l46,-46v323.715zM256,20c11.027,0 20,8.973 20,20s-8.973,20 -20,20 -20,-8.973 -20,-20 8.973,-20 20,-20zM222.984,62.551c7.211,10.527 19.32,17.449 33.016,17.449s25.805,-6.922 33.016,-17.449l38.301,57.449h-142.629zM222.984,62.551"/>
+</vector>
