@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -43,6 +42,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -64,9 +64,6 @@ import com.example.android.artplace.ui.searchresults.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -74,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String THEME_PREFERENCE_KEY = "theme_prefs";
-    private static final String TITLE_ARTWORKS = "Artworks";
-    private static final String TITLE_SEARCH = "Search";
-    private static final String TITLE_FAVORITES = "Favorites";
     private static final String POSITION_KEY = "position";
 
     @BindView(R.id.appbar_main)
@@ -111,19 +105,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            mTitle = savedInstanceState.getString(TITLE_ARTWORKS);
+            // Get the position of the selected Fragment
             mPosition = savedInstanceState.getInt(POSITION_KEY);
-
-            Log.d(TAG, "onCreate: Current title: " + mTitle + "\nCurrent position: " + mPosition);
         }
 
-        //mTitle = "ArtPlace";
+        Log.d(TAG, "onCreate: position: " + mPosition);
+        // Set the title on the toolbar according to
+        // the position of the clicked Fragment
         setToolbarTitle(mPosition);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(mTitle);
-        //toolbar.setTitle("Artworks");
         if (getSupportActionBar() != null) {
-            //getSupportActionBar().setTitle(mTitle);
+            getSupportActionBar().setTitle(mTitle);
         }
 
         // Obtain the shared Tracker instance.
@@ -136,10 +128,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         // Add items to the Bottom Navigation
         addBottomNavigationItems();
-        // Setting the very 1st item as home screen.
-        mPosition = 0;
         bottomNavigation.setCurrentItem(mPosition);
-
 
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
@@ -149,25 +138,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 viewPager.setCurrentItem(position);
 
                 mPosition = position;
-
+                // Set the title on the toolbar according to
+                // the position of the clicked Fragment
                 setToolbarTitle(position);
-
-                /*switch (mPosition) {
-                    case 0:
-                        mTitle = "Artworks";
-                        toolbar.setTitle(mTitle);
-                        break;
-                    case 1:
-                        mTitle = "Search";
-                        toolbar.setTitle(mTitle);
-                        break;
-                    case 2:
-                        mTitle = "Favorites";
-                        toolbar.setTitle(mTitle);
-                        break;
-                    default:
-                        break;
-                }*/
 
                 return true;
             }
@@ -181,24 +154,27 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(TITLE_FAVORITES, (String) toolbar.getTitle());
+        // Save the position of the selected Fragment
         outState.putInt(POSITION_KEY, mPosition);
-
-        Log.d(TAG, "onSaveInstanceState: Current title: " + mTitle + "\nCurrent position: " + mPosition);
     }
 
+    /**
+     * Method for setting the title on the Toolbar for each Fragment
+     *
+     * @param position of the current Fragment
+     */
     private void setToolbarTitle(int position) {
         switch (position) {
             case 0:
-                mTitle = "Artworks";
+                mTitle = getString(R.string.title_artworks);
                 toolbar.setTitle(mTitle);
                 break;
             case 1:
-                mTitle = "Search";
+                mTitle = getString(R.string.title_search);
                 toolbar.setTitle(mTitle);
                 break;
             case 2:
-                mTitle = "Favorites";
+                mTitle = getString(R.string.title_favorites);
                 toolbar.setTitle(mTitle);
                 break;
             default:
@@ -208,39 +184,31 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void addBottomNavigationItems() {
 
-        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem("Artworks", R.drawable.ic_frame);
-        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem("Search", R.drawable.ic_search_24dp);
-        AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem("Favorites", R.drawable.ic_favorite_24dp);
+        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(getString(R.string.title_artworks), R.drawable.ic_frame);
+        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(getString(R.string.search), R.drawable.ic_search_24dp);
+        AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(getString(R.string.title_favorites), R.drawable.ic_favorite_24dp);
 
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
         bottomNavigation.addItem(favoritesItem);
     }
 
+    //TODO: Make these three methods into one
     private Fragment createArtworksFragment() {
         Fragment artworksFragment = new ArtworksFragment();
-        // Set arguments for the title here
+        // Set arguments here
         Bundle bundle = new Bundle();
-        //bundle.putString(TITLE_ARTWORKS, "Artworks");
         artworksFragment.setArguments(bundle);
         return artworksFragment;
     }
 
     private FavoritesFragment createFavFragment() {
         FavoritesFragment favFragment = new FavoritesFragment();
-        // Set arguments for the title here
-        Bundle bundle = new Bundle();
-        //bundle.putString(TITLE_ARTWORKS, "Favorites");
-        favFragment.setArguments(bundle);
         return favFragment;
     }
 
     private SearchFragment createSearchFragment() {
         SearchFragment searchFragment = new SearchFragment();
-        // Set arguments for the title here
-        Bundle bundle = new Bundle();
-        //bundle.putString(TITLE_ARTWORKS, "Search the Art World");
-        searchFragment.setArguments(bundle);
         return searchFragment;
     }
 

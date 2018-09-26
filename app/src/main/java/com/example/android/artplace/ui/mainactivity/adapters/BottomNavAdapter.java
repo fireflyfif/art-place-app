@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.ui.mainactivity.adapters;
 
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -64,20 +63,4 @@ public class BottomNavAdapter extends SmartFragmentStatePagerAdapter {
         return fragments.size();
     }
 
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-
-        switch (position) {
-            case 0:
-                return "Artworks2";
-            case 1:
-                return "Search2";
-            case 2:
-                return "Favorites2";
-            default:
-                throw new UnsupportedOperationException();
-        }
-        //return super.getPageTitle(position);
-    }
 }
