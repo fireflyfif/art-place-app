@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private static final String TITLE_ARTWORKS = "Artworks";
     private static final String TITLE_SEARCH = "Search";
     private static final String TITLE_FAVORITES = "Favorites";
+    private static final String POSITION_KEY = "position";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -96,12 +97,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private SharedPreferences mPreferences;
     private boolean mIsDayMode;
     private String mTitle;
+    private int mPosition;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -109,15 +111,19 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            mTitle = "ArtPlace";
-            Log.d(TAG, "onCreate: Current title: " + mTitle);
             mTitle = savedInstanceState.getString(TITLE_ARTWORKS);
+            mPosition = savedInstanceState.getInt(POSITION_KEY);
+
+            Log.d(TAG, "onCreate: Current title: " + mTitle + "\nCurrent position: " + mPosition);
         }
 
+        //mTitle = "ArtPlace";
+        setToolbarTitle(mPosition);
         setSupportActionBar(toolbar);
+        toolbar.setTitle(mTitle);
         //toolbar.setTitle("Artworks");
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mTitle);
+            //getSupportActionBar().setTitle(mTitle);
         }
 
         // Obtain the shared Tracker instance.
@@ -131,7 +137,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         // Add items to the Bottom Navigation
         addBottomNavigationItems();
         // Setting the very 1st item as home screen.
-        bottomNavigation.setCurrentItem(0);
+        mPosition = 0;
+        bottomNavigation.setCurrentItem(mPosition);
+
 
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
@@ -140,7 +148,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
                 viewPager.setCurrentItem(position);
 
-                switch (position) {
+                mPosition = position;
+
+                setToolbarTitle(position);
+
+                /*switch (mPosition) {
                     case 0:
                         mTitle = "Artworks";
                         toolbar.setTitle(mTitle);
@@ -155,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                         break;
                     default:
                         break;
-                }
+                }*/
 
                 return true;
             }
@@ -169,9 +181,29 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mTitle = (String) toolbar.getTitle();
-        Log.d(TAG, "onSaveInstanceState: Current title: " + mTitle);
-        outState.putString(TITLE_FAVORITES, mTitle);
+        outState.putString(TITLE_FAVORITES, (String) toolbar.getTitle());
+        outState.putInt(POSITION_KEY, mPosition);
+
+        Log.d(TAG, "onSaveInstanceState: Current title: " + mTitle + "\nCurrent position: " + mPosition);
+    }
+
+    private void setToolbarTitle(int position) {
+        switch (position) {
+            case 0:
+                mTitle = "Artworks";
+                toolbar.setTitle(mTitle);
+                break;
+            case 1:
+                mTitle = "Search";
+                toolbar.setTitle(mTitle);
+                break;
+            case 2:
+                mTitle = "Favorites";
+                toolbar.setTitle(mTitle);
+                break;
+            default:
+                break;
+        }
     }
 
     private void addBottomNavigationItems() {
@@ -229,6 +261,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void setupViewPager() {
         viewPager.setPagingEnabled(false);
+        // Set the offset to 3 so that the Pager Adapter keeps in memory
+        // all 3 Fragments and doesn't load it
+        viewPager.setOffscreenPageLimit(3);
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
 
         mPagerAdapter.addFragments(createArtworksFragment());
@@ -243,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         Log.d(TAG, "onRefreshConnection is now triggered");
         setAppBarVisible();
     }
-
 
     @Override
     protected void onResume() {

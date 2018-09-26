@@ -38,9 +38,11 @@ package com.example.android.artplace.ui.contentdetail;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 
 import com.example.android.artplace.R;
 import com.example.android.artplace.model.Thumbnail;
@@ -64,6 +66,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     ImageView contentImage;
     @BindView(R.id.content_description)
     TextView contentDescription;
+    @BindView(R.id.toolbar_detail)
+    Toolbar toolbar;
 
     private Result mResults;
 
@@ -73,6 +77,12 @@ public class SearchDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_detail);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {

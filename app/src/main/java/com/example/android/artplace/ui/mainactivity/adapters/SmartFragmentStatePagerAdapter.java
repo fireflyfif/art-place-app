@@ -36,6 +36,7 @@
 package com.example.android.artplace.ui.mainactivity.adapters;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -59,7 +60,7 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         Fragment fragment = (Fragment) super.instantiateItem(container, position);
-        registeredFragments.put(position,fragment);
+        registeredFragments.put(position, fragment);
         return fragment;
     }
 
@@ -73,6 +74,13 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
     @Override
     public int getCount() {
         return 0;
+    }
+
+    @Nullable
+    @Override
+    public CharSequence getPageTitle(int position) {
+
+        return super.getPageTitle(position);
     }
 
     // Returns the fragment for the position (if instantiated)
