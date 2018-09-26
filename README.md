@@ -34,10 +34,10 @@ def apiToken = project.hasProperty('token') ? apiToken : (System.getenv('TOKEN')
 
 ## Screenshots
 
-![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_01.png)
+![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_new_01.png)
 
 
-![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_02.png)
+![text](https://github.com/fireflyfif/art-place-app/blob/master/art/design_new_02_.png)
 
 
 # License
