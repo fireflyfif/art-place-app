@@ -64,6 +64,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView contentType;
     @BindView(R.id.content_image)
     ImageView contentImage;
+    @BindView(R.id.content_image2)
+    ImageView secondImage;
     @BindView(R.id.content_description)
     TextView contentDescription;
     @BindView(R.id.toolbar_detail)
@@ -107,18 +109,35 @@ public class SearchDetailActivity extends AppCompatActivity {
                             String imageThumbnailString = thumbnail.getHref();
 
                             if (imageThumbnailString != null || imageThumbnailString.isEmpty()) {
+                                // Set the backdrop image
                                 Picasso.get()
                                         .load(imageThumbnailString)
                                         .placeholder(R.drawable.placeholder)
                                         .error(R.drawable.placeholder)
                                         .into(contentImage);
+
+                                // Set the second image
+                                Picasso.get()
+                                        .load(imageThumbnailString)
+                                        .placeholder(R.drawable.placeholder)
+                                        .error(R.drawable.placeholder)
+                                        .into(secondImage);
                             } else {
+                                // Set the backdrop image
                                 Picasso.get()
                                         .load(R.drawable.placeholder)
                                         .placeholder(R.drawable.placeholder)
                                         .error(R.drawable.placeholder)
                                         .into(contentImage);
+
+                                // Set the second image
+                                Picasso.get()
+                                        .load(imageThumbnailString)
+                                        .placeholder(R.drawable.placeholder)
+                                        .error(R.drawable.placeholder)
+                                        .into(secondImage);
                             }
+
                         }
 
                     }

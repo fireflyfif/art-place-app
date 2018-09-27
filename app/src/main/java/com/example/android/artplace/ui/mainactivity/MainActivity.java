@@ -184,9 +184,12 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void addBottomNavigationItems() {
 
-        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(getString(R.string.title_artworks), R.drawable.ic_frame);
-        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(getString(R.string.search), R.drawable.ic_search_24dp);
-        AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(getString(R.string.title_favorites), R.drawable.ic_favorite_24dp);
+        AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
+                getString(R.string.title_artworks), R.drawable.ic_frame);
+        AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
+                getString(R.string.search), R.drawable.ic_search_24dp);
+        AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(
+                getString(R.string.title_favorites), R.drawable.ic_favorite_24dp);
 
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
