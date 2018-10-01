@@ -48,7 +48,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -66,13 +65,11 @@ import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.model.artworks.Artwork;
-import com.example.android.artplace.ui.ArtworkDetailActivity;
+import com.example.android.artplace.ui.artworkdetail.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
 import com.google.android.gms.analytics.Tracker;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

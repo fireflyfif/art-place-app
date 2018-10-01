@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.android.artplace"
@@ -18,7 +17,6 @@ android {
 
         vectorDrawables.useSupportLibrary = true
     }
-
     signingConfigs {
         config {
             keyAlias 'capstone'
@@ -27,7 +25,6 @@ android {
             storePassword 'udacity'
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -38,11 +35,11 @@ android {
             testCoverageEnabled = true
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion '28.0.2'
 }
 
 dependencies {

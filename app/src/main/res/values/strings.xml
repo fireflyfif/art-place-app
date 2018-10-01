@@ -48,4 +48,5 @@
     <string name="title_artworks">Artworks</string>
     <string name="title_search">Search the Art World</string>
     <string name="title_favorites">Favorites</string>
+    <string name="information_label">Information</string>
 </resources>

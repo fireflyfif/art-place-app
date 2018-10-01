@@ -33,7 +33,7 @@
 
         </activity>
         <activity
-            android:name=".ui.ArtworkDetailActivity"
+            android:name=".ui.artworkdetail.ArtworkDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.mainactivity.MainActivity">
             <meta-data
@@ -42,10 +42,10 @@
         </activity>
         <activity
             android:name=".ui.artistdetail.ArtistDetailActivity"
-            android:parentActivityName=".ui.ArtworkDetailActivity">
+            android:parentActivityName=".ui.artworkdetail.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.ArtworkDetailActivity" />
+                android:value=".ui.artworkdetail.ArtworkDetailActivity" />
         </activity>
         <activity
             android:name=".ui.favorites.FavArtworksActivity"
