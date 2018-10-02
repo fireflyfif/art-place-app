@@ -45,9 +45,11 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -86,6 +88,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
@@ -129,8 +132,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView dimensIn;
     @BindView(R.id.blurry_image)
     SimpleDraweeView blurryImage;
-    @BindView(R.id.artwork_info)
-    TextView artworkInfo;
+    @BindView(R.id.artwork_info_markdown)
+    MarkdownView artworkInfoMarkdown;
 
     // Views of the artist
     @BindView(R.id.artist_cardview)
@@ -269,6 +272,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mTitleString = currentArtwork.getTitle();
             artworkName.setText(mTitleString);
             collapsingToolbarLayout.setTitle(mTitleString);
+            collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.colorWhite));
             Log.d(TAG, "Title of the artwork: " + mTitleString);
 
         } else {
@@ -323,11 +327,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
         }
 
-        if (currentArtwork.getAdditionalInformation() != null || currentArtwork.getAdditionalInformation().isEmpty()) {
+        if (currentArtwork.getAdditionalInformation() != null) {
             String addInfo = currentArtwork.getAdditionalInformation();
-            artworkInfo.setText(addInfo);
+            if (TextUtils.isEmpty(addInfo)) {
+                artworkInfoMarkdown.setVisibility(View.INVISIBLE);
+            }
+            artworkInfoMarkdown.loadMarkdown(addInfo);
+            //artworkInfoMarkdown.setText(addInfo);
         } else {
-            artworkInfo.setText(R.string.not_applicable);
+            //artworkInfoMarkdown.setText(R.string.not_applicable);
         }
 
         ImageLinks imageLinksObject = currentArtwork.getLinks();

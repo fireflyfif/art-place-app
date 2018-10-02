@@ -46,5 +46,6 @@
     <color name="colorText">#616161</color>
     <color name="colorWhiteTransparent">#80FFFFFF</color>
     <color name="colorIconsInactive">#a4a4a4</color>
+    <color name="colorWhite">#FFFFFF</color>
 
 </resources>

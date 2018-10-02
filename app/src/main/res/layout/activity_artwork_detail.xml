@@ -55,6 +55,7 @@
             android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            android:theme="@style/Theme.AppCompat.DayNight"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -288,12 +289,14 @@
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:text="@string/information_label"
                         app:fontFamily="sans-serif-condensed"
-                        app:layout_constraintEnd_toStartOf="@+id/artwork_info"
+                        app:layout_constraintEnd_toStartOf="@+id/artwork_info_markdown"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/artwork_museum" />
 
-                    <TextView
-                        android:id="@+id/artwork_info"
+                    <br.tiagohm.markdownview.MarkdownView
+                        android:id="@+id/artwork_info_markdown"
+                        android:background="@color/colorAccent"
+                        app:escapeHtml="false"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

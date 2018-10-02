@@ -67,13 +67,15 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
             android:maxLines="2"
-            android:paddingBottom="@dimen/padding_6dp"
-            android:paddingEnd="@dimen/padding_10dp"
-            android:paddingLeft="@dimen/padding_10dp"
-            android:paddingRight="@dimen/padding_10dp"
             android:paddingStart="@dimen/padding_10dp"
+            android:paddingLeft="@dimen/padding_10dp"
             android:paddingTop="@dimen/padding_10dp"
+            android:paddingEnd="@dimen/padding_10dp"
+            android:paddingRight="@dimen/padding_10dp"
+            android:paddingBottom="@dimen/padding_6dp"
             android:textColor="@color/colorAccentLight"
+            android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
         <TextView
