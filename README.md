@@ -30,7 +30,7 @@ def apiToken = project.hasProperty('token') ? apiToken : (System.getenv('TOKEN')
 - [Google Play Services - Analytics](https://developers.google.com/android/reference/com/google/android/gms/analytics/package-summary)
 - [Palette](https://developer.android.com/training/material/palette-colors)
 - [Fresco](https://github.com/facebook/fresco)
-
+- [MarkdownView](https://github.com/tiagohm/MarkdownView)
 
 ## Screenshots
 
