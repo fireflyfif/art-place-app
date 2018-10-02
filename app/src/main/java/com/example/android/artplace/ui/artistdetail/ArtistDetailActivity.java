@@ -115,15 +115,14 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
-            if (getIntent().hasExtra(ARTWORK_ID_KEY) || getIntent().hasExtra(ARTWORK_TITLE_KEY) || getIntent().hasExtra(ARTIST_URL_KEY)) {
-                String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);
-                String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
+            if (getIntent().hasExtra(ARTIST_URL_KEY)) {
+                //String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);
+                //String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
                 String receivedArtistUrlString = getIntent().getStringExtra(ARTIST_URL_KEY);
 
-                Log.d(TAG, "Received id from the intent: " + receivedArtworkId);
                 Log.d(TAG, "Received artist url from the intent: " + receivedArtistUrlString);
 
-                clickedArtworkTitle.setText(receivedArtworkTitle);
+                //clickedArtworkTitle.setText(receivedArtworkTitle);
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
