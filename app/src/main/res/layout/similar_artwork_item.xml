@@ -38,17 +38,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/padding_6dp">
 
-    <ImageView
-        android:id="@+id/similar_artwork_thumbnail"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="@dimen/margin_4dp"
-        android:background="@color/colorPrimary"
-        android:contentDescription="@string/current_artwork_description"
-        android:gravity="center_horizontal"
-        android:scaleType="centerCrop" />
+        android:layout_height="200dp">
+
+        <ImageView
+            android:id="@+id/similar_artwork_bg"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="@dimen/margin_4dp"
+            android:background="@color/colorPrimary"
+            android:contentDescription="@string/current_artwork_description"
+            android:gravity="center_horizontal"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:id="@+id/similar_artwork_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/margin_4dp"
+            android:background="@color/colorPrimary"
+            android:contentDescription="@string/current_artwork_description"
+            android:gravity="center_horizontal"
+            android:scaleType="fitCenter" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/similar_artwork_title"
@@ -75,11 +93,11 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-condensed"
         android:maxLines="2"
-        android:paddingBottom="@dimen/padding_16dp"
-        android:paddingEnd="@dimen/padding_10dp"
-        android:paddingLeft="@dimen/padding_10dp"
-        android:paddingRight="@dimen/padding_10dp"
         android:paddingStart="@dimen/padding_10dp"
+        android:paddingLeft="@dimen/padding_10dp"
+        android:paddingEnd="@dimen/padding_10dp"
+        android:paddingRight="@dimen/padding_10dp"
+        android:paddingBottom="@dimen/padding_16dp"
         android:textAllCaps="true"
         android:textColor="@color/colorText"
         android:textStyle="bold"

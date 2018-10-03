@@ -49,6 +49,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -66,6 +67,7 @@ import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
+import com.example.android.artplace.model.SimilarArtworksLink;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artworks.ArtistsLink;
 import com.example.android.artplace.model.artworks.Artwork;
@@ -79,6 +81,7 @@ import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
+import com.example.android.artplace.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import com.example.android.artplace.utils.StringUtils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
@@ -167,6 +170,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     // Similar Artworks Views
     @BindView(R.id.similar_artworks_rv)
     RecyclerView similarArtworksRv;
+    private SimilarArtworksAdapter mSimilarArtAdapter;
 
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
@@ -189,6 +193,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mDimensInInchString;
     private String mArtistUrl;
     private String mPermalinkForShare;
+    private String mSimilarArtworksLink;
 
     private ArtistsDetailViewModel mArtistViewModel;
 
@@ -483,6 +488,11 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Get the Permalink for sharing it outside the app
         Permalink permalinkForShare = imageLinksObject.getPermalink();
         mPermalinkForShare = permalinkForShare.getHref();
+
+        SimilarArtworksLink similarArtworksLink = imageLinksObject.getSimilarArtworks();
+        mSimilarArtworksLink = similarArtworksLink.getHref();
+        Log.d(TAG, "Similar Artworks link: " + mSimilarArtworksLink);
+        initSimilarViewModel(mSimilarArtworksLink);
     }
 
     /**
@@ -621,6 +631,35 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 .into(artistImage);*/
 
         }
+    }
+
+    /**
+     * Method for initializing the ViewModel of the Similar Artworks
+     *
+     * @param similarArtLink is the given link to the similar artworks
+     */
+    private void initSimilarViewModel(String similarArtLink) {
+        // Initialize the ViewModel
+        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+        mArtistViewModel.initSimilarArtworksLink(similarArtLink);
+
+        mArtistViewModel.getSimilarArtworksLink().observe(this, new Observer<List<Artwork>>() {
+            @Override
+            public void onChanged(@Nullable List<Artwork> artworkList) {
+                if (artworkList != null) {
+                    setupSimilarArtworksUI(artworkList);
+                }
+            }
+        });
+    }
+
+    private void setupSimilarArtworksUI(List<Artwork> artworkList) {
+
+        mSimilarArtAdapter = new SimilarArtworksAdapter(this, artworkList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
+        similarArtworksRv.setLayoutManager(layoutManager);
+        similarArtworksRv.setAdapter(mSimilarArtAdapter);
     }
 
     private void clickFab() {

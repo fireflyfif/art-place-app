@@ -75,6 +75,15 @@ public interface ArtsyApiInterface {
     Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
     /**
+     * Make call according to the url that is received from the JSON
+     *
+     * @param similarArtLink is dynamic link for similar artworks page
+     * @return the response for the similar artworks page
+     */
+    @GET
+    Call<ArtworkWrapperResponse> getSimilarArtLink(@Url String similarArtLink);
+
+    /**
      * Endpoint for fetching Artist of the current Artwork
      */
     @GET("/api/artists")

@@ -39,6 +39,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.example.android.artplace.model.artists.Artist;
+import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.repository.ArtsyRepository;
 
 import java.util.List;
@@ -46,7 +47,7 @@ import java.util.List;
 public class ArtistsDetailViewModel extends ViewModel {
 
     private LiveData<List<Artist>> mArtistLink;
-
+    private LiveData<List<Artwork>> mSimilarArtworkLink;
 
     public ArtistsDetailViewModel() {
     }
@@ -60,9 +61,21 @@ public class ArtistsDetailViewModel extends ViewModel {
         mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
     }
 
+    public void initSimilarArtworksLink(String similarArtUrl) {
+        if (mSimilarArtworkLink != null) {
+            return;
+        }
+
+        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
+    }
+
 
     public LiveData<List<Artist>> getArtistFromLink() {
         return mArtistLink;
+    }
+
+    public LiveData<List<Artwork>> getSimilarArtworksLink() {
+        return mSimilarArtworkLink;
     }
 
 }

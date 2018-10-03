@@ -44,6 +44,9 @@ import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
+import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +90,47 @@ public class ArtsyRepository {
         return INSTANCE;
     }
 
-    /*public LiveData<List<Artist>> getArtist(String artworkId) {
-        return loadArtist(artworkId);
-    }*/
+    public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
+        return loadSimilarArtworks(similarArtUrl);
+    }
+
+    private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
+
+        MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
+
+        ArtPlaceApp.getInstance().getArtsyApi().getSimilarArtLink(similarArtUrl)
+                .enqueue(new Callback<ArtworkWrapperResponse>() {
+
+                    ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
+                    EmbeddedArtworks embeddedArtworks = new EmbeddedArtworks();
+                    List<Artwork> similarArtList = new ArrayList<>();
+
+                    @Override
+                    public void onResponse(@NonNull Call<ArtworkWrapperResponse> call,
+                                           @NonNull Response<ArtworkWrapperResponse> response) {
+
+                        if (response.isSuccessful()) {
+                            artworkWrapper = response.body();
+                            if (artworkWrapper != null) {
+                                embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
+
+                                similarArtList = embeddedArtworks.getArtworks();
+                                similarArtData.setValue(similarArtList);
+                            }
+                            Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
+                        } else {
+                            similarArtData.setValue(null);
+                            Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
+                        }
+                    }
+                    @Override
+                    public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "OnFailure! " + t.getMessage());
+                    }
+                });
+
+        return similarArtData;
+    }
 
     public LiveData<List<Artist>> getArtistFromLink(String artistUrl) {
         return loadArtistFromLink(artistUrl);
@@ -99,40 +140,40 @@ public class ArtsyRepository {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtistWrapperResponse>() {
-            ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
-            EmbeddedArtists embeddedArtists = new EmbeddedArtists();
-            List<Artist> artistList = new ArrayList<>();
+        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl)
+                .enqueue(new Callback<ArtistWrapperResponse>() {
+                    ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
+                    EmbeddedArtists embeddedArtists = new EmbeddedArtists();
+                    List<Artist> artistList = new ArrayList<>();
 
-            @Override
-            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
-                if (response.isSuccessful()) {
+                    @Override
+                    public void onResponse(@NonNull Call<ArtistWrapperResponse> call,
+                                           @NonNull Response<ArtistWrapperResponse> response) {
+                        if (response.isSuccessful()) {
 
-                    artistWrapperResponse = response.body();
+                            artistWrapperResponse = response.body();
 
-                    if (artistWrapperResponse != null) {
-                        embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
+                            if (artistWrapperResponse != null) {
+                                embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
 
-                        if (embeddedArtists != null) {
-                            artistList = embeddedArtists.getArtists();
+                                if (embeddedArtists != null) {
+                                    artistList = embeddedArtists.getArtists();
 
-                            artistLiveData.setValue(artistList);
+                                    artistLiveData.setValue(artistList);
+                                }
+                            }
+                            Log.d(TAG, "Loaded successfully! " + response.code());
+                        } else {
+                            artistLiveData.setValue(null);
+                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
                         }
                     }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
 
-                } else {
-
-                    artistLiveData.setValue(null);
-                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
-            }
-        });
+                    @Override
+                    public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "OnFailure! " + t.getMessage());
+                    }
+                });
 
         return artistLiveData;
     }
