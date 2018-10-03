@@ -117,11 +117,11 @@
                 android:id="@+id/card_view_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/margin_8dp"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:layout_marginEnd="@dimen/margin_8dp"
-                android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_16dp"
+                android:layout_marginStart="@dimen/margin_horizontal_cardview"
+                android:layout_marginLeft="@dimen/margin_horizontal_cardview"
+                android:layout_marginEnd="@dimen/margin_horizontal_cardview"
+                android:layout_marginRight="@dimen/margin_horizontal_cardview"
+                android:layout_marginBottom="@dimen/margin_bottom_cardview"
                 app:cardBackgroundColor="@color/cardBackground">
 
                 <android.support.constraint.ConstraintLayout
@@ -140,11 +140,11 @@
                             android:id="@+id/divider"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginTop="55dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
+                            android:layout_marginStart="@dimen/margin_16dp"
+                            android:layout_marginLeft="@dimen/margin_16dp"
+                            android:layout_marginTop="@dimen/divider_margin_top"
+                            android:layout_marginEnd="@dimen/margin_16dp"
+                            android:layout_marginRight="@dimen/margin_16dp"
                             android:background="@color/colorAccent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -154,11 +154,11 @@
                             android:id="@+id/artwork_artist_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
+                            android:layout_marginStart="@dimen/margin_8dp"
+                            android:layout_marginLeft="@dimen/margin_8dp"
+                            android:layout_marginTop="@dimen/margin_8dp"
+                            android:layout_marginEnd="@dimen/margin_8dp"
+                            android:layout_marginRight="@dimen/margin_8dp"
                             android:background="@android:color/transparent"
                             android:textAllCaps="true"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
@@ -173,10 +173,10 @@
                             android:id="@+id/artwork_title"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
+                            android:layout_marginStart="@dimen/margin_8dp"
+                            android:layout_marginLeft="@dimen/margin_8dp"
+                            android:layout_marginEnd="@dimen/margin_8dp"
+                            android:layout_marginRight="@dimen/margin_8dp"
                             android:gravity="center_horizontal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                             android:textColor="@android:color/white"
@@ -191,12 +191,12 @@
                             android:id="@+id/artwork_date"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="@dimen/margin_8dp"
+                            android:layout_marginLeft="@dimen/margin_8dp"
+                            android:layout_marginTop="@dimen/margin_8dp"
+                            android:layout_marginEnd="@dimen/margin_8dp"
+                            android:layout_marginRight="@dimen/margin_8dp"
+                            android:layout_marginBottom="@dimen/margin_8dp"
                             android:gravity="center_horizontal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/colorAccent"
@@ -351,159 +351,9 @@
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/artist_cardview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/margin_8dp"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:layout_marginEnd="@dimen/margin_8dp"
-                android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/card_bottom_margin"
-                app:cardBackgroundColor="@color/cardBackground">
+            <include
+                layout="@layout/artist_detail_cardview"/>
 
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/artist_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
-                        android:gravity="center_horizontal"
-                        android:padding="@dimen/padding_10dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                        android:textColor="@color/colorPrimary"
-                        app:fontFamily="sans-serif-condensed"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Gustav Klimt" />
-
-                    <TextView
-                        android:id="@+id/artist_lifespan"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:layout_marginLeft="@dimen/margin_8dp"
-                        android:layout_marginTop="@dimen/margin_8dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:gravity="center_horizontal"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_name"
-                        tools:text="1862 - 1918" />
-
-                    <View
-                        android:id="@+id/divider_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/divider_height"
-                        android:layout_marginStart="@dimen/margin_24dp"
-                        android:layout_marginLeft="@dimen/margin_24dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_24dp"
-                        android:layout_marginRight="@dimen/margin_24dp"
-                        android:background="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_lifespan" />
-
-                    <TextView
-                        android:id="@+id/artist_home"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_32dp"
-                        android:layout_marginLeft="@dimen/margin_32dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_32dp"
-                        android:layout_marginRight="@dimen/margin_32dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@+id/hometown_label"
-                        app:layout_constraintTop_toBottomOf="@+id/divider_2"
-                        tools:text="Baumgarten, Austria" />
-
-                    <TextView
-                        android:id="@+id/artist_nationality"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_32dp"
-                        android:layout_marginRight="@dimen/margin_32dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/artist_home"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_home"
-                        tools:text="Austrian" />
-
-
-                    <TextView
-                        android:id="@+id/artist_location"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_32dp"
-                        android:layout_marginRight="@dimen/margin_32dp"
-                        android:layout_marginBottom="@dimen/last_margin_bottom"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/artist_nationality"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_nationality"
-                        tools:text="Vienna, Austria" />
-
-                    <TextView
-                        android:id="@+id/hometown_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_32dp"
-                        android:layout_marginLeft="@dimen/margin_32dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:text="@string/hometown_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        app:fontFamily="sans-serif-condensed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/divider_2" />
-
-                    <TextView
-                        android:id="@+id/artist_nationality_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_32dp"
-                        android:layout_marginLeft="@dimen/margin_32dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:text="@string/nationality_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        app:fontFamily="sans-serif-condensed"
-                        app:layout_constraintEnd_toStartOf="@+id/artist_nationality"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_home" />
-
-                    <TextView
-                        android:id="@+id/artist_location_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_32dp"
-                        android:layout_marginLeft="@dimen/margin_32dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_16dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:text="@string/location_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        app:fontFamily="sans-serif-condensed"
-                        app:layout_constraintEnd_toStartOf="@+id/artist_location"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/artist_nationality" />
-
-                </android.support.constraint.ConstraintLayout>
-
-            </android.support.v7.widget.CardView>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

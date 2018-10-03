@@ -62,4 +62,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="margin_24dp">24dp</dimen>
     <dimen name="fav_thumbnail_width">120dp</dimen>
     <dimen name="card_bottom_margin">60dp</dimen>
+    <dimen name="divider_margin_top">55dp</dimen>
+    <dimen name="margin_horizontal_cardview">8dp</dimen>
+    <dimen name="margin_bottom_cardview">16dp</dimen>
 </resources>
