@@ -49,6 +49,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -163,6 +164,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
 
+    // Similar Artworks Views
+    @BindView(R.id.similar_artworks_rv)
+    RecyclerView similarArtworksRv;
+
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
     @BindView(R.id.adView)
@@ -178,6 +183,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mNewArtworkLinkString;
     private String mNewSquareArtworkLinkString;
     private String mArtistNameFromSlug;
+    private String mArtistNameString;
     private String mArtworkThumbnailString;
     private String mDimensInCmString;
     private String mDimensInInchString;
@@ -474,6 +480,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
         }
 
+        // Get the Permalink for sharing it outside the app
         Permalink permalinkForShare = imageLinksObject.getPermalink();
         mPermalinkForShare = permalinkForShare.getHref();
     }
@@ -513,25 +520,25 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         if (currentArtist != null) {
 
             if (currentArtist.getName() != null) {
-                String artistNameString = currentArtist.getName();
-                artistName.setText(artistNameString);
+                mArtistNameString = currentArtist.getName();
+                artistName.setText(mArtistNameString);
 
                 // Check first if the artist name is not null or empty
-                if ((artistNameString == null) || (artistNameString.isEmpty())) {
+                if ((mArtistNameString == null) || (mArtistNameString.isEmpty())) {
                     // Hide the Artist CardView if there is no info about the Artist
                     artistCard.setVisibility(View.GONE);
                     artistNameButton.setVisibility(View.GONE);
                 }
 
                 // Set the name of the Artist to the Button
-                artistNameButton.setText(artistNameString);
+                artistNameButton.setText(mArtistNameString);
 
                 artistNameButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         // Check first if the artist name is not null or "N/A"
-                        if ((artistNameString == null) || (artistNameString.equals("N/A")) || TextUtils.isEmpty(artistNameString)) {
+                        if ((mArtistNameString == null) || (mArtistNameString.equals("N/A")) || TextUtils.isEmpty(mArtistNameString)) {
                             // Show a message to the user that there is no artist for the selected artwork
                             Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
                             return;
@@ -669,7 +676,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         String artworkId = mArtworkIdString;
         String artworkTitle = mTitleString;
-        String artworkSlug = mArtistNameFromSlug;
+        String artworkArtist = mArtistNameString;
         String artworkCategory = mCategoryString;
         String artworkMedium = mMediumString;
         String artworkDate = mDateString;
@@ -679,7 +686,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         String artworkDimensInch = mDimensInInchString;
         String artworkDimensCm = mDimensInCmString;
 
-        FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkSlug,
+        FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkArtist,
                 artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage, artworkDimensInch, artworkDimensCm);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
