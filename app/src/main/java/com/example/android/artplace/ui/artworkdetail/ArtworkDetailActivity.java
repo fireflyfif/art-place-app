@@ -53,10 +53,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
@@ -71,6 +74,7 @@ import com.example.android.artplace.model.artworks.InSize;
 import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
@@ -178,6 +182,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mDimensInCmString;
     private String mDimensInInchString;
     private String mArtistUrl;
+    private String mPermalinkForShare;
 
     private ArtistsDetailViewModel mArtistViewModel;
 
@@ -467,8 +472,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 // Hide the Artist CardView if there is no info about the Artist
                 artistCard.setVisibility(View.GONE);
             }
-
         }
+
+        Permalink permalinkForShare = imageLinksObject.getPermalink();
+        mPermalinkForShare = permalinkForShare.getHref();
     }
 
     /**
@@ -678,6 +685,34 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
         Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_SHORT).show();
         Log.d(TAG, "Insert a new item into the db");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.artwork_detail_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                // Share the Permalink here
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                if (mPermalinkForShare != null || !TextUtils.isEmpty(mPermalinkForShare)) {
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, mPermalinkForShare);
+                    startActivity(shareIntent);
+                    Log.d(TAG, "Shared permalink: " + mPermalinkForShare);
+                } else {
+                    Toast.makeText(this, "Nothing to share.", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
 

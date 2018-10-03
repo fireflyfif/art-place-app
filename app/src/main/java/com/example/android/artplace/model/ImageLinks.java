@@ -40,6 +40,7 @@ import android.os.Parcelable;
 
 import com.example.android.artplace.model.artworks.ArtistsLink;
 import com.example.android.artplace.model.artworks.MainImage;
+import com.example.android.artplace.model.search.Permalink;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -60,21 +61,28 @@ public class ImageLinks implements Parcelable {
     @Expose
     private MainImage image;
 
-
     /*
-    TODO: Implement later on
     An external location on the artsy.net website.
+    Used for sharing outside the app
      */
-    /*@SerializedName("permalink")
+    @SerializedName("permalink")
     @Expose
-    private Permalink permalink;*/
+    private Permalink permalink;
 
     /*
-    Don't need this now
+    Genes are like genres in the Artsy API
      */
-    /*@SerializedName("genes")
+    @SerializedName("genes")
     @Expose
-    private Genes genes;*/
+    private Genes genes;
+
+    @SerializedName("similar_artworks")
+    @Expose
+    private SimilarArtworksLink similarArtworks;
+
+    /*@SerializedName("partner")
+    @Expose
+    private PartnerLink partnerLink;*/
 
     @SerializedName("artists")
     @Expose
@@ -105,6 +113,17 @@ public class ImageLinks implements Parcelable {
         this.artists = artists;
     }
 
+    public Permalink getPermalink() {
+        return permalink;
+    }
+
+    public Genes getGenes() {
+        return genes;
+    }
+
+    public SimilarArtworksLink getSimilarArtworks() {
+        return similarArtworks;
+    }
 
     @Override
     public int describeContents() {
@@ -115,6 +134,9 @@ public class ImageLinks implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(this.thumbnail, flags);
         dest.writeParcelable(this.image, flags);
+        dest.writeParcelable(this.permalink, flags);
+        dest.writeParcelable(this.genes, flags);
+        dest.writeParcelable(this.similarArtworks, flags);
         dest.writeParcelable(this.artists, flags);
     }
 
@@ -124,6 +146,9 @@ public class ImageLinks implements Parcelable {
     protected ImageLinks(Parcel in) {
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
         this.image = in.readParcelable(MainImage.class.getClassLoader());
+        this.permalink = in.readParcelable(Permalink.class.getClassLoader());
+        this.genes = in.readParcelable(Genes.class.getClassLoader());
+        this.similarArtworks = in.readParcelable(SimilarArtworksLink.class.getClassLoader());
         this.artists = in.readParcelable(ArtistsLink.class.getClassLoader());
     }
 

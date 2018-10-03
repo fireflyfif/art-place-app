@@ -50,4 +50,5 @@
     <string name="title_favorites">Favorites</string>
     <string name="information_label">Information</string>
     <string name="museum_label">Museum</string>
+    <string name="menu_share">Share</string>
 </resources>

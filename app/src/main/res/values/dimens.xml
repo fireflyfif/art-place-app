@@ -65,4 +65,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="divider_margin_top">55dp</dimen>
     <dimen name="margin_horizontal_cardview">8dp</dimen>
     <dimen name="margin_bottom_cardview">16dp</dimen>
+    <dimen name="year_text_size">18sp</dimen>
 </resources>
