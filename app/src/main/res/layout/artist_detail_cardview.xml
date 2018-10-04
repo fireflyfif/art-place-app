@@ -43,7 +43,7 @@
     android:layout_marginLeft="@dimen/margin_horizontal_cardview"
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
-    android:layout_marginBottom="@dimen/card_bottom_margin"
+    android:layout_marginBottom="@dimen/margin_bottom_cardview"
     app:cardBackgroundColor="@color/cardBackground"
     tools:showIn="@layout/activity_artwork_detail">
 

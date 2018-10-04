@@ -51,4 +51,6 @@
     <string name="information_label">Information</string>
     <string name="museum_label">Museum</string>
     <string name="menu_share">Share</string>
+    <string name="artist_label">Artist</string>
+    <string name="similar_artworks_label">Similar Artworks</string>
 </resources>

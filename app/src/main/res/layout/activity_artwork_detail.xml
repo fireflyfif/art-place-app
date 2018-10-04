@@ -351,8 +351,26 @@
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
+            <TextView
+                android:id="@+id/artist_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/artist_label"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/padding_6dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
             <include
                 layout="@layout/artist_detail_cardview"/>
+
+            <TextView
+                android:id="@+id/similar_artworks_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/padding_6dp"
+                android:text="@string/similar_artworks_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <include
                 layout="@layout/similar_artworks_cardview"/>

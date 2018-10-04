@@ -64,7 +64,7 @@
             android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
     </FrameLayout>
 
