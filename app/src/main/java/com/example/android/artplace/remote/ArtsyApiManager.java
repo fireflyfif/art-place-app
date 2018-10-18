@@ -36,6 +36,7 @@
 package com.example.android.artplace.remote;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.artists.CustomArtistsDeserializer;
@@ -51,10 +52,13 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -67,12 +71,10 @@ public class ArtsyApiManager {
     private static retrofit2.Response<TypeToken> mAccessToken;
     private static TokenServiceHolder mTokenServiceHolder;
     private static String token;
+    private static OkHttpClient.Builder client;
 
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
-    // TODO: Remove the following strings before committing!!!
-    private static String mClientId = "";
-    private static String mClientSecret = "";
 
     // Provide the Retrofit call
     public static ArtsyApiInterface create() {
@@ -80,7 +82,7 @@ public class ArtsyApiManager {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
+        client = new OkHttpClient.Builder();
 
         //COMPLETED: Add the Header wit the Token here
         // source: https://stackoverflow.com/a/32282876/8132331
@@ -89,6 +91,7 @@ public class ArtsyApiManager {
             public Response intercept(@NonNull Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
                         .addHeader("X-XAPP-Token", BuildConfig.TOKEN)
+                        //.addHeader("X-XAPP-Token", token)
                         .build();
                 return chain.proceed(newRequest);
             }

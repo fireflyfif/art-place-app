@@ -33,7 +33,7 @@ ext {
     androidArchVersion = "1.1.1"
     picassoVersion = "2.71828"
     butterknifeVersion = "8.8.1"
-    playServicesAdsVersion = "17.0.0"
+    playServicesAdsVersion = "15.0.1"
     playServicesAnalyticsVersion = "16.0.4"
     frescoVersion = "1.10.0"
     frescoProcessorsVersion = "2.1.0"

@@ -39,7 +39,6 @@ public class TokenServiceHolder {
 
     ArtsyApiInterface artsyApiInterface = null;
 
-    //@Nullable
     public ArtsyApiInterface get() {
         return artsyApiInterface;
     }
