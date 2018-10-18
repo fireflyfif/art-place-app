@@ -38,13 +38,20 @@ package com.example.android.artplace.remote;
 import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
+import com.example.android.artplace.model.token.TypeToken;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface ArtsyApiInterface {
+
+
+    @POST("/api/tokens/xapp_token")
+    Call<TypeToken> refreshToken(@Query("client_id") String clientId,
+                                 @Query("client_secret") String clientSecret);
 
     /**
      * Endpoint for fetching Artworks

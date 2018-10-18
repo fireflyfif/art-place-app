@@ -44,6 +44,7 @@ import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.CustomArtsyDeserializer;
+import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -59,6 +60,19 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArtsyApiManager {
+
+    private static TokenServiceHolder tokenServiceHolder;
+    private static TokenAuthenticator authenticator = new TokenAuthenticator(tokenServiceHolder);
+    private static OkHttpClient okHttpClient = new OkHttpClient();
+    private static retrofit2.Response<TypeToken> mAccessToken;
+    private static TokenServiceHolder mTokenServiceHolder;
+    private static String token;
+
+    private static final String TAG = ArtsyApiManager.class.getSimpleName();
+
+    // TODO: Remove the following strings before committing!!!
+    private static String mClientId = "";
+    private static String mClientSecret = "";
 
     // Provide the Retrofit call
     public static ArtsyApiInterface create() {
