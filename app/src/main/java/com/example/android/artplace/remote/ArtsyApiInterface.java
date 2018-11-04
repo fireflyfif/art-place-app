@@ -49,9 +49,17 @@ import retrofit2.http.Url;
 public interface ArtsyApiInterface {
 
 
+    /**
+     * Endpoint for obtaining a new XAPP token
+     *
+     * @param clientId is the client ID
+     * @param clientSecret is the client Secret key
+     * @return a call to obtaining new token
+     */
     @POST("/api/tokens/xapp_token")
     Call<TypeToken> refreshToken(@Query("client_id") String clientId,
                                  @Query("client_secret") String clientSecret);
+
 
     /**
      * Endpoint for fetching Artworks
@@ -63,6 +71,7 @@ public interface ArtsyApiInterface {
     @GET("/api/artworks")
     Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
 
+
     /**
      * Make call according to the url that is received from the json response
      * @param nextUrl is dynamic link for next page with items
@@ -71,6 +80,7 @@ public interface ArtsyApiInterface {
      */
     @GET
     Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
+
 
     /**
      * Make call according to the url that is received from the json response
@@ -81,6 +91,7 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
+
     /**
      * Make call according to the url that is received from the JSON
      *
@@ -90,11 +101,13 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtworkWrapperResponse> getSimilarArtLink(@Url String similarArtLink);
 
+
     /**
      * Endpoint for fetching Artist of the current Artwork
      */
     @GET("/api/artists")
     Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
+
 
     /**
      * Endpoint for Search results
