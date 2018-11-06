@@ -57,16 +57,16 @@ public class TokenAuthenticator implements Authenticator {
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
 
     private static TokenAuthenticator INSTANCE;
-    private final TokenServiceHolder mTokenServiceHolder;
+    //private final TokenServiceHolder mTokenServiceHolder;
     private String token;
 
-    private TokenAuthenticator(TokenServiceHolder tokenServiceHolder) {
-        mTokenServiceHolder = tokenServiceHolder;
+    private TokenAuthenticator() {
+        //mTokenServiceHolder = tokenServiceHolder;
     }
 
-    static synchronized TokenAuthenticator getInstance(TokenServiceHolder tokenServiceHolder) {
+    static synchronized TokenAuthenticator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator(tokenServiceHolder);
+            INSTANCE = new TokenAuthenticator();
         }
 
         return INSTANCE;
@@ -76,11 +76,12 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
 
-        ArtsyApiInterface service = mTokenServiceHolder.get();
+        /*ArtsyApiInterface service = mTokenServiceHolder.get();
         if (service == null) {
             return null;
-        }
+        }*/
 
+        ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
 
         Call<TypeToken> call = service.refreshToken(CLIENT_ID, CLIENT_SECRET);
         retrofit2.Response<TypeToken> tokenResponse = call.execute();

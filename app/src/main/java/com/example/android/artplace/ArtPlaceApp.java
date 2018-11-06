@@ -120,4 +120,12 @@ public class ArtPlaceApp extends Application {
         return mArtsyApi;
     }
 
+    public ArtsyApiInterface getToken() {
+        if (mArtsyApi == null) {
+            mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class);
+        }
+
+        return mArtsyApi;
+    }
+
 }

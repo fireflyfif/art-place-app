@@ -41,6 +41,8 @@ import com.example.android.artplace.model.search.SearchWrapperResponse;
 import com.example.android.artplace.model.token.TypeToken;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -56,9 +58,10 @@ public interface ArtsyApiInterface {
      * @param clientSecret is the client Secret key
      * @return a call to obtaining new token
      */
-    @POST("/api/tokens/xapp_token")
-    Call<TypeToken> refreshToken(@Query("client_id") String clientId,
-                                 @Query("client_secret") String clientSecret);
+    @FormUrlEncoded
+    @POST("api/tokens/xapp_token")
+    Call<TypeToken> refreshToken(@Field("client_id") String clientId,
+                                 @Field("client_secret") String clientSecret);
 
 
     /**

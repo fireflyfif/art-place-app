@@ -47,6 +47,7 @@ import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.token.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.android.artplace.BuildConfig.CLIENT_ID;
+import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
 
 // Singleton pattern for the Repository class,
 // best explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -90,10 +94,39 @@ public class ArtsyRepository {
         return INSTANCE;
     }
 
+    private String getNewToken() {
+        String token = null;
+        
+        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+                .enqueue(new Callback<TypeToken>() {
+            @Override
+            public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
+                
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
+
+            }
+        });
+        
+        return token;
+    }
+
+
+    /*
+    Getter method to load the Similar Artworks
+     */
     public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
         return loadSimilarArtworks(similarArtUrl);
     }
 
+    /**
+     * Method for accessing the Similar artworks endpoint from the Artsy API
+     *
+     * @param similarArtUrl is the Url to the Similar Artworks results
+     * @return loaded results from the Artsy response
+     */
     private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
 
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
@@ -178,51 +211,4 @@ public class ArtsyRepository {
         return artistLiveData;
     }
 
-    /**
-     * Fetch data from the Artists endpoint with selected artwork ID
-     * Not in use now
-     *
-     * @param artworkId is the current artwork ID
-     */
-   /* private LiveData<List<Artist>> loadArtist(String artworkId) {
-
-        MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
-
-        // No need of a networkIO Executors here, as Retrofit is doing its call asynchronously
-        // Get the Instance of the ArtPlaceApp to create the Retrofit call
-        ArtPlaceApp.getInstance().getArtsyApi().getArtist(artworkId).enqueue(new Callback<ArtistWrapperResponse>() {
-            ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
-            EmbeddedArtists embeddedArtists = new EmbeddedArtists();
-            List<Artist> artistList = new ArrayList<>();
-
-            @Override
-            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
-                if (response.isSuccessful()) {
-
-                    artistWrapperResponse = response.body();
-
-                    if (artistWrapperResponse != null) {
-                        embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
-
-                        artistList = embeddedArtists.getArtists();
-
-                        artistLiveData.setValue(artistList);
-                    }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
-
-                } else {
-                    artistLiveData.setValue(null);
-                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
-            }
-        });
-
-        // Return LiveData<Artist>
-        return artistLiveData;
-    }*/
 }
