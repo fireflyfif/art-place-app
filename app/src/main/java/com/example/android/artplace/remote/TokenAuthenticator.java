@@ -48,8 +48,9 @@ import okhttp3.Response;
 import okhttp3.Route;
 import retrofit2.Call;
 
-import static com.example.android.artplace.utils.Utils.CLIENT_ID;
-import static com.example.android.artplace.utils.Utils.CLIENT_SECRET;
+import static com.example.android.artplace.BuildConfig.CLIENT_ID;
+import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
+
 
 public class TokenAuthenticator implements Authenticator {
 

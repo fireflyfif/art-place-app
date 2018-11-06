@@ -16,6 +16,14 @@ android {
                 (System.getenv('TOKEN') ?: "\"\"")
         buildConfigField "String", "TOKEN", apiToken
 
+        def clientId = project.hasProperty('clientId') ? clientId :
+                (System.getenv('CLIENT_ID') ?: "\"\"")
+        buildConfigField "String", "CLIENT_ID", clientId
+
+        def clientSecret = project.hasProperty('clientSecret') ? clientSecret :
+                (System.getenv('CLIENT_SECRET') ?: "\"\"")
+        buildConfigField "String", "CLIENT_SECRET", clientSecret
+
         vectorDrawables.useSupportLibrary = true
     }
     signingConfigs {

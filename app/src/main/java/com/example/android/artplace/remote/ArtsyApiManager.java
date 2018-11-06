@@ -63,17 +63,71 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.android.artplace.utils.Utils.BASE_ARTSY_URL;
+
 public class ArtsyApiManager {
 
     private static TokenServiceHolder tokenServiceHolder;
-    private static TokenAuthenticator authenticator = new TokenAuthenticator(tokenServiceHolder);
+    //private static TokenAuthenticator authenticator = new TokenAuthenticator(tokenServiceHolder);
     private static OkHttpClient okHttpClient = new OkHttpClient();
     private static retrofit2.Response<TypeToken> mAccessToken;
     private static TokenServiceHolder mTokenServiceHolder;
     private static String token;
     private static OkHttpClient.Builder client;
 
+    private final static OkHttpClient sClient = buildClient();
+    private final static Retrofit sRetrofit = buildRetrofit(sClient);
+
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
+
+
+    private static OkHttpClient buildClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+
+                        Request.Builder requestBuilder = request.newBuilder();
+
+                        request = requestBuilder.build();
+
+                        return chain.proceed(request);
+                    }
+                });
+
+        return builder.build();
+    }
+
+    private static Retrofit buildRetrofit(OkHttpClient client) {
+        return new Retrofit.Builder()
+                .baseUrl(BASE_ARTSY_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    public static <T> T createService(Class<T> service) {
+        return sRetrofit.create(service);
+    }
+
+    public static <T> T createServiceWithAuth(Class<T> service, TokenServiceHolder tokenServiceHolder) {
+        OkHttpClient newClient = sClient.newBuilder().addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+
+                Request.Builder builder = request.newBuilder();
+
+                request = builder.build();
+
+                return chain.proceed(request);
+            }
+        }).authenticator(TokenAuthenticator.getInstance(tokenServiceHolder)).build();
+
+        Retrofit newRetrofit = sRetrofit.newBuilder().client(newClient).build();
+        return newRetrofit.create(service);
+    }
 
 
     // Provide the Retrofit call
@@ -100,7 +154,7 @@ public class ArtsyApiManager {
         client.addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Utils.BASE_ARTSY_URL)
+                .baseUrl(BASE_ARTSY_URL)
                 .client(client.build())
                 //.addConverterFactory(GsonConverterFactory.create(makeGson()))
                 .addConverterFactory(GsonConverterFactory.create())
