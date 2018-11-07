@@ -33,48 +33,44 @@
  *
  */
 
-package com.example.android.artplace.model.token;
+package com.example.android.artplace.utils;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.content.SharedPreferences;
 
-public class TypeToken {
+import com.example.android.artplace.model.token.TypeToken;
 
-    @SerializedName("type")
-    @Expose
-    private String type;
+/*
+Helper class for saving the token into SharedPreferences
+ */
+public class TokenManager {
 
-    @SerializedName("token")
-    @Expose
-    private String token;
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor mEditor;
 
-    @SerializedName("expires_at")
-    @Expose
-    private String expiresAt;
+    private static TokenManager INSTANCE;
 
-    public String getType() {
-        return type;
+    public TokenManager(SharedPreferences prefs) {
+        mPrefs = prefs;
     }
 
-    public String getToken() {
+    static synchronized TokenManager getInstance(SharedPreferences prefs) {
+        if (INSTANCE == null) {
+            INSTANCE = new TokenManager(prefs);
+        }
+        return INSTANCE;
+    }
+
+    public void saveToken(TypeToken token) {
+        mEditor.putString("GET_TOKEN", token.getToken());
+    }
+
+    public void deleteToken() {
+        mEditor.remove("GET_TOKEN").commit();
+    }
+
+    public TypeToken getToken() {
+        TypeToken token = new TypeToken();
+        token.setToken(mPrefs.getString("GET_TOKEN", null));
         return token;
-    }
-
-    public String getExpiresAt() {
-        return expiresAt;
-    }
-
-    public TypeToken() { }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setExpiresAt(String expiresAt) {
-        this.expiresAt = expiresAt;
     }
 }

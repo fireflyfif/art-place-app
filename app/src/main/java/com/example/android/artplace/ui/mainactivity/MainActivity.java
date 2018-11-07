@@ -206,13 +206,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private FavoritesFragment createFavFragment() {
-        FavoritesFragment favFragment = new FavoritesFragment();
-        return favFragment;
+        return new FavoritesFragment();
     }
 
     private SearchFragment createSearchFragment() {
-        SearchFragment searchFragment = new SearchFragment();
-        return searchFragment;
+        return new SearchFragment();
     }
 
     private void setupBottomNavStyle() {
