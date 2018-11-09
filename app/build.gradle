@@ -13,7 +13,8 @@ android {
 
         // TODO: Always hide the TOKEN; Has to be refreshed every 6 days!!!
         def apiToken = project.hasProperty('token') ? apiToken :
-                (System.getenv('TOKEN') ?: "\"\"")
+                (System.getenv('TOKEN') ?: "\"" +
+                        "\"")
         buildConfigField "String", "TOKEN", apiToken
 
         def clientId = project.hasProperty('clientId') ? clientId :

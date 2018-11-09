@@ -39,7 +39,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.BuildConfig;
 import com.example.android.artplace.model.artists.CustomArtistsDeserializer;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
@@ -47,19 +46,16 @@ import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.model.token.TypeToken;
-import com.example.android.artplace.utils.Utils;
+import com.example.android.artplace.utils.TokenManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
-import okhttp3.Authenticator;
-import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -112,7 +108,7 @@ public class ArtsyApiManager {
         return sRetrofit.create(service);
     }
 
-    public static <T> T createServiceWithAuth(Class<T> service) {
+    public static <T> T createServiceWithAuth(Class<T> service, TokenManager tokenManager) {
         OkHttpClient newClient = sClient.newBuilder().addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -120,11 +116,15 @@ public class ArtsyApiManager {
 
                 Request.Builder builder = request.newBuilder();
 
+                if (tokenManager.getNewToken().getToken() != null) {
+                    // nothing to do here
+                }
+
                 request = builder.build();
 
                 return chain.proceed(request);
             }
-        }).authenticator(TokenAuthenticator.getInstance()).build();
+        }).authenticator(TokenAuthenticator.getInstance(tokenManager)).build();
 
         Retrofit newRetrofit = sRetrofit.newBuilder().client(newClient).build();
         return newRetrofit.create(service);
@@ -136,9 +136,9 @@ public class ArtsyApiManager {
      * TODO: Not sure if this is the right place to do this!
      * @return
      */
-    private static String getNewToken() {
+    private static String getNewToken(TokenManager tokenManager) {
 
-        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+        ArtPlaceApp.getInstance().getToken(tokenManager).refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
 
                     TypeToken typeToken = new TypeToken();
@@ -147,8 +147,12 @@ public class ArtsyApiManager {
 
                         if (response.isSuccessful()) {
                             typeToken = response.body();
+                            // Save the token into Shared Preferences
+                            tokenManager.saveToken(response.body());
+
                             if (typeToken != null) {
                                 mToken = typeToken.getToken();
+
                                 Log.d(TAG, "New obtained token: " + mToken);
                             }
 

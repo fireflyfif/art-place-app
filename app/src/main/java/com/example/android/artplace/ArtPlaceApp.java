@@ -41,6 +41,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.utils.TokenManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
@@ -120,9 +121,9 @@ public class ArtPlaceApp extends Application {
         return mArtsyApi;
     }
 
-    public ArtsyApiInterface getToken() {
+    public ArtsyApiInterface getToken(TokenManager tokenManager) {
         if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class);
+            mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class, tokenManager);
         }
 
         return mArtsyApi;

@@ -68,7 +68,7 @@ public class TokenManager {
         mEditor.remove("GET_TOKEN").commit();
     }
 
-    public TypeToken getToken() {
+    public TypeToken getNewToken() {
         TypeToken token = new TypeToken();
         token.setToken(mPrefs.getString("GET_TOKEN", null));
         return token;

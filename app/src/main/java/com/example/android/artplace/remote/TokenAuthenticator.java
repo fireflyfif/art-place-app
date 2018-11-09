@@ -39,6 +39,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.model.token.TypeToken;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.io.IOException;
 
@@ -57,16 +58,16 @@ public class TokenAuthenticator implements Authenticator {
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
 
     private static TokenAuthenticator INSTANCE;
-    //private final TokenServiceHolder mTokenServiceHolder;
+    private TokenManager mTokenManager;
     private String token;
 
-    private TokenAuthenticator() {
-        //mTokenServiceHolder = tokenServiceHolder;
+    private TokenAuthenticator(TokenManager tokenManager) {
+        mTokenManager = tokenManager;
     }
 
-    static synchronized TokenAuthenticator getInstance() {
+    static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator();
+            INSTANCE = new TokenAuthenticator(tokenManager);
         }
 
         return INSTANCE;
@@ -76,10 +77,8 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
 
-        /*ArtsyApiInterface service = mTokenServiceHolder.get();
-        if (service == null) {
-            return null;
-        }*/
+        // Get the token from the preferences
+        TypeToken token = mTokenManager.getNewToken();
 
         ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
 
@@ -87,14 +86,14 @@ public class TokenAuthenticator implements Authenticator {
         retrofit2.Response<TypeToken> tokenResponse = call.execute();
 
         if (tokenResponse.isSuccessful()) {
-            TypeToken typeToken = tokenResponse.body();
-            if (typeToken != null) {
-                token = typeToken.getToken();
+            TypeToken newToken = tokenResponse.body();
+            if (newToken != null) {
+                mTokenManager.saveToken(newToken);
+                //token = typeToken.getNewToken();
             }
-            Log.d(TAG, "Token: " + token);
+            Log.d(TAG, "Token: " + newToken);
 
-            return response.request().newBuilder()
-                    .build();
+            return response.request().newBuilder().build();
         } else {
             return null;
         }
