@@ -79,7 +79,8 @@ import butterknife.ButterKnife;
  * Use the {@link ArtworksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener, SnackMessageListener {
+public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener,
+        SnackMessageListener {
 
     private static final String TAG = ArtworksFragment.class.getSimpleName();
     private static final String ARG_ARTWORKS_TITLE = "artworks_title";
@@ -129,15 +130,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
 
-        if (savedInstanceState != null) {
-           // mTitle = savedInstanceState.getString(ARG_ARTWORKS_TITLE);
-        }
-
-        if (getArguments() != null) {
-           // mTitle = getArguments().getString(ARG_ARTWORKS_TITLE);
-            // Set the title of the Fragment here
-            //Objects.requireNonNull(getActivity()).setTitle(mTitle);
-        }
     }
 
     @Override

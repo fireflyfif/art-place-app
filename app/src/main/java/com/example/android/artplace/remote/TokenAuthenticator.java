@@ -59,15 +59,15 @@ public class TokenAuthenticator implements Authenticator {
 
     private static TokenAuthenticator INSTANCE;
     private TokenManager mTokenManager;
-    private String token;
+    private String mToken;
 
-    private TokenAuthenticator(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    private TokenAuthenticator() {
+        //mTokenManager = tokenManager;
     }
 
-    static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
+    static synchronized TokenAuthenticator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator(tokenManager);
+            INSTANCE = new TokenAuthenticator();
         }
 
         return INSTANCE;
@@ -78,7 +78,7 @@ public class TokenAuthenticator implements Authenticator {
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
 
         // Get the token from the preferences
-        TypeToken token = mTokenManager.getNewToken();
+        //TypeToken token = mTokenManager.getNewToken();
 
         ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
 
@@ -88,8 +88,8 @@ public class TokenAuthenticator implements Authenticator {
         if (tokenResponse.isSuccessful()) {
             TypeToken newToken = tokenResponse.body();
             if (newToken != null) {
-                mTokenManager.saveToken(newToken);
-                //token = typeToken.getNewToken();
+                //mTokenManager.saveToken(newToken);
+                mToken = newToken.getToken();
             }
             Log.d(TAG, "Token: " + newToken);
 

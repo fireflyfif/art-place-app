@@ -33,7 +33,7 @@
  *
  */
 
-package com.example.android.artplace.ui.contentdetail;
+package com.example.android.artplace.ui.searchdetail;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

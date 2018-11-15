@@ -108,7 +108,7 @@ public class ArtsyApiManager {
         return sRetrofit.create(service);
     }
 
-    public static <T> T createServiceWithAuth(Class<T> service, TokenManager tokenManager) {
+    public static <T> T createServiceWithAuth(Class<T> service) {
         OkHttpClient newClient = sClient.newBuilder().addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -116,15 +116,15 @@ public class ArtsyApiManager {
 
                 Request.Builder builder = request.newBuilder();
 
-                if (tokenManager.getNewToken().getToken() != null) {
+                /*if (tokenManager.getNewToken().getToken() != null) {
                     // nothing to do here
-                }
+                }*/
 
                 request = builder.build();
 
                 return chain.proceed(request);
             }
-        }).authenticator(TokenAuthenticator.getInstance(tokenManager)).build();
+        }).authenticator(TokenAuthenticator.getInstance()).build();
 
         Retrofit newRetrofit = sRetrofit.newBuilder().client(newClient).build();
         return newRetrofit.create(service);
@@ -136,9 +136,11 @@ public class ArtsyApiManager {
      * TODO: Not sure if this is the right place to do this!
      * @return
      */
-    private static String getNewToken(TokenManager tokenManager) {
+    private static String getNewToken() {
+        // mToken can't save the new value of the token from the response.
+        // TODO: Fina a way to store the value!
 
-        ArtPlaceApp.getInstance().getToken(tokenManager).refreshToken(CLIENT_ID, CLIENT_SECRET)
+        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
 
                     TypeToken typeToken = new TypeToken();
@@ -148,12 +150,15 @@ public class ArtsyApiManager {
                         if (response.isSuccessful()) {
                             typeToken = response.body();
                             // Save the token into Shared Preferences
-                            tokenManager.saveToken(response.body());
+                            //tokenManager.saveToken(response.body());
 
+                            String newToken;
                             if (typeToken != null) {
-                                mToken = typeToken.getToken();
 
-                                Log.d(TAG, "New obtained token: " + mToken);
+                                mToken = typeToken.getToken();
+                                newToken = mToken;
+
+                                Log.d(TAG, "New obtained token: " + newToken);
                             }
 
                             Log.d(TAG, "Get new Token loaded successfully! " + response.code());
@@ -172,8 +177,11 @@ public class ArtsyApiManager {
                 });
 
         if (mToken == null) {
+            // Old token for tests
             mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MTg4MDQ2NiwiaWF0IjoxNTQxMjc1NjY2LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJkZTAwMTJhOWM1MGYwZDM1OTZkZDkyIn0.bJeWjVn6QXGDbEzGFs4ilqzzJSg63NJhybhyGBAUlJY";
+            //newToken[0] = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MjkyMDQ3MSwiaWF0IjoxNTQyMzE1NjcxLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJlZGRlOTdhOTNjM2EwMDJiZTRiNjI0In0.IV75y4dXfNXe7LfXs4E3GVnV3a4O55Bg7n82RttSOrw";
         }
+        Log.d(TAG, "New obtained token at last: " + mToken);
         return mToken;
     }
 

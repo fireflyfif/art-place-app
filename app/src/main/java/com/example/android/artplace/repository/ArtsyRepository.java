@@ -48,6 +48,7 @@ import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.token.TypeToken;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +102,8 @@ public class ArtsyRepository {
                 .enqueue(new Callback<TypeToken>() {
             @Override
             public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
-                
+                // Get the token here
+
             }
 
             @Override

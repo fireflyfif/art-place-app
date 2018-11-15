@@ -62,7 +62,7 @@
                 android:value=".ui.favorites.FavArtworksActivity" />
         </activity>
 
-        <activity android:name=".ui.contentdetail.SearchDetailActivity"
+        <activity android:name=".ui.searchdetail.SearchDetailActivity"
             android:parentActivityName=".ui.mainactivity.MainActivity">
 
             <meta-data

@@ -44,7 +44,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -60,23 +59,19 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnResultClickListener;
 import com.example.android.artplace.model.search.Result;
-import com.example.android.artplace.ui.contentdetail.SearchDetailActivity;
+import com.example.android.artplace.ui.searchdetail.SearchDetailActivity;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 import com.example.android.artplace.utils.NetworkState;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
