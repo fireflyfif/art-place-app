@@ -35,6 +35,8 @@
 
 package com.example.android.artplace.remote;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -126,19 +128,26 @@ public class ArtsyApiManager {
             }
         }).authenticator(TokenAuthenticator.getInstance()).build();
 
-        Retrofit newRetrofit = sRetrofit.newBuilder().client(newClient).build();
+        Retrofit newRetrofit = sRetrofit
+                .newBuilder()
+                .client(newClient)
+                .build();
+
         return newRetrofit.create(service);
     }
 
 
     /**
      * Make the call to get the token
-     * TODO: The method does not get the token
+     * TODO: The method does not save the token
      * @return
      */
-    private static String  getNewToken() {
+    private static LiveData<String> getNewToken() {
         // mToken can't save the new value of the token from the response.
         // TODO: Find a way to store the value of the token!
+
+        // TODO: This tries to save the token into a mutable LiveData. Not working!!!
+        MutableLiveData<String> newToken = new MutableLiveData<>();
 
         ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
@@ -153,7 +162,9 @@ public class ArtsyApiManager {
                             //tokenManager.saveToken(response.body());
 
                             if (typeToken != null) {
+                                //newToken = typeToken.getToken();
                                 mToken = typeToken.getToken();
+                                newToken.setValue(mToken);
 
                                 Log.d(TAG, "New obtained token: " + mToken);
                             }
@@ -173,13 +184,13 @@ public class ArtsyApiManager {
                     }
                 });
 
-        if (mToken == null) {
+        if (newToken == null) {
             // Old token for tests
             //mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MTg4MDQ2NiwiaWF0IjoxNTQxMjc1NjY2LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJkZTAwMTJhOWM1MGYwZDM1OTZkZDkyIn0.bJeWjVn6QXGDbEzGFs4ilqzzJSg63NJhybhyGBAUlJY";
             mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MjkyMDQ3MSwiaWF0IjoxNTQyMzE1NjcxLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJlZGRlOTdhOTNjM2EwMDJiZTRiNjI0In0.IV75y4dXfNXe7LfXs4E3GVnV3a4O55Bg7n82RttSOrw";
         }
-        Log.d(TAG, "New obtained token at last: " + mToken);
-        return mToken;
+        Log.d(TAG, "New obtained token finally: " + newToken.toString());
+        return newToken;
     }
 
 
@@ -188,7 +199,7 @@ public class ArtsyApiManager {
     // Provide the Retrofit call
     public static ArtsyApiInterface create() {
 
-        String token = getNewToken();
+        String token = String.valueOf(getNewToken());
         Log.d(TAG, "Token is: " + token);
 
         // For logging the url that is being made

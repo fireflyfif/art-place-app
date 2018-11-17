@@ -98,7 +98,7 @@ public class ArtsyRepository {
     private String getNewToken() {
         String token = null;
         
-        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+        ArtPlaceApp.getInstance().getArtsyApi().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
             @Override
             public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
