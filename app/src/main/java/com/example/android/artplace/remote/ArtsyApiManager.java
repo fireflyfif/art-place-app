@@ -133,12 +133,12 @@ public class ArtsyApiManager {
 
     /**
      * Make the call to get the token
-     * TODO: Not sure if this is the right place to do this!
+     * TODO: The method does not get the token
      * @return
      */
-    private static String getNewToken() {
+    private static String  getNewToken() {
         // mToken can't save the new value of the token from the response.
-        // TODO: Fina a way to store the value of the token!
+        // TODO: Find a way to store the value of the token!
 
         ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
@@ -152,13 +152,10 @@ public class ArtsyApiManager {
                             // Save the token into Shared Preferences
                             //tokenManager.saveToken(response.body());
 
-                            String newToken;
                             if (typeToken != null) {
-
                                 mToken = typeToken.getToken();
-                                newToken = mToken;
 
-                                Log.d(TAG, "New obtained token: " + newToken);
+                                Log.d(TAG, "New obtained token: " + mToken);
                             }
 
                             Log.d(TAG, "Get new Token loaded successfully! " + response.code());
