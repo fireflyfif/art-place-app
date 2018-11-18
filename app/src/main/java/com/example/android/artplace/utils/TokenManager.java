@@ -49,11 +49,11 @@ public class TokenManager {
 
     private static TokenManager INSTANCE;
 
-    public TokenManager(SharedPreferences prefs) {
+    private TokenManager(SharedPreferences prefs) {
         mPrefs = prefs;
     }
 
-    static synchronized TokenManager getInstance(SharedPreferences prefs) {
+    public static synchronized TokenManager getInstance(SharedPreferences prefs) {
         if (INSTANCE == null) {
             INSTANCE = new TokenManager(prefs);
         }

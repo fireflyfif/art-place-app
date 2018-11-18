@@ -60,6 +60,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
@@ -69,10 +70,13 @@ import com.example.android.artplace.ui.artworkdetail.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
+import com.example.android.artplace.utils.TokenManager;
 import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -97,6 +101,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
+    private ArtworksFragmentViewModelFactory mFactory;
+    private TokenManager mTokenManager;
     private Tracker mTracker;
 
     // TODO: Rename and change types of parameters
@@ -141,8 +147,15 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         ButterKnife.bind(this, rootView);
 
-        // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+        mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
+                "prefs", MODE_PRIVATE));
+
+        // TODO: Save the token into SharedPreferences
+        if (mTokenManager.getNewToken().getToken() != null) {
+            // TODO: get the new token here
+            String newToken = mTokenManager.getNewToken().getToken();
+            Log.d(TAG, "Get the new token here: " + newToken);
+        }
 
         // Set up the UI
         setupUi();
@@ -167,6 +180,12 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         // Setup the RecyclerView
         setRecyclerView();
+
+        // Initialize the ViewModelFactory
+        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance(), mTokenManager);
+
+        // Initialize the ViewModel
+        mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);
 
         // Call submitList() method of the PagedListAdapter when a new page is available
         mViewModel.getArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
@@ -223,6 +242,12 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         // Setup the RecyclerView
         setRecyclerView();
+
+        // Initialize the ViewModelFactory
+        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance(), mTokenManager);
+
+        // Initialize the ViewModel
+        mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);
 
         mViewModel.refreshArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
             @Override

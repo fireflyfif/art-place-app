@@ -72,9 +72,12 @@ import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchdetail.SearchDetailActivity;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.TokenManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
 
@@ -102,6 +105,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
     private String mTitle;
+    private TokenManager mTokenManager;
 
     private SharedPreferences mSharedPreferences;
 
@@ -146,6 +150,16 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         ButterKnife.bind(this, rootView);
 
+        mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
+                "prefs", MODE_PRIVATE));
+
+        // TODO: Save the token into SharedPreferences
+        if (mTokenManager.getNewToken().getToken() != null) {
+            // TODO: get the new token here
+            String newToken = mTokenManager.getNewToken().getToken();
+            Log.d(TAG, "Get the new token here: " + newToken);
+        }
+
         // Set the UI
         setupUi();
 
@@ -176,7 +190,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
         Log.d(TAG, "setupUi: Type word: " + mTypeString);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString, mTypeString);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
+                mQueryWordString, mTypeString, mTokenManager);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
@@ -246,7 +261,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_NAME, MODE_PRIVATE);
         mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
 
         if (mQueryWordString == null) {
@@ -256,12 +271,15 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
         Log.d(TAG, "requestNewCall: Type word: " + typeWord);
 
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), mQueryWordString, typeWord);
+        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
+                mQueryWordString, typeWord, mTokenManager);
 
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory)
+                .get(SearchFragmentViewModel.class);
 
-        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString, typeWord).observe(this, new Observer<PagedList<Result>>() {
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString, typeWord)
+                .observe(this, new Observer<PagedList<Result>>() {
 
             @Override
             public void onChanged(@Nullable PagedList<Result> results) {
@@ -279,7 +297,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
     private void saveToSharedPreference(String searchQuery) {
         mSharedPreferences = getActivity().getApplicationContext()
-                .getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+                .getSharedPreferences(PREFERENCE_SEARCH_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(PREFERENCE_SEARCH_KEY, searchQuery);
         // Use apply() instead of commit(), because it is being saved on the background
@@ -416,7 +434,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         if (key.equals(PREFERENCE_SEARCH_KEY)) {
             mSharedPreferences = getActivity()
-                    .getSharedPreferences(PREFERENCE_SEARCH_NAME, Context.MODE_PRIVATE);
+                    .getSharedPreferences(PREFERENCE_SEARCH_NAME, MODE_PRIVATE);
 
             if (mSharedPreferences.contains(PREFERENCE_SEARCH_KEY)) {
                 mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_KEY, null);
