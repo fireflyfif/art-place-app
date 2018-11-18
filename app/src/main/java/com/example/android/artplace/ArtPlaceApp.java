@@ -114,16 +114,16 @@ public class ArtPlaceApp extends Application {
     /**
      * Method that creates a Retrofit instance from the ArtsyApiManager
      */
-    public ArtsyApiInterface getArtsyApi() {
+    public ArtsyApiInterface getArtsyApi(TokenManager tokenManager) {
         if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.create();
+            mArtsyApi = ArtsyApiManager.createApiCall(ArtsyApiInterface.class, tokenManager);
         }
         return mArtsyApi;
     }
 
     public ArtsyApiInterface getToken() {
         if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class);
+            //mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class);
         }
 
         return mArtsyApi;

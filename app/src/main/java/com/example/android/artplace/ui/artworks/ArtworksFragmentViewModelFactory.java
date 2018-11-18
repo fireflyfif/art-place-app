@@ -33,43 +33,20 @@
  *
  */
 
-package com.example.android.artplace.ui.searchresults.datasource;
+package com.example.android.artplace.ui.artworks;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.DataSource;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.search.Result;
-import com.example.android.artplace.utils.TokenManager;
+public class ArtworksFragmentViewModelFactory implements ViewModelProvider.Factory {
 
-public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
-
-    private MutableLiveData<SearchDataSource> mSearchDataSourceMutableLiveData;
-    private SearchDataSource mSearchDataSource;
-    private ArtPlaceApp mArtPlaceApp;
-    private String mArtQuery;
-    private String mTypeString;
-    private TokenManager mTokenManager;
-
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord, String typeWord, TokenManager tokenManager) {
-        mArtPlaceApp = artPlaceApp;
-        mArtQuery = queryWord;
-        mTypeString = typeWord;
-        mTokenManager = tokenManager;
-
-        mSearchDataSourceMutableLiveData = new MutableLiveData<>();
+    public ArtworksFragmentViewModelFactory() {
     }
 
-
+    @NonNull
     @Override
-    public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery, mTypeString, mTokenManager);
-        mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
-
-        return mSearchDataSource;
-    }
-
-    public MutableLiveData<SearchDataSource> getSearchDataSourceMutableLiveData() {
-        return mSearchDataSourceMutableLiveData;
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        return null;
     }
 }

@@ -35,18 +35,16 @@
 
 package com.example.android.artplace.remote;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.model.artists.CustomArtistsDeserializer;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
-import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.utils.TokenManager;
 import com.google.gson.Gson;
@@ -80,6 +78,7 @@ public class ArtsyApiManager {
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
 
+
     private static OkHttpClient buildClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
@@ -110,7 +109,7 @@ public class ArtsyApiManager {
         return sRetrofit.create(service);
     }
 
-    public static <T> T createServiceWithAuth(Class<T> service) {
+    /*public static <T> T createServiceWithAuth(Class<T> service) {
         OkHttpClient newClient = sClient.newBuilder().addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -118,9 +117,9 @@ public class ArtsyApiManager {
 
                 Request.Builder builder = request.newBuilder();
 
-                /*if (tokenManager.getNewToken().getToken() != null) {
+                *//*if (tokenManager.getNewToken().getToken() != null) {
                     // nothing to do here
-                }*/
+                }*//*
 
                 request = builder.build();
 
@@ -134,7 +133,7 @@ public class ArtsyApiManager {
                 .build();
 
         return newRetrofit.create(service);
-    }
+    }*/
 
 
     /**
@@ -142,12 +141,9 @@ public class ArtsyApiManager {
      * TODO: The method does not save the token
      * @return
      */
-    private static LiveData<String> getNewToken() {
+    private static String getNewToken() {
         // mToken can't save the new value of the token from the response.
         // TODO: Find a way to store the value of the token!
-
-        // TODO: This tries to save the token into a mutable LiveData. Not working!!!
-        MutableLiveData<String> newToken = new MutableLiveData<>();
 
         ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
@@ -162,9 +158,7 @@ public class ArtsyApiManager {
                             //tokenManager.saveToken(response.body());
 
                             if (typeToken != null) {
-                                //newToken = typeToken.getToken();
                                 mToken = typeToken.getToken();
-                                newToken.setValue(mToken);
 
                                 Log.d(TAG, "New obtained token: " + mToken);
                             }
@@ -184,53 +178,45 @@ public class ArtsyApiManager {
                     }
                 });
 
-        if (newToken == null) {
+        // The value is always null
+        if (mToken == null) {
             // Old token for tests
             //mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MTg4MDQ2NiwiaWF0IjoxNTQxMjc1NjY2LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJkZTAwMTJhOWM1MGYwZDM1OTZkZDkyIn0.bJeWjVn6QXGDbEzGFs4ilqzzJSg63NJhybhyGBAUlJY";
             mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MjkyMDQ3MSwiaWF0IjoxNTQyMzE1NjcxLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJlZGRlOTdhOTNjM2EwMDJiZTRiNjI0In0.IV75y4dXfNXe7LfXs4E3GVnV3a4O55Bg7n82RttSOrw";
         }
-        Log.d(TAG, "New obtained token finally: " + newToken.toString());
-        return newToken;
+        Log.d(TAG, "New obtained token finally: " + mToken);
+        return mToken;
     }
 
 
     ////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\
 
     // Provide the Retrofit call
-    public static ArtsyApiInterface create() {
-
-        String token = String.valueOf(getNewToken());
-        Log.d(TAG, "Token is: " + token);
+    public static <T> T createApiCall (Class<T> service, TokenManager tokenManager) {
 
         // For logging the url that is being made
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        client = new OkHttpClient.Builder();
-
-        //COMPLETED: Add the Header wit the Token here
-        // source: https://stackoverflow.com/a/32282876/8132331
-        client.addInterceptor(new Interceptor() {
+        OkHttpClient newClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
-            public Response intercept(@NonNull Chain chain) throws IOException {
+            public Response intercept(Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
-                        //.addHeader("X-XAPP-Token", BuildConfig.TOKEN)
-                        .addHeader("X-XAPP-Token", token)
+                        .addHeader("X-XAPP-Token", tokenManager.getNewToken().getToken())
                         .build();
+
+                Log.d(TAG, "Token is: " + tokenManager.getNewToken().getToken());
+
                 return chain.proceed(newRequest);
             }
-        }).build();
+        }).authenticator(TokenAuthenticator.getInstance(tokenManager)).build();
 
-        client.addInterceptor(interceptor).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_ARTSY_URL)
-                .client(client.build())
-                //.addConverterFactory(GsonConverterFactory.create(makeGson()))
-                .addConverterFactory(GsonConverterFactory.create())
+        Retrofit newRetrofit = sRetrofit
+                .newBuilder()
+                .client(newClient)
                 .build();
 
-        return retrofit.create(ArtsyApiInterface.class);
+        return newRetrofit.create(service);
     }
 
     /*

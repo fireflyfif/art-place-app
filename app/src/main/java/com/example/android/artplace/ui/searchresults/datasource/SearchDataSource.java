@@ -47,6 +47,7 @@ import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
 import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     private static final String LOG_TAG = SearchDataSource.class.getSimpleName();
     private ArtPlaceApp mAppController;
+    private TokenManager mTokenManager;
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
@@ -69,10 +71,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mNextUrl;
 
 
-    public SearchDataSource(ArtPlaceApp appController, String queryWord, String typeWord) {
+    public SearchDataSource(ArtPlaceApp appController, String queryWord, String typeWord, TokenManager tokenManager) {
         mAppController = appController;
         mQueryString = queryWord;
         mTypeString = typeWord;
+        mTokenManager = tokenManager;
 
         mNetworkState = new MutableLiveData<>();
         mInitialLoading = new MutableLiveData<>();
@@ -96,7 +99,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
         Log.d(LOG_TAG, "loadInitial: type word: " + mTypeString);
 
-        mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
+        mAppController.getArtsyApi(mTokenManager).getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
                 new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
@@ -194,7 +197,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi().getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        mAppController.getArtsyApi(mTokenManager).getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
             List<Result> resultList = new ArrayList<>();

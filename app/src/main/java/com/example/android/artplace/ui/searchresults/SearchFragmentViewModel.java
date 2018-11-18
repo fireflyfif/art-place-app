@@ -50,6 +50,7 @@ import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
 import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.TokenManager;
 
 public class SearchFragmentViewModel extends ViewModel {
 
@@ -68,12 +69,14 @@ public class SearchFragmentViewModel extends ViewModel {
     private ArtPlaceApp mApplication;
     private String mQueryWord;
     private String mTypeWord;
+    private TokenManager mTokenManager;
 
 
-    public SearchFragmentViewModel(ArtPlaceApp application, String queryWord, String typeWord) {
+    public SearchFragmentViewModel(ArtPlaceApp application, String queryWord, String typeWord, TokenManager tokenManager) {
         mApplication = application;
         mQueryWord = queryWord;
         mTypeWord = typeWord;
+        mTokenManager = tokenManager;
 
         init(application, queryWord, typeWord);
     }
@@ -81,7 +84,7 @@ public class SearchFragmentViewModel extends ViewModel {
     private void init(Application application, String queryWord, String typeWord) {
 
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord, mTokenManager);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
@@ -131,7 +134,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
     public LiveData<PagedList<Result>> refreshSearchLiveData(Application application, String queryWord, String typeWord) {
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord, mTokenManager);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()

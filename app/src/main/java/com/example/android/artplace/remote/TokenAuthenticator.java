@@ -38,6 +38,7 @@ package com.example.android.artplace.remote;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.utils.TokenManager;
 
@@ -48,9 +49,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
 import retrofit2.Call;
+import retrofit2.Callback;
 
 import static com.example.android.artplace.BuildConfig.CLIENT_ID;
 import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 
 public class TokenAuthenticator implements Authenticator {
@@ -61,20 +64,19 @@ public class TokenAuthenticator implements Authenticator {
     private TokenManager mTokenManager;
     private String mToken;
 
-    private TokenAuthenticator() {
-        //mTokenManager = tokenManager;
+    private TokenAuthenticator(TokenManager tokenManager) {
+        mTokenManager = tokenManager;
     }
 
-    static synchronized TokenAuthenticator getInstance() {
+    static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator();
+            INSTANCE = new TokenAuthenticator(tokenManager);
         }
 
         return INSTANCE;
     }
 
-
-    @Override
+    /*@Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
 
         // Get the token from the preferences
@@ -88,7 +90,7 @@ public class TokenAuthenticator implements Authenticator {
         if (tokenResponse.isSuccessful()) {
             TypeToken newToken = tokenResponse.body();
             if (newToken != null) {
-                //mTokenManager.saveToken(newToken);
+                mTokenManager.saveToken(newToken);
                 mToken = newToken.getToken();
             }
             Log.d(TAG, "Token: " + newToken);
@@ -97,7 +99,62 @@ public class TokenAuthenticator implements Authenticator {
         } else {
             return null;
         }
+    }*/
 
+    @Override
+    public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
+
+        // Get the token from the preferences
+        //TypeToken token = mTokenManager.getNewToken();
+
+        ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
+
+        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+                .enqueue(new Callback<TypeToken>() {
+
+                    @Override
+                    public void onResponse(@NonNull Call<TypeToken> call, @NonNull retrofit2.Response<TypeToken> response) {
+
+                        if (response.isSuccessful()) {
+                            TypeToken newToken = response.body();
+                            if (newToken != null) {
+                                // Save the token into Shared Preferences
+                                mTokenManager.saveToken(newToken);
+                                mToken = newToken.getToken();
+                            }
+                            Log.d(TAG, "Token: " + newToken);
+
+
+                            Log.d(TAG, "Get new Token loaded successfully! " + response.code());
+                        } else if (response.code() == HTTP_UNAUTHORIZED) {
+                            Log.d(TAG, "Response code 401 - Unauthorized!");
+                        } else {
+                            mToken = "";
+                            Log.d(TAG, "Get new Token loaded NOT successfully! " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
+                        Log.d(TAG, "OnFailure! " + t.getMessage());
+                    }
+                });
+
+        Call<TypeToken> call = service.refreshToken(CLIENT_ID, CLIENT_SECRET);
+        retrofit2.Response<TypeToken> tokenResponse = call.execute();
+
+        if (tokenResponse.isSuccessful()) {
+            TypeToken newToken = tokenResponse.body();
+            if (newToken != null) {
+                mTokenManager.saveToken(newToken);
+                mToken = newToken.getToken();
+            }
+            Log.d(TAG, "Token: " + newToken);
+
+            return response.request().newBuilder().build();
+        } else {
+            return null;
+        }
     }
 
 }

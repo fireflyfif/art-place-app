@@ -95,7 +95,7 @@ public class ArtsyRepository {
         return INSTANCE;
     }
 
-    private String getNewToken() {
+    /*private String getNewToken() {
         String token = null;
         
         ArtPlaceApp.getInstance().getArtsyApi().refreshToken(CLIENT_ID, CLIENT_SECRET)
@@ -113,14 +113,14 @@ public class ArtsyRepository {
         });
         
         return token;
-    }
+    }*/
 
 
     /*
     Getter method to load the Similar Artworks
      */
-    public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
-        return loadSimilarArtworks(similarArtUrl);
+    public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl, TokenManager tokenManager) {
+        return loadSimilarArtworks(similarArtUrl, tokenManager);
     }
 
     /**
@@ -129,11 +129,11 @@ public class ArtsyRepository {
      * @param similarArtUrl is the Url to the Similar Artworks results
      * @return loaded results from the Artsy response
      */
-    private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
+    private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl, TokenManager tokenManager) {
 
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getSimilarArtLink(similarArtUrl)
+        ArtPlaceApp.getInstance().getArtsyApi(tokenManager).getSimilarArtLink(similarArtUrl)
                 .enqueue(new Callback<ArtworkWrapperResponse>() {
 
                     ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
@@ -167,15 +167,15 @@ public class ArtsyRepository {
         return similarArtData;
     }
 
-    public LiveData<List<Artist>> getArtistFromLink(String artistUrl) {
-        return loadArtistFromLink(artistUrl);
+    public LiveData<List<Artist>> getArtistFromLink(String artistUrl, TokenManager tokenManager) {
+        return loadArtistFromLink(artistUrl, tokenManager);
     }
 
-    private LiveData<List<Artist>> loadArtistFromLink(String artistUrl) {
+    private LiveData<List<Artist>> loadArtistFromLink(String artistUrl, TokenManager tokenManager) {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl)
+        ArtPlaceApp.getInstance().getArtsyApi(tokenManager).getArtistLink(artistUrl)
                 .enqueue(new Callback<ArtistWrapperResponse>() {
                     ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
                     EmbeddedArtists embeddedArtists = new EmbeddedArtists();
