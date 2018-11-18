@@ -39,14 +39,26 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
+import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.ui.searchresults.SearchFragmentViewModel;
+import com.example.android.artplace.utils.TokenManager;
+
 public class ArtworksFragmentViewModelFactory implements ViewModelProvider.Factory {
 
-    public ArtworksFragmentViewModelFactory() {
+    private ArtPlaceApp mArtPlaceApp;
+    private TokenManager mTokenManager;
+
+    public ArtworksFragmentViewModelFactory(ArtPlaceApp application, TokenManager tokenManager) {
+        mArtPlaceApp = application;
+        mTokenManager = tokenManager;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return null;
+        if (modelClass.isAssignableFrom(ArtworksViewModel.class)) {
+            return (T) new ArtworksViewModel(mArtPlaceApp, mTokenManager);
+        }
+        throw new IllegalArgumentException("Unknown ViewModel class.");
     }
 }
