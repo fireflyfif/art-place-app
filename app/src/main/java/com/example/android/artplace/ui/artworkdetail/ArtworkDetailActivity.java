@@ -83,6 +83,7 @@ import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
 import com.example.android.artplace.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import com.example.android.artplace.utils.StringUtils;
+import com.example.android.artplace.utils.TokenManager;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -204,6 +205,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private Postprocessor mPostprocessor;
     private ImageRequest mImageRequest;
     private PipelineDraweeController mController;
+    private TokenManager mTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +221,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
+
+        // TODO: Save the token into SharedPreferences
+        if (mTokenManager.getNewToken().getToken() != null) {
+            // TODO: get the new token here
+            String newToken = mTokenManager.getNewToken().getToken();
+            Log.d(TAG, "Get the new token here: " + newToken);
         }
 
         // Obtain the shared Tracker instance.
@@ -246,7 +257,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
-                setupUi(mArtworkObject);
+                setupUi(mArtworkObject, mTokenManager);
             }
         }
 
@@ -288,7 +299,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
-    private void setupUi(Artwork currentArtwork) {
+    private void setupUi(Artwork currentArtwork, TokenManager tokenManager) {
 
         mArtworkIdString = currentArtwork.getId();
 
@@ -465,7 +476,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mArtistUrl = artistsLinkObject.getHref(); // This link needs a token
 
             // Initialize the artist ViewModel
-            initArtistViewModel(mArtistUrl);
+            initArtistViewModel(mArtistUrl, tokenManager);
             Log.d(TAG, "Link to the artist: " + mArtistUrl);
 
             String artworkId = currentArtwork.getId();
@@ -492,7 +503,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         SimilarArtworksLink similarArtworksLink = imageLinksObject.getSimilarArtworks();
         mSimilarArtworksLink = similarArtworksLink.getHref();
         Log.d(TAG, "Similar Artworks link: " + mSimilarArtworksLink);
-        initSimilarViewModel(mSimilarArtworksLink);
+        initSimilarViewModel(mSimilarArtworksLink, tokenManager);
     }
 
     /**
@@ -500,10 +511,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      *
      * @param artistLink is the given link to the artist
      */
-    private void initArtistViewModel(String artistLink) {
+    private void initArtistViewModel(String artistLink, TokenManager tokenManager) {
         // Initialize the ViewModel
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-        mArtistViewModel.initArtistLink(artistLink);
+        mArtistViewModel.initArtistLink(artistLink, tokenManager);
 
         mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
             @Override
@@ -638,10 +649,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      *
      * @param similarArtLink is the given link to the similar artworks
      */
-    private void initSimilarViewModel(String similarArtLink) {
+    private void initSimilarViewModel(String similarArtLink, TokenManager tokenManager) {
         // Initialize the ViewModel
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-        mArtistViewModel.initSimilarArtworksLink(similarArtLink);
+        mArtistViewModel.initSimilarArtworksLink(similarArtLink, tokenManager);
 
         mArtistViewModel.getSimilarArtworksLink().observe(this, new Observer<List<Artwork>>() {
             @Override

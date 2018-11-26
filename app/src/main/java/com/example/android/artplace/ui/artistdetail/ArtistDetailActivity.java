@@ -53,6 +53,7 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.ImageLinks;
+import com.example.android.artplace.utils.TokenManager;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
@@ -93,6 +94,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
     private ArtistsDetailViewModel mArtistViewModel;
     private Tracker mTracker;
+    private TokenManager mTokenManager;
 
 
     @Override
@@ -113,6 +115,15 @@ public class ArtistDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
+
+        // TODO: Save the token into SharedPreferences
+        if (mTokenManager.getNewToken().getToken() != null) {
+            // TODO: get the new token here
+            String newToken = mTokenManager.getNewToken().getToken();
+            Log.d(TAG, "Get the new token here: " + newToken);
+        }
+
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {
@@ -126,7 +137,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-                mArtistViewModel.initArtistLink(receivedArtistUrlString);
+                mArtistViewModel.initArtistLink(receivedArtistUrlString, mTokenManager);
 
                 mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
                     @Override

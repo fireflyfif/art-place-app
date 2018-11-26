@@ -41,6 +41,7 @@ import android.arch.lifecycle.ViewModel;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.repository.ArtsyRepository;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.util.List;
 
@@ -52,21 +53,21 @@ public class ArtistsDetailViewModel extends ViewModel {
     public ArtistsDetailViewModel() {
     }
 
-    public void initArtistLink(String artistUrl) {
+    public void initArtistLink(String artistUrl, TokenManager tokenManager) {
 
         if (mArtistLink != null) {
             return;
         }
 
-        mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
+        mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl, tokenManager);
     }
 
-    public void initSimilarArtworksLink(String similarArtUrl) {
+    public void initSimilarArtworksLink(String similarArtUrl, TokenManager tokenManager) {
         if (mSimilarArtworkLink != null) {
             return;
         }
 
-        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
+        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl, tokenManager);
     }
 
 
