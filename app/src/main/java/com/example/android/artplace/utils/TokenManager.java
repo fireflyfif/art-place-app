@@ -36,6 +36,7 @@
 package com.example.android.artplace.utils;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.android.artplace.model.token.TypeToken;
 
@@ -44,6 +45,7 @@ Helper class for saving the token into SharedPreferences
  */
 public class TokenManager {
 
+    private static final String TAG = TokenManager.class.getSimpleName();
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
@@ -60,8 +62,8 @@ public class TokenManager {
         return INSTANCE;
     }
 
-    public void saveToken(TypeToken token) {
-        mEditor.putString("GET_TOKEN", token.getToken());
+    public void saveToken(TypeToken tokenObject) {
+        mEditor.putString("GET_TOKEN", tokenObject.getToken()).commit();
     }
 
     public void deleteToken() {
@@ -70,7 +72,10 @@ public class TokenManager {
 
     public TypeToken getNewToken() {
         TypeToken token = new TypeToken();
-        token.setToken(mPrefs.getString("GET_TOKEN", null));
+        String tokenString = token.getToken();
+        Log.d(TAG, "Get new token from TypeToken: " + tokenString);
+
+        token.setToken(mPrefs.getString("GET_TOKEN", tokenString));
         return token;
     }
 }

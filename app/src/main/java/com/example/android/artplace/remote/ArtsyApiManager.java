@@ -203,6 +203,7 @@ public class ArtsyApiManager {
             public Response intercept(Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
                         .addHeader("X-XAPP-Token", tokenManager.getNewToken().getToken())
+                        //.addHeader("X-XAPP-Token", getNewToken())
                         .build();
 
                 Log.d(TAG, "Token is: " + tokenManager.getNewToken().getToken());
