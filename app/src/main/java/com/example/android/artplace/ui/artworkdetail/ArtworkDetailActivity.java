@@ -79,6 +79,7 @@ import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
+import com.example.android.artplace.ui.LargeArtworkActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
 import com.example.android.artplace.ui.artworkdetail.adapter.SimilarArtworksAdapter;
@@ -103,13 +104,15 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_ID_KEY = "artwork_id";
-    private static final String ARTWORK_TITLE_KEY = "artwork_title";
+    private static final String ARTWORK_LARGER_IMAGE_KEY = "artwork_larger_link";
     private static final String ARTIST_URL_KEY = "artist_url";
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
@@ -187,6 +190,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mMuseumString;
     private String mNewArtworkLinkString;
     private String mNewSquareArtworkLinkString;
+    private String mLargerImageLinkString;
     private String mArtistNameFromSlug;
     private String mArtistNameString;
     private String mArtworkThumbnailString;
@@ -407,15 +411,21 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             }
 
             // Get the sixth entry from this list, which corresponds to "square"
-            String versionSquareString;
+            String versionSquareImageString;
             if (imageVersionList.contains("square")) {
-
-                versionSquareString = "square";
-                Log.d(TAG, "Version of the square image: " + versionSquareString);
+                versionSquareImageString = "square";
+                Log.d(TAG, "Version of the square image: " + versionSquareImageString);
             } else {
+                versionSquareImageString = imageVersionList.get(0);
+                Log.d(TAG, "Version of the square image: " + versionSquareImageString);
+            }
 
-                versionSquareString = imageVersionList.get(0);
-                Log.d(TAG, "Version of the square image: " + versionSquareString);
+            String versionLargerImageString;
+            if (imageVersionList.contains("larger")) {
+                versionLargerImageString = "larger";
+            } else {
+                // If does not contain the requested version, take the first one in the list
+                versionLargerImageString = imageVersionList.get(0);
             }
 
 
@@ -430,8 +440,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
 
             // Get the first entry from this list, which corresponds to "large"
-            mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}", versionSquareString);
+            mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}",
+                    versionSquareImageString);
             Log.d(TAG, "New link to the square image: " + mNewSquareArtworkLinkString);
+
+            mLargerImageLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}",
+                    versionLargerImageString);
 
             // Extract the string to thumbnail so that it is saved in favorites
             Thumbnail thumbnail = imageLinksObject.getThumbnail();
@@ -470,6 +484,20 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder)
                     .into(artworkImage);
+
+            // If there is an image set a click listener on it
+            artworkImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open new Activity
+                    Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
+                            LargeArtworkActivity.class);
+                    largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, mLargerImageLinkString);
+                    Log.d(TAG, "Larger link to image: " + mLargerImageLinkString);
+                    startActivity(largeImageIntent);
+                }
+            });
+
         }
 
         if (imageLinksObject.getArtists() != null) {

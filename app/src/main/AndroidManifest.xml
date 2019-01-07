@@ -18,21 +18,18 @@
         <activity
             android:name=".ui.mainactivity.MainActivity"
             android:launchMode="singleTop">
-
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
 
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".ui.artworkdetail.ArtworkDetailActivity"
@@ -63,13 +60,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.favorites.FavArtworksActivity" />
         </activity>
-
-        <activity android:name=".ui.searchdetail.SearchDetailActivity"
+        <activity
+            android:name=".ui.searchdetail.SearchDetailActivity"
             android:parentActivityName=".ui.mainactivity.MainActivity">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mainactivity.MainActivity" />
+        </activity>
+
+        <activity android:name=".ui.LargeArtworkActivity"
+            android:parentActivityName=".ui.artworkdetail.ArtworkDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.artworkdetail.ArtworkDetailActivity" />
+
         </activity>
 
         <receiver android:name=".widget.ArtPlaceWidget">
@@ -88,7 +92,7 @@
         <service
             android:name=".widget.FavoritesWidgetService"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 
