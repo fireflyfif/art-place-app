@@ -109,21 +109,20 @@ public class TokenAuthenticator implements Authenticator {
 
         ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
 
-        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+        /*ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
 
                     @Override
                     public void onResponse(@NonNull Call<TypeToken> call, @NonNull retrofit2.Response<TypeToken> response) {
 
                         if (response.isSuccessful()) {
-                            TypeToken newToken = response.body();
-                            if (newToken != null) {
+                            TypeToken tokenObject = response.body();
+                            if (tokenObject != null) {
                                 // Save the token into Shared Preferences
-                                mTokenManager.saveToken(newToken);
-                                mToken = newToken.getToken();
+                                mTokenManager.saveToken(tokenObject);
+                                //mToken = newToken.getToken();
+                                Log.d(TAG, "Token saved into SharedPrefs");
                             }
-                            Log.d(TAG, "Token: " + newToken);
-
 
                             Log.d(TAG, "Get new Token loaded successfully! " + response.code());
                         } else if (response.code() == HTTP_UNAUTHORIZED) {
@@ -138,20 +137,25 @@ public class TokenAuthenticator implements Authenticator {
                     public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
                         Log.d(TAG, "OnFailure! " + t.getMessage());
                     }
-                });
+                });*/
 
         Call<TypeToken> call = service.refreshToken(CLIENT_ID, CLIENT_SECRET);
         retrofit2.Response<TypeToken> tokenResponse = call.execute();
 
         if (tokenResponse.isSuccessful()) {
-            TypeToken newToken = tokenResponse.body();
-            if (newToken != null) {
-                mTokenManager.saveToken(newToken);
-                mToken = newToken.getToken();
+            TypeToken tokenObject = tokenResponse.body();
+            String newToken = null;
+            if (tokenObject != null) {
+                mTokenManager.saveToken(tokenObject);
+                newToken = tokenObject.getToken();
+                Log.d(TAG, "Token from authenticate2 saved into SharedPrefs: " + newToken);
             }
-            Log.d(TAG, "Token: " + newToken);
 
-            return response.request().newBuilder().build();
+            return response
+                    .request()
+                    .newBuilder()
+                    .header("X-XAPP-Token", newToken)
+                    .build();
         } else {
             return null;
         }

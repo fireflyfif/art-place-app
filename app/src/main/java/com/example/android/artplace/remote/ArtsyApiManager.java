@@ -206,7 +206,10 @@ public class ArtsyApiManager {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
+                        // Temp way of hard-coding the token
                         .addHeader("X-XAPP-Token", mToken)
+                        //.addHeader("X-XAPP-Token", tokenManager.getNewToken().getToken())
+                        //.addHeader("X-XAPP-Token", getNewToken())
                         .build();
 
 
