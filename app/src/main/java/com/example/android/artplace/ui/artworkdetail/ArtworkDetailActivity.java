@@ -305,14 +305,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         // Set the Up Button Navigation to another color
         // source: https://stackoverflow.com/a/26837072/8132331
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorText),
-                PorterDuff.Mode.SRC_ATOP);
+        if (toolbar != null) {
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+                    PorterDuff.Mode.SRC_ATOP);
+        }
 
         if (currentArtwork.getTitle() != null) {
             mTitleString = currentArtwork.getTitle();
             artworkName.setText(mTitleString);
             collapsingToolbarLayout.setTitle(mTitleString);
-            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorText));
+            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
             Log.d(TAG, "Title of the artwork: " + mTitleString);
 
         } else {

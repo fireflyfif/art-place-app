@@ -49,7 +49,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_6dp">6dp</dimen>
-    <dimen name="image_height">300dp</dimen>
+    <dimen name="image_height">350dp</dimen>
     <dimen name="overlap_layout">20dp</dimen>
     <dimen name="artwork_detail_square">250dp</dimen>
     <dimen name="square_image_margin">20dp</dimen>
@@ -66,4 +66,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="margin_horizontal_cardview">8dp</dimen>
     <dimen name="margin_bottom_cardview">16dp</dimen>
     <dimen name="year_text_size">18sp</dimen>
+    <dimen name="bg_protect_height">150dp</dimen>
 </resources>

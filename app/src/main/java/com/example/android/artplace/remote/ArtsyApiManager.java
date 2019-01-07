@@ -180,8 +180,6 @@ public class ArtsyApiManager {
 
         // The value is always null
         if (mToken == null) {
-            // Old token for tests
-            //mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MTg4MDQ2NiwiaWF0IjoxNTQxMjc1NjY2LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJkZTAwMTJhOWM1MGYwZDM1OTZkZDkyIn0.bJeWjVn6QXGDbEzGFs4ilqzzJSg63NJhybhyGBAUlJY";
             mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0MjkyMDQ3MSwiaWF0IjoxNTQyMzE1NjcxLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWJlZGRlOTdhOTNjM2EwMDJiZTRiNjI0In0.IV75y4dXfNXe7LfXs4E3GVnV3a4O55Bg7n82RttSOrw";
         }
         Log.d(TAG, "New obtained token finally: " + mToken);
@@ -198,14 +196,20 @@ public class ArtsyApiManager {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        // TODO: Temp solution for getting the newest token
+        //mToken = getNewToken();
+        mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0NzQwNjgxOSwiaWF0IjoxNTQ2ODAyMDE5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWMzMjUzNjNkZTdhMmYwM2QzMWViMWQ2In0.XuyNZ7IY1cHbiL-IVxyVE8Co0TzQo3ZAeiOG9WE9TbM";
+
+        Log.d(TAG, "Token is: " + mToken);
+
         OkHttpClient newClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
-                        .addHeader("X-XAPP-Token", tokenManager.getNewToken().getToken())
+                        .addHeader("X-XAPP-Token", mToken)
                         .build();
 
-                Log.d(TAG, "Token is: " + tokenManager.getNewToken().getToken());
+
 
                 return chain.proceed(newRequest);
             }

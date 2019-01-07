@@ -105,7 +105,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private TokenManager mTokenManager;
     private Tracker mTracker;
 
-    // TODO: Rename and change types of parameters
     private String mTitle;
 
 
@@ -117,10 +116,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
      * @return A new instance of fragment ArtworksFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ArtworksFragment newInstance(String param1, String param2) {
         ArtworksFragment fragment = new ArtworksFragment();
         Bundle args = new Bundle();
@@ -135,7 +132,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -249,14 +245,11 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);
 
-        mViewModel.refreshArtworkLiveData().observe(this, new Observer<PagedList<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Artwork> artworks) {
-                if (artworks != null) {
-                    mPagedListAdapter.submitList(null);
-                    // When a new page is available, call submitList() method of the PagedListAdapter
-                    mPagedListAdapter.submitList(artworks);
-                }
+        mViewModel.refreshArtworkLiveData().observe(this, artworks -> {
+            if (artworks != null) {
+                mPagedListAdapter.submitList(null);
+                // When a new page is available, call submitList() method of the PagedListAdapter
+                mPagedListAdapter.submitList(artworks);
             }
         });
 
@@ -295,7 +288,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         Intent intent = new Intent(getContext(), ArtworkDetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-
     }
 
     @Override

@@ -68,7 +68,7 @@
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/image_height"
-                    android:src="@color/colorPrimary" />
+                    android:src="@color/colorPrimaryDark" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
@@ -84,7 +84,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="@dimen/bg_protect_height"
                     android:background="@drawable/photo_background_protection"
                     android:fitsSystemWindows="true" />
 
