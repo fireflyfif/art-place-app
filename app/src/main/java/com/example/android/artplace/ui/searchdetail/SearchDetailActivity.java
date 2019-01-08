@@ -35,12 +35,19 @@
 
 package com.example.android.artplace.ui.searchdetail;
 
+import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -48,6 +55,7 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Result;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -57,6 +65,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
+    private int mLightMutedColor = 0xFFAAAAAA;
 
     @BindView(R.id.content_title)
     TextView contentTitle;
@@ -70,6 +79,12 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView contentDescription;
     @BindView(R.id.toolbar_detail)
     Toolbar toolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.background_title_layout)
+    LinearLayout bgLayout;
+    @BindView(R.id.card_view_content)
+    CardView cardView;
 
     private Result mResults;
 
@@ -92,10 +107,19 @@ public class SearchDetailActivity extends AppCompatActivity {
                 mResults = receivedBundle.getParcelable(RESULT_PARCEL_KEY);
 
                 if (mResults != null) {
+
+                    if (toolbar != null) {
+                        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+                                PorterDuff.Mode.SRC_ATOP);
+                    }
+
                     String titleString = mResults.getTitle();
                     String typeString = mResults.getType();
                     String descriptionString = mResults.getDescription();
                     Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
+
+                    collapsingToolbarLayout.setTitle(titleString);
+                    collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
 
                     contentTitle.setText(titleString);
                     contentType.setText(typeString);
@@ -121,7 +145,26 @@ public class SearchDetailActivity extends AppCompatActivity {
                                         .load(imageThumbnailString)
                                         .placeholder(R.color.colorPrimary)
                                         .error(R.color.colorPrimary)
-                                        .into(secondImage);
+                                        .into(secondImage, new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                // Get the image as a bitmap
+                                                Bitmap bitmap = ((BitmapDrawable) secondImage.getDrawable()).getBitmap();
+                                                secondImage.setImageBitmap(bitmap);
+
+                                                // Get a color from the bitmap by using the Palette library
+                                                Palette palette = Palette.from(bitmap).generate();
+                                                int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+
+                                                cardView.setCardBackgroundColor(generatedLightColor);
+                                                //bgLayout.setBackgroundColor(generatedLightColor);
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+
+                                            }
+                                        });
                             } else {
                                 // Set the backdrop image
                                 Picasso.get()
@@ -132,7 +175,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
                                 // Set the second image
                                 Picasso.get()
-                                        .load(imageThumbnailString)
+                                        .load(R.color.colorPrimary)
                                         .placeholder(R.color.colorPrimary)
                                         .error(R.color.colorPrimary)
                                         .into(secondImage);

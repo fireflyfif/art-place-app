@@ -57,7 +57,7 @@
             android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleGravity="bottom|center_horizontal"
+            app:expandedTitleGravity="start|bottom"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout

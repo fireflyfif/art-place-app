@@ -66,8 +66,15 @@
                 <ImageView
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="@dimen/image_height"
                     android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bg_protect_height"
+                    android:background="@drawable/photo_bg_protection_reverse"
+                    android:layout_gravity="bottom"
+                    android:fitsSystemWindows="true" />
 
             </FrameLayout>
 
@@ -102,15 +109,13 @@
                 android:layout_marginEnd="@dimen/margin_8dp"
                 android:layout_marginLeft="@dimen/margin_8dp"
                 android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginStart="@dimen/margin_8dp"
-                app:cardBackgroundColor="@color/cardBackground">
+                android:layout_marginStart="@dimen/margin_8dp">
 
                 <LinearLayout
                     android:id="@+id/background_title_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
-                    android:background="@color/colorPrimaryDark"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
@@ -118,10 +123,10 @@
                         android:id="@+id/content_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="@dimen/margin_8dp"
+                        android:layout_marginLeft="@dimen/margin_8dp"
+                        android:layout_marginRight="@dimen/margin_8dp"
+                        android:layout_marginStart="@dimen/margin_8dp"
                         android:layout_marginTop="16dp"
                         android:gravity="center_horizontal"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
@@ -131,21 +136,23 @@
                         android:id="@+id/content_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:layout_marginStart="@dimen/margin_8dp"
+                        android:layout_marginLeft="@dimen/margin_8dp"
+                        android:layout_marginTop="@dimen/margin_8dp"
+                        android:layout_marginEnd="@dimen/margin_8dp"
+                        android:layout_marginRight="@dimen/margin_8dp"
+                        android:layout_marginBottom="@dimen/margin_8dp"
+                        android:fontFamily="sans-serif"
+                        android:background="@color/colorAccentLight"
+                        android:padding="@dimen/padding_6dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                         tools:text="Artwork" />
 
                     <ImageView
                         android:id="@+id/content_image2"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
-                        android:scaleType="fitCenter"
-                        android:padding="10dp" />
+                        android:scaleType="fitCenter" />
 
                     <TextView
                         android:id="@+id/content_description"

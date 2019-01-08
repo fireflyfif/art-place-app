@@ -266,6 +266,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
         // Check if the item exists in the db already or not!!!
+        // TODO: Remove Repository instance from Activity!
         FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new ResultFromDbCallback() {
             @Override
             public void setResult(boolean isFav) {

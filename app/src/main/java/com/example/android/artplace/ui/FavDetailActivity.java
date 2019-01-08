@@ -140,6 +140,7 @@ public class FavDetailActivity extends AppCompatActivity {
             String favDimensCmString = getIntent().getStringExtra(ARTWORK_DIMENS_CM_KEY);
 
             collapsingToolbarLayout.setTitle(favTitleString);
+            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
 
             favTitle.setText(favTitleString);
             favArtist.setText(favArtistString);
