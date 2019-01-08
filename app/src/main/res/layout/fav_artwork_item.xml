@@ -32,83 +32,102 @@
   ~
   ~
   -->
-
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/artwork_cardview"
+    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/card_view_margin"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
+    app:cardPreventCornerOverlap="true">
 
-    <ImageView
-        android:id="@+id/fav_artwork_thumbnail"
-        android:layout_width="@dimen/fav_thumbnail_width"
-        android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/margin_8dp"
-        android:layout_marginTop="@dimen/margin_8dp"
-        android:contentDescription="@string/image_thumbnail_description"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/fav_artwork_title"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:padding="@dimen/padding_10dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        app:fontFamily="sans-serif-condensed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fav_artwork_thumbnail"
-        app:layout_constraintTop_toTopOf="@+id/fav_artwork_thumbnail"
-        tools:text="Artwork Title with a Very Long Title Very Long Title" />
+        android:background="@color/colorBackground">
 
-    <TextView
-        android:id="@+id/fav_artwork_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:padding="@dimen/padding_10dp"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        app:fontFamily="sans-serif"
-        app:layout_constraintStart_toStartOf="@+id/fav_artwork_title"
-        app:layout_constraintTop_toBottomOf="@+id/fav_artwork_title"
-        tools:text="Artwork Category" />
+        <ImageView
+            android:id="@+id/fav_artwork_thumbnail"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="@dimen/margin_8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="@string/image_thumbnail_description"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/fav_artwork_medium"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_8dp"
-        android:padding="@dimen/padding_10dp"
-        app:fontFamily="sans-serif"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/fav_artwork_category"
-        app:layout_constraintTop_toBottomOf="@+id/fav_artwork_category"
-        tools:text="Artwork Medium Artwork Medium Artwork Medium" />
+        <TextView
+            android:id="@+id/fav_artwork_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/colorText"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-condensed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_thumbnail"
+            tools:text="Artwork Title with a Very Long Title Very Long Title" />
 
-    <TextView
-        android:id="@+id/fav_artwork_year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_8dp"
-        android:layout_marginStart="@dimen/margin_8dp"
-        android:background="@color/colorPrimary"
-        android:padding="@dimen/padding_10dp"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        app:fontFamily="sans-serif"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/fav_artwork_category"
-        app:layout_constraintTop_toTopOf="@+id/fav_artwork_category"
-        tools:text="Artwork Year" />
+        <TextView
+            android:id="@+id/fav_artwork_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif"
+            app:layout_constraintStart_toStartOf="@+id/fav_artwork_title"
+            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_title"
+            tools:text="Artwork Category" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/fav_artwork_medium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            app:fontFamily="sans-serif"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fav_artwork_category"
+            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_category"
+            tools:text="Artwork Medium Artwork Medium Artwork Medium" />
+
+        <TextView
+            android:id="@+id/fav_artwork_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_8dp"
+            android:layout_marginLeft="@dimen/margin_8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/fav_artwork_category"
+            app:layout_constraintTop_toTopOf="@+id/fav_artwork_category"
+            tools:text="Artwork Year" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

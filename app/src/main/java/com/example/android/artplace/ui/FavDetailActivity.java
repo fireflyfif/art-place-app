@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.ui;
 
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -118,6 +119,11 @@ public class FavDetailActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (toolbar != null) {
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+                    PorterDuff.Mode.SRC_ATOP);
         }
 
         if (getIntent().getExtras() != null) {

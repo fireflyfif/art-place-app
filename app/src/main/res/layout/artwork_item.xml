@@ -45,7 +45,9 @@
     android:foreground="?android:attr/selectableItemBackground"
     style="@style/Widget.MaterialComponents.CardView"
     app:cardPreventCornerOverlap="true"
-    app:cardBackgroundColor="@color/cardBackground">
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
