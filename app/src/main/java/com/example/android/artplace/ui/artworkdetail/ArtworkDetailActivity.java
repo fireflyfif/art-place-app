@@ -474,15 +474,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Set the square image with Picasso
         if (mNewSquareArtworkLinkString == null || mNewSquareArtworkLinkString.isEmpty()) {
             Picasso.get()
-                    .load(R.drawable.placeholder)
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
+                    .load(R.color.colorPrimary)
+                    .placeholder(R.color.colorPrimary)
+                    .error(R.color.colorPrimary)
                     .into(artworkImage);
         } else {
             Picasso.get()
                     .load(Uri.parse(mNewSquareArtworkLinkString))
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
+                    .placeholder(R.color.colorPrimary)
+                    .error(R.color.colorPrimary)
                     .into(artworkImage);
 
             // If there is an image set a click listener on it

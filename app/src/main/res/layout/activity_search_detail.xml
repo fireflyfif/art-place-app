@@ -67,8 +67,7 @@
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/placeholder" />
+                    android:scaleType="centerCrop" />
 
             </FrameLayout>
 
@@ -146,8 +145,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:scaleType="fitCenter"
-                        android:padding="10dp"
-                        app:srcCompat="@drawable/placeholder" />
+                        android:padding="10dp" />
 
                     <TextView
                         android:id="@+id/content_description"

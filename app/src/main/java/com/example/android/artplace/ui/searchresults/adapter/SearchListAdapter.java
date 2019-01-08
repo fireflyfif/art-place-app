@@ -170,16 +170,16 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                         if (thumbnailPathString == null || thumbnailPathString.isEmpty()) {
                             // If it's empty or null -> set the placeholder
                             Picasso.get()
-                                    .load(R.drawable.placeholder)
-                                    .placeholder(R.drawable.placeholder)
-                                    .error(R.drawable.placeholder)
+                                    .load(R.color.colorPrimary)
+                                    .placeholder(R.color.colorPrimary)
+                                    .error(R.color.colorPrimary)
                                     .into(searchThumbnail);
                         } else {
                             // If it's not empty -> load the image
                             Picasso.get()
                                     .load(thumbnailPathString)
-                                    .placeholder(R.drawable.placeholder)
-                                    .error(R.drawable.placeholder)
+                                    .placeholder(R.color.colorPrimary)
+                                    .error(R.color.colorPrimary)
                                     .into(searchThumbnail);
                         }
                     }

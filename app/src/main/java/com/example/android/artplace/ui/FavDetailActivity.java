@@ -151,9 +151,9 @@ public class FavDetailActivity extends AppCompatActivity {
             // Instantiate Image Request using Post Processor as parameter
             if (favImageString == null || favImageString.isEmpty()) {
                 Picasso.get()
-                        .load(R.drawable.placeholder)
-                        .error(R.drawable.placeholder)
-                        .placeholder(R.drawable.placeholder)
+                        .load(R.color.colorPrimary)
+                        .error(R.color.colorPrimary)
+                        .placeholder(R.color.colorPrimary)
                         .into(favImage);
 
             } else {
@@ -173,8 +173,8 @@ public class FavDetailActivity extends AppCompatActivity {
 
                 Picasso.get()
                         .load(Uri.parse(favImageString))
-                        .error(R.drawable.placeholder)
-                        .placeholder(R.drawable.placeholder)
+                        .error(R.color.colorPrimary)
+                        .placeholder(R.color.colorPrimary)
                         .into(favImage);
             }
 

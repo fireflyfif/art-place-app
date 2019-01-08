@@ -82,12 +82,11 @@
                     android:layout_marginTop="@dimen/square_image_margin"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/placeholder" />
+                    android:scaleType="fitCenter" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="@dimen/bg_protect_height"
                     android:background="@drawable/photo_background_protection"
                     android:fitsSystemWindows="true" />
 
@@ -98,10 +97,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize"
                 android:background="@null"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/PopupMenuStyle" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

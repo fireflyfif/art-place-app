@@ -132,15 +132,15 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
 
             if (thumbnailString == null || thumbnailString.isEmpty()) {
                 bitmap = Picasso.get()
-                        .load(R.drawable.placeholder)
-                        .placeholder(R.drawable.placeholder)
+                        .load(R.color.colorPrimary)
+                        .placeholder(R.color.colorPrimary)
                         .resize(300, 300)
                         .centerCrop()
                         .error(R.mipmap.ic_launcher).get();
             } else {
                 bitmap = Picasso.get()
                         .load(thumbnailString)
-                        .placeholder(R.drawable.placeholder)
+                        .placeholder(R.color.colorPrimary)
                         .resize(300, 300)
                         .centerCrop()
                         .error(R.mipmap.ic_launcher).get();

@@ -47,7 +47,6 @@
         android:layout_marginTop="@dimen/margin_8dp"
         android:contentDescription="@string/image_thumbnail_description"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
