@@ -35,5 +35,30 @@
 
 package com.example.android.artplace.ui.searchdetail;
 
-public class SearchDetailViewModel {
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+
+import com.example.android.artplace.model.search.EmbeddedResults;
+import com.example.android.artplace.repository.ArtsyRepository;
+
+import java.util.List;
+
+public class SearchDetailViewModel extends ViewModel {
+
+    private LiveData<EmbeddedResults> mResultLiveData;
+
+    public SearchDetailViewModel() {}
+
+    public void initSearchLink(String selfLink) {
+        if (mResultLiveData != null) {
+            return;
+        }
+        mResultLiveData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+    }
+
+    public LiveData<EmbeddedResults> getResultSelfLink() {
+        return mResultLiveData;
+    }
+
+
 }

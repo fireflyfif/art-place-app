@@ -190,7 +190,7 @@ public class ArtsyApiManager {
     ////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\////\\\\
 
     // Provide the Retrofit call
-    public static <T> T createApiCall (Class<T> service, TokenManager tokenManager) {
+    public static <T> T createApiCall (Class<T> service) {
 
         // For logging the url that is being made
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -216,7 +216,7 @@ public class ArtsyApiManager {
 
                 return chain.proceed(newRequest);
             }
-        }).authenticator(TokenAuthenticator.getInstance(tokenManager)).build();
+        }).authenticator(TokenAuthenticator.getInstance()).build();
 
         Retrofit newRetrofit = sRetrofit
                 .newBuilder()

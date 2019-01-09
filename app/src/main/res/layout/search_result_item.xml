@@ -43,6 +43,11 @@
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    style="@style/Widget.MaterialComponents.CardView"
+    app:cardPreventCornerOverlap="true"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="3dp"
     app:cardBackgroundColor="@color/cardBackground">
 
     <LinearLayout

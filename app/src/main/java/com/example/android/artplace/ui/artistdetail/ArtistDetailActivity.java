@@ -115,14 +115,14 @@ public class ArtistDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
+        //mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
 
         // TODO: Save the token into SharedPreferences
-        if (mTokenManager.getNewToken().getToken() != null) {
+        /*if (mTokenManager.getNewToken().getToken() != null) {
             // TODO: get the new token here
             String newToken = mTokenManager.getNewToken().getToken();
             Log.d(TAG, "Get the new token here: " + newToken);
-        }
+        }*/
 
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
@@ -137,7 +137,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-                mArtistViewModel.initArtistLink(receivedArtistUrlString, mTokenManager);
+                mArtistViewModel.initArtistLink(receivedArtistUrlString);
 
                 mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
                     @Override

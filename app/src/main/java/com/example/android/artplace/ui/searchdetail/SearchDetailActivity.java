@@ -35,6 +35,8 @@
 
 package com.example.android.artplace.ui.searchdetail;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -52,11 +54,16 @@ import android.widget.TextView;
 
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.model.Self;
 import com.example.android.artplace.model.Thumbnail;
+import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Result;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,6 +94,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     CardView cardView;
 
     private Result mResults;
+    private SearchDetailViewModel mViewModel;
 
 
     @Override
@@ -187,5 +195,36 @@ public class SearchDetailActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void initSearchContentViewModel(String selfLink) {
+        mViewModel = ViewModelProviders.of(this).get(SearchDetailViewModel.class);
+        mViewModel.initSearchLink(selfLink);
+
+        mViewModel.getResultSelfLink().observe(this, new Observer<EmbeddedResults>() {
+
+            List<Result> resultList = new ArrayList<>();
+            Result result = new Result();
+            LinksResult linksResult = new LinksResult();
+            Self self = new Self();
+
+            @Override
+            public void onChanged(@Nullable EmbeddedResults embeddedResults) {
+                if (embeddedResults != null) {
+                    resultList = embeddedResults.getResults();
+                    for (int i = 0; i < resultList.size(); i++) {
+                        result = resultList.get(i);
+
+                        linksResult = result.getLinks();
+                        self = linksResult.getSelf();
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void setupSearchContent() {
+
     }
 }

@@ -61,7 +61,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
     private ArtPlaceApp mAppController;
-    private TokenManager mTokenManager;
+    //private TokenManager mTokenManager;
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
@@ -69,9 +69,9 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private String mNextUrl;
 
 
-    public ArtworkDataSource(ArtPlaceApp appController, TokenManager tokenManager) {
+    public ArtworkDataSource(ArtPlaceApp appController) {
         mAppController = appController;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
 
         mNetworkState = new MutableLiveData();
         mInitialLoading = new MutableLiveData();
@@ -93,7 +93,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi(mTokenManager).getArtsyResponse(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+        mAppController.getArtsyApi().getArtsyResponse(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
             List<Artwork> artworkList = new ArrayList<>();
 
@@ -156,7 +156,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-            mAppController.getArtsyApi(mTokenManager).getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+            mAppController.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
                 ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
                 List<Artwork> artworkList = new ArrayList<>();
 

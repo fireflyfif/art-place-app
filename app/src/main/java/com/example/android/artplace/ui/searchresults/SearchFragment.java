@@ -150,15 +150,15 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         ButterKnife.bind(this, rootView);
 
-        mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
-                "prefs", MODE_PRIVATE));
+        /*mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
+                "prefs", MODE_PRIVATE));*/
 
         // TODO: Save the token into SharedPreferences
-        if (mTokenManager.getNewToken().getToken() != null) {
+        /*if (mTokenManager.getNewToken().getToken() != null) {
             // TODO: get the new token here
             String newToken = mTokenManager.getNewToken().getToken();
             Log.d(TAG, "Get the new token here: " + newToken);
-        }
+        }*/
 
         // Set the UI
         setupUi();
@@ -191,7 +191,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Log.d(TAG, "setupUi: Type word: " + mTypeString);
 
         mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
-                mQueryWordString, mTypeString, mTokenManager);
+                mQueryWordString, mTypeString);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
@@ -272,7 +272,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Log.d(TAG, "requestNewCall: Type word: " + typeWord);
 
         mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
-                mQueryWordString, typeWord, mTokenManager);
+                mQueryWordString, typeWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory)

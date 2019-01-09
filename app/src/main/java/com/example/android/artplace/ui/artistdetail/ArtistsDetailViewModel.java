@@ -53,21 +53,21 @@ public class ArtistsDetailViewModel extends ViewModel {
     public ArtistsDetailViewModel() {
     }
 
-    public void initArtistLink(String artistUrl, TokenManager tokenManager) {
+    public void initArtistLink(String artistUrl) {
 
         if (mArtistLink != null) {
             return;
         }
 
-        mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl, tokenManager);
+        mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
     }
 
-    public void initSimilarArtworksLink(String similarArtUrl, TokenManager tokenManager) {
+    public void initSimilarArtworksLink(String similarArtUrl) {
         if (mSimilarArtworkLink != null) {
             return;
         }
 
-        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl, tokenManager);
+        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
     }
 
 

@@ -51,11 +51,11 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
     private String mTypeString;
     private TokenManager mTokenManager;
 
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord, String typeWord, TokenManager tokenManager) {
+    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord, String typeWord) {
         mArtPlaceApp = artPlaceApp;
         mArtQuery = queryWord;
         mTypeString = typeWord;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
 
         mSearchDataSourceMutableLiveData = new MutableLiveData<>();
     }
@@ -63,7 +63,7 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 
     @Override
     public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery, mTypeString, mTokenManager);
+        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery, mTypeString);
         mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
 
         return mSearchDataSource;

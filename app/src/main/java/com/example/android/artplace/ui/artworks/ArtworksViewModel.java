@@ -65,18 +65,18 @@ public class ArtworksViewModel extends ViewModel {
     private static final int PREFETCH_DISTANCE_HINT = 20;
 
 
-    public ArtworksViewModel(ArtPlaceApp appController, TokenManager tokenManager) {
+    public ArtworksViewModel(ArtPlaceApp appController) {
 
-        init(appController, tokenManager);
+        init(appController);
     }
 
     /*
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init(ArtPlaceApp appController, TokenManager tokenManager) {
+    private void init(ArtPlaceApp appController) {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory((ArtPlaceApp) appController, tokenManager);
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory((ArtPlaceApp) appController);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),

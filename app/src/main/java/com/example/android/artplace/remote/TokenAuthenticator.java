@@ -64,13 +64,13 @@ public class TokenAuthenticator implements Authenticator {
     private TokenManager mTokenManager;
     private String mToken;
 
-    private TokenAuthenticator(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    private TokenAuthenticator() {
+
     }
 
-    static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
+    static synchronized TokenAuthenticator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator(tokenManager);
+            INSTANCE = new TokenAuthenticator();
         }
 
         return INSTANCE;

@@ -144,7 +144,10 @@
                         android:layout_marginBottom="@dimen/margin_8dp"
                         android:fontFamily="sans-serif"
                         android:background="@color/colorAccentLight"
-                        android:padding="@dimen/padding_6dp"
+                        android:paddingRight="@dimen/padding_6dp"
+                        android:paddingStart="@dimen/padding_6dp"
+                        android:paddingLeft="@dimen/padding_6dp"
+                        android:paddingEnd="@dimen/padding_6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                         tools:text="Artwork" />
 

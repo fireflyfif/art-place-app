@@ -41,14 +41,15 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.ArtPlaceApp;
-import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artists.Artist;
+import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
-import com.example.android.artplace.model.token.TypeToken;
-import com.example.android.artplace.utils.TokenManager;
+import com.example.android.artplace.model.search.EmbeddedResults;
+import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.model.search.SearchWrapperResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +57,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.example.android.artplace.BuildConfig.CLIENT_ID;
-import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
 
 // Singleton pattern for the Repository class,
 // best explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -119,8 +117,8 @@ public class ArtsyRepository {
     /*
     Getter method to load the Similar Artworks
      */
-    public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl, TokenManager tokenManager) {
-        return loadSimilarArtworks(similarArtUrl, tokenManager);
+    public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
+        return loadSimilarArtworks(similarArtUrl);
     }
 
     /**
@@ -129,11 +127,11 @@ public class ArtsyRepository {
      * @param similarArtUrl is the Url to the Similar Artworks results
      * @return loaded results from the Artsy response
      */
-    private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl, TokenManager tokenManager) {
+    private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
 
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi(tokenManager).getSimilarArtLink(similarArtUrl)
+        ArtPlaceApp.getInstance().getArtsyApi().getSimilarArtLink(similarArtUrl)
                 .enqueue(new Callback<ArtworkWrapperResponse>() {
 
                     ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
@@ -167,15 +165,15 @@ public class ArtsyRepository {
         return similarArtData;
     }
 
-    public LiveData<List<Artist>> getArtistFromLink(String artistUrl, TokenManager tokenManager) {
-        return loadArtistFromLink(artistUrl, tokenManager);
+    public LiveData<List<Artist>> getArtistFromLink(String artistUrl) {
+        return loadArtistFromLink(artistUrl);
     }
 
-    private LiveData<List<Artist>> loadArtistFromLink(String artistUrl, TokenManager tokenManager) {
+    private LiveData<List<Artist>> loadArtistFromLink(String artistUrl) {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi(tokenManager).getArtistLink(artistUrl)
+        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl)
                 .enqueue(new Callback<ArtistWrapperResponse>() {
                     ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
                     EmbeddedArtists embeddedArtists = new EmbeddedArtists();
@@ -211,6 +209,53 @@ public class ArtsyRepository {
                 });
 
         return artistLiveData;
+    }
+
+    public LiveData<EmbeddedResults> getSearchContentLink(String selfLink) {
+        return loadSearchContentLink(selfLink);
+    }
+
+    private LiveData<EmbeddedResults> loadSearchContentLink(String selfLink) {
+
+        MutableLiveData<EmbeddedResults> searchLiveData = new MutableLiveData<>();
+
+        ArtPlaceApp.getInstance().getArtsyApi().getLinkFromSearchContent(selfLink)
+                .enqueue(new Callback<SearchWrapperResponse>() {
+
+                    SearchWrapperResponse searchWrapperResponse = new SearchWrapperResponse();
+                    EmbeddedResults embeddedResults = new EmbeddedResults();
+                    List<Result> resultList = new ArrayList<>();
+
+                    @Override
+                    public void onResponse(@NonNull Call<SearchWrapperResponse> call,
+                                           @NonNull Response<SearchWrapperResponse> response) {
+                        if (response.isSuccessful()) {
+
+                            searchWrapperResponse = response.body();
+
+                            if (searchWrapperResponse != null) {
+                                embeddedResults = searchWrapperResponse.getEmbedded();
+
+                                if (embeddedResults != null) {
+                                    resultList = embeddedResults.getResults();
+
+                                    searchLiveData.setValue(embeddedResults);
+                                }
+                            }
+                            Log.d(TAG, "Loaded successfully! " + response.code());
+                        } else {
+                            searchLiveData.setValue(null);
+                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "OnFailure! " + t.getMessage());
+                    }
+                });
+
+        return searchLiveData;
     }
 
 }

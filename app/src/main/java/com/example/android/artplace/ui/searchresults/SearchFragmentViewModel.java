@@ -69,14 +69,14 @@ public class SearchFragmentViewModel extends ViewModel {
     private ArtPlaceApp mApplication;
     private String mQueryWord;
     private String mTypeWord;
-    private TokenManager mTokenManager;
+    //private TokenManager mTokenManager;
 
 
-    public SearchFragmentViewModel(ArtPlaceApp application, String queryWord, String typeWord, TokenManager tokenManager) {
+    public SearchFragmentViewModel(ArtPlaceApp application, String queryWord, String typeWord) {
         mApplication = application;
         mQueryWord = queryWord;
         mTypeWord = typeWord;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
 
         init(application, queryWord, typeWord);
     }
@@ -84,7 +84,7 @@ public class SearchFragmentViewModel extends ViewModel {
     private void init(Application application, String queryWord, String typeWord) {
 
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord, mTokenManager);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
@@ -134,7 +134,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
     public LiveData<PagedList<Result>> refreshSearchLiveData(Application application, String queryWord, String typeWord) {
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord, mTokenManager);
+        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, queryWord, typeWord);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()

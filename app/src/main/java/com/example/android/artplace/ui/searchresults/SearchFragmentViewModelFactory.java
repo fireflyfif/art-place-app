@@ -48,15 +48,14 @@ public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory
     private ArtPlaceApp mApplication;
     private String mQueryWord;
     private String mTypeWord;
-    private TokenManager mTokenManager;
+    //private TokenManager mTokenManager;
 
-    public SearchFragmentViewModelFactory(ArtPlaceApp application, String queryWord, String typeWord,
-                                          TokenManager tokenManager) {
+    public SearchFragmentViewModelFactory(ArtPlaceApp application, String queryWord, String typeWord) {
 
         mApplication = application;
         mQueryWord = queryWord;
         mTypeWord = typeWord;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
     }
 
     @SuppressWarnings("unchecked")
@@ -64,7 +63,7 @@ public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(SearchFragmentViewModel.class)) {
-            return (T) new SearchFragmentViewModel(mApplication, mQueryWord, mTypeWord, mTokenManager);
+            return (T) new SearchFragmentViewModel(mApplication, mQueryWord, mTypeWord);
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }

@@ -47,18 +47,18 @@ public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> 
     private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
     private ArtworkDataSource mDataSource;
     private ArtPlaceApp mArtPlaceApp;
-    private TokenManager mTokenManager;
+    //private TokenManager mTokenManager;
 
 
-    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp, TokenManager tokenManager) {
+    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp) {
         mArtPlaceApp = artPlaceApp;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
         mArtworksDataSourceLiveData = new MutableLiveData<>();
     }
 
     @Override
     public DataSource<Long, Artwork> create() {
-        mDataSource = new ArtworkDataSource(mArtPlaceApp, mTokenManager);
+        mDataSource = new ArtworkDataSource(mArtPlaceApp);
         mArtworksDataSourceLiveData.postValue(mDataSource);
 
         return mDataSource;

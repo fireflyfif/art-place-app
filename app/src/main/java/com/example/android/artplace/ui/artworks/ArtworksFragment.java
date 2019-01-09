@@ -143,15 +143,15 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         ButterKnife.bind(this, rootView);
 
-        mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
-                "prefs", MODE_PRIVATE));
+        /*mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
+                "prefs", MODE_PRIVATE));*/
 
         // TODO: Save the token into SharedPreferences
-        if (mTokenManager.getNewToken().getToken() != null) {
+        /*if (mTokenManager.getNewToken().getToken() != null) {
             // TODO: get the new token here
             String newToken = mTokenManager.getNewToken().getToken();
             Log.d(TAG, "Get the new token here: " + newToken);
-        }
+        }*/
 
         // Set up the UI
         setupUi();
@@ -178,7 +178,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModelFactory
-        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance(), mTokenManager);
+        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance());
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);
@@ -240,7 +240,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModelFactory
-        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance(), mTokenManager);
+        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance());
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);

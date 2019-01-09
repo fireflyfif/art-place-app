@@ -71,11 +71,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mNextUrl;
 
 
-    public SearchDataSource(ArtPlaceApp appController, String queryWord, String typeWord, TokenManager tokenManager) {
+    public SearchDataSource(ArtPlaceApp appController, String queryWord, String typeWord) {
         mAppController = appController;
         mQueryString = queryWord;
         mTypeString = typeWord;
-        mTokenManager = tokenManager;
+        //mTokenManager = tokenManager;
 
         mNetworkState = new MutableLiveData<>();
         mInitialLoading = new MutableLiveData<>();
@@ -99,7 +99,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
         Log.d(LOG_TAG, "loadInitial: type word: " + mTypeString);
 
-        mAppController.getArtsyApi(mTokenManager).getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
+        mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
                 new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
@@ -197,7 +197,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi(mTokenManager).getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        mAppController.getArtsyApi().getNextLinkForSearch(mNextUrl,
+                params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
             List<Result> resultList = new ArrayList<>();
