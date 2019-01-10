@@ -113,8 +113,6 @@ public class SearchFragmentViewModel extends ViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        Log.d(TAG, "SearchFragmentViewModel: PagedListConfig: " + mResultPagedList);
-
         mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();

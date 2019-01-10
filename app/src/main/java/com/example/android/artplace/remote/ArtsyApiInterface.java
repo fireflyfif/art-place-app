@@ -37,6 +37,7 @@ package com.example.android.artplace.remote;
 
 import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
+import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
 import com.example.android.artplace.model.token.TypeToken;
 
@@ -122,5 +123,5 @@ public interface ArtsyApiInterface {
     Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("size") int itemSize, @Query("type") String type);
 
     @GET
-    Call<SearchWrapperResponse> getLinkFromSearchContent(@Url String selfLink);
+    Call<ShowContent> getDetailContentFromSearchLink(@Url String selfLink);
 }

@@ -38,26 +38,24 @@ package com.example.android.artplace.ui.searchdetail;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.example.android.artplace.model.search.EmbeddedResults;
+import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.repository.ArtsyRepository;
 
-import java.util.List;
+public class ShowsDetailViewModel extends ViewModel {
 
-public class SearchDetailViewModel extends ViewModel {
+    private LiveData<ShowContent> mContentLiveData;
 
-    private LiveData<EmbeddedResults> mResultLiveData;
-
-    public SearchDetailViewModel() {}
+    public ShowsDetailViewModel() {}
 
     public void initSearchLink(String selfLink) {
-        if (mResultLiveData != null) {
+        if (mContentLiveData != null) {
             return;
         }
-        mResultLiveData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+        mContentLiveData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
     }
 
-    public LiveData<EmbeddedResults> getResultSelfLink() {
-        return mResultLiveData;
+    public LiveData<ShowContent> getResultSelfLink() {
+        return mContentLiveData;
     }
 
 

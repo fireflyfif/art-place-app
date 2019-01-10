@@ -37,9 +37,11 @@ package com.example.android.artplace.ui.searchdetail;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -48,21 +50,27 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 import com.example.android.artplace.R;
+import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Self;
 import com.example.android.artplace.model.Thumbnail;
-import com.example.android.artplace.model.search.EmbeddedResults;
+import com.example.android.artplace.model.artists.Artist;
+import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.search.LinksResult;
+import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.model.search.ShowContent;
+import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -92,9 +100,34 @@ public class SearchDetailActivity extends AppCompatActivity {
     LinearLayout bgLayout;
     @BindView(R.id.card_view_content)
     CardView cardView;
+    @BindView(R.id.content_detail_description)
+    TextView detailDescription;
+    @BindView(R.id.content_detail_press_release)
+    TextView detailPressRelease;
+    @BindView(R.id.read_more_button)
+    Button readMoreButton;
+
+    @BindView(R.id.artist_name)
+    TextView artistName;
+    @BindView(R.id.artist_home)
+    TextView artistHomeTown;
+//    @BindView(R.id.artist_image)
+//    ImageView artistImage;
+    @BindView(R.id.artist_lifespan)
+    TextView artistLifespan;
+    @BindView(R.id.artist_location)
+    TextView artistLocation;
+    @BindView(R.id.artist_nationality)
+    TextView artistNationality;
 
     private Result mResults;
-    private SearchDetailViewModel mViewModel;
+    private ShowsDetailViewModel mShowsViewModel;
+    private ArtistsDetailViewModel mArtistViewModel;
+
+    private String mDescription;
+    private String mPressRelease;
+    private String mStartDate;
+    private String mEndDate;
 
 
     @Override
@@ -189,42 +222,166 @@ public class SearchDetailActivity extends AppCompatActivity {
                                         .into(secondImage);
                             }
 
-                        }
 
+                            Self self = linksResult.getSelf();
+                            String selfLinkString;
+                            if (self != null) {
+                                selfLinkString = self.getHref();
+                                Log.d(TAG, "Self Link: " + selfLinkString);
+
+
+                                if (typeString.equals("shows")) {
+                                    // Init the View Model from the detail search content endpoint
+                                    initShowsContentViewModel(selfLinkString);
+                                }
+
+                                if (typeString.equals("artist")) {
+                                    initArtistContentViewModel(selfLinkString);
+                                }
+                            }
+
+                            Permalink permalink = linksResult.getPermalink();
+                            readMoreButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (permalink != null) {
+                                        String readMoreLink = permalink.getHref();
+                                        Log.d(TAG, "Perma Link: " + readMoreLink);
+                                        Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
+                                        openUrlIntent.setData(Uri.parse(readMoreLink));
+                                        startActivity(openUrlIntent);
+                                    }
+                                }
+                            });
+
+                        }
                     }
                 }
             }
         }
     }
 
-    private void initSearchContentViewModel(String selfLink) {
-        mViewModel = ViewModelProviders.of(this).get(SearchDetailViewModel.class);
-        mViewModel.initSearchLink(selfLink);
+    /**
+     * Method for initialising the views from the detail search View Model
+     *
+     * @param selfLink is the link that should be passed as a link to be used as a new call
+     */
+    private void initShowsContentViewModel(String selfLink) {
+        mShowsViewModel = ViewModelProviders.of(this).get(ShowsDetailViewModel.class);
+        mShowsViewModel.initSearchLink(selfLink);
 
-        mViewModel.getResultSelfLink().observe(this, new Observer<EmbeddedResults>() {
-
-            List<Result> resultList = new ArrayList<>();
-            Result result = new Result();
-            LinksResult linksResult = new LinksResult();
-            Self self = new Self();
+        mShowsViewModel.getResultSelfLink().observe(this, new Observer<ShowContent>() {
 
             @Override
-            public void onChanged(@Nullable EmbeddedResults embeddedResults) {
-                if (embeddedResults != null) {
-                    resultList = embeddedResults.getResults();
-                    for (int i = 0; i < resultList.size(); i++) {
-                        result = resultList.get(i);
-
-                        linksResult = result.getLinks();
-                        self = linksResult.getSelf();
-                    }
-
+            public void onChanged(@Nullable ShowContent showContent) {
+                if (showContent != null) {
+                    setupShowsContentUi(showContent);
                 }
             }
         });
     }
 
-    private void setupSearchContent() {
+    private void setupShowsContentUi(ShowContent showContent) {
+        mPressRelease = showContent.getPressRelease();
+        mDescription = showContent.getDescription();
+        mStartDate = showContent.getStartAt();
+        mEndDate = showContent.getEndAt();
+
+        detailDescription.setText(mDescription);
+        detailPressRelease.setText(mPressRelease);
+    }
+
+    private void initArtistContentViewModel(String receivedArtistUrlString) {
+
+        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+        mArtistViewModel.initArtistLink(receivedArtistUrlString);
+
+        mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
+            @Override
+            public void onChanged(@Nullable List<Artist> artists) {
+                if (artists != null) {
+
+                    for (int i = 0; i < artists.size(); i++) {
+                        Artist artistCurrent = artists.get(i);
+                        setupUi(artistCurrent);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setupUi(Artist currentArtist) {
+
+        // Get the name of the artist
+        if (currentArtist.getName() != null) {
+            String artistNameString = currentArtist.getName();
+            artistName.setText(artistNameString);
+            Log.d(TAG, "Artist name:" + artistNameString);
+        } else {
+            artistName.setText(getString(R.string.not_applicable));
+        }
+
+        // Get the Home town of the artist
+        if (currentArtist.getHometown() != null) {
+            String artistHomeTownString = currentArtist.getHometown();
+            artistHomeTown.setText(artistHomeTownString);
+            Log.d(TAG, "Artist hometown:" + artistHomeTownString);
+        } else {
+            artistHomeTown.setText(getString(R.string.not_applicable));
+        }
+
+        // Get the date of the birth and dead of the artist
+        String artistBirthString;
+        String artistDeathString;
+        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
+            artistBirthString = currentArtist.getBirthday();
+            artistDeathString = currentArtist.getDeathday();
+
+            String lifespanConcatString = artistBirthString + " - " + artistDeathString;
+            artistLifespan.setText(lifespanConcatString);
+            Log.d(TAG, "Artist life span:" + lifespanConcatString);
+        } else {
+            artistLifespan.setText(getString(R.string.not_applicable));
+        }
+
+        // Get the location of the artist
+        if (currentArtist.getLocation() != null) {
+            String artistLocationString = currentArtist.getLocation();
+            artistLocation.setText(artistLocationString);
+            Log.d(TAG, "Artist location:" + artistLocationString);
+        } else {
+            artistLocation.setText(getString(R.string.not_applicable));
+        }
+
+        if (currentArtist.getNationality() != null) {
+            String artistNationalityString = currentArtist.getNationality();
+            artistNationality.setText(artistNationalityString);
+            Log.d(TAG, "Artist nationality:" + artistNationalityString);
+        } else {
+            artistNationality.setText(getString(R.string.not_applicable));
+        }
+
+        // Get the list of image versions first
+        List<String> imageVersionList = currentArtist.getImageVersions();
+        // Get the first entry from this list, which corresponds to "large"
+        String versionString = imageVersionList.get(0);
+
+        ImageLinks imageLinksObject = currentArtist.getLinks();
+        MainImage mainImageObject = imageLinksObject.getImage();
+        // Get the link for the current artist,
+        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        String artistImgLinkString = mainImageObject.getHref();
+        // Replace the {image_version} from the artworkImgLinkString with
+        // the wanted version, e.g. "large"
+        String newArtistLinkString = artistImgLinkString
+                .replaceAll("\\{.*?\\}", versionString);
+
+        // Handle no image cases with placeholders
+       /* Picasso.get()
+                .load(Uri.parse(newArtistLinkString))
+                .placeholder(R.color.colorPrimary)
+                .error(R.color.colorPrimary)
+                .into(artistImage);*/
 
     }
 }

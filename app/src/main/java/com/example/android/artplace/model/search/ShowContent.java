@@ -43,7 +43,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class SearchContent implements Parcelable {
+public class ShowContent implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -97,7 +97,7 @@ public class SearchContent implements Parcelable {
     @Expose
     private LinksResult links;
 
-    public SearchContent() {}
+    public ShowContent() {}
 
 
 
@@ -263,7 +263,7 @@ public class SearchContent implements Parcelable {
         dest.writeParcelable(this.links, flags);
     }
 
-    protected SearchContent(Parcel in) {
+    protected ShowContent(Parcel in) {
         this.id = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
@@ -283,15 +283,15 @@ public class SearchContent implements Parcelable {
         this.links = in.readParcelable(LinksResult.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<SearchContent> CREATOR = new Parcelable.Creator<SearchContent>() {
+    public static final Parcelable.Creator<ShowContent> CREATOR = new Parcelable.Creator<ShowContent>() {
         @Override
-        public SearchContent createFromParcel(Parcel source) {
-            return new SearchContent(source);
+        public ShowContent createFromParcel(Parcel source) {
+            return new ShowContent(source);
         }
 
         @Override
-        public SearchContent[] newArray(int size) {
-            return new SearchContent[size];
+        public ShowContent[] newArray(int size) {
+            return new ShowContent[size];
         }
     };
 }

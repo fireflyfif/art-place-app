@@ -47,9 +47,7 @@ import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
-import com.example.android.artplace.model.search.EmbeddedResults;
-import com.example.android.artplace.model.search.Result;
-import com.example.android.artplace.model.search.SearchWrapperResponse;
+import com.example.android.artplace.model.search.ShowContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -211,36 +209,27 @@ public class ArtsyRepository {
         return artistLiveData;
     }
 
-    public LiveData<EmbeddedResults> getSearchContentLink(String selfLink) {
+    public LiveData<ShowContent> getSearchContentLink(String selfLink) {
         return loadSearchContentLink(selfLink);
     }
 
-    private LiveData<EmbeddedResults> loadSearchContentLink(String selfLink) {
+    private LiveData<ShowContent> loadSearchContentLink(String selfLink) {
 
-        MutableLiveData<EmbeddedResults> searchLiveData = new MutableLiveData<>();
+        MutableLiveData<ShowContent> searchLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getLinkFromSearchContent(selfLink)
-                .enqueue(new Callback<SearchWrapperResponse>() {
+        ArtPlaceApp.getInstance().getArtsyApi().getDetailContentFromSearchLink(selfLink)
+                .enqueue(new Callback<ShowContent>() {
 
-                    SearchWrapperResponse searchWrapperResponse = new SearchWrapperResponse();
-                    EmbeddedResults embeddedResults = new EmbeddedResults();
-                    List<Result> resultList = new ArrayList<>();
+                    ShowContent showContent = new ShowContent();
 
                     @Override
-                    public void onResponse(@NonNull Call<SearchWrapperResponse> call,
-                                           @NonNull Response<SearchWrapperResponse> response) {
+                    public void onResponse(@NonNull Call<ShowContent> call,
+                                           @NonNull Response<ShowContent> response) {
                         if (response.isSuccessful()) {
 
-                            searchWrapperResponse = response.body();
-
-                            if (searchWrapperResponse != null) {
-                                embeddedResults = searchWrapperResponse.getEmbedded();
-
-                                if (embeddedResults != null) {
-                                    resultList = embeddedResults.getResults();
-
-                                    searchLiveData.setValue(embeddedResults);
-                                }
+                            showContent = response.body();
+                            if (showContent != null) {
+                                searchLiveData.setValue(showContent);
                             }
                             Log.d(TAG, "Loaded successfully! " + response.code());
                         } else {
@@ -250,7 +239,7 @@ public class ArtsyRepository {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
                         Log.d(TAG, "OnFailure! " + t.getMessage());
                     }
                 });

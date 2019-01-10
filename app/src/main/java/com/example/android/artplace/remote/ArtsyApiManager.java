@@ -216,7 +216,9 @@ public class ArtsyApiManager {
 
                 return chain.proceed(newRequest);
             }
-        }).authenticator(TokenAuthenticator.getInstance()).build();
+        }).authenticator(TokenAuthenticator.getInstance())
+                .addInterceptor(interceptor)
+                .build();
 
         Retrofit newRetrofit = sRetrofit
                 .newBuilder()
