@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.remote;
 
+import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.search.ShowContent;
@@ -88,6 +89,8 @@ public interface ArtsyApiInterface {
 
     /**
      * Make call according to the url that is received from the json response
+     * Endpoint for fetching Artist of the current Artwork
+     * e.g.: https://api.artsy.net/api/artists?artwork_id=4d8b92eb4eb68a1b2c000968
      *
      * @param artistLink is dynamic link for artist page
      * @return the response for the artist page
@@ -95,6 +98,15 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtistWrapperResponse> getArtistLink(@Url String artistLink);
 
+    /**
+     * Make call to the artist endpoint that looks like that:
+     *  https://api.artsy.net/api/artists/4d8b92b34eb68a1b2c0003f4
+     *
+     * @param artistLink is the link taken from previous call
+     * @return
+     */
+    @GET
+    Call<Artist> getArtistInfoFromLink(@Url String artistLink);
 
     /**
      * Make call according to the url that is received from the JSON
@@ -104,13 +116,6 @@ public interface ArtsyApiInterface {
      */
     @GET
     Call<ArtworkWrapperResponse> getSimilarArtLink(@Url String similarArtLink);
-
-
-    /**
-     * Endpoint for fetching Artist of the current Artwork
-     */
-    @GET("/api/artists")
-    Call<ArtistWrapperResponse> getArtist(@Query("artwork_id") String artworkId);
 
 
     /**

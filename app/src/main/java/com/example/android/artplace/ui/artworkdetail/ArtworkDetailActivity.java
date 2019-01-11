@@ -46,7 +46,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,7 +53,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,16 +102,14 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
-    private static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_LARGER_IMAGE_KEY = "artwork_larger_link";
     private static final String ARTIST_URL_KEY = "artist_url";
+    private static final String ARTWORK_TITLE_KEY = "artwork_title";
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
     private static final int NON_FAV_TAG = 1;
@@ -154,6 +150,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView artworkInfoLabel;
 
     // Views of the artist
+    @BindView(R.id.artist_label)
+    TextView artistLabel;
     @BindView(R.id.artist_cardview)
     CardView artistCard;
     @BindView(R.id.artist_name)
@@ -170,6 +168,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView artistLocationLabel;
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
+    @BindView(R.id.artist_bio)
+    TextView artistBio;
+    @BindView(R.id.artist_bio_label)
+    TextView artistBioLabel;
 
     // Similar Artworks Views
     @BindView(R.id.similar_artworks_rv)
@@ -524,6 +526,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals("N/A"))) {
                 // Hide the Artist CardView if there is no info about the Artist
                 artistCard.setVisibility(View.GONE);
+                artistLabel.setVisibility(View.GONE);
             }
         }
 
@@ -545,9 +548,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private void initArtistViewModel(String artistLink) {
         // Initialize the ViewModel
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-        mArtistViewModel.initArtistLink(artistLink);
+        mArtistViewModel.initArtistDataFromArtwork(artistLink);
 
-        mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
+        mArtistViewModel.getArtistDataFromArtwork().observe(this, new Observer<List<Artist>>() {
             @Override
             public void onChanged(@Nullable List<Artist> artists) {
                 if (artists != null) {
@@ -598,8 +601,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
                         // Send the name of the artwork as extra
-                        //intent.putExtra(ARTWORK_TITLE_KEY, finalTitleString);
-                        //intent.putExtra(ARTWORK_ID_KEY, artworkId);
+                        intent.putExtra(ARTWORK_TITLE_KEY, mTitleString);
                         intent.putExtra(ARTIST_URL_KEY, mArtistUrl);
                         startActivity(intent);
                     }
@@ -672,6 +674,19 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 .error(R.drawable.placeholder)
                 .into(artistImage);*/
 
+            if (currentArtist.getBiography() != null) {
+                String artistBioString = currentArtist.getBiography();
+                artistBio.setText(artistBioString);
+
+                if (currentArtist.getBiography().isEmpty()) {
+                    artistBio.setVisibility(View.GONE);
+                    artistBioLabel.setVisibility(View.GONE);
+                }
+            } else {
+                artistBio.setVisibility(View.GONE);
+                artistBioLabel.setVisibility(View.GONE);
+            }
+
         }
     }
 
@@ -683,9 +698,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private void initSimilarViewModel(String similarArtLink) {
         // Initialize the ViewModel
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-        mArtistViewModel.initSimilarArtworksLink(similarArtLink);
+        mArtistViewModel.initSimilarArtworksData(similarArtLink);
 
-        mArtistViewModel.getSimilarArtworksLink().observe(this, new Observer<List<Artwork>>() {
+        mArtistViewModel.getSimilarArtworksData().observe(this, new Observer<List<Artwork>>() {
             @Override
             public void onChanged(@Nullable List<Artwork> artworkList) {
                 if (artworkList != null) {

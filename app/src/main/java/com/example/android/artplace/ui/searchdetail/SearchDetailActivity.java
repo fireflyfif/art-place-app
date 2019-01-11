@@ -49,6 +49,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -107,11 +108,13 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.read_more_button)
     Button readMoreButton;
 
+    @BindView(R.id.artist_cardview)
+    CardView artistCardView;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
     TextView artistHomeTown;
-//    @BindView(R.id.artist_image)
+    //    @BindView(R.id.artist_image)
 //    ImageView artistImage;
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
@@ -119,13 +122,14 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView artistLocation;
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
+    @BindView(R.id.artist_bio)
+    TextView artistBio;
+    @BindView(R.id.artist_bio_label)
+    TextView artistBioLabel;
 
-    private Result mResults;
     private ShowsDetailViewModel mShowsViewModel;
     private ArtistsDetailViewModel mArtistViewModel;
 
-    private String mDescription;
-    private String mPressRelease;
     private String mStartDate;
     private String mEndDate;
 
@@ -145,7 +149,7 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {
                 Bundle receivedBundle = getIntent().getExtras();
-                mResults = receivedBundle.getParcelable(RESULT_PARCEL_KEY);
+                Result mResults = receivedBundle.getParcelable(RESULT_PARCEL_KEY);
 
                 if (mResults != null) {
 
@@ -229,7 +233,6 @@ public class SearchDetailActivity extends AppCompatActivity {
                                 selfLinkString = self.getHref();
                                 Log.d(TAG, "Self Link: " + selfLinkString);
 
-
                                 if (typeString.equals("shows")) {
                                     // Init the View Model from the detail search content endpoint
                                     initShowsContentViewModel(selfLinkString);
@@ -237,6 +240,8 @@ public class SearchDetailActivity extends AppCompatActivity {
 
                                 if (typeString.equals("artist")) {
                                     initArtistContentViewModel(selfLinkString);
+                                } else {
+                                    artistCardView.setVisibility(View.GONE);
                                 }
                             }
 
@@ -282,8 +287,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     }
 
     private void setupShowsContentUi(ShowContent showContent) {
-        mPressRelease = showContent.getPressRelease();
-        mDescription = showContent.getDescription();
+        String mPressRelease = showContent.getPressRelease();
+        String mDescription = showContent.getDescription();
         mStartDate = showContent.getStartAt();
         mEndDate = showContent.getEndAt();
 
@@ -294,17 +299,13 @@ public class SearchDetailActivity extends AppCompatActivity {
     private void initArtistContentViewModel(String receivedArtistUrlString) {
 
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-        mArtistViewModel.initArtistLink(receivedArtistUrlString);
+        mArtistViewModel.initArtistData(receivedArtistUrlString);
 
-        mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
+        mArtistViewModel.getArtistData().observe(this, new Observer<Artist>() {
             @Override
-            public void onChanged(@Nullable List<Artist> artists) {
+            public void onChanged(@Nullable Artist artists) { // onChanged is never called?
                 if (artists != null) {
-
-                    for (int i = 0; i < artists.size(); i++) {
-                        Artist artistCurrent = artists.get(i);
-                        setupUi(artistCurrent);
-                    }
+                    setupUi(artists);
                 }
             }
         });
@@ -383,5 +384,17 @@ public class SearchDetailActivity extends AppCompatActivity {
                 .error(R.color.colorPrimary)
                 .into(artistImage);*/
 
+       if (currentArtist.getBiography() != null) {
+           String artistBioString = currentArtist.getBiography();
+           artistBio.setText(artistBioString);
+
+           if (currentArtist.getBiography().isEmpty()) {
+               artistBio.setVisibility(View.GONE);
+               artistBioLabel.setVisibility(View.GONE);
+           }
+       } else {
+           artistBio.setVisibility(View.GONE);
+           artistBioLabel.setVisibility(View.GONE);
+       }
     }
 }

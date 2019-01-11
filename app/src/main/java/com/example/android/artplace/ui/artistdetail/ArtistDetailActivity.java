@@ -35,16 +35,15 @@
 
 package com.example.android.artplace.ui.artistdetail;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -67,7 +66,6 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
-    private static final String ARTWORK_ID_KEY = "artwork_id";
     private static final String ARTWORK_TITLE_KEY = "artwork_title";
     private static final String ARTIST_URL_KEY = "artist_url";
 
@@ -87,10 +85,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistLifespan;
     @BindView(R.id.artist_location)
     TextView artistLocation;
-    @BindView(R.id.artwork_title_clicked)
-    TextView clickedArtworkTitle;
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
+    @BindView(R.id.artist_bio)
+    TextView artistBio;
+    @BindView(R.id.artist_bio_label)
+    TextView artistBioLabel;
 
     private ArtistsDetailViewModel mArtistViewModel;
     private Tracker mTracker;
@@ -127,33 +127,28 @@ public class ArtistDetailActivity extends AppCompatActivity {
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {
-                //String receivedArtworkId = getIntent().getStringExtra(ARTWORK_ID_KEY);
-                //String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
+
+                String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
                 String receivedArtistUrlString = getIntent().getStringExtra(ARTIST_URL_KEY);
 
                 Log.d(TAG, "Received artist url from the intent: " + receivedArtistUrlString);
 
-                //clickedArtworkTitle.setText(receivedArtworkTitle);
+                collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
                 // Initialize the ViewModel
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-                mArtistViewModel.initArtistLink(receivedArtistUrlString);
+                mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
-                mArtistViewModel.getArtistFromLink().observe(this, new Observer<List<Artist>>() {
-                    @Override
-                    public void onChanged(@Nullable List<Artist> artists) {
-                        if (artists != null) {
+                mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
+                    if (artists != null) {
 
-                            for (int i = 0; i < artists.size(); i++) {
-                                Artist artistCurrent = artists.get(i);
-                                setupUi(artistCurrent);
-                            }
+                        for (int i = 0; i < artists.size(); i++) {
+                            Artist artistCurrent = artists.get(i);
+                            setupUi(artistCurrent);
                         }
                     }
                 });
-
             }
-
         }
     }
 
@@ -173,7 +168,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
             String artistNameString = currentArtist.getName();
             artistName.setText(artistNameString);
 
-            collapsingToolbarLayout.setTitle(artistNameString);
+            //collapsingToolbarLayout.setTitle(artistNameString);
         } else {
             artistName.setText(getString(R.string.not_applicable));
         }
@@ -235,6 +230,19 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 .placeholder(R.color.colorPrimary)
                 .error(R.color.colorPrimary)
                 .into(artistImage);
+
+        if (currentArtist.getBiography() != null) {
+            String artistBioString = currentArtist.getBiography();
+            artistBio.setText(artistBioString);
+
+            if (currentArtist.getBiography().isEmpty()) {
+                artistBio.setVisibility(View.GONE);
+                artistBioLabel.setVisibility(View.GONE);
+            }
+        } else {
+            artistBio.setVisibility(View.GONE);
+            artistBioLabel.setVisibility(View.GONE);
+        }
 
     }
 }

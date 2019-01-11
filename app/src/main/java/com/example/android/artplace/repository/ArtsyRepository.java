@@ -154,6 +154,7 @@ public class ArtsyRepository {
                             Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
                         }
                     }
+
                     @Override
                     public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
                         Log.d(TAG, "OnFailure! " + t.getMessage());
@@ -202,6 +203,47 @@ public class ArtsyRepository {
 
                     @Override
                     public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "OnFailure! " + t.getMessage());
+                    }
+                });
+
+        return artistLiveData;
+    }
+
+    public LiveData<Artist> getArtistInfoFromLink(String artistUrl) {
+        return loadArtistInfoFromLink(artistUrl);
+    }
+
+    /**
+     * This method differs from loadArtistFromLink() method with using another endpoint
+     * consisted of the id of the artist
+     */
+    private LiveData<Artist> loadArtistInfoFromLink(String artistUrl) {
+
+        MutableLiveData<Artist> artistLiveData = new MutableLiveData<>();
+
+        ArtPlaceApp.getInstance().getArtsyApi().getArtistInfoFromLink(artistUrl)
+                .enqueue(new Callback<Artist>() {
+                    Artist artistData = new Artist();
+
+                    @Override
+                    public void onResponse(@NonNull Call<Artist> call,
+                                           @NonNull Response<Artist> response) {
+                        if (response.isSuccessful()) {
+                            artistData = response.body();
+
+                            if (artistData != null) {
+                                artistLiveData.setValue(artistData);
+                            }
+                            Log.d(TAG, "Loaded successfully! " + response.code());
+                        } else {
+                            artistLiveData.setValue(null);
+                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
                         Log.d(TAG, "OnFailure! " + t.getMessage());
                     }
                 });

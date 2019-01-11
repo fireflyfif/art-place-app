@@ -47,35 +47,43 @@ import java.util.List;
 
 public class ArtistsDetailViewModel extends ViewModel {
 
-    private LiveData<List<Artist>> mArtistLink;
+    private LiveData<List<Artist>> mArtistListData;
+    private LiveData<Artist> mArtistData;
     private LiveData<List<Artwork>> mSimilarArtworkLink;
 
     public ArtistsDetailViewModel() {
     }
 
-    public void initArtistLink(String artistUrl) {
-
-        if (mArtistLink != null) {
+    public void initArtistDataFromArtwork(String artistUrl) {
+        if (mArtistListData != null) {
             return;
         }
-
-        mArtistLink = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
+        mArtistListData = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
     }
 
-    public void initSimilarArtworksLink(String similarArtUrl) {
+    public void initArtistData(String artistUrl) {
+        if (mArtistData != null) {
+            return;
+        }
+        mArtistData = ArtsyRepository.getInstance().getArtistInfoFromLink(artistUrl);
+    }
+
+    public void initSimilarArtworksData(String similarArtUrl) {
         if (mSimilarArtworkLink != null) {
             return;
         }
-
         mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
     }
 
-
-    public LiveData<List<Artist>> getArtistFromLink() {
-        return mArtistLink;
+    public LiveData<List<Artist>> getArtistDataFromArtwork() {
+        return mArtistListData;
     }
 
-    public LiveData<List<Artwork>> getSimilarArtworksLink() {
+    public LiveData<Artist> getArtistData() {
+        return mArtistData;
+    }
+
+    public LiveData<List<Artwork>> getSimilarArtworksData() {
         return mSimilarArtworkLink;
     }
 
