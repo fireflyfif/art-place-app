@@ -77,6 +77,7 @@ import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
+import com.example.android.artplace.ui.CustomCardView;
 import com.example.android.artplace.ui.LargeArtworkActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
@@ -122,6 +123,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     // Views of the Artwork
+    @BindView(R.id.card_view_content)
+    CustomCardView customCardView;
     @BindView(R.id.artwork_title)
     TextView artworkName;
     @BindView(R.id.artwork_artist_button)

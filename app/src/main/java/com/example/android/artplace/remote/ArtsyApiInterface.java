@@ -74,7 +74,11 @@ public interface ArtsyApiInterface {
      * @return a call to the Artsy Response
      */
     @GET("/api/artworks")
-    Call<ArtworkWrapperResponse> getArtsyResponse(@Query("size") int itemSize);
+    Call<ArtworkWrapperResponse> getArtworksData(@Query("size") int itemSize);
+
+
+    @GET
+    Call<ArtworkWrapperResponse> getArtworksByArtistData(@Url String artworksLink);
 
 
     /**

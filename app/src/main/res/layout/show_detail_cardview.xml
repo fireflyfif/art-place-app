@@ -65,7 +65,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Gustav Klimt" />
+            tools:text="Show" />
 
         <TextView
             android:id="@+id/artist_lifespan"
@@ -146,7 +146,7 @@
             android:layout_marginStart="@dimen/margin_32dp"
             android:layout_marginLeft="@dimen/margin_32dp"
             android:layout_marginTop="@dimen/margin_16dp"
-            android:text="@string/hometown_label"
+            android:text="Start at"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:fontFamily="sans-serif-condensed"
             app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +161,7 @@
             android:layout_marginTop="@dimen/margin_16dp"
             android:layout_marginEnd="@dimen/margin_8dp"
             android:layout_marginRight="@dimen/margin_8dp"
-            android:text="@string/nationality_label"
+            android:text="End at"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:fontFamily="sans-serif-condensed"
             app:layout_constraintEnd_toStartOf="@+id/artist_nationality"

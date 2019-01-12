@@ -114,14 +114,18 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView artistName;
     @BindView(R.id.artist_home)
     TextView artistHomeTown;
-    //    @BindView(R.id.artist_image)
-//    ImageView artistImage;
+    @BindView(R.id.hometown_label)
+    TextView hometownLabel;
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
     @BindView(R.id.artist_location)
     TextView artistLocation;
+    @BindView(R.id.artist_location_label)
+    TextView locationLabel;
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
+    @BindView(R.id.artist_nationality_label)
+    TextView artistNationalityLabel;
     @BindView(R.id.artist_bio)
     TextView artistBio;
     @BindView(R.id.artist_bio_label)
@@ -160,7 +164,14 @@ public class SearchDetailActivity extends AppCompatActivity {
 
                     String titleString = mResults.getTitle();
                     String typeString = mResults.getType();
-                    String descriptionString = mResults.getDescription();
+                    String descriptionString = null;
+                    if (mResults.getDescription() != null) {
+                        descriptionString = mResults.getDescription();
+                        contentDescription.setText(descriptionString);
+                    } else {
+                        contentDescription.setVisibility(View.GONE);
+                    }
+
                     Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
 
                     collapsingToolbarLayout.setTitle(titleString);
@@ -168,7 +179,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
                     contentTitle.setText(titleString);
                     contentType.setText(typeString);
-                    contentDescription.setText(descriptionString);
+
 
                     if (mResults.getLinks() != null) {
                         LinksResult linksResult = mResults.getLinks();
@@ -233,15 +244,16 @@ public class SearchDetailActivity extends AppCompatActivity {
                                 selfLinkString = self.getHref();
                                 Log.d(TAG, "Self Link: " + selfLinkString);
 
-                                if (typeString.equals("shows")) {
+                                artistCardView.setVisibility(View.GONE);
+
+                                if (typeString.equals("show")) {
                                     // Init the View Model from the detail search content endpoint
                                     initShowsContentViewModel(selfLinkString);
                                 }
 
                                 if (typeString.equals("artist")) {
+                                    artistCardView.setVisibility(View.VISIBLE);
                                     initArtistContentViewModel(selfLinkString);
-                                } else {
-                                    artistCardView.setVisibility(View.GONE);
                                 }
                             }
 
@@ -287,13 +299,20 @@ public class SearchDetailActivity extends AppCompatActivity {
     }
 
     private void setupShowsContentUi(ShowContent showContent) {
-        String mPressRelease = showContent.getPressRelease();
-        String mDescription = showContent.getDescription();
+
+        if (showContent.getPressRelease() != null) {
+            String pressRelease = showContent.getPressRelease();
+            detailPressRelease.setText(pressRelease);
+        }
+
+        if (showContent.getDescription() != null) {
+            String mDescription = showContent.getDescription();
+            detailDescription.setText(mDescription);
+        }
+
         mStartDate = showContent.getStartAt();
         mEndDate = showContent.getEndAt();
 
-        detailDescription.setText(mDescription);
-        detailPressRelease.setText(mPressRelease);
     }
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
@@ -327,6 +346,11 @@ public class SearchDetailActivity extends AppCompatActivity {
             String artistHomeTownString = currentArtist.getHometown();
             artistHomeTown.setText(artistHomeTownString);
             Log.d(TAG, "Artist hometown:" + artistHomeTownString);
+
+            if (currentArtist.getHometown().isEmpty()) {
+                artistHomeTown.setVisibility(View.GONE);
+                hometownLabel.setVisibility(View.GONE);
+            }
         } else {
             artistHomeTown.setText(getString(R.string.not_applicable));
         }
@@ -350,6 +374,11 @@ public class SearchDetailActivity extends AppCompatActivity {
             String artistLocationString = currentArtist.getLocation();
             artistLocation.setText(artistLocationString);
             Log.d(TAG, "Artist location:" + artistLocationString);
+
+            if (currentArtist.getLocation().isEmpty()) {
+                artistLocation.setVisibility(View.GONE);
+                locationLabel.setVisibility(View.GONE);
+            }
         } else {
             artistLocation.setText(getString(R.string.not_applicable));
         }
@@ -358,6 +387,11 @@ public class SearchDetailActivity extends AppCompatActivity {
             String artistNationalityString = currentArtist.getNationality();
             artistNationality.setText(artistNationalityString);
             Log.d(TAG, "Artist nationality:" + artistNationalityString);
+
+            if (currentArtist.getNationality().isEmpty()) {
+                artistNationality.setVisibility(View.GONE);
+                artistNationalityLabel.setVisibility(View.GONE);
+            }
         } else {
             artistNationality.setText(getString(R.string.not_applicable));
         }
