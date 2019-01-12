@@ -53,8 +53,8 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_height"
-            app:collapsedTitleGravity="start"
             android:fitsSystemWindows="true"
+            app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.example.android.artplace.ui.CustomCardView
+            <android.support.v7.widget.CardView
                 android:id="@+id/card_view_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -135,7 +135,8 @@
                         android:id="@+id/background_title_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="top">
+                        android:layout_gravity="top"
+                        android:background="@color/colorPrimaryDark">
 
                         <View
                             android:id="@+id/divider"
@@ -147,6 +148,7 @@
                             android:layout_marginEnd="@dimen/margin_16dp"
                             android:layout_marginRight="@dimen/margin_16dp"
                             android:background="@color/colorAccent"
+                            android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -181,6 +183,7 @@
                             android:gravity="center_horizontal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                             android:textColor="@android:color/white"
+                            android:textIsSelectable="true"
                             app:fontFamily="sans-serif-condensed"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
@@ -201,6 +204,7 @@
                             android:gravity="center_horizontal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/colorAccent"
+                            android:textIsSelectable="true"
                             android:textSize="@dimen/year_text_size"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -218,6 +222,7 @@
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
+                        android:textIsSelectable="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/artwork_category"
                         app:layout_constraintTop_toBottomOf="@+id/artwork_category"
@@ -231,6 +236,7 @@
                         android:layout_marginLeft="@dimen/margin_32dp"
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
+                        android:textIsSelectable="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/category_label"
                         app:layout_constraintTop_toTopOf="@+id/category_label"
@@ -244,6 +250,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginBottom="16dp"
+                        android:textIsSelectable="true"
                         app:layout_constraintBottom_toTopOf="@+id/artwork_info_markdown"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/artwork_dimens_cm"
@@ -350,41 +357,39 @@
                         tools:text="Artwork Additional Information" />
 
                 </android.support.constraint.ConstraintLayout>
-            </com.example.android.artplace.ui.CustomCardView>
+            </android.support.v7.widget.CardView>
 
             <TextView
                 android:id="@+id/artist_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_8dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
                 android:paddingStart="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:paddingLeft="@dimen/padding_6dp"
+                android:paddingTop="@dimen/padding_6dp"
                 android:paddingEnd="@dimen/padding_6dp"
+                android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/artist_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="@color/colorText" />
 
-            <include
-                layout="@layout/artist_detail_cardview"/>
+            <include layout="@layout/artist_detail_cardview" />
 
             <TextView
                 android:id="@+id/similar_artworks_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_8dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
                 android:paddingStart="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:paddingLeft="@dimen/padding_6dp"
+                android:paddingTop="@dimen/padding_6dp"
                 android:paddingEnd="@dimen/padding_6dp"
+                android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/similar_artworks_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="@color/colorText" />
 
-            <include
-                layout="@layout/similar_artworks_cardview"/>
+            <include layout="@layout/similar_artworks_cardview" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
@@ -394,6 +399,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:visibility="gone"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
 
@@ -401,14 +407,27 @@
         android:id="@+id/fav_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_16dp"
         android:contentDescription="@string/fab_contentDecription"
         android:tint="@android:color/white"
         app:behavior_autoHide="false"
         app:fabSize="normal"
-        app:layout_anchor="@id/appbar"
+        app:layout_anchor="@id/bottom_app_bar"
         app:layout_anchorGravity="bottom|center_horizontal"
         app:pressedTranslationZ="@dimen/fab_pressed_transition"
         app:srcCompat="@drawable/ic_favorite_border_24dp" />
+
+    <android.support.design.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:outlineAmbientShadowColor="@color/colorAccent"
+        android:outlineSpotShadowColor="@color/colorAccent"
+        app:fabAlignmentMode="center"
+        app:fabCradleMargin="6dp"
+        app:fabCradleRoundedCornerRadius="25dp"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        tools:targetApi="lollipop" />
 
 </android.support.design.widget.CoordinatorLayout>

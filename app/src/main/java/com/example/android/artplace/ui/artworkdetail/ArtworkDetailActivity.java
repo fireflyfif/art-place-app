@@ -123,8 +123,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     // Views of the Artwork
-    @BindView(R.id.card_view_content)
-    CustomCardView customCardView;
     @BindView(R.id.artwork_title)
     TextView artworkName;
     @BindView(R.id.artwork_artist_button)

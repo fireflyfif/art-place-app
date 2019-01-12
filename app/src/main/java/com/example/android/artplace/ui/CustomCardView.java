@@ -46,7 +46,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 
-
+// Custom View that draws a curve around a FAB. Currently not in use.
+// Source: https://proandroiddev.com/how-i-drew-custom-shapes-in-bottom-bar-c4539d86afd7
 public class CustomCardView extends CardView {
 
     private final int CURVE_CIRCLE_RADIUS = 256 / 2;
@@ -141,6 +142,4 @@ public class CustomCardView extends CardView {
         super.onDraw(canvas);
         canvas.drawPath(mPath, mPaint);
     }
-
-
 }
