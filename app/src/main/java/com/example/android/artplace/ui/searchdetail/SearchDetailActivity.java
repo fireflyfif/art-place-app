@@ -49,7 +49,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -59,21 +58,19 @@ import android.widget.TextView;
 
 
 import com.example.android.artplace.R;
-import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Self;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.artists.Artist;
-import com.example.android.artplace.model.artworks.MainImage;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
+import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -83,10 +80,11 @@ public class SearchDetailActivity extends AppCompatActivity {
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
     private int mLightMutedColor = 0xFFAAAAAA;
 
+    // Search Detail main Views
     @BindView(R.id.content_title)
     TextView contentTitle;
     @BindView(R.id.content_type)
-    TextView contentType;
+    Button contentType;
     @BindView(R.id.content_image)
     ImageView contentImage;
     @BindView(R.id.content_image2)
@@ -101,13 +99,32 @@ public class SearchDetailActivity extends AppCompatActivity {
     LinearLayout bgLayout;
     @BindView(R.id.card_view_content)
     CardView cardView;
-    @BindView(R.id.content_detail_description)
-    TextView detailDescription;
-    @BindView(R.id.content_detail_press_release)
-    TextView detailPressRelease;
     @BindView(R.id.read_more_button)
     Button readMoreButton;
 
+    // Show Card Views
+    @BindView(R.id.show_cardview)
+    CardView showCardView;
+    @BindView(R.id.show_bg)
+    View showBackground;
+    @BindView(R.id.show_start_date)
+    TextView showStartDate;
+    @BindView(R.id.show_start_label)
+    TextView showStartDateLabel;
+    @BindView(R.id.show_end_date)
+    TextView showEndDate;
+    @BindView(R.id.show_end_label)
+    TextView showEndDateLabel;
+    @BindView(R.id.show_description)
+    TextView showDescription;
+    @BindView(R.id.show_description_label)
+    TextView showDescriptionLabel;
+    @BindView(R.id.show_press_release)
+    TextView showPress;
+    @BindView(R.id.show_press_label)
+    TextView showPressLabel;
+
+    // Artist Card Views
     @BindView(R.id.artist_cardview)
     CardView artistCardView;
     @BindView(R.id.artist_name)
@@ -133,9 +150,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private ShowsDetailViewModel mShowsViewModel;
     private ArtistsDetailViewModel mArtistViewModel;
-
-    private String mStartDate;
-    private String mEndDate;
+    private int mGeneratedLightColor;
 
 
     @Override
@@ -162,124 +177,129 @@ public class SearchDetailActivity extends AppCompatActivity {
                                 PorterDuff.Mode.SRC_ATOP);
                     }
 
-                    String titleString = mResults.getTitle();
-                    String typeString = mResults.getType();
-                    String descriptionString = null;
-                    if (mResults.getDescription() != null) {
-                        descriptionString = mResults.getDescription();
-                        contentDescription.setText(descriptionString);
-                    } else {
-                        contentDescription.setVisibility(View.GONE);
-                    }
-
-                    Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
-
-                    collapsingToolbarLayout.setTitle(titleString);
-                    collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
-
-                    contentTitle.setText(titleString);
-                    contentType.setText(typeString);
-
-
-                    if (mResults.getLinks() != null) {
-                        LinksResult linksResult = mResults.getLinks();
-
-                        if (linksResult.getThumbnail() != null) {
-                            Thumbnail thumbnail = linksResult.getThumbnail();
-                            String imageThumbnailString = thumbnail.getHref();
-
-                            if (imageThumbnailString != null || imageThumbnailString.isEmpty()) {
-                                // Set the backdrop image
-                                Picasso.get()
-                                        .load(imageThumbnailString)
-                                        .placeholder(R.color.colorPrimary)
-                                        .error(R.color.colorPrimary)
-                                        .into(contentImage);
-
-                                // Set the second image
-                                Picasso.get()
-                                        .load(imageThumbnailString)
-                                        .placeholder(R.color.colorPrimary)
-                                        .error(R.color.colorPrimary)
-                                        .into(secondImage, new Callback() {
-                                            @Override
-                                            public void onSuccess() {
-                                                // Get the image as a bitmap
-                                                Bitmap bitmap = ((BitmapDrawable) secondImage.getDrawable()).getBitmap();
-                                                secondImage.setImageBitmap(bitmap);
-
-                                                // Get a color from the bitmap by using the Palette library
-                                                Palette palette = Palette.from(bitmap).generate();
-                                                int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
-
-                                                cardView.setCardBackgroundColor(generatedLightColor);
-                                                //bgLayout.setBackgroundColor(generatedLightColor);
-                                            }
-
-                                            @Override
-                                            public void onError(Exception e) {
-
-                                            }
-                                        });
-                            } else {
-                                // Set the backdrop image
-                                Picasso.get()
-                                        .load(R.color.colorPrimary)
-                                        .placeholder(R.color.colorPrimary)
-                                        .error(R.color.colorPrimary)
-                                        .into(contentImage);
-
-                                // Set the second image
-                                Picasso.get()
-                                        .load(R.color.colorPrimary)
-                                        .placeholder(R.color.colorPrimary)
-                                        .error(R.color.colorPrimary)
-                                        .into(secondImage);
-                            }
-
-
-                            Self self = linksResult.getSelf();
-                            String selfLinkString;
-                            if (self != null) {
-                                selfLinkString = self.getHref();
-                                Log.d(TAG, "Self Link: " + selfLinkString);
-
-                                artistCardView.setVisibility(View.GONE);
-
-                                if (typeString.equals("show")) {
-                                    // Init the View Model from the detail search content endpoint
-                                    initShowsContentViewModel(selfLinkString);
-                                }
-
-                                if (typeString.equals("artist")) {
-                                    artistCardView.setVisibility(View.VISIBLE);
-                                    initArtistContentViewModel(selfLinkString);
-                                }
-                            }
-
-                            Permalink permalink = linksResult.getPermalink();
-                            readMoreButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (permalink != null) {
-                                        String readMoreLink = permalink.getHref();
-                                        Log.d(TAG, "Perma Link: " + readMoreLink);
-                                        Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
-                                        openUrlIntent.setData(Uri.parse(readMoreLink));
-                                        startActivity(openUrlIntent);
-                                    }
-                                }
-                            });
-
-                        }
-                    }
+                    setupSearchUi(mResults);
                 }
             }
         }
     }
 
+    private void setupSearchUi(Result results) {
+        String titleString = results.getTitle();
+        String typeString = results.getType();
+        String descriptionString = null;
+        if (results.getDescription() != null) {
+            descriptionString = results.getDescription();
+            contentDescription.setText(descriptionString);
+
+            if (results.getDescription().isEmpty()) {
+                contentDescription.setVisibility(View.GONE);
+            }
+        }
+
+        Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
+
+        collapsingToolbarLayout.setTitle(titleString);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+
+        contentTitle.setText(titleString);
+        contentType.setText(typeString);
+
+        if (results.getLinks() != null) {
+            LinksResult linksResult = results.getLinks();
+
+            if (linksResult.getThumbnail() != null) {
+                Thumbnail thumbnail = linksResult.getThumbnail();
+                String imageThumbnailString = thumbnail.getHref();
+
+                if (imageThumbnailString != null || imageThumbnailString.isEmpty()) {
+                    // Set the backdrop image
+                    Picasso.get()
+                            .load(imageThumbnailString)
+                            .placeholder(R.color.colorPrimary)
+                            .error(R.color.colorPrimary)
+                            .into(contentImage);
+
+                    // Set the second image
+                    Picasso.get()
+                            .load(imageThumbnailString)
+                            .placeholder(R.color.colorPrimary)
+                            .error(R.color.colorPrimary)
+                            .into(secondImage, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    // Get the image as a bitmap
+                                    Bitmap bitmap = ((BitmapDrawable) secondImage.getDrawable()).getBitmap();
+                                    secondImage.setImageBitmap(bitmap);
+
+                                    // Get a color from the bitmap by using the Palette library
+                                    Palette palette = Palette.from(bitmap).generate();
+                                    mGeneratedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+
+                                    cardView.setCardBackgroundColor(mGeneratedLightColor);
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
+                } else {
+                    // Set the backdrop image
+                    Picasso.get()
+                            .load(R.color.colorPrimary)
+                            .placeholder(R.color.colorPrimary)
+                            .error(R.color.colorPrimary)
+                            .into(contentImage);
+
+                    // Set the second image
+                    Picasso.get()
+                            .load(R.color.colorPrimary)
+                            .placeholder(R.color.colorPrimary)
+                            .error(R.color.colorPrimary)
+                            .into(secondImage);
+                }
+
+
+                Self self = linksResult.getSelf();
+                String selfLinkString;
+                if (self != null) {
+                    selfLinkString = self.getHref();
+                    Log.d(TAG, "Self Link: " + selfLinkString);
+
+                    artistCardView.setVisibility(View.GONE);
+                    showCardView.setVisibility(View.GONE);
+
+                    if (typeString.equals("show")) {
+                        showCardView.setVisibility(View.VISIBLE);
+                        // Init the View Model from the detail search content endpoint
+                        initShowsContentViewModel(selfLinkString);
+                    }
+
+                    if (typeString.equals("artist")) {
+                        artistCardView.setVisibility(View.VISIBLE);
+                        initArtistContentViewModel(selfLinkString);
+                    }
+                }
+
+                Permalink permalink = linksResult.getPermalink();
+                readMoreButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (permalink != null) {
+                            String readMoreLink = permalink.getHref();
+                            Log.d(TAG, "Perma Link: " + readMoreLink);
+                            Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
+                            openUrlIntent.setData(Uri.parse(readMoreLink));
+                            startActivity(openUrlIntent);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     /**
-     * Method for initialising the views from the detail search View Model
+     * Method for initialising the views from the show search View Model
      *
      * @param selfLink is the link that should be passed as a link to be used as a new call
      */
@@ -300,19 +320,47 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private void setupShowsContentUi(ShowContent showContent) {
 
+        showBackground.setBackgroundColor(mGeneratedLightColor);
+
         if (showContent.getPressRelease() != null) {
             String pressRelease = showContent.getPressRelease();
-            detailPressRelease.setText(pressRelease);
+            showPress.setText(pressRelease);
+
+            if (showContent.getPressRelease().isEmpty()) {
+                showPress.setVisibility(View.GONE);
+                showPressLabel.setVisibility(View.GONE);
+            }
         }
 
         if (showContent.getDescription() != null) {
             String mDescription = showContent.getDescription();
-            detailDescription.setText(mDescription);
+            showDescription.setText(mDescription);
+
+            if (showContent.getDescription().isEmpty()) {
+                showDescription.setVisibility(View.GONE);
+                showDescriptionLabel.setVisibility(View.GONE);
+            }
         }
 
-        mStartDate = showContent.getStartAt();
-        mEndDate = showContent.getEndAt();
+        if (showContent.getStartAt() != null) {
+            String startDate = showContent.getStartAt();
+            showStartDate.setText(startDate);
 
+            if (showContent.getStartAt().isEmpty()) {
+                showStartDate.setVisibility(View.GONE);
+                showStartDateLabel.setVisibility(View.GONE);
+            }
+        }
+
+        if (showContent.getEndAt() != null) {
+            String endDate = showContent.getEndAt();
+            showEndDate.setText(endDate);
+
+            if (showContent.getEndAt().isEmpty()) {
+                showEndDate.setVisibility(View.GONE);
+                showEndDateLabel.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
@@ -324,18 +372,19 @@ public class SearchDetailActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable Artist artists) { // onChanged is never called?
                 if (artists != null) {
-                    setupUi(artists);
+                    setupArtistUi(artists);
                 }
             }
         });
     }
 
-    private void setupUi(Artist currentArtist) {
+    private void setupArtistUi(Artist currentArtist) {
 
         // Get the name of the artist
         if (currentArtist.getName() != null) {
             String artistNameString = currentArtist.getName();
             artistName.setText(artistNameString);
+            artistName.setBackgroundColor(mGeneratedLightColor);
             Log.d(TAG, "Artist name:" + artistNameString);
         } else {
             artistName.setText(getString(R.string.not_applicable));
@@ -348,8 +397,8 @@ public class SearchDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Artist hometown:" + artistHomeTownString);
 
             if (currentArtist.getHometown().isEmpty()) {
-                artistHomeTown.setVisibility(View.GONE);
-                hometownLabel.setVisibility(View.GONE);
+                artistHomeTown.setVisibility(View.INVISIBLE);
+                hometownLabel.setVisibility(View.INVISIBLE);
             }
         } else {
             artistHomeTown.setText(getString(R.string.not_applicable));
@@ -376,8 +425,8 @@ public class SearchDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Artist location:" + artistLocationString);
 
             if (currentArtist.getLocation().isEmpty()) {
-                artistLocation.setVisibility(View.GONE);
-                locationLabel.setVisibility(View.GONE);
+                artistLocation.setVisibility(View.INVISIBLE);
+                locationLabel.setVisibility(View.INVISIBLE);
             }
         } else {
             artistLocation.setText(getString(R.string.not_applicable));
@@ -389,46 +438,24 @@ public class SearchDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Artist nationality:" + artistNationalityString);
 
             if (currentArtist.getNationality().isEmpty()) {
-                artistNationality.setVisibility(View.GONE);
-                artistNationalityLabel.setVisibility(View.GONE);
+                artistNationality.setVisibility(View.INVISIBLE);
+                artistNationalityLabel.setVisibility(View.INVISIBLE);
             }
         } else {
             artistNationality.setText(getString(R.string.not_applicable));
         }
 
-        // Get the list of image versions first
-        List<String> imageVersionList = currentArtist.getImageVersions();
-        // Get the first entry from this list, which corresponds to "large"
-        String versionString = imageVersionList.get(0);
+        if (currentArtist.getBiography() != null) {
+            String artistBioString = currentArtist.getBiography();
+            artistBio.setText(artistBioString);
 
-        ImageLinks imageLinksObject = currentArtist.getLinks();
-        MainImage mainImageObject = imageLinksObject.getImage();
-        // Get the link for the current artist,
-        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-        String artistImgLinkString = mainImageObject.getHref();
-        // Replace the {image_version} from the artworkImgLinkString with
-        // the wanted version, e.g. "large"
-        String newArtistLinkString = artistImgLinkString
-                .replaceAll("\\{.*?\\}", versionString);
-
-        // Handle no image cases with placeholders
-       /* Picasso.get()
-                .load(Uri.parse(newArtistLinkString))
-                .placeholder(R.color.colorPrimary)
-                .error(R.color.colorPrimary)
-                .into(artistImage);*/
-
-       if (currentArtist.getBiography() != null) {
-           String artistBioString = currentArtist.getBiography();
-           artistBio.setText(artistBioString);
-
-           if (currentArtist.getBiography().isEmpty()) {
-               artistBio.setVisibility(View.GONE);
-               artistBioLabel.setVisibility(View.GONE);
-           }
-       } else {
-           artistBio.setVisibility(View.GONE);
-           artistBioLabel.setVisibility(View.GONE);
-       }
+            if (currentArtist.getBiography().isEmpty()) {
+                artistBio.setVisibility(View.GONE);
+                artistBioLabel.setVisibility(View.GONE);
+            }
+        } else {
+            artistBio.setVisibility(View.GONE);
+            artistBioLabel.setVisibility(View.GONE);
+        }
     }
 }

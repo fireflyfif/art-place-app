@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ PROJECT LICENSE
+  ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
+  ~
+  ~ According to Udacity Honor Code we agree that we will not plagiarize (a form of cheating) the work of others. :
+  ~ Plagiarism at Udacity can range from submitting a project you didn’t create to copying code into a program without
+  ~ citation. Any action in which you misleadingly claim an idea or piece of work as your own when it is not constitutes
+  ~ plagiarism.
+  ~ Read more here: https://udacity.zendesk.com/hc/en-us/articles/360001451091-What-is-plagiarism-
+  ~
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Iva Ivanova
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  ~
+  ~
+  -->
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/artwork_cardview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/margin_horizontal_cardview"
+    android:layout_marginLeft="@dimen/margin_horizontal_cardview"
+    android:layout_marginEnd="@dimen/margin_horizontal_cardview"
+    android:layout_marginRight="@dimen/margin_horizontal_cardview"
+    android:layout_marginBottom="@dimen/margin_bottom_cardview"
+    app:cardBackgroundColor="@color/cardBackground"
+    app:cardCornerRadius="3dp"
+    app:cardPreventCornerOverlap="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/content_constraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/background_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/colorPrimaryDark">
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginLeft="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/divider_margin_top"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginRight="@dimen/margin_16dp"
+                android:background="@color/colorAccent"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/artwork_artist_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:background="@android:color/transparent"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/colorAccent"
+                app:fontFamily="@font/amethysta"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider"
+                tools:text="Artist" />
+
+            <TextView
+                android:id="@+id/artwork_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@android:color/white"
+                android:textIsSelectable="true"
+                app:fontFamily="@font/amethysta"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artwork_artist_button"
+                tools:text="Artwork Title" />
+
+            <TextView
+                android:id="@+id/artwork_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:layout_marginBottom="@dimen/margin_8dp"
+                android:fontFamily="@font/amethysta"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/colorAccent"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/year_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artwork_title"
+                tools:text="1599-1600" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/artwork_medium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/artwork_category"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_category"
+            tools:text="Artwork Medium" />
+
+        <TextView
+            android:id="@+id/artwork_category"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_32dp"
+            android:layout_marginLeft="@dimen/margin_32dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            android:textIsSelectable="true"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/category_label"
+            app:layout_constraintTop_toTopOf="@+id/category_label"
+            tools:text="Artwork Category" />
+
+        <TextView
+            android:id="@+id/artwork_museum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            android:layout_marginBottom="16dp"
+            android:textIsSelectable="true"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintBottom_toTopOf="@+id/artwork_info_markdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/artwork_dimens_cm"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_dimens_cm"
+            tools:text="Artwork place of exhibiting" />
+
+        <TextView
+            android:id="@+id/artwork_dimens_cm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_8dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/artwork_dimens_in"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_dimens_in"
+            tools:text="80 × 55.6 cm" />
+
+        <TextView
+            android:id="@+id/artwork_dimens_in"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/artwork_medium"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_medium"
+            tools:text="31 1/2 × 21 7/8 in" />
+
+        <TextView
+            android:id="@+id/category_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_marginLeft="@dimen/margin_16dp"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:text="@string/category_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/background_title_layout" />
+
+        <TextView
+            android:id="@+id/medium_label"
+            style="@style/details_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/medium_label"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toStartOf="@+id/artwork_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/artwork_medium" />
+
+        <TextView
+            android:id="@+id/dimens_label"
+            style="@style/details_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:text="@string/dimensions_label"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toStartOf="@+id/artwork_dimens_in"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_medium" />
+
+        <TextView
+            android:id="@+id/museum_label"
+            style="@style/details_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:text="@string/museum_label"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toStartOf="@+id/artwork_museum"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_dimens_cm" />
+
+        <TextView
+            android:id="@+id/info_label"
+            style="@style/details_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/information_label"
+            app:fontFamily="@font/amethysta"
+            app:layout_constraintEnd_toStartOf="@+id/artwork_info_markdown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/artwork_info_markdown" />
+
+        <br.tiagohm.markdownview.MarkdownView
+            android:id="@+id/artwork_info_markdown"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginRight="@dimen/margin_8dp"
+            android:layout_marginBottom="@dimen/margin_8dp"
+            android:background="@color/colorBackground"
+            app:escapeHtml="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/artwork_medium"
+            app:layout_constraintTop_toBottomOf="@+id/artwork_museum"
+            tools:text="Artwork Additional Information" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

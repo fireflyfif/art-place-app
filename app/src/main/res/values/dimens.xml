@@ -68,4 +68,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="year_text_size">18sp</dimen>
     <dimen name="bg_protect_height">150dp</dimen>
     <dimen name="bottom_nav_margin">60dp</dimen>
+    <dimen name="margin_42dp">42dp</dimen>
+    <dimen name="padding_8dp">8dp</dimen>
 </resources>

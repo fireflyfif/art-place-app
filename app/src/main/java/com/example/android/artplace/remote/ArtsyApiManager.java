@@ -198,7 +198,7 @@ public class ArtsyApiManager {
 
         // TODO: Temp solution for getting the newest token
         //mToken = getNewToken();
-        mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0NzQwNjgxOSwiaWF0IjoxNTQ2ODAyMDE5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWMzMjUzNjNkZTdhMmYwM2QzMWViMWQ2In0.XuyNZ7IY1cHbiL-IVxyVE8Co0TzQo3ZAeiOG9WE9TbM";
+        mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0Nzk5NTI5MCwiaWF0IjoxNTQ3MzkwNDkwLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWMzYjRlMWFlNjE2ZDY1MDcyMjI4MGFkIn0.UmUzGi4GfrIkP9HdSapUbRtBoqDUriQrmbaVUxssxls";
 
         Log.d(TAG, "Token is: " + mToken);
 

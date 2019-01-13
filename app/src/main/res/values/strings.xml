@@ -55,4 +55,8 @@
     <string name="similar_artworks_label">Similar Artworks</string>
     <string name="read_more_button">Read more on Artsy</string>
     <string name="biography_label">Biography</string>
+    <string name="start_at">Start at</string>
+    <string name="end_at">End at</string>
+    <string name="press">Press</string>
+    <string name="description">Description</string>
 </resources>
