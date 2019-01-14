@@ -92,7 +92,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     private int mLastPosition = -1;
 
 
-    public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler, OnRefreshListener onRefreshListener) {
+    public ArtworkListAdapter(Context context, OnArtworkClickListener clickHandler,
+                              OnRefreshListener onRefreshListener) {
         super(Artwork.DIFF_CALLBACK);
         mContext = context;
         mClickHandler = clickHandler;
