@@ -131,6 +131,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        //position = holder.getAdapterPosition();
+        Log.d(TAG, "Get the position from onBindViewHolder(): " + position);
         if (holder instanceof ArtworkItemViewHolder) {
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
@@ -155,6 +157,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
     }
 
+    // Implement this method, as without the filtered list is producing an error
     @Override
     public int getItemCount() {
         if (mArtworkList != null) {
@@ -195,22 +198,25 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String artworkName = constraint.toString();
+                List<Artwork> filteredList = new ArrayList<>();
 
                 if (TextUtils.isEmpty(artworkName)) {
                     mArtworkList = getCurrentList();
                 } else {
-                    List<Artwork> filteredList = new ArrayList<>();
+                    //List<Artwork> filteredList = new ArrayList<>();
 
+                    // TODO: Add a constrain for the artist name too
                      for (Artwork currentArtwork : mArtworkList) {
                          if (currentArtwork.getTitle().toLowerCase().contains(artworkName.toLowerCase())) {
                              filteredList.add(currentArtwork);
                          }
                      }
                      mArtworkList = filteredList;
+                     Log.d(TAG, "Filtered list: " + filteredList.size());
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = mArtworkList;
+                filterResults.values = filteredList;
 
                 return filterResults;
             }
@@ -220,7 +226,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mArtworkList = (List<Artwork>) results.values;
 
-                notifyDataSetChanged();
+                notifyDataSetChanged(); // this method is called
             }
         };
     }
@@ -361,7 +367,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         public void onClick(View v) {
             // Get the item position from the PagedList!!!
             Artwork currentArtwork = getItem(getAdapterPosition());
-            mClickHandler.onArtworkClick(currentArtwork);
+            mClickHandler.onArtworkClick(currentArtwork, getAdapterPosition());
+            Log.d(TAG, "onClick position: " + getAdapterPosition());
         }
     }
 

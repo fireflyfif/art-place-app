@@ -39,5 +39,5 @@ import com.example.android.artplace.model.artworks.Artwork;
 
 // Interface for the item click callback
 public interface OnArtworkClickListener {
-    void onArtworkClick(Artwork artwork);
+    void onArtworkClick(Artwork artwork, int position);
 }

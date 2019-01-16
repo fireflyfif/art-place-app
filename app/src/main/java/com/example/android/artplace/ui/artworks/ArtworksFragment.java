@@ -292,13 +292,20 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     }
 
     @Override
-    public void onArtworkClick(Artwork artwork) {
+    public void onArtworkClick(Artwork artwork, int position) {
+
+        //getAdapter().notifyDataSetChanged();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
+        Log.d(TAG, "Get current list: " + getAdapter().getCurrentList().size());
 
         Intent intent = new Intent(getContext(), ArtworkDetailActivity.class);
         intent.putExtras(bundle);
+        // The position is not correct after filtering the list
+        intent.putExtra("position_key", position);
+        intent.putExtra("test_key", artwork.getId());
+        Log.d(TAG, "Sending current artwork id + position: " + artwork.getId() + " + " + position);
         startActivity(intent);
     }
 
@@ -347,7 +354,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                     getAdapter().getFilter().filter(query);
                     Log.d(TAG, "Current query: " + query);
                 }
-                return true;
+                return false;
             }
 
             @Override
@@ -355,7 +362,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 if (getAdapter() != null) {
                     getAdapter().getFilter().filter(newText);
                 }
-                return true;
+                return false;
             }
         });
     }

@@ -266,6 +266,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
+                // TODO: Testing the received intent. Remove later
+                String artworkId = bundle.getString("test_key", mArtworkObject.getId());
+                Log.d(TAG, "Received artwork id: " + artworkId);
+
                 setupUi(mArtworkObject);
             }
         }
