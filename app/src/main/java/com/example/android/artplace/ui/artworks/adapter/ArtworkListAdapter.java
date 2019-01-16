@@ -35,21 +35,27 @@
 
 package com.example.android.artplace.ui.artworks.adapter;
 
+import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,13 +74,15 @@ import com.example.android.artplace.utils.StringUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
-public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder> {
+public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder>
+        implements Filterable {
 
     private static final String TAG = ArtworkListAdapter.class.getSimpleName();
 
@@ -84,8 +92,12 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     private Context mContext;
     private NetworkState mNetworkState;
 
+    private List<Artwork> mArtworkList;
+
     private OnArtworkClickListener mClickHandler;
     private OnRefreshListener mRefreshHandler;
+
+
 
     private int mMutedColor = 0xFF333333;
     private int mLightMutedColor = 0xFFAAAAAA;
@@ -122,7 +134,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         if (holder instanceof ArtworkItemViewHolder) {
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
-                ((ArtworkItemViewHolder)holder).bindTo(getItem(position), position);
+                ((ArtworkItemViewHolder)holder).bindTo(mArtworkList.get(position));
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
@@ -143,6 +155,15 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
     }
 
+    @Override
+    public int getItemCount() {
+        if (mArtworkList != null) {
+            Log.d(TAG, "Current list: " + mArtworkList.size());
+            return mArtworkList.size();
+        }
+        return super.getItemCount();
+    }
+
     public void setNetworkState(NetworkState newNetworkState) {
         NetworkState previousState = mNetworkState;
         boolean previousExtraRow = hasExtraRow();
@@ -158,6 +179,56 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         } else if (newExtraRow && previousState != newNetworkState){
             notifyItemChanged(getItemCount() - 1);
         }
+    }
+
+    @Override
+    public void onCurrentListChanged(@Nullable PagedList<Artwork> currentList) {
+        super.onCurrentListChanged(currentList);
+
+        mArtworkList = currentList;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String artworkName = constraint.toString();
+
+                if (TextUtils.isEmpty(artworkName)) {
+                    mArtworkList = getCurrentList();
+                } else {
+                    List<Artwork> filteredList = new ArrayList<>();
+
+                     for (Artwork currentArtwork : mArtworkList) {
+                         if (currentArtwork.getTitle().toLowerCase().contains(artworkName.toLowerCase())) {
+                             filteredList.add(currentArtwork);
+                         }
+                     }
+                     mArtworkList = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mArtworkList;
+
+                return filterResults;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mArtworkList = (List<Artwork>) results.values;
+
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public void swapCatalogue(List<Artwork> artworkList) {
+        mArtworkList = artworkList;
+
+        notifyDataSetChanged();
     }
 
 
@@ -180,7 +251,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             itemView.setOnClickListener(this);
         }
 
-        private void bindTo(Artwork artwork, int position) {
+        private void bindTo(Artwork artwork) {
 
             // Get the thumbnail from the json tree
             if (artwork.getLinks() != null) {

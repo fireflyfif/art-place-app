@@ -37,5 +37,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/amethysta</item>
+        <item>@font/andika</item>
     </array>
 </resources>

@@ -38,9 +38,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_24dp"
+        android:orderInCategory="100"
+        android:title="Search Artworks"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
         android:id="@+id/action_refresh"
         android:title="@string/refresh"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_refresh_24dp"
         tools:ignore="HardcodedText" />

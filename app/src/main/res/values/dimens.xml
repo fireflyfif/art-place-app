@@ -35,7 +35,7 @@
 
 <resources>
 
-    <dimen name="card_view_margin">4dp</dimen>
+    <dimen name="card_view_margin">6dp</dimen>
     <dimen name="thumbnail_height">150dp</dimen>
     <dimen name="margin_4dp">4dp</dimen>
     <dimen name="padding_6dp">6dp</dimen>
@@ -70,4 +70,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="bottom_nav_margin">60dp</dimen>
     <dimen name="margin_42dp">42dp</dimen>
     <dimen name="padding_8dp">8dp</dimen>
+    <dimen name="card_view_vertical_margin">3dp</dimen>
+    <dimen name="fav_cardview_corners">5dp</dimen>
 </resources>

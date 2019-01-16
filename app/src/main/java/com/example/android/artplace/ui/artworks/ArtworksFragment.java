@@ -35,6 +35,7 @@
 
 package com.example.android.artplace.ui.artworks;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
@@ -49,6 +50,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +60,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 import com.example.android.artplace.ArtPlaceApp;
@@ -105,7 +108,11 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private TokenManager mTokenManager;
     private Tracker mTracker;
 
+    private PagedList<Artwork> mArtworksList;
+
     private String mTitle;
+
+    private SearchView mSearchView;
 
 
     public ArtworksFragment() {
@@ -190,7 +197,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 if (artworks != null) {
                     // When a new page is available, call submitList() method of the PagedListAdapter
                     mPagedListAdapter.submitList(artworks);
+                    mPagedListAdapter.swapCatalogue(artworks);
 
+                    mArtworksList = artworks;
                 }
             }
         });
@@ -250,6 +259,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 mPagedListAdapter.submitList(null);
                 // When a new page is available, call submitList() method of the PagedListAdapter
                 mPagedListAdapter.submitList(artworks);
+                //mPagedListAdapter.swapCatalogue(artworks);
+
+                mArtworksList = artworks;
             }
         });
 
@@ -305,6 +317,10 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         refreshArtworks();
     }
 
+    private ArtworkListAdapter getAdapter() {
+        return mPagedListAdapter;
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -316,6 +332,32 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         drawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.colorText));
         menu.findItem(R.id.action_refresh).setIcon(drawable);
+
+        // Set the Search View
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // TODO:
+                //query = String.valueOf(mSearchView.getQuery());
+                if (getAdapter() != null) {
+                    getAdapter().getFilter().filter(query);
+                    Log.d(TAG, "Current query: " + query);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (getAdapter() != null) {
+                    getAdapter().getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
     }
 
     @Override

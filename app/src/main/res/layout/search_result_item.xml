@@ -46,7 +46,7 @@
     android:foreground="?android:attr/selectableItemBackground"
     style="@style/Widget.MaterialComponents.CardView"
     app:cardPreventCornerOverlap="true"
-    app:cardCornerRadius="2dp"
+    app:cardCornerRadius="3dp"
     app:cardElevation="3dp"
     app:cardBackgroundColor="@color/cardBackground">
 
@@ -75,11 +75,12 @@
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
+            android:paddingTop="@dimen/padding_10dp"
             android:paddingEnd="@dimen/padding_10dp"
             android:paddingRight="@dimen/padding_10dp"
-            android:paddingBottom="@dimen/padding_16dp"
+            android:paddingBottom="@dimen/padding_10dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorAccentLight"
+            android:textColor="@color/colorAccentDark"
             android:textStyle="bold"
             tools:text="article" />
 
@@ -92,7 +93,6 @@
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
-            android:paddingTop="@dimen/padding_10dp"
             android:paddingEnd="@dimen/padding_10dp"
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_16dp"

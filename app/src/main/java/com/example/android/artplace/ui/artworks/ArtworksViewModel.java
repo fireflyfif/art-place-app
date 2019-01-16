@@ -60,6 +60,8 @@ public class ArtworksViewModel extends ViewModel {
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
 
+    private String mArtworkName;
+
     private static final int PAGE_SIZE = 80;
     private static final int INITIAL_SIZE_HINT = 50;
     private static final int PREFETCH_DISTANCE_HINT = 20;
@@ -144,4 +146,8 @@ public class ArtworksViewModel extends ViewModel {
 
         return mArtworkLiveData;
     }
+
+    /*private LiveData<PagedList<Artwork>> createFilteredArtworks(String artworkQuery) {
+        return new LivePagedListBuilder<>()
+    }*/
 }

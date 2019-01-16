@@ -125,11 +125,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             //mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
         }
 
-        if (getArguments() != null) {
-           // mTitle = getArguments().getString(ARG_SEARCH_TITLE);
-            //Objects.requireNonNull(getActivity()).setTitle(mTitle);
-        }
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -256,7 +251,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    public synchronized void requestNewCall(String typeWord) {
+    public synchronized void requestNewCall(String typedWord) {
 
         // Setup the RecyclerView first
         setupRecyclerView();
@@ -269,16 +264,16 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         }
 
         Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
-        Log.d(TAG, "requestNewCall: Type word: " + typeWord);
+        Log.d(TAG, "requestNewCall: Type word: " + typedWord);
 
         mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
-                mQueryWordString, typeWord);
+                mQueryWordString, typedWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory)
                 .get(SearchFragmentViewModel.class);
 
-        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString, typeWord)
+        mViewModel.refreshSearchLiveData(ArtPlaceApp.getInstance(), mQueryWordString, typedWord)
                 .observe(this, new Observer<PagedList<Result>>() {
 
             @Override
@@ -331,7 +326,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         // Set the Submit Button
-        mSearchView.setSubmitButtonEnabled(false);
+        mSearchView.setSubmitButtonEnabled(true);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
