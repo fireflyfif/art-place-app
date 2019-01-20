@@ -104,8 +104,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
-    private String mTitle;
-    private TokenManager mTokenManager;
 
     private SharedPreferences mSharedPreferences;
 
@@ -144,16 +142,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
         ButterKnife.bind(this, rootView);
-
-        /*mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
-                "prefs", MODE_PRIVATE));*/
-
-        // TODO: Save the token into SharedPreferences
-        /*if (mTokenManager.getNewToken().getToken() != null) {
-            // TODO: get the new token here
-            String newToken = mTokenManager.getNewToken().getToken();
-            Log.d(TAG, "Get the new token here: " + newToken);
-        }*/
 
         // Set the UI
         setupUi();

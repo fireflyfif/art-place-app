@@ -161,8 +161,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     TextView artistName;
     @BindView(R.id.artist_home)
     TextView artistHomeTown;
-    //    @BindView(R.id.artist_image)
-//    ImageView artistImage;
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
     @BindView(R.id.artist_location)
@@ -214,7 +212,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private Postprocessor mPostprocessor;
     private ImageRequest mImageRequest;
     private PipelineDraweeController mController;
-    private TokenManager mTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,15 +228,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        //mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
-
-        // TODO: Save the token into SharedPreferences
-        /*if (mTokenManager.getNewToken().getToken() != null) {
-            // TODO: get the new token here
-            String newToken = mTokenManager.getNewToken().getToken();
-            Log.d(TAG, "Get the new token here: " + newToken);
-        }*/
 
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
@@ -267,8 +255,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             if (mArtworkObject != null) {
                 // TODO: Testing the received intent. Remove later
-                String artworkId = bundle.getString("test_key", mArtworkObject.getId());
-                Log.d(TAG, "Received artwork id: " + artworkId);
+                //String artworkId = bundle.getString("test_key", mArtworkObject.getId());
+
 
                 setupUi(mArtworkObject);
             }
@@ -316,6 +304,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private void setupUi(Artwork currentArtwork) {
 
         mArtworkIdString = currentArtwork.getId();
+        Log.d(TAG, "Received artwork id: " + mArtworkIdString);
 
         // Set the Up Button Navigation to another color
         // source: https://stackoverflow.com/a/26837072/8132331
@@ -507,7 +496,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     startActivity(largeImageIntent);
                 }
             });
-
         }
 
         if (imageLinksObject.getArtists() != null) {
@@ -674,13 +662,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String newArtistLinkString = artistImgLinkString
                     .replaceAll("\\{.*?\\}", versionString);
 
-            // Handle no image cases with placeholders
-        /*Picasso.get()
-                .load(Uri.parse(newArtistLinkString))
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .into(artistImage);*/
-
             if (currentArtist.getBiography() != null) {
                 String artistBioString = currentArtist.getBiography();
                 artistBio.setText(artistBioString);
@@ -693,7 +674,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 artistBio.setVisibility(View.GONE);
                 artistBioLabel.setVisibility(View.GONE);
             }
-
         }
     }
 

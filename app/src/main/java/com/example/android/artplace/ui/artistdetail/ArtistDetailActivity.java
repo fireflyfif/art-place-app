@@ -115,15 +115,6 @@ public class ArtistDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        //mTokenManager = TokenManager.getInstance(getSharedPreferences("prefs", MODE_PRIVATE));
-
-        // TODO: Save the token into SharedPreferences
-        /*if (mTokenManager.getNewToken().getToken() != null) {
-            // TODO: get the new token here
-            String newToken = mTokenManager.getNewToken().getToken();
-            Log.d(TAG, "Get the new token here: " + newToken);
-        }*/
-
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {

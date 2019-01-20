@@ -97,8 +97,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     private OnArtworkClickListener mClickHandler;
     private OnRefreshListener mRefreshHandler;
 
-
-
     private int mMutedColor = 0xFF333333;
     private int mLightMutedColor = 0xFFAAAAAA;
     private int mLastPosition = -1;
@@ -136,7 +134,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         if (holder instanceof ArtworkItemViewHolder) {
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
-                ((ArtworkItemViewHolder)holder).bindTo(mArtworkList.get(position));
+                Artwork currentArtwork = mArtworkList.get(position);
+                ((ArtworkItemViewHolder) holder).bindTo(currentArtwork);
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
@@ -150,7 +149,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
     @Override
     public int getItemViewType(int position) {
-        if (hasExtraRow() && position == getItemCount() -1) {
+        if (hasExtraRow() && position == getItemCount() - 1) {
             return TYPE_PROGRESS;
         } else {
             return TYPE_ITEM;
@@ -179,7 +178,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             } else {
                 notifyItemInserted(getItemCount());
             }
-        } else if (newExtraRow && previousState != newNetworkState){
+        } else if (newExtraRow && previousState != newNetworkState) {
             notifyItemChanged(getItemCount() - 1);
         }
     }
@@ -197,26 +196,35 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String artworkName = constraint.toString();
+                String queryWord = constraint.toString().toLowerCase();
                 List<Artwork> filteredList = new ArrayList<>();
 
-                if (TextUtils.isEmpty(artworkName)) {
-                    mArtworkList = getCurrentList();
-                } else {
-                    //List<Artwork> filteredList = new ArrayList<>();
-
-                    // TODO: Add a constrain for the artist name too
-                     for (Artwork currentArtwork : mArtworkList) {
-                         if (currentArtwork.getTitle().toLowerCase().contains(artworkName.toLowerCase())) {
-                             filteredList.add(currentArtwork);
-                         }
-                     }
-                     mArtworkList = filteredList;
-                     Log.d(TAG, "Filtered list: " + filteredList.size());
-                }
-
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = filteredList;
+
+                if (TextUtils.isEmpty(queryWord)) {
+                    mArtworkList = getCurrentList();
+                    filterResults.values = mArtworkList;
+                    if (mArtworkList != null) {
+                        filterResults.count = mArtworkList.size();
+                    }
+                } else {
+                    // Add a constrain for the artist name and the category
+                    for (Artwork currentArtwork : mArtworkList) {
+
+                        String artworkTitle = currentArtwork.getTitle().toLowerCase();
+                        String artworkArtist = currentArtwork.getSlug().toLowerCase();
+                        String artworkCategory = currentArtwork.getCategory().toLowerCase();
+
+                        if (artworkTitle.contains(queryWord) || artworkArtist.contains(queryWord)
+                                || artworkCategory.contains(queryWord)) {
+                            filteredList.add(currentArtwork);
+                            mArtworkList = filteredList;
+                        }
+                    }
+                    filterResults.values = filteredList;
+                    filterResults.count = filteredList.size();
+                    Log.d(TAG, "Filtered list: " + filteredList.size());
+                }
 
                 return filterResults;
             }
@@ -225,15 +233,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mArtworkList = (List<Artwork>) results.values;
+                //results.count = mArtworkList.size();
+                Log.d(TAG, "Filtered list, publishResults: " + results.count);
 
-                notifyDataSetChanged(); // this method is called
+                swapCatalogue(mArtworkList);
             }
         };
     }
 
     public void swapCatalogue(List<Artwork> artworkList) {
         mArtworkList = artworkList;
-
         notifyDataSetChanged();
     }
 
@@ -249,6 +258,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         @BindView(R.id.artwork_artist)
         TextView artworkArtist;
 
+        private Artwork mCurrentItem; // allows this viewholder to keep a reference to the bound item
+
         private ArtworkItemViewHolder(View itemView) {
             super(itemView);
 
@@ -258,6 +269,9 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
 
         private void bindTo(Artwork artwork) {
+
+            // Important point from this SO post: https://stackoverflow.com/a/40749134/8132331
+            mCurrentItem = artwork; // Keeps a reference to the current item
 
             // Get the thumbnail from the json tree
             if (artwork.getLinks() != null) {
@@ -364,11 +378,11 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         }
 
         @Override
-        public void onClick(View v) {
-            // Get the item position from the PagedList!!!
-            Artwork currentArtwork = getItem(getAdapterPosition());
-            mClickHandler.onArtworkClick(currentArtwork, getAdapterPosition());
-            Log.d(TAG, "onClick position: " + getAdapterPosition());
+        public void onClick(View view) {
+
+            // Using the mCurrentItem make the position to update even after filtering the list
+            mClickHandler.onArtworkClick(mCurrentItem, this.getLayoutPosition());
+            Log.d(TAG, "onClick position: " + this.getLayoutPosition());
         }
     }
 
@@ -427,7 +441,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                 errorMessage.setVisibility(View.GONE);
                 refreshButton.setVisibility(View.GONE);
             }
-
         }
 
         @Override

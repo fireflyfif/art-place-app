@@ -60,7 +60,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
 import android.widget.TextView;
 
 import com.example.android.artplace.ArtPlaceApp;
@@ -73,13 +72,10 @@ import com.example.android.artplace.ui.artworkdetail.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
-import com.example.android.artplace.utils.TokenManager;
 import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -105,12 +101,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
     private ArtworksFragmentViewModelFactory mFactory;
-    private TokenManager mTokenManager;
     private Tracker mTracker;
 
     private PagedList<Artwork> mArtworksList;
-
-    private String mTitle;
 
     private SearchView mSearchView;
 
@@ -149,16 +142,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         View rootView = inflater.inflate(R.layout.fragment_artworks, container, false);
 
         ButterKnife.bind(this, rootView);
-
-        /*mTokenManager = TokenManager.getInstance(getActivity().getSharedPreferences(
-                "prefs", MODE_PRIVATE));*/
-
-        // TODO: Save the token into SharedPreferences
-        /*if (mTokenManager.getNewToken().getToken() != null) {
-            // TODO: get the new token here
-            String newToken = mTokenManager.getNewToken().getToken();
-            Log.d(TAG, "Get the new token here: " + newToken);
-        }*/
 
         // Set up the UI
         setupUi();
@@ -259,8 +242,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 mPagedListAdapter.submitList(null);
                 // When a new page is available, call submitList() method of the PagedListAdapter
                 mPagedListAdapter.submitList(artworks);
-                //mPagedListAdapter.swapCatalogue(artworks);
-
                 mArtworksList = artworks;
             }
         });
@@ -294,18 +275,12 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @Override
     public void onArtworkClick(Artwork artwork, int position) {
 
-        //getAdapter().notifyDataSetChanged();
-
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
         Log.d(TAG, "Get current list: " + getAdapter().getCurrentList().size());
 
         Intent intent = new Intent(getContext(), ArtworkDetailActivity.class);
         intent.putExtras(bundle);
-        // The position is not correct after filtering the list
-        intent.putExtra("position_key", position);
-        intent.putExtra("test_key", artwork.getId());
-        Log.d(TAG, "Sending current artwork id + position: " + artwork.getId() + " + " + position);
         startActivity(intent);
     }
 
@@ -344,7 +319,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setSubmitButtonEnabled(false);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -352,6 +327,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 //query = String.valueOf(mSearchView.getQuery());
                 if (getAdapter() != null) {
                     getAdapter().getFilter().filter(query);
+                    mPagedListAdapter.swapCatalogue(mArtworksList);
+
                     Log.d(TAG, "Current query: " + query);
                 }
                 return false;
@@ -359,8 +336,10 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
                 if (getAdapter() != null) {
                     getAdapter().getFilter().filter(newText);
+                    Log.d(TAG, "Current query: " + newText);
                 }
                 return false;
             }

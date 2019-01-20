@@ -148,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
-        //mPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
