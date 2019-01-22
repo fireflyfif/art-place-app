@@ -33,13 +33,14 @@
  *
  */
 
-package com.example.android.artplace.remote;
+package com.example.android.artplace.remote.authentication;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.token.TypeToken;
+import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.utils.TokenManager;
 
 import java.io.IOException;
@@ -49,11 +50,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
 import retrofit2.Call;
-import retrofit2.Callback;
 
 import static com.example.android.artplace.BuildConfig.CLIENT_ID;
 import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
-import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 
 public class TokenAuthenticator implements Authenticator {
@@ -76,38 +75,13 @@ public class TokenAuthenticator implements Authenticator {
         return INSTANCE;
     }
 
-    /*@Override
-    public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
-
-        // Get the token from the preferences
-        //TypeToken token = mTokenManager.getNewToken();
-
-        ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
-
-        Call<TypeToken> call = service.refreshToken(CLIENT_ID, CLIENT_SECRET);
-        retrofit2.Response<TypeToken> tokenResponse = call.execute();
-
-        if (tokenResponse.isSuccessful()) {
-            TypeToken newToken = tokenResponse.body();
-            if (newToken != null) {
-                mTokenManager.saveToken(newToken);
-                mToken = newToken.getToken();
-            }
-            Log.d(TAG, "Token: " + newToken);
-
-            return response.request().newBuilder().build();
-        } else {
-            return null;
-        }
-    }*/
-
     @Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
 
         // Get the token from the preferences
         //TypeToken token = mTokenManager.getNewToken();
-
-        ArtsyApiInterface service = ArtsyApiManager.createService(ArtsyApiInterface.class);
+        
+        TokenService tokenService = ArtsyApiManager.createService(TokenService.class);
 
         /*ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
@@ -139,7 +113,7 @@ public class TokenAuthenticator implements Authenticator {
                     }
                 });*/
 
-        Call<TypeToken> call = service.refreshToken(CLIENT_ID, CLIENT_SECRET);
+        Call<TypeToken> call = tokenService.refreshToken(CLIENT_ID, CLIENT_SECRET);
         retrofit2.Response<TypeToken> tokenResponse = call.execute();
 
         if (tokenResponse.isSuccessful()) {

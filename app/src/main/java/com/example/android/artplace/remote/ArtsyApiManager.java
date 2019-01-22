@@ -46,7 +46,7 @@ import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.token.TypeToken;
-import com.example.android.artplace.utils.TokenManager;
+import com.example.android.artplace.remote.authentication.TokenAuthenticator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -145,7 +145,7 @@ public class ArtsyApiManager {
         // mToken can't save the new value of the token from the response.
         // TODO: Find a way to store the value of the token!
 
-        ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
+       /* ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
                 .enqueue(new Callback<TypeToken>() {
 
                     TypeToken typeToken = new TypeToken();
@@ -176,7 +176,7 @@ public class ArtsyApiManager {
                     public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
                         Log.d(TAG, "OnFailure! " + t.getMessage());
                     }
-                });
+                });*/
 
         // The value is always null
         if (mToken == null) {

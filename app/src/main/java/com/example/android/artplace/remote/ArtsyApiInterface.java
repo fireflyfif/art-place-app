@@ -54,19 +54,6 @@ public interface ArtsyApiInterface {
 
 
     /**
-     * Endpoint for obtaining a new XAPP token
-     *
-     * @param clientId is the client ID
-     * @param clientSecret is the client Secret key
-     * @return a call to obtaining new token
-     */
-    @FormUrlEncoded
-    @POST("api/tokens/xapp_token")
-    Call<TypeToken> refreshToken(@Field("client_id") String clientId,
-                                 @Field("client_secret") String clientSecret);
-
-
-    /**
      * Endpoint for fetching Artworks
      * link: https://api.artsy.net/api/artworks?size=10 + header with token
      *
