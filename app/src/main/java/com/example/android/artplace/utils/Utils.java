@@ -41,5 +41,6 @@ public class Utils {
     private Utils() {}
 
     public static final String BASE_ARTSY_URL = "https://api.artsy.net/";
+    public static final String HEADER_TOKEN_KEY = "X-XAPP-Token";
 
 }

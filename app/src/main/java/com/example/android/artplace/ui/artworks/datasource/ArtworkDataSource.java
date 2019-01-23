@@ -46,7 +46,9 @@ import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.Links;
 import com.example.android.artplace.model.Next;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,8 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
     private ArtPlaceApp mAppController;
-    //private TokenManager mTokenManager;
+    private TokenManager mTokenManager;
+    private ArtsyRepository mRepository;
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
@@ -68,9 +71,10 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private String mNextUrl;
 
 
-    public ArtworkDataSource(ArtPlaceApp appController) {
+    public ArtworkDataSource(ArtPlaceApp appController, TokenManager tokenManager, ArtsyRepository repository) {
         mAppController = appController;
-        //mTokenManager = tokenManager;
+        mTokenManager = tokenManager;
+        mRepository = repository;
 
         mNetworkState = new MutableLiveData();
         mInitialLoading = new MutableLiveData();
@@ -92,7 +96,8 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi().getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+        //mRepository.getArtsyApi(mTokenManager).getArtworksData()
+        mRepository.getArtsyApi(mTokenManager).getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
             List<Artwork> artworkList = new ArrayList<>();
 

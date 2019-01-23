@@ -53,6 +53,8 @@ import retrofit2.Call;
 
 import static com.example.android.artplace.BuildConfig.CLIENT_ID;
 import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
+import static com.example.android.artplace.utils.Utils.HEADER_TOKEN_KEY;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 
 public class TokenAuthenticator implements Authenticator {
@@ -63,77 +65,40 @@ public class TokenAuthenticator implements Authenticator {
     private TokenManager mTokenManager;
     private String mToken;
 
-    private TokenAuthenticator() {
-
+    private TokenAuthenticator(TokenManager tokenManager) {
+        mTokenManager = tokenManager;
     }
 
-    static synchronized TokenAuthenticator getInstance() {
+    public static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator();
+            INSTANCE = new TokenAuthenticator(tokenManager);
         }
-
         return INSTANCE;
     }
 
     @Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
+        // Get token used in request
+        String token = response.header(HEADER_TOKEN_KEY);
+        Log.d(TAG, "The used token for the call: " + token);
+        synchronized (this) {
+            // Do the refresh in sync block to avoid multiple requests
 
-        // Get the token from the preferences
-        //TypeToken token = mTokenManager.getNewToken();
-        
-        TokenService tokenService = ArtsyApiManager.createService(TokenService.class);
+            // Get the currently stored token
+            String currentToken = mTokenManager.getToken();
 
-        /*ArtPlaceApp.getInstance().getToken().refreshToken(CLIENT_ID, CLIENT_SECRET)
-                .enqueue(new Callback<TypeToken>() {
-
-                    @Override
-                    public void onResponse(@NonNull Call<TypeToken> call, @NonNull retrofit2.Response<TypeToken> response) {
-
-                        if (response.isSuccessful()) {
-                            TypeToken tokenObject = response.body();
-                            if (tokenObject != null) {
-                                // Save the token into Shared Preferences
-                                mTokenManager.saveToken(tokenObject);
-                                //mToken = newToken.getToken();
-                                Log.d(TAG, "Token saved into SharedPrefs");
-                            }
-
-                            Log.d(TAG, "Get new Token loaded successfully! " + response.code());
-                        } else if (response.code() == HTTP_UNAUTHORIZED) {
-                            Log.d(TAG, "Response code 401 - Unauthorized!");
-                        } else {
-                            mToken = "";
-                            Log.d(TAG, "Get new Token loaded NOT successfully! " + response.code());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });*/
-
-        Call<TypeToken> call = tokenService.refreshToken(CLIENT_ID, CLIENT_SECRET);
-        retrofit2.Response<TypeToken> tokenResponse = call.execute();
-
-        if (tokenResponse.isSuccessful()) {
-            TypeToken tokenObject = tokenResponse.body();
-            String newToken = null;
-            if (tokenObject != null) {
-                mTokenManager.saveToken(tokenObject);
-                newToken = tokenObject.getToken();
-                Log.d(TAG, "Token from authenticate2 saved into SharedPrefs: " + newToken);
+            if (currentToken != null && currentToken.equals(token)) {
+                int code = mTokenManager.refreshToken();
+                Log.d(TAG, "The response code is: " + code);
             }
-
-            return response
-                    .request()
-                    .newBuilder()
-                    .header("X-XAPP-Token", newToken)
-                    .build();
-        } else {
-            return null;
         }
-    }
 
+        return response
+                .request()
+                .newBuilder()
+                .header(HEADER_TOKEN_KEY, mTokenManager.getToken())
+                .build();
+
+    }
 }
 

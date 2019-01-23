@@ -95,14 +95,14 @@ public class ArtPlaceApp extends Application {
         return sInstance;
     }
 
-    /*
+    /**
     Helper method that gets the context of the application
      */
     private static ArtPlaceApp get(Context context) {
         return (ArtPlaceApp) context.getApplicationContext();
     }
 
-    /*
+    /**
     Method that is used for initializing  the ViewModel,
     because the ViewModel class has a parameter of ArtPlaceApp
      */
@@ -114,9 +114,9 @@ public class ArtPlaceApp extends Application {
     /**
      * Method that creates a Retrofit instance from the ArtsyApiManager
      */
-    public ArtsyApiInterface getArtsyApi() {
+    public ArtsyApiInterface getArtsyApi(TokenManager tokenManager) {
         if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.createApiCall(ArtsyApiInterface.class);
+            mArtsyApi = ArtsyApiManager.createApiCall(ArtsyApiInterface.class, tokenManager);
         }
         return mArtsyApi;
     }

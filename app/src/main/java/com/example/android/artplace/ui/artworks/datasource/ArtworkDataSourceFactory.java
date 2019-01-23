@@ -40,6 +40,7 @@ import android.arch.paging.DataSource;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.TokenManager;
 
 public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
@@ -47,18 +48,21 @@ public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> 
     private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
     private ArtworkDataSource mDataSource;
     private ArtPlaceApp mArtPlaceApp;
-    //private TokenManager mTokenManager;
+    private TokenManager mTokenManager;
+    private ArtsyRepository mRepository;
 
 
-    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp) {
+    // TODO: Remove the ArtPlaceApp dependency
+    public ArtworkDataSourceFactory(ArtPlaceApp artPlaceApp, TokenManager tokenManager, ArtsyRepository repository) {
         mArtPlaceApp = artPlaceApp;
-        //mTokenManager = tokenManager;
+        mTokenManager = tokenManager;
+        mRepository = repository;
         mArtworksDataSourceLiveData = new MutableLiveData<>();
     }
 
     @Override
     public DataSource<Long, Artwork> create() {
-        mDataSource = new ArtworkDataSource(mArtPlaceApp);
+        mDataSource = new ArtworkDataSource(mArtPlaceApp, mTokenManager, mRepository);
         mArtworksDataSourceLiveData.postValue(mDataSource);
 
         return mDataSource;

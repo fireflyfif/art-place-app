@@ -48,6 +48,8 @@ import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.search.ShowContent;
+import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +71,6 @@ public class ArtsyRepository {
 
     // Private constructor of the Repository class
     private ArtsyRepository() {
-
         // Prevent from the reflection api
         if (INSTANCE != null) {
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
@@ -87,32 +88,14 @@ public class ArtsyRepository {
                 }
             }
         }
-
         return INSTANCE;
     }
 
-    /*private String getNewToken() {
-        String token = null;
-        
-        ArtPlaceApp.getInstance().getArtsyApi().refreshToken(CLIENT_ID, CLIENT_SECRET)
-                .enqueue(new Callback<TypeToken>() {
-            @Override
-            public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
-                // Get the token here
+    public ArtsyApiInterface getArtsyApi(TokenManager tokenManager) {
+        return ArtPlaceApp.getInstance().getArtsyApi(tokenManager);
+    }
 
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
-
-            }
-        });
-        
-        return token;
-    }*/
-
-
-    /*
+    /**
     Getter method to load the Similar Artworks
      */
     public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
@@ -129,7 +112,7 @@ public class ArtsyRepository {
 
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getSimilarArtLink(similarArtUrl)
+        getArtsyApi().getSimilarArtLink(similarArtUrl)
                 .enqueue(new Callback<ArtworkWrapperResponse>() {
 
                     ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
@@ -172,7 +155,7 @@ public class ArtsyRepository {
 
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getArtistLink(artistUrl)
+        getArtsyApi().getArtistLink(artistUrl)
                 .enqueue(new Callback<ArtistWrapperResponse>() {
                     ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
                     EmbeddedArtists embeddedArtists = new EmbeddedArtists();
@@ -222,7 +205,7 @@ public class ArtsyRepository {
 
         MutableLiveData<Artist> artistLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getArtistInfoFromLink(artistUrl)
+        getArtsyApi().getArtistInfoFromLink(artistUrl)
                 .enqueue(new Callback<Artist>() {
                     Artist artistData = new Artist();
 
@@ -259,7 +242,7 @@ public class ArtsyRepository {
 
         MutableLiveData<ShowContent> searchLiveData = new MutableLiveData<>();
 
-        ArtPlaceApp.getInstance().getArtsyApi().getDetailContentFromSearchLink(selfLink)
+        getArtsyApi().getDetailContentFromSearchLink(selfLink)
                 .enqueue(new Callback<ShowContent>() {
 
                     ShowContent showContent = new ShowContent();

@@ -46,6 +46,7 @@ import android.arch.paging.PagedList;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.artworks.Artwork;
@@ -67,18 +68,17 @@ public class ArtworksViewModel extends ViewModel {
     private static final int PREFETCH_DISTANCE_HINT = 20;
 
 
-    public ArtworksViewModel(ArtPlaceApp appController) {
-
-        init(appController);
+    public ArtworksViewModel(ArtPlaceApp appController, TokenManager tokenManager, ArtsyRepository repository) {
+        init(appController, tokenManager, repository);
     }
 
     /*
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init(ArtPlaceApp appController) {
+    private void init(ArtPlaceApp appController, TokenManager tokenManager, ArtsyRepository repository) {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory((ArtPlaceApp) appController);
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(appController, tokenManager, repository);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
@@ -121,7 +121,7 @@ public class ArtworksViewModel extends ViewModel {
     }
 
     public LiveData<NetworkState> getInitialLoading() {
-        return mNetworkState;
+        return mInitialLoading;
     }
 
     public LiveData<PagedList<Artwork>> getArtworkLiveData() {
