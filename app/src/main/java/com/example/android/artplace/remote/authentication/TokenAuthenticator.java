@@ -38,9 +38,6 @@ package com.example.android.artplace.remote.authentication;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.model.token.TypeToken;
-import com.example.android.artplace.remote.ArtsyApiInterface;
-import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.utils.TokenManager;
 
 import java.io.IOException;
@@ -49,12 +46,8 @@ import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
-import retrofit2.Call;
 
-import static com.example.android.artplace.BuildConfig.CLIENT_ID;
-import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
 import static com.example.android.artplace.utils.Utils.HEADER_TOKEN_KEY;
-import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 
 public class TokenAuthenticator implements Authenticator {
@@ -63,7 +56,6 @@ public class TokenAuthenticator implements Authenticator {
 
     private static TokenAuthenticator INSTANCE;
     private TokenManager mTokenManager;
-    private String mToken;
 
     private TokenAuthenticator(TokenManager tokenManager) {
         mTokenManager = tokenManager;
@@ -81,24 +73,20 @@ public class TokenAuthenticator implements Authenticator {
         // Get token used in request
         String token = response.header(HEADER_TOKEN_KEY);
         Log.d(TAG, "The used token for the call: " + token);
-        synchronized (this) {
-            // Do the refresh in sync block to avoid multiple requests
 
-            // Get the currently stored token
-            String currentToken = mTokenManager.getToken();
+        // Get the currently stored token
+        String currentToken = mTokenManager.getToken();
 
-            if (currentToken != null && currentToken.equals(token)) {
-                int code = mTokenManager.refreshToken();
-                Log.d(TAG, "The response code is: " + code);
-            }
+        // TODO: Check if the date is expired, do not check if token is the same!!!
+        if (currentToken != null && currentToken.equals(token)) {
+            // Refresh the token here
+            mTokenManager.fetchToken();
         }
-
         return response
                 .request()
                 .newBuilder()
                 .header(HEADER_TOKEN_KEY, mTokenManager.getToken())
                 .build();
-
     }
 }
 

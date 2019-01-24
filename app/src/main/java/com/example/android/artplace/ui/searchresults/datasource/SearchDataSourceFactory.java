@@ -40,6 +40,7 @@ import android.arch.paging.DataSource;
 
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.search.Result;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.TokenManager;
 
 public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
@@ -49,13 +50,13 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
     private ArtPlaceApp mArtPlaceApp;
     private String mArtQuery;
     private String mTypeString;
-    private TokenManager mTokenManager;
+    private ArtsyRepository mRepository;
 
-    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, String queryWord, String typeWord) {
+    public SearchDataSourceFactory(ArtPlaceApp artPlaceApp, ArtsyRepository repository, String queryWord, String typeWord) {
         mArtPlaceApp = artPlaceApp;
         mArtQuery = queryWord;
         mTypeString = typeWord;
-        //mTokenManager = tokenManager;
+        mRepository = repository;
 
         mSearchDataSourceMutableLiveData = new MutableLiveData<>();
     }
@@ -63,7 +64,7 @@ public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 
     @Override
     public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mArtQuery, mTypeString);
+        mSearchDataSource = new SearchDataSource(mArtPlaceApp, mRepository, mArtQuery, mTypeString);
         mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
 
         return mSearchDataSource;

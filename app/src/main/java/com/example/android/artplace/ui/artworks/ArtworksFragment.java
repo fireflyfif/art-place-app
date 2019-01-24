@@ -41,6 +41,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -70,18 +71,18 @@ import com.example.android.artplace.callbacks.SnackMessageListener;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.ui.artworkdetail.ArtworkDetailActivity;
 import com.example.android.artplace.ui.artworks.adapter.ArtworkListAdapter;
+import com.example.android.artplace.utils.Injection;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.RetrieveNetworkConnectivity;
+import com.example.android.artplace.utils.TokenManager;
 import com.google.android.gms.analytics.Tracker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
-/**
- * Use the {@link ArtworksFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener,
         SnackMessageListener {
 
@@ -103,6 +104,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private ArtworksFragmentViewModelFactory mFactory;
     private Tracker mTracker;
 
+    private TokenManager mTokenManager;
+    private SharedPreferences mPreferences;
+
     private PagedList<Artwork> mArtworksList;
 
     private SearchView mSearchView;
@@ -112,23 +116,16 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment ArtworksFragment.
-     */
-    public static ArtworksFragment newInstance(String param1, String param2) {
-        ArtworksFragment fragment = new ArtworksFragment();
-        Bundle args = new Bundle();
-        //args.putString(ARG_ARTWORKS_TITLE, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mPreferences = getActivity().getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+        // Initialize the TokenManager
+        mTokenManager = TokenManager.getInstance(mPreferences);
+        // Check if any token is being saved in ArtworksFragment
+        String token = mTokenManager.getToken();
+        Log.d(TAG, "Token taken from preferences: " + token);
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
@@ -168,7 +165,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModelFactory
-        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance());
+        mFactory = Injection.provideArtworksViewModelFactory(mTokenManager);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);
@@ -232,7 +229,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModelFactory
-        mFactory = new ArtworksFragmentViewModelFactory(ArtPlaceApp.getInstance());
+        mFactory = Injection.provideArtworksViewModelFactory(mTokenManager);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mFactory).get(ArtworksViewModel.class);

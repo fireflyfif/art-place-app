@@ -49,6 +49,7 @@ import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.remote.ArtsyApiInterface;
+import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;
@@ -68,31 +69,47 @@ public class ArtsyRepository {
     // before any read of sInstance variable
     private static volatile ArtsyRepository INSTANCE;
 
+    private TokenManager mTokenManager;
+
+
+   /* private void withRefresh(Runnable runnable) {
+        if (mTokenManager.fetchToken()) {
+            runnable.run()
+        }
+    }*/
 
     // Private constructor of the Repository class
-    private ArtsyRepository() {
+    private ArtsyRepository(TokenManager tokenManager) {
         // Prevent from the reflection api
         if (INSTANCE != null) {
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
         }
+        mTokenManager = tokenManager;
     }
 
-    public static ArtsyRepository getInstance() {
+    public static ArtsyRepository getInstance(TokenManager tokenManager) {
         // Double check locking pattern
         if (INSTANCE == null) {
 
             // if there is no instance available, create a new one
             synchronized (ArtsyRepository.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new ArtsyRepository();
+                    INSTANCE = new ArtsyRepository(tokenManager);
                 }
             }
         }
         return INSTANCE;
     }
 
-    public ArtsyApiInterface getArtsyApi(TokenManager tokenManager) {
-        return ArtPlaceApp.getInstance().getArtsyApi(tokenManager);
+    // TODO: Q: Should I add the TokenManager in the scope of this method?
+    public ArtsyApiInterface getArtsyApi() {
+        return ArtPlaceApp.getInstance().getArtsyApi(mTokenManager);
+        /*withRefresh(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });*/
     }
 
     /**

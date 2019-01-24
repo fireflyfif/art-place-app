@@ -71,6 +71,7 @@ import com.example.android.artplace.callbacks.OnResultClickListener;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.ui.searchdetail.SearchDetailActivity;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
+import com.example.android.artplace.utils.Injection;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.TokenManager;
 
@@ -78,6 +79,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
 public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
 
@@ -104,6 +106,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mTypeString;
+    private TokenManager mTokenManager;
 
     private SharedPreferences mSharedPreferences;
 
@@ -122,6 +125,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
             //mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
         }
+
+        mSharedPreferences = getActivity().getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+        // Initialize the TokenManager
+        mTokenManager = TokenManager.getInstance(mSharedPreferences);
+        // Check if any token is being saved in ArtworksFragment
+        String token = mTokenManager.getToken();
+        Log.d(TAG, "Token taken from preferences: " + token);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -142,6 +152,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
         ButterKnife.bind(this, rootView);
+
+        mViewModelFactory = Injection.provideSearchViewModelFactory(mTokenManager, mQueryWordString, mTypeString);
 
         // Set the UI
         setupUi();
@@ -172,9 +184,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
         Log.d(TAG, "setupUi: Type word: " + mTypeString);
-
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
-                mQueryWordString, mTypeString);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
@@ -253,9 +262,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
         Log.d(TAG, "requestNewCall: Type word: " + typedWord);
-
-        mViewModelFactory = new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(),
-                mQueryWordString, typedWord);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory)

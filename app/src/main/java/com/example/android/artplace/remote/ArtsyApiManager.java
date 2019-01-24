@@ -108,7 +108,6 @@ public class ArtsyApiManager {
         // TODO: Temp solution for getting the newest token
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0ODYwMDYwOSwiaWF0IjoxNTQ3OTk1ODA5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0NDhhYTEwYjY2YTM1YjU1OTFjYzFjIn0.hwDECmkK70y3Pl1VtBiRfek8Pspxrs7gMviIZoa-zLk";
 
-        // TODO: Q: How many Interceptors can I add?
         OkHttpClient newClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -126,6 +125,7 @@ public class ArtsyApiManager {
                         return chain.proceed(newRequest);
                     }
                 })
+                // Add the authenticator where the new token is being fetched
                 .authenticator(TokenAuthenticator.getInstance(tokenManager))
                 .addInterceptor(logsInterceptor)
                 .build();

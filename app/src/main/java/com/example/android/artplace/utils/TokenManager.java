@@ -36,6 +36,7 @@
 package com.example.android.artplace.utils;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.model.token.TypeToken;
@@ -44,18 +45,20 @@ import com.example.android.artplace.remote.authentication.TokenService;
 
 import java.io.IOException;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.android.artplace.BuildConfig.CLIENT_ID;
 import static com.example.android.artplace.BuildConfig.CLIENT_SECRET;
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
-/*
-Helper class for saving the token into SharedPreferences
+/**
+ * Helper class for saving the token into SharedPreferences
  */
 public class TokenManager {
 
     private static final String TAG = TokenManager.class.getSimpleName();
-    private static final String KEY_TOKEN = "GET_TOKEN";
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
@@ -76,7 +79,8 @@ public class TokenManager {
     }
 
     public void saveToken(TypeToken tokenObject) {
-        mEditor.putString(KEY_TOKEN, tokenObject.getToken()).commit();
+        mEditor.putString(KEY_TOKEN_PREFS, tokenObject.getToken()).commit();
+//        mEditor.putString(KEY_TOKEN_PREFS, tokenObject.ex()).commit();
     }
 
     public void deleteToken() {
@@ -84,7 +88,8 @@ public class TokenManager {
     }
 
     public String getToken() {
-        return mPrefs.getString(KEY_TOKEN, "");
+        return mPrefs.getString(KEY_TOKEN_PREFS, "");
+//        return mPrefs.getString(KEY_EXPIRY, "");
     }
 
     // TODO: Not sure if I need this method?
@@ -97,33 +102,48 @@ public class TokenManager {
         return token;
     }
 
-    public int refreshToken() {
-        TokenService tokenService = ArtsyApiManager.createService(TokenService.class);
+    public void fetchToken() {
+        /*final String token = // get token from shared preferences
+                if (isTokenValid(token)) {
 
-        Response<TypeToken> tokenResponse;
-        int responseCode = 0;
+        } else {*/
+        synchronized (this) {
+            getTokenService().refreshToken(CLIENT_ID, CLIENT_SECRET)
+                    .enqueue(new Callback<TypeToken>() {
+                        @Override
+                        public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
+                            if (response.isSuccessful()) {
+                                TypeToken tokenObject = response.body();
+                                if (tokenObject != null) {
+                                    // Save the token into SharedPreferences
+                                    saveToken(tokenObject);
 
-        try {
-            // TODO: Should I do this asynchronously with enqueue() method?
-            tokenResponse = tokenService.refreshToken(CLIENT_ID, CLIENT_SECRET).execute();
-            responseCode = tokenResponse.code();
-            Log.d(TAG, "Response code: " + responseCode);
+                                    // Check the token
+                                    Log.d(TAG, "Token saved into SharedPrefs: " + tokenObject.getToken());
+                                }
+                            } else {
+                                Log.e(TAG, "Error when fetching the toke: %s" + response.message());
+                            }
+                        }
 
-            if (tokenResponse.isSuccessful()) {
-                TypeToken tokenObject = tokenResponse.body();
-
-                String newToken;
-                if (tokenObject != null) {
-                    // Save the token into SharedPreferences
-                    saveToken(tokenObject);
-                    newToken = tokenObject.getToken();
-                    Log.d(TAG, "Token from authenticate2 saved into SharedPrefs: " + newToken);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+                        @Override
+                        public void onFailure(Call<TypeToken> call, Throwable t) {
+                            Log.e(TAG, "Error when fetching the toke");
+                        }
+                    });
         }
-
-        return responseCode;
     }
+
+    /**
+     * Create the service for fetching the token
+     * @return service for the Token
+     */
+    private TokenService getTokenService() {
+        if (mTokenService == null) {
+            mTokenService = ArtsyApiManager.createService(TokenService.class);
+        }
+        return mTokenService;
+    }
+
 }
+

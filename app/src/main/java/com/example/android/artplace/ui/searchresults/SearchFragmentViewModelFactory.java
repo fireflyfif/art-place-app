@@ -40,6 +40,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import com.example.android.artplace.ArtPlaceApp;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
 import com.example.android.artplace.utils.TokenManager;
 
@@ -48,13 +49,16 @@ public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory
     private ArtPlaceApp mApplication;
     private String mQueryWord;
     private String mTypeWord;
+    private ArtsyRepository mRepo;
     //private TokenManager mTokenManager;
 
-    public SearchFragmentViewModelFactory(ArtPlaceApp application, String queryWord, String typeWord) {
+    public SearchFragmentViewModelFactory(ArtPlaceApp application, ArtsyRepository repository,
+                                          String queryWord, String typeWord) {
 
         mApplication = application;
         mQueryWord = queryWord;
         mTypeWord = typeWord;
+        mRepo = repository;
         //mTokenManager = tokenManager;
     }
 
@@ -63,7 +67,7 @@ public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(SearchFragmentViewModel.class)) {
-            return (T) new SearchFragmentViewModel(mApplication, mQueryWord, mTypeWord);
+            return (T) new SearchFragmentViewModel(mApplication, mRepo, mQueryWord, mTypeWord);
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }

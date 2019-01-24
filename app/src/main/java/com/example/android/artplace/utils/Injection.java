@@ -33,60 +33,29 @@
  *
  */
 
-package com.example.android.artplace.ui.artistdetail;
+package com.example.android.artplace.utils;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-
-import com.example.android.artplace.model.artists.Artist;
-import com.example.android.artplace.model.artworks.Artwork;
+import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.repository.ArtsyRepository;
-import com.example.android.artplace.utils.TokenManager;
+import com.example.android.artplace.ui.artworks.ArtworksFragmentViewModelFactory;
+import com.example.android.artplace.ui.searchresults.SearchFragmentViewModelFactory;
 
-import java.util.List;
+public class Injection {
 
-public class ArtistsDetailViewModel extends ViewModel {
-
-    private LiveData<List<Artist>> mArtistListData;
-    private LiveData<Artist> mArtistData;
-    private LiveData<List<Artwork>> mSimilarArtworkLink;
-    private TokenManager mTokenManager;
-
-    public ArtistsDetailViewModel(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    private static ArtsyRepository provideRepository(TokenManager tokenManager) {
+        return ArtsyRepository.getInstance(tokenManager);
     }
 
-    public void initArtistDataFromArtwork(String artistUrl) {
-        if (mArtistListData != null) {
-            return;
-        }
-        mArtistListData = ArtsyRepository.getInstance(mTokenManager).getArtistFromLink(artistUrl);
+    public static ArtworksFragmentViewModelFactory provideArtworksViewModelFactory(TokenManager tokenManager) {
+        ArtsyRepository repository = provideRepository(tokenManager);
+        return new ArtworksFragmentViewModelFactory(repository);
     }
 
-    public void initArtistData(String artistUrl) {
-        if (mArtistData != null) {
-            return;
-        }
-        mArtistData = ArtsyRepository.getInstance(mTokenManager).getArtistInfoFromLink(artistUrl);
+    public static SearchFragmentViewModelFactory provideSearchViewModelFactory(
+            TokenManager tokenManager,
+            String queryWord,
+            String typeWord) {
+        ArtsyRepository repository = provideRepository(tokenManager);
+        return new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), repository, queryWord, typeWord);
     }
-
-    public void initSimilarArtworksData(String similarArtUrl) {
-        if (mSimilarArtworkLink != null) {
-            return;
-        }
-        mSimilarArtworkLink = ArtsyRepository.getInstance(mTokenManager).getSimilarArtFromLink(similarArtUrl);
-    }
-
-    public LiveData<List<Artist>> getArtistDataFromArtwork() {
-        return mArtistListData;
-    }
-
-    public LiveData<Artist> getArtistData() {
-        return mArtistData;
-    }
-
-    public LiveData<List<Artwork>> getSimilarArtworksData() {
-        return mSimilarArtworkLink;
-    }
-
 }

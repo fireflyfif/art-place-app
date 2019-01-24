@@ -37,7 +37,9 @@ package com.example.android.artplace.ui.searchdetail;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -65,14 +67,16 @@ import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.ShowContent;
+import com.example.android.artplace.ui.artistdetail.ArtistDetailViewModelFactory;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.example.android.artplace.utils.TokenManager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -149,7 +153,10 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView artistBioLabel;
 
     private ShowsDetailViewModel mShowsViewModel;
+    private ShowDetailViewModelFactory mShowFactory;
     private ArtistsDetailViewModel mArtistViewModel;
+    private ArtistDetailViewModelFactory mArtistFactory;
+    private TokenManager mTokenManager;
     private int mGeneratedLightColor;
 
 
@@ -164,6 +171,12 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        SharedPreferences preferences = getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+        // Initialize the TokenManager
+        mTokenManager = TokenManager.getInstance(preferences);
+        mArtistFactory = new ArtistDetailViewModelFactory(mTokenManager);
+        mShowFactory = new ShowDetailViewModelFactory(mTokenManager);
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {
@@ -304,7 +317,7 @@ public class SearchDetailActivity extends AppCompatActivity {
      * @param selfLink is the link that should be passed as a link to be used as a new call
      */
     private void initShowsContentViewModel(String selfLink) {
-        mShowsViewModel = ViewModelProviders.of(this).get(ShowsDetailViewModel.class);
+        mShowsViewModel = ViewModelProviders.of(this, mShowFactory).get(ShowsDetailViewModel.class);
         mShowsViewModel.initSearchLink(selfLink);
 
         mShowsViewModel.getResultSelfLink().observe(this, new Observer<ShowContent>() {
@@ -365,7 +378,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
 
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+        mArtistViewModel = ViewModelProviders.of(this, mArtistFactory).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistData(receivedArtistUrlString);
 
         mArtistViewModel.getArtistData().observe(this, new Observer<Artist>() {

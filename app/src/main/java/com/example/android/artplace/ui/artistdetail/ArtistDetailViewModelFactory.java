@@ -35,58 +35,27 @@
 
 package com.example.android.artplace.ui.artistdetail;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-import com.example.android.artplace.model.artists.Artist;
-import com.example.android.artplace.model.artworks.Artwork;
-import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.TokenManager;
 
-import java.util.List;
+public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
 
-public class ArtistsDetailViewModel extends ViewModel {
-
-    private LiveData<List<Artist>> mArtistListData;
-    private LiveData<Artist> mArtistData;
-    private LiveData<List<Artwork>> mSimilarArtworkLink;
     private TokenManager mTokenManager;
 
-    public ArtistsDetailViewModel(TokenManager tokenManager) {
+    public ArtistDetailViewModelFactory(TokenManager tokenManager) {
         mTokenManager = tokenManager;
     }
 
-    public void initArtistDataFromArtwork(String artistUrl) {
-        if (mArtistListData != null) {
-            return;
+    @SuppressWarnings("unchecked")
+    @NonNull
+    @Override
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        if (modelClass.isAssignableFrom(ArtistsDetailViewModel.class)) {
+            return (T) new ArtistsDetailViewModel(mTokenManager);
         }
-        mArtistListData = ArtsyRepository.getInstance(mTokenManager).getArtistFromLink(artistUrl);
+        throw new IllegalArgumentException("Unknown ViewModel class.");
     }
-
-    public void initArtistData(String artistUrl) {
-        if (mArtistData != null) {
-            return;
-        }
-        mArtistData = ArtsyRepository.getInstance(mTokenManager).getArtistInfoFromLink(artistUrl);
-    }
-
-    public void initSimilarArtworksData(String similarArtUrl) {
-        if (mSimilarArtworkLink != null) {
-            return;
-        }
-        mSimilarArtworkLink = ArtsyRepository.getInstance(mTokenManager).getSimilarArtFromLink(similarArtUrl);
-    }
-
-    public LiveData<List<Artist>> getArtistDataFromArtwork() {
-        return mArtistListData;
-    }
-
-    public LiveData<Artist> getArtistData() {
-        return mArtistData;
-    }
-
-    public LiveData<List<Artwork>> getSimilarArtworksData() {
-        return mSimilarArtworkLink;
-    }
-
 }

@@ -33,60 +33,19 @@
  *
  */
 
-package com.example.android.artplace.ui.artistdetail;
+package com.example.android.artplace.viewmodel;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-import com.example.android.artplace.model.artists.Artist;
-import com.example.android.artplace.model.artworks.Artwork;
-import com.example.android.artplace.repository.ArtsyRepository;
-import com.example.android.artplace.utils.TokenManager;
+// TODO: Do a generic ViewModelFactory with Dagger2
+public class ArtsyViewModelFactory implements ViewModelProvider.Factory {
 
-import java.util.List;
 
-public class ArtistsDetailViewModel extends ViewModel {
-
-    private LiveData<List<Artist>> mArtistListData;
-    private LiveData<Artist> mArtistData;
-    private LiveData<List<Artwork>> mSimilarArtworkLink;
-    private TokenManager mTokenManager;
-
-    public ArtistsDetailViewModel(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    @NonNull
+    @Override
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        return null;
     }
-
-    public void initArtistDataFromArtwork(String artistUrl) {
-        if (mArtistListData != null) {
-            return;
-        }
-        mArtistListData = ArtsyRepository.getInstance(mTokenManager).getArtistFromLink(artistUrl);
-    }
-
-    public void initArtistData(String artistUrl) {
-        if (mArtistData != null) {
-            return;
-        }
-        mArtistData = ArtsyRepository.getInstance(mTokenManager).getArtistInfoFromLink(artistUrl);
-    }
-
-    public void initSimilarArtworksData(String similarArtUrl) {
-        if (mSimilarArtworkLink != null) {
-            return;
-        }
-        mSimilarArtworkLink = ArtsyRepository.getInstance(mTokenManager).getSimilarArtFromLink(similarArtUrl);
-    }
-
-    public LiveData<List<Artist>> getArtistDataFromArtwork() {
-        return mArtistListData;
-    }
-
-    public LiveData<Artist> getArtistData() {
-        return mArtistData;
-    }
-
-    public LiveData<List<Artwork>> getSimilarArtworksData() {
-        return mSimilarArtworkLink;
-    }
-
 }

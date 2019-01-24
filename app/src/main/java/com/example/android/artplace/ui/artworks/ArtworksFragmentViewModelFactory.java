@@ -47,13 +47,10 @@ import com.example.android.artplace.utils.TokenManager;
 public class ArtworksFragmentViewModelFactory implements ViewModelProvider.Factory {
 
     private ArtPlaceApp mArtPlaceApp;
-    private TokenManager mTokenManager;
     private ArtsyRepository mRepository;
 
-    public ArtworksFragmentViewModelFactory(ArtPlaceApp application, TokenManager tokenManager,
-                                            ArtsyRepository repository) {
-        mArtPlaceApp = application;
-        mTokenManager = tokenManager;
+    public ArtworksFragmentViewModelFactory(ArtsyRepository repository) {
+        //mArtPlaceApp = application;
         mRepository = repository;
     }
 
@@ -62,7 +59,7 @@ public class ArtworksFragmentViewModelFactory implements ViewModelProvider.Facto
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ArtworksViewModel.class)) {
-            return (T) new ArtworksViewModel(mArtPlaceApp, mTokenManager, mRepository);
+            return (T) new ArtworksViewModel(mRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }

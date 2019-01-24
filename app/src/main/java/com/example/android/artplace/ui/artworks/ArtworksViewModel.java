@@ -53,6 +53,10 @@ import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.TokenManager;
 
+import static com.example.android.artplace.utils.Utils.INITIAL_SIZE_HINT;
+import static com.example.android.artplace.utils.Utils.PAGE_SIZE;
+import static com.example.android.artplace.utils.Utils.PREFETCH_DISTANCE_HINT;
+
 public class ArtworksViewModel extends ViewModel {
 
     private LiveData<NetworkState> mNetworkState;
@@ -61,24 +65,21 @@ public class ArtworksViewModel extends ViewModel {
     public LiveData<PagedList<Artwork>> mArtworkLiveData;
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
 
-    private String mArtworkName;
-
-    private static final int PAGE_SIZE = 80;
-    private static final int INITIAL_SIZE_HINT = 50;
-    private static final int PREFETCH_DISTANCE_HINT = 20;
+    private ArtsyRepository mRepo;
 
 
-    public ArtworksViewModel(ArtPlaceApp appController, TokenManager tokenManager, ArtsyRepository repository) {
-        init(appController, tokenManager, repository);
+    public ArtworksViewModel(ArtsyRepository repository) {
+        mRepo = repository;
+        init(repository);
     }
 
-    /*
+    /**
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init(ArtPlaceApp appController, TokenManager tokenManager, ArtsyRepository repository) {
+    private void init(ArtsyRepository repository) {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(appController, tokenManager, repository);
+        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(repository);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
@@ -147,7 +148,4 @@ public class ArtworksViewModel extends ViewModel {
         return mArtworkLiveData;
     }
 
-    /*private LiveData<PagedList<Artwork>> createFilteredArtworks(String artworkQuery) {
-        return new LivePagedListBuilder<>()
-    }*/
 }

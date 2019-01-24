@@ -36,6 +36,8 @@
 package com.example.android.artplace.ui.artistdetail;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -61,6 +63,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
 public class ArtistDetailActivity extends AppCompatActivity {
 
@@ -93,6 +97,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistBioLabel;
 
     private ArtistsDetailViewModel mArtistViewModel;
+    private ArtistDetailViewModelFactory mViewModelFactory;
     private Tracker mTracker;
     private TokenManager mTokenManager;
 
@@ -126,8 +131,13 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
+                SharedPreferences preferences = getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+                // Initialize the TokenManager
+                mTokenManager = TokenManager.getInstance(preferences);
+
                 // Initialize the ViewModel
-                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+                mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
+                mArtistViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ArtistsDetailViewModel.class);
                 mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
                 mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {

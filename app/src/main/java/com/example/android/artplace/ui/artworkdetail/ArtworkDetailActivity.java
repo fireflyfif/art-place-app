@@ -37,7 +37,9 @@ package com.example.android.artplace.ui.artworkdetail;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -80,6 +82,7 @@ import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.CustomCardView;
 import com.example.android.artplace.ui.LargeArtworkActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
+import com.example.android.artplace.ui.artistdetail.ArtistDetailViewModelFactory;
 import com.example.android.artplace.ui.artistdetail.ArtistsDetailViewModel;
 import com.example.android.artplace.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import com.example.android.artplace.utils.StringUtils;
@@ -103,6 +106,8 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
+
+import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
@@ -204,6 +209,8 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mSimilarArtworksLink;
 
     private ArtistsDetailViewModel mArtistViewModel;
+    private ArtistDetailViewModelFactory mViewModelFactory;
+    private TokenManager mTokenManager;
 
     private boolean mIsFavorite;
     private Tracker mTracker;
@@ -253,11 +260,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
+            SharedPreferences preferences = getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+            // Initialize the TokenManager
+            mTokenManager = TokenManager.getInstance(preferences);
+            mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
+
             if (mArtworkObject != null) {
-                // TODO: Testing the received intent. Remove later
-                //String artworkId = bundle.getString("test_key", mArtworkObject.getId());
-
-
                 setupUi(mArtworkObject);
             }
         }
@@ -542,7 +550,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      */
     private void initArtistViewModel(String artistLink) {
         // Initialize the ViewModel
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+        mArtistViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
 
         mArtistViewModel.getArtistDataFromArtwork().observe(this, new Observer<List<Artist>>() {

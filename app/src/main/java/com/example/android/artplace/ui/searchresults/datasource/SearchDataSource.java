@@ -46,6 +46,7 @@ import com.example.android.artplace.model.Next;
 import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
+import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
 import com.example.android.artplace.utils.TokenManager;
 
@@ -62,6 +63,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private static final String LOG_TAG = SearchDataSource.class.getSimpleName();
     private ArtPlaceApp mAppController;
     private TokenManager mTokenManager;
+    private ArtsyRepository mRepository;
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
@@ -71,10 +73,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mNextUrl;
 
 
-    public SearchDataSource(ArtPlaceApp appController, String queryWord, String typeWord) {
+    public SearchDataSource(ArtPlaceApp appController, ArtsyRepository repository, String queryWord, String typeWord) {
         mAppController = appController;
         mQueryString = queryWord;
         mTypeString = typeWord;
+        mRepository = repository;
         //mTokenManager = tokenManager;
 
         mNetworkState = new MutableLiveData<>();
@@ -99,7 +102,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
         Log.d(LOG_TAG, "loadInitial: type word: " + mTypeString);
 
-        mAppController.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
+        mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
                 new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
@@ -197,7 +200,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mAppController.getArtsyApi().getNextLinkForSearch(mNextUrl,
+        mRepository.getArtsyApi().getNextLinkForSearch(mNextUrl,
                 params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
 
             SearchWrapperResponse searchResponse = new SearchWrapperResponse();
