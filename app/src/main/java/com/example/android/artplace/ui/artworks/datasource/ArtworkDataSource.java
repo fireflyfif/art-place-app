@@ -160,76 +160,76 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
 
-        mRepository.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
-            ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
-            List<Artwork> artworkList = new ArrayList<>();
+            mRepository.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+                ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
+                List<Artwork> artworkList = new ArrayList<>();
 
-            Links links = new Links();
-            Next next = new Next();
+                Links links = new Links();
+                Next next = new Next();
 
-            @Override
-            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
+                @Override
+                public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
 
-                if (response.isSuccessful()) {
-                    artworkWrapperResponse = response.body();
-                    if (artworkWrapperResponse != null) {
-                        EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
+                    if (response.isSuccessful()) {
+                        artworkWrapperResponse = response.body();
+                        if (artworkWrapperResponse != null) {
+                            EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
 
-                        links = artworkWrapperResponse.getLinks();
-                        if (links != null) {
-                            next = links.getNext();
+                            links = artworkWrapperResponse.getLinks();
+                            if (links != null) {
+                                next = links.getNext();
 
-                            // Try and catch block doesn't crash the app,
-                            // and stops when there is no more next urls for next page
-                            try {
-                                mNextUrl = next.getHref();
-                            } catch (NullPointerException e) {
-                                Log.e(TAG, "The next.getHref() is null: " + e);
-                                // Return so that it stops repeating the same call
-                                return;
-                            } catch (Exception e) {
-                                Log.e(TAG, "The general exception is: " + e);
-                                // Return so that it stops repeating the same call
-                                return;
+                                // Try and catch block doesn't crash the app,
+                                // and stops when there is no more next urls for next page
+                                try {
+                                    mNextUrl = next.getHref();
+                                } catch (NullPointerException e) {
+                                    Log.e(TAG, "The next.getHref() is null: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                } catch (Exception e) {
+                                    Log.e(TAG, "The general exception is: " + e);
+                                    // Return so that it stops repeating the same call
+                                    return;
+                                }
+
+                                Log.d(TAG, "Link to next: " + mNextUrl);
                             }
 
-                            Log.d(TAG, "Link to next: " + mNextUrl);
-                        }
+                            if (embeddedArtworks.getArtworks() != null) {
+                                //long nextKey = params.key == 100 ? null: params.key + 30;
+                                long nextKey;
 
-                        if (embeddedArtworks.getArtworks() != null) {
-                            //long nextKey = params.key == 100 ? null: params.key + 30;
-                            long nextKey;
+                                if (params.key == embeddedArtworks.getArtworks().size()) {
+                                    nextKey = 0;
+                                } else {
+                                    nextKey = params.key + 100;
+                                }
 
-                            if (params.key == embeddedArtworks.getArtworks().size()) {
-                                nextKey = 0;
-                            } else {
-                                nextKey = params.key + 100;
+                                Log.d(TAG, "Next key : " + nextKey);
+
+                                artworkList = embeddedArtworks.getArtworks();
+
+                                callback.onResult(artworkList, nextKey);
+
+                                Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
                             }
 
-                            Log.d(TAG, "Next key : " + nextKey);
+                            Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
 
-                            artworkList = embeddedArtworks.getArtworks();
-
-                            callback.onResult(artworkList, nextKey);
-
-                            Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
+                            mNetworkState.postValue(NetworkState.LOADED);
+                            mInitialLoading.postValue(NetworkState.LOADED);
                         }
-
-                        Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
-
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                @Override
+                public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
 
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
-            }
-        });
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
+                }
+            });
 
     }
 }

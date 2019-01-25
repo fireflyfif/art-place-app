@@ -70,6 +70,7 @@ public class ArtsyRepository {
     private static volatile ArtsyRepository INSTANCE;
 
     private TokenManager mTokenManager;
+    private ArtsyApiInterface mService;
 
 
    /* private void withRefresh(Runnable runnable) {
@@ -103,7 +104,7 @@ public class ArtsyRepository {
 
     // TODO: Q: Should I add the TokenManager in the scope of this method?
     public ArtsyApiInterface getArtsyApi() {
-        return ArtPlaceApp.getInstance().getArtsyApi(mTokenManager);
+        return ArtsyApiManager.createApiCall(ArtsyApiInterface.class, mTokenManager);
         /*withRefresh(new Runnable() {
             @Override
             public void run() {
@@ -113,7 +114,7 @@ public class ArtsyRepository {
     }
 
     /**
-    Getter method to load the Similar Artworks
+     * Getter method to load the Similar Artworks
      */
     public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
         return loadSimilarArtworks(similarArtUrl);

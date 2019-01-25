@@ -62,17 +62,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.android.artplace.utils.Utils.BASE_ARTSY_URL;
 import static com.example.android.artplace.utils.Utils.HEADER_TOKEN_KEY;
 
+// TODO: Fix this class! It's too messy now!
 public class ArtsyApiManager {
 
     private final static OkHttpClient sClient = buildClient();
-    private final static Retrofit sRetrofit = buildRetrofit();
+    private final static Retrofit sRetrofit = buildRetrofit(sClient);
 
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
 
     private static OkHttpClient buildClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                // TODO: Q: How many interceptors can I add?
+                // TODO: No point of this interceptor here
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
@@ -86,14 +87,25 @@ public class ArtsyApiManager {
         return builder.build();
     }
 
-    private static Retrofit buildRetrofit() {
+    /**
+     * First Retrofit object
+     * TODO: Figure out if I can use only one object
+     * @return
+     */
+    private static Retrofit buildRetrofit(OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl(BASE_ARTSY_URL)
-                .client(ArtsyApiManager.sClient)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
+    /**
+     * Create service for fetching the token
+     * @param service
+     * @param <T>
+     * @return
+     */
     public static <T> T createService(Class<T> service) {
         return sRetrofit.create(service);
     }
@@ -106,10 +118,10 @@ public class ArtsyApiManager {
         logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         // TODO: Temp solution for getting the newest token
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0ODYwMDYwOSwiaWF0IjoxNTQ3OTk1ODA5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0NDhhYTEwYjY2YTM1YjU1OTFjYzFjIn0.hwDECmkK70y3Pl1VtBiRfek8Pspxrs7gMviIZoa-zLk";
+        //String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0ODYwMDYwOSwiaWF0IjoxNTQ3OTk1ODA5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0NDhhYTEwYjY2YTM1YjU1OTFjYzFjIn0.hwDECmkK70y3Pl1VtBiRfek8Pspxrs7gMviIZoa-zLk";
 
         OkHttpClient newClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
+                .addInterceptor(new Interceptor() { // why is this part skipped???
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         String tokenString = tokenManager.getToken();
@@ -130,16 +142,25 @@ public class ArtsyApiManager {
                 .addInterceptor(logsInterceptor)
                 .build();
 
-        Retrofit newRetrofit = getRetrofit(newClient);
+        Retrofit newRetrofit = sRetrofit
+                .newBuilder()
+                .client(newClient)
+                .build();
 
         return newRetrofit.create(service);
     }
 
+    /**
+     * Second Retrofit object
+     * @param newClient
+     * @return
+     */
     @NonNull
     private static Retrofit getRetrofit(OkHttpClient newClient) {
-        return sRetrofit
-                .newBuilder()
+        return new Retrofit.Builder()
+                .baseUrl(BASE_ARTSY_URL)
                 .client(newClient)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
