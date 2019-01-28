@@ -64,7 +64,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
+import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
 
 public class ArtistDetailActivity extends AppCompatActivity {
 
@@ -131,9 +131,9 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
-                SharedPreferences preferences = getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
                 // Initialize the TokenManager
-                mTokenManager = TokenManager.getInstance(preferences);
+                mTokenManager = TokenManager.getInstance(this);
 
                 // Initialize the ViewModel
                 mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);

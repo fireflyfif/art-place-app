@@ -74,14 +74,18 @@ public class TokenAuthenticator implements Authenticator {
         String token = response.header(HEADER_TOKEN_KEY);
         Log.d(TAG, "The used token for the call: " + token);
 
+        // Refresh the token here
+        // TODO: Don't refresh if already we have it saved and it's not expired
+        mTokenManager.fetchToken();
+
         // Get the currently stored token
-        String currentToken = mTokenManager.getToken();
+        //String currentToken = mTokenManager.getToken(); // gets null, because nothing is saved into SharedPrefs yet
 
         // TODO: Check if the date is expired, do not check if token is the same!!!
-        if (currentToken != null && currentToken.equals(token)) {
+        /*if (currentToken != null && currentToken.equals(token)) {
             // Refresh the token here
             mTokenManager.fetchToken();
-        }
+        }*/
         return response
                 .request()
                 .newBuilder()

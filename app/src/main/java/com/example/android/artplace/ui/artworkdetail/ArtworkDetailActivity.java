@@ -79,7 +79,6 @@ import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
-import com.example.android.artplace.ui.CustomCardView;
 import com.example.android.artplace.ui.LargeArtworkActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailActivity;
 import com.example.android.artplace.ui.artistdetail.ArtistDetailViewModelFactory;
@@ -107,7 +106,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
-import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
+import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
@@ -260,9 +259,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
-            SharedPreferences preferences = getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+            SharedPreferences preferences = getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
             // Initialize the TokenManager
-            mTokenManager = TokenManager.getInstance(preferences);
+            mTokenManager = TokenManager.getInstance(this);
             mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
 
             if (mArtworkObject != null) {

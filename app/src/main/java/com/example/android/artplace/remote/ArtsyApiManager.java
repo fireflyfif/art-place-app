@@ -72,9 +72,9 @@ public class ArtsyApiManager {
 
 
     private static OkHttpClient buildClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
                 // TODO: No point of this interceptor here
-                .addInterceptor(new Interceptor() {
+                /*.addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request();
@@ -82,7 +82,7 @@ public class ArtsyApiManager {
                         request = requestBuilder.build();
                         return chain.proceed(request);
                     }
-                });
+                });*/
 
         return builder.build();
     }
@@ -118,12 +118,17 @@ public class ArtsyApiManager {
         logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         // TODO: Temp solution for getting the newest token
-        //String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0ODYwMDYwOSwiaWF0IjoxNTQ3OTk1ODA5LCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0NDhhYTEwYjY2YTM1YjU1OTFjYzFjIn0.hwDECmkK70y3Pl1VtBiRfek8Pspxrs7gMviIZoa-zLk";
+        //String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0OTI2OTUzMCwiaWF0IjoxNTQ4NjY0NzMwLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0ZWJmOWE0ZDdiOTgxYWNiMTE2NzE1In0.BLgH_ZS50BmnJdiqfkZdeOjsEH1gxj6s2QG6UH1utJ";
 
         OkHttpClient newClient = new OkHttpClient.Builder()
+                // Add the authenticator where the new token is being fetched
+                .authenticator(TokenAuthenticator.getInstance(tokenManager))
                 .addInterceptor(new Interceptor() { // why is this part skipped???
                     @Override
                     public Response intercept(Chain chain) throws IOException {
+                        // Try to fetch the token here, although it's best to fetch it from authenticator
+                        //tokenManager.fetchToken();
+                        // The token needs to be saved first before it can be fetched from shared prefs
                         String tokenString = tokenManager.getToken();
                         Request newRequest = chain
                                 .request()
@@ -132,13 +137,11 @@ public class ArtsyApiManager {
                                 //.addHeader("X-XAPP-Token", token)
                                 .addHeader(HEADER_TOKEN_KEY, tokenString)
                                 .build();
-                        Log.d(TAG, "Token is: " + tokenString);
+                        Log.d(TAG, "Token in intercept is: " + tokenString);
 
                         return chain.proceed(newRequest);
                     }
                 })
-                // Add the authenticator where the new token is being fetched
-                .authenticator(TokenAuthenticator.getInstance(tokenManager))
                 .addInterceptor(logsInterceptor)
                 .build();
 

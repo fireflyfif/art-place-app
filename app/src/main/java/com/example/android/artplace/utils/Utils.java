@@ -45,5 +45,6 @@ public class Utils {
     public static final int PAGE_SIZE = 80;
     public static final int INITIAL_SIZE_HINT = 50;
     public static final int PREFETCH_DISTANCE_HINT = 20;
-    public static final String KEY_TOKEN_PREFS = "GET_TOKEN";
+    public static final String PREFS_TOKEN_KEY = "com.example.android.artplace.PREFS_TOKEN_KEY";
+    public static final String TOKEN_VALUE_KEY = "token_value";
 }

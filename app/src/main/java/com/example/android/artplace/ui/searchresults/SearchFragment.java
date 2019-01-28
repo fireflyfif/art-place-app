@@ -79,7 +79,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
+import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
 
 public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
 
@@ -126,9 +126,9 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             //mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
         }
 
-        mSharedPreferences = getActivity().getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+        //mSharedPreferences = getActivity().getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
         // Initialize the TokenManager
-        mTokenManager = TokenManager.getInstance(mSharedPreferences);
+        mTokenManager = TokenManager.getInstance(getActivity());
         // Check if any token is being saved in ArtworksFragment
         String token = mTokenManager.getToken();
         Log.d(TAG, "Token taken from preferences: " + token);

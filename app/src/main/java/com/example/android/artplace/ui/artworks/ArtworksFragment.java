@@ -63,7 +63,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnArtworkClickListener;
 import com.example.android.artplace.callbacks.OnRefreshListener;
@@ -80,7 +79,7 @@ import com.google.android.gms.analytics.Tracker;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.android.artplace.utils.Utils.KEY_TOKEN_PREFS;
+import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
 
 
 public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener,
@@ -120,9 +119,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPreferences = getActivity().getSharedPreferences(KEY_TOKEN_PREFS, Context.MODE_PRIVATE);
+        //mPreferences = getActivity().getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
         // Initialize the TokenManager
-        mTokenManager = TokenManager.getInstance(mPreferences);
+        mTokenManager = TokenManager.getInstance(getActivity());
         // Check if any token is being saved in ArtworksFragment
         String token = mTokenManager.getToken();
         Log.d(TAG, "Token taken from preferences: " + token);

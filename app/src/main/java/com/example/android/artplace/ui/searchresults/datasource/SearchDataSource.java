@@ -99,8 +99,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        Log.d(LOG_TAG, "loadInitial: query word: " + mQueryString);
-        Log.d(LOG_TAG, "loadInitial: type word: " + mTypeString);
+        Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString);
+        Log.d(LOG_TAG, "search loadInitial: type word: " + mTypeString);
 
         mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
                 new Callback<SearchWrapperResponse>() {
@@ -156,9 +156,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                 } else {
 
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
                     switch (response.code()) {
                         case 400:
                             //TODO: Make display the following error message:
@@ -169,6 +166,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                             break;
                     }
+
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+
 
                     Log.d(LOG_TAG, "Response code from initial load: " + response.code());
                 }

@@ -105,12 +105,6 @@ public class ArtsyRepository {
     // TODO: Q: Should I add the TokenManager in the scope of this method?
     public ArtsyApiInterface getArtsyApi() {
         return ArtsyApiManager.createApiCall(ArtsyApiInterface.class, mTokenManager);
-        /*withRefresh(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });*/
     }
 
     /**
