@@ -64,14 +64,13 @@ public class TokenManager {
     //private SharedPreferences.Editor mEditor;
     private Context mContext;
 
-    private TokenService mTokenService;
+    //private TokenService mTokenService;
 
     private static TokenManager INSTANCE;
 
     private TokenManager(Context context) {
         mContext = context;
         mPrefs = context.getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
-        //mEditor = mPrefs.edit();
     }
 
     public static synchronized TokenManager getInstance(Context context) {
@@ -112,7 +111,7 @@ public class TokenManager {
 
         } else {*/
         synchronized (this) {
-            getTokenService().refreshToken(CLIENT_ID, CLIENT_SECRET)
+            ArtsyApiManager.createService(TokenService.class).refreshToken(CLIENT_ID, CLIENT_SECRET)
                     .enqueue(new Callback<TypeToken>() {
                         @Override
                         public void onResponse(@NonNull Call<TypeToken> call, @NonNull Response<TypeToken> response) {
@@ -142,10 +141,10 @@ public class TokenManager {
      * @return service for the Token
      */
     private TokenService getTokenService() {
-        if (mTokenService == null) {
-            mTokenService = ArtsyApiManager.createService(TokenService.class);
-        }
-        return mTokenService;
+//        if (mTokenService == null) {
+//            mTokenService = ArtsyApiManager.createService(TokenService.class);
+//        }
+        return ArtsyApiManager.createService(TokenService.class);
     }
 
 }

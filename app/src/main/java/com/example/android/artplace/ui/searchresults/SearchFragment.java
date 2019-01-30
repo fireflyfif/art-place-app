@@ -130,8 +130,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         // Initialize the TokenManager
         mTokenManager = TokenManager.getInstance(getActivity());
         // Check if any token is being saved in ArtworksFragment
-        String token = mTokenManager.getToken();
-        Log.d(TAG, "Token taken from preferences: " + token);
+//        String token = mTokenManager.getToken();
+//        Log.d(TAG, "Token taken from preferences: " + token);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);

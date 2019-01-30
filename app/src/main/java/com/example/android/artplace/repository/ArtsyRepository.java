@@ -50,6 +50,7 @@ import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
+import com.example.android.artplace.remote.authentication.TokenService;
 import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class ArtsyRepository {
     private static volatile ArtsyRepository INSTANCE;
 
     private TokenManager mTokenManager;
-    private ArtsyApiInterface mService;
+    //private ArtsyApiInterface mService;
 
 
    /* private void withRefresh(Runnable runnable) {
@@ -106,6 +107,7 @@ public class ArtsyRepository {
     public ArtsyApiInterface getArtsyApi() {
         return ArtsyApiManager.createApiCall(ArtsyApiInterface.class, mTokenManager);
     }
+
 
     /**
      * Getter method to load the Similar Artworks

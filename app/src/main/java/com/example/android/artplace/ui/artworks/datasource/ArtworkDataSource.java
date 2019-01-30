@@ -127,6 +127,9 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     }
 
                     Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
+                } else if (response.code() == 401) {
+                    Log.d(TAG, "Error from the server message " + response.message());
+
                 } else {
 
                     mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));

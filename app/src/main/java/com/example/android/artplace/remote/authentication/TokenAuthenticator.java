@@ -49,7 +49,8 @@ import okhttp3.Route;
 
 import static com.example.android.artplace.utils.Utils.HEADER_TOKEN_KEY;
 
-
+// This class should be called when the token expires
+// source:https://github.com/square/okhttp/wiki/Recipes#handling-authentication
 public class TokenAuthenticator implements Authenticator {
 
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
@@ -74,8 +75,9 @@ public class TokenAuthenticator implements Authenticator {
         String token = response.header(HEADER_TOKEN_KEY);
         Log.d(TAG, "The used token for the call: " + token);
 
-        // Refresh the token here
+        // Refresh the token here: fetch and then save
         // TODO: Don't refresh if already we have it saved and it's not expired
+        // Always do it in a synchronise block
         mTokenManager.fetchToken();
 
         // Get the currently stored token

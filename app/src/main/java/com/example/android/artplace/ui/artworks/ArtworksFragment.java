@@ -123,8 +123,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Initialize the TokenManager
         mTokenManager = TokenManager.getInstance(getActivity());
         // Check if any token is being saved in ArtworksFragment
-        String token = mTokenManager.getToken();
-        Log.d(TAG, "Token taken from preferences: " + token);
+        //String token = mTokenManager.getToken();
+        //Log.d(TAG, "Token taken from preferences: " + token);
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);

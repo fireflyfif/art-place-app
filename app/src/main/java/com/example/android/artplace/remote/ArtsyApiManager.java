@@ -73,16 +73,6 @@ public class ArtsyApiManager {
 
     private static OkHttpClient buildClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-                // TODO: No point of this interceptor here
-                /*.addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-                        Request.Builder requestBuilder = request.newBuilder();
-                        request = requestBuilder.build();
-                        return chain.proceed(request);
-                    }
-                });*/
 
         return builder.build();
     }
@@ -117,19 +107,20 @@ public class ArtsyApiManager {
         HttpLoggingInterceptor logsInterceptor = new HttpLoggingInterceptor();
         logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        // TODO: Temp solution for getting the newest token
-        //String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTU0OTI2OTUzMCwiaWF0IjoxNTQ4NjY0NzMwLCJhdWQiOiI1YjNjZGRhMWNiNGMyNzE2ZTliZTQyOWYiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWM0ZWJmOWE0ZDdiOTgxYWNiMTE2NzE1In0.BLgH_ZS50BmnJdiqfkZdeOjsEH1gxj6s2QG6UH1utJ";
-
         OkHttpClient newClient = new OkHttpClient.Builder()
                 // Add the authenticator where the new token is being fetched
                 .authenticator(TokenAuthenticator.getInstance(tokenManager))
                 .addInterceptor(new Interceptor() { // why is this part skipped???
                     @Override
                     public Response intercept(Chain chain) throws IOException {
-                        // Try to fetch the token here, although it's best to fetch it from authenticator
-                        //tokenManager.fetchToken();
                         // The token needs to be saved first before it can be fetched from shared prefs
                         String tokenString = tokenManager.getToken();
+                        if (tokenString == null || tokenString.equals("")) {
+                            // The token should be fetch here only the first time, after that the
+                            // Authenticator will handle refreshing it
+                            tokenManager.fetchToken();
+                            Log.d(TAG, "Token in intercept is null");
+                        }
                         Request newRequest = chain
                                 .request()
                                 .newBuilder()
