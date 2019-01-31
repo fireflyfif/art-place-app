@@ -38,12 +38,14 @@ package com.example.android.artplace.remote;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.android.artplace.callbacks.FetchTokenCallback;
 import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.model.artists.CustomArtistsDeserializer;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
+import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.remote.authentication.TokenAuthenticator;
 import com.example.android.artplace.utils.TokenManager;
 import com.google.gson.Gson;
@@ -108,20 +110,24 @@ public class ArtsyApiManager {
         logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient newClient = new OkHttpClient.Builder()
-                // Add the authenticator where the new token is being fetched
-                .authenticator(TokenAuthenticator.getInstance(tokenManager))
-                .addInterceptor(new Interceptor() { // why is this part skipped???
+                .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
+                        Request newRequest;
+
                         // The token needs to be saved first before it can be fetched from shared prefs
                         String tokenString = tokenManager.getToken();
                         if (tokenString == null || tokenString.equals("")) {
+                            Log.d(TAG, "Token in intercept is null or empty");
                             // The token should be fetch here only the first time, after that the
                             // Authenticator will handle refreshing it
-                            tokenManager.fetchToken();
-                            Log.d(TAG, "Token in intercept is null");
+                            tokenManager.fetchTokenFirstTime();
+
+                            // Try to get it now from SharedPrefs
+                            tokenString = tokenManager.getToken();
                         }
-                        Request newRequest = chain
+
+                        newRequest = chain
                                 .request()
                                 .newBuilder()
                                 // Temp way of hard-coding the token
@@ -133,6 +139,8 @@ public class ArtsyApiManager {
                         return chain.proceed(newRequest);
                     }
                 })
+                // Add the authenticator where the refreshed token is being fetched
+                .authenticator(TokenAuthenticator.getInstance(tokenManager))
                 .addInterceptor(logsInterceptor)
                 .build();
 

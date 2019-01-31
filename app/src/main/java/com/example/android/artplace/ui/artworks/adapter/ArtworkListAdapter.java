@@ -160,7 +160,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     @Override
     public int getItemCount() {
         if (mArtworkList != null) {
-            Log.d(TAG, "Current list: " + mArtworkList.size());
             return mArtworkList.size();
         }
         return super.getItemCount();

@@ -40,9 +40,12 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.android.artplace.callbacks.FetchTokenCallback;
 import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.remote.ArtsyApiManager;
 import com.example.android.artplace.remote.authentication.TokenService;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -105,7 +108,30 @@ public class TokenManager {
         return token;
     }
 
-    public void fetchToken() {
+    public String fetchTokenFirstTime() {
+        Response<TypeToken> response;
+        String firstTimeToken = null;
+
+        synchronized (this) {
+            try {
+                response = ArtsyApiManager
+                        .createService(TokenService.class)
+                        .refreshToken(CLIENT_ID, CLIENT_SECRET)
+                        .execute();
+                if (response.isSuccessful()) {
+                    TypeToken typeToken = response.body();
+                    firstTimeToken = typeToken.getToken();
+                    saveToken(typeToken);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG, "First time token fetched: " + firstTimeToken);
+        return firstTimeToken;
+    }
+
+    public void fetchToken(FetchTokenCallback callback) {
         /*final String token = // get token from shared preferences
                 if (isTokenValid(token)) {
 
@@ -118,8 +144,15 @@ public class TokenManager {
                             if (response.isSuccessful()) {
                                 TypeToken tokenObject = response.body();
                                 if (tokenObject != null) {
+                                    String newToken = tokenObject.getToken();
+
+                                    // Get the value of the token as a reference in the callback
+                                    // source: https://stackoverflow.com/a/44881355/8132331
+                                    if(callback != null) {
+                                        callback.onSuccess(tokenObject);
+                                    }
                                     // Check the token
-                                    Log.d(TAG, "Token saved into SharedPrefs: " + tokenObject.getToken());
+                                    Log.d(TAG, "Token saved into SharedPrefs: " + newToken);
                                     // Save the token into SharedPreferences
                                     saveToken(tokenObject);
                                 }
@@ -131,6 +164,9 @@ public class TokenManager {
                         @Override
                         public void onFailure(Call<TypeToken> call, Throwable t) {
                             Log.e(TAG, "Error when fetching the toke");
+                            if (callback != null) {
+                                callback.onError(t);
+                            }
                         }
                     });
         }
