@@ -119,12 +119,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //mPreferences = getActivity().getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
         // Initialize the TokenManager
         mTokenManager = TokenManager.getInstance(getActivity());
-        // Check if any token is being saved in ArtworksFragment
-        //String token = mTokenManager.getToken();
-        //Log.d(TAG, "Token taken from preferences: " + token);
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
@@ -312,7 +308,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         menu.findItem(R.id.action_refresh).setIcon(drawable);
 
         // Set the Search View
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         mSearchView.setSubmitButtonEnabled(false);

@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.ui.searchresults;
 
-import android.app.Application;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -45,13 +44,11 @@ import android.arch.paging.PagedList;
 import android.util.Log;
 
 import com.example.android.artplace.AppExecutors;
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSource;
 import com.example.android.artplace.ui.searchresults.datasource.SearchDataSourceFactory;
 import com.example.android.artplace.utils.NetworkState;
-import com.example.android.artplace.utils.TokenManager;
 
 public class SearchFragmentViewModel extends ViewModel {
 
@@ -67,15 +64,12 @@ public class SearchFragmentViewModel extends ViewModel {
     private LiveData<NetworkState> mInitialLoading;
 
     private LiveData<PagedList<Result>> mResultPagedList;
-    private ArtPlaceApp mApplication;
     private String mQueryWord;
     private String mTypeWord;
     private ArtsyRepository mRepo;
-    //private TokenManager mTokenManager;
 
 
-    public SearchFragmentViewModel(ArtPlaceApp application, ArtsyRepository repository, String queryWord, String typeWord) {
-        mApplication = application;
+    public SearchFragmentViewModel(ArtsyRepository repository, String queryWord, String typeWord) {
         mQueryWord = queryWord;
         mTypeWord = typeWord;
         mRepo = repository;
@@ -86,7 +80,7 @@ public class SearchFragmentViewModel extends ViewModel {
     private void init() {
 
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory(mApplication, mRepo, mQueryWord, mTypeWord);
+        mSearchDataSourceFactory = new SearchDataSourceFactory(mRepo, mQueryWord, mTypeWord);
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
@@ -125,16 +119,16 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public LiveData<NetworkState> getInitialLoading() {
-        return mNetworkState;
+        return mInitialLoading;
     }
 
     public LiveData<PagedList<Result>> getSearchResultsLiveData() {
         return mResultPagedList;
     }
 
-    public LiveData<PagedList<Result>> refreshSearchLiveData(Application application, String queryWord, String typeWord) {
+    public LiveData<PagedList<Result>> refreshSearchLiveData(String queryWord, String typeWord) {
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory((ArtPlaceApp) application, mRepo, queryWord, typeWord);
+        mSearchDataSourceFactory = new SearchDataSourceFactory(mRepo, queryWord, typeWord);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()

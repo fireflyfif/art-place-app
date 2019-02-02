@@ -117,14 +117,15 @@ public class ArtsyApiManager {
 
                         // The token needs to be saved first before it can be fetched from shared prefs
                         String tokenString = tokenManager.getToken();
+                        // If there si no token saved in shared preferences, that means the app is
+                        // launched for the first time and we need to fetch the token
                         if (tokenString == null || tokenString.equals("")) {
                             Log.d(TAG, "Token in intercept is null or empty");
                             // The token should be fetch here only the first time, after that the
                             // Authenticator will handle refreshing it
-                            tokenManager.fetchTokenFirstTime();
+                            tokenString = tokenManager.fetchTokenFirstTime();
 
-                            // Try to get it now from SharedPrefs
-                            tokenString = tokenManager.getToken();
+                            Log.d(TAG, "Token fetched for the first time: " + tokenString);
                         }
 
                         newRequest = chain

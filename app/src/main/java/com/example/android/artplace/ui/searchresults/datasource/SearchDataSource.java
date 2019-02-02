@@ -61,8 +61,6 @@ import retrofit2.Response;
 public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     private static final String LOG_TAG = SearchDataSource.class.getSimpleName();
-    private ArtPlaceApp mAppController;
-    private TokenManager mTokenManager;
     private ArtsyRepository mRepository;
 
     private final MutableLiveData<NetworkState> mNetworkState;
@@ -73,12 +71,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     private String mNextUrl;
 
 
-    public SearchDataSource(ArtPlaceApp appController, ArtsyRepository repository, String queryWord, String typeWord) {
-        mAppController = appController;
+    public SearchDataSource(ArtsyRepository repository, String queryWord, String typeWord) {
         mQueryString = queryWord;
         mTypeString = typeWord;
         mRepository = repository;
-        //mTokenManager = tokenManager;
 
         mNetworkState = new MutableLiveData<>();
         mInitialLoading = new MutableLiveData<>();
@@ -101,6 +97,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
         Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString);
         Log.d(LOG_TAG, "search loadInitial: type word: " + mTypeString);
+
+        if (mQueryString == null || mQueryString.isEmpty()) {
+            mQueryString = "Andy Warhol";
+        }
 
         mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
                 new Callback<SearchWrapperResponse>() {
@@ -161,14 +161,18 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             //TODO: Make display the following error message:
                             // "Invalid type article,artist,artwork,city,fair,feature,gene,show,profile,sale,tag,page"
                             mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                         case 404:
-
+                            // TODO: Not found results
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                             break;
                     }
 
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    //mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    //mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
 
 
                     Log.d(LOG_TAG, "Response code from initial load: " + response.code());

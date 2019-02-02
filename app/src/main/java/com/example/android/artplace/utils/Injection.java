@@ -35,7 +35,6 @@
 
 package com.example.android.artplace.utils;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.ui.artworks.ArtworksFragmentViewModelFactory;
 import com.example.android.artplace.ui.searchresults.SearchFragmentViewModelFactory;
@@ -56,6 +55,6 @@ public class Injection {
             String queryWord,
             String typeWord) {
         ArtsyRepository repository = provideRepository(tokenManager);
-        return new SearchFragmentViewModelFactory(ArtPlaceApp.getInstance(), repository, queryWord, typeWord);
+        return new SearchFragmentViewModelFactory(repository, queryWord, typeWord);
     }
 }
