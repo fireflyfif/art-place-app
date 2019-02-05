@@ -111,6 +111,7 @@ public class TokenManager {
     public String fetchTokenFirstTime() {
         Response<TypeToken> response;
         String firstTimeToken = null;
+        String tokenExpirationDate = null;
 
         synchronized (this) {
             try {
@@ -121,13 +122,15 @@ public class TokenManager {
                 if (response.isSuccessful()) {
                     TypeToken typeToken = response.body();
                     firstTimeToken = typeToken.getToken();
+                    tokenExpirationDate = typeToken.getExpiresAt();
+
                     saveToken(typeToken);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "First time token fetched: " + firstTimeToken);
+        Log.d(TAG, "First time token fetched: " + firstTimeToken + " Expired at: " + tokenExpirationDate);
         return firstTimeToken;
     }
 

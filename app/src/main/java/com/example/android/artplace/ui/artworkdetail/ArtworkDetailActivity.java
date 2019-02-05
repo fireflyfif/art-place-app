@@ -37,9 +37,7 @@ package com.example.android.artplace.ui.artworkdetail;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,7 +65,9 @@ import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.ResultFromDbCallback;
 import com.example.android.artplace.database.entity.FavoriteArtworks;
+import com.example.android.artplace.model.ImageLinks;
 import com.example.android.artplace.model.SimilarArtworksLink;
+import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artworks.ArtistsLink;
 import com.example.android.artplace.model.artworks.Artwork;
@@ -75,8 +75,6 @@ import com.example.android.artplace.model.artworks.CmSize;
 import com.example.android.artplace.model.artworks.Dimensions;
 import com.example.android.artplace.model.artworks.InSize;
 import com.example.android.artplace.model.artworks.MainImage;
-import com.example.android.artplace.model.ImageLinks;
-import com.example.android.artplace.model.Thumbnail;
 import com.example.android.artplace.model.search.Permalink;
 import com.example.android.artplace.repository.FavArtRepository;
 import com.example.android.artplace.ui.LargeArtworkActivity;
@@ -105,8 +103,6 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
-
-import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
 
@@ -195,7 +191,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mCategoryString;
     private String mDateString;
     private String mMuseumString;
-    private String mNewArtworkLinkString;
+    private String mLargeArtworkLinkString;
     private String mNewSquareArtworkLinkString;
     private String mLargerImageLinkString;
     private String mArtistNameFromSlug;
@@ -259,7 +255,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
-            SharedPreferences preferences = getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
             // Initialize the TokenManager
             mTokenManager = TokenManager.getInstance(this);
             mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
@@ -402,37 +397,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             List<String> imageVersionList = currentArtwork.getImageVersions();
 
-            String versionLargeString;
+            String largeVersion = "large";
             // Check if the list with image version contains "large"
-            if (imageVersionList.contains("large")) {
-
-                // Set the version to "large"
-                versionLargeString = "large";
-                Log.d(TAG, "Version of the image: " + versionLargeString);
-            } else {
-
-                // Set the first String from the version list
-                versionLargeString = imageVersionList.get(0);
-                Log.d(TAG, "Version of the image: " + versionLargeString);
-            }
+            String versionLargeString = getVersionString(imageVersionList, largeVersion);
 
             // Get the sixth entry from this list, which corresponds to "square"
-            String versionSquareImageString;
-            if (imageVersionList.contains("square")) {
-                versionSquareImageString = "square";
-                Log.d(TAG, "Version of the square image: " + versionSquareImageString);
-            } else {
-                versionSquareImageString = imageVersionList.get(0);
-                Log.d(TAG, "Version of the square image: " + versionSquareImageString);
-            }
+            String squareVersion = "square";
+            String versionSquareImageString = getVersionString(imageVersionList, squareVersion);
 
-            String versionLargerImageString;
-            if (imageVersionList.contains("larger")) {
-                versionLargerImageString = "larger";
-            } else {
-                // If does not contain the requested version, take the first one in the list
-                versionLargerImageString = imageVersionList.get(0);
-            }
+            String largerVersion = "larger";
+            String versionLargerImageString = getVersionString(imageVersionList, largerVersion);
 
 
             // Get the link for the current artwork,
@@ -441,9 +415,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             // Replace the {image_version} from the artworkImgLinkString with
             // the wanted version, e.g. "large"
-            mNewArtworkLinkString = artworkImgLinkString
+            mLargeArtworkLinkString = artworkImgLinkString
                     .replaceAll("\\{.*?\\}", versionLargeString);
-            Log.d(TAG, "New link to the image: " + mNewArtworkLinkString);
+            Log.d(TAG, "New link to the image: " + mLargeArtworkLinkString);
 
             // Get the first entry from this list, which corresponds to "large"
             mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}",
@@ -457,36 +431,22 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             Thumbnail thumbnail = imageLinksObject.getThumbnail();
             mArtworkThumbnailString = thumbnail.getHref();
 
-            // Initialize Blur Post Processor
-            // Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-            mPostprocessor = new BlurPostprocessor(this, 20);
-
-            // Instantiate Image Request using Post Processor as parameter
-            mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mNewArtworkLinkString))
-                    .setPostprocessor(mPostprocessor)
-                    .build();
-
-            // Instantiate Controller
-            mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(mImageRequest)
-                    .setOldController(blurryImage.getController())
-                    .build();
-
-            // Load the blurred image
-            blurryImage.setController(mController);
+            // Make the image Blurry
+            makeImageBlurry(mNewSquareArtworkLinkString);
 
         }
 
-        // Set the square image with Picasso
-        if (mNewSquareArtworkLinkString == null || mNewSquareArtworkLinkString.isEmpty()) {
+        // Set the large image with Picasso
+        if (mLargeArtworkLinkString == null || mLargeArtworkLinkString.isEmpty()) {
             Picasso.get()
                     .load(R.color.colorPrimary)
                     .placeholder(R.color.colorPrimary)
                     .error(R.color.colorPrimary)
                     .into(artworkImage);
         } else {
+
             Picasso.get()
-                    .load(Uri.parse(mNewSquareArtworkLinkString))
+                    .load(Uri.parse(mLargeArtworkLinkString))
                     .placeholder(R.color.colorPrimary)
                     .error(R.color.colorPrimary)
                     .into(artworkImage);
@@ -540,6 +500,44 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         mSimilarArtworksLink = similarArtworksLink.getHref();
         Log.d(TAG, "Similar Artworks link: " + mSimilarArtworksLink);
         initSimilarViewModel(mSimilarArtworksLink);
+    }
+
+    private String getVersionString(List<String> imageVersionList, String versionString) {
+        int versionNumber;
+        String versionLargeString;
+        if (imageVersionList.contains(versionString)) {
+            versionNumber = imageVersionList.indexOf(versionString);
+            versionLargeString = imageVersionList.get(versionNumber);
+        } else {
+            // Get the first one no matter what is the value
+            versionLargeString = imageVersionList.get(0);
+        }
+        return versionLargeString;
+    }
+
+    /**
+     * Make the image blurry with the help of SimpleDraweeView View
+     * Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
+     *
+     * currently not in use
+     */
+    private void makeImageBlurry(String linkString) {
+        // Initialize Blur Post Processor
+        mPostprocessor = new BlurPostprocessor(this, 20);
+
+        // Instantiate Image Request using Post Processor as parameter
+        mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(linkString))
+                .setPostprocessor(mPostprocessor)
+                .build();
+
+        // Instantiate Controller
+        mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                .setImageRequest(mImageRequest)
+                .setOldController(blurryImage.getController())
+                .build();
+
+        // Load the blurred image
+        blurryImage.setController(mController);
     }
 
     /**
@@ -656,8 +654,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             // Get the list of image versions first
             List<String> imageVersionList = currentArtist.getImageVersions();
+            String versionString;
             // Get the first entry from this list, which corresponds to "large"
-            String versionString = imageVersionList.get(0);
+            String largeVersion = "large";
+            if (imageVersionList.contains(largeVersion)) {
+                int versionNumber = imageVersionList.indexOf(largeVersion);
+                versionString = imageVersionList.get(versionNumber);
+            } else {
+                versionString = imageVersionList.get(0);
+            }
 
             ImageLinks imageLinksObject = currentArtist.getLinks();
             MainImage mainImageObject = imageLinksObject.getImage();
@@ -772,7 +777,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         String artworkDate = mDateString;
         String artworkMuseum = mMuseumString;
         String artworkThumbnail = mArtworkThumbnailString;
-        String artworkImage = mNewArtworkLinkString;
+        String artworkImage = mLargeArtworkLinkString;
         String artworkDimensInch = mDimensInInchString;
         String artworkDimensCm = mDimensInCmString;
 

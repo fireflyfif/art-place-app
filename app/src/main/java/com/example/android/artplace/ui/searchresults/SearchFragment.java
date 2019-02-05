@@ -86,7 +86,9 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
     private static final String PREFERENCE_SEARCH_KEY = "search_prefs";
     private static final String PREFERENCE_SEARCH_WORD= "search_word";
+
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
+    private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
     private static final String RESULT_PARCEL_KEY = "results_key";
 
     @BindView(R.id.coordinator_layout)
@@ -121,7 +123,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         if (savedInstanceState != null) {
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
-            //mTitle = savedInstanceState.getString(ARG_SEARCH_TITLE);
+            mSearchType = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
         }
 
         // Initialize the TokenManager
@@ -136,7 +138,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         super.onSaveInstanceState(outState);
 
         outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
-       // outState.putString(ARG_SEARCH_TITLE, mTitle);
+        outState.putString(SEARCH_TYPE_SAVE_STATE, mSearchType);
     }
 
     @Nullable
@@ -169,15 +171,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private void setupUi() {
         // Setup the RecyclerView first
         setupRecyclerView();
-
-//        if (mQueryWordString == null || mQueryWordString.isEmpty()) {
-//            mQueryWordString = "Andy Warhol";
-//        }
-//
-//        //getActivity().setTitle(mQueryWordString);
-//
-//        Log.d(TAG, "setupUi: Query word: " + mQueryWordString);
-//        Log.d(TAG, "setupUi: Search Type word: " + mSearchType);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
@@ -247,6 +240,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         // Setup the RecyclerView first
         setupRecyclerView();
 
+        // TODO: Generate a method for getting the query word from shared preferences
         mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
         mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
 
@@ -254,8 +248,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             queryWord = "Andy Warhol";
         }
 
-        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString);
-        Log.d(TAG, "requestNewCall: Type word: " + mSearchType);
+        mQueryWordString = queryWord;
+        mSearchType = searchType;
+
+        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString + "\nBut the reference queryWord is: "
+                + queryWord);
+        Log.d(TAG, "requestNewCall: Type word: " + mSearchType + "\nBut the reference for search type is: "
+                + searchType);
 
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory)
@@ -301,6 +300,11 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         inflater.inflate(R.menu.search_menu, menu);
 
+        // TODO: Generate a method for getting the query word from shared preferences
+        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
+        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
+        Log.d(TAG, "onCreateOptionsMenu: Query word " + mQueryWordString);
+
         // Make the icon with a dynamic tint
         // source: https://stackoverflow.com/a/29916353/8132331
         Drawable drawable = menu.findItem(R.id.action_search).getIcon();
@@ -312,6 +316,12 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         SearchManager searchManager =
                 (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        if (mSearchView != null && !mQueryWordString.isEmpty()) {
+            mSearchView.onActionViewExpanded();
+            mSearchView.setQuery(mQueryWordString, true);
+            mSearchView.clearFocus();
+        }
+
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         // Set the Submit Button
         mSearchView.setSubmitButtonEnabled(false);
@@ -324,6 +334,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 // Save the search query into SharedPreference
                 saveToSharedPreference(query);
                 requestNewCall(query, mSearchType);
+                mQueryWordString = query;
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
 
                 return true;
@@ -333,7 +344,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "SearchFragment: onQueryTextChange called");
 
-                if (newText.length() > 0) {
+                if (newText.length() > 2) {
                     requestNewCall(newText, mSearchType);
                 }
 
@@ -350,7 +361,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             case R.id.action_search:
                 return true;
 
-            case R.id.action_type_article:
+            /*case R.id.action_type_article:
                 item.setChecked(true);
                 // Set the type to article
                 mSearchType = "article";
@@ -358,7 +369,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 requestNewCall(mQueryWordString, mSearchType);
 
                 Log.d(TAG, "Type word: " + mSearchType);
-                return true;
+                return true;*/
 
             case R.id.action_type_artist:
                 item.setChecked(true);

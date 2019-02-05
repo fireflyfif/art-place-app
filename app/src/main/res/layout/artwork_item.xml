@@ -58,12 +58,13 @@
         <ImageView
             android:id="@+id/artwork_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_4dp"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
-            android:scaleType="centerCrop" />
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"/>
 
         <TextView
             android:id="@+id/artwork_title"

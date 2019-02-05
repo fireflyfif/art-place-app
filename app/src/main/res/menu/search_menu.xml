@@ -49,11 +49,11 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_filter_list_black_24dp">
 
-        <item
+        <!--<item
             android:id="@+id/action_type_article"
             android:orderInCategory="1"
             android:title="@string/action_article"
-            app:showAsAction="never" />
+            app:showAsAction="never" />-->
 
         <item
             android:id="@+id/action_type_artist"

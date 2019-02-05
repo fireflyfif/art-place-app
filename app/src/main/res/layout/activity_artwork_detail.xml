@@ -52,10 +52,12 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorPrimary"
+            app:titleEnabled="false"
+            android:background="@color/colorBackground"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -67,19 +69,21 @@
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     android:src="@color/colorPrimaryDark" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
-                    android:layout_width="@dimen/artwork_detail_square"
-                    android:layout_height="@dimen/artwork_detail_square"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/square_image_margin"
-                    android:layout_marginBottom="@dimen/square_image_margin"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
-                    android:scaleType="fitCenter"
+                    android:scaleType="fitStart"
+                    android:adjustViewBounds="true"
                     android:src="@color/colorPrimary" />
 
                 <View

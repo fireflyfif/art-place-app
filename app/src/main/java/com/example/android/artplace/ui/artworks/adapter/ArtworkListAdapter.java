@@ -49,9 +49,11 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Filter;
@@ -291,7 +293,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                 if (artworkThumbnailString == null) {
 
-                    // TODO: Handle case where no "image_version" is provided by the JSON
+                    // Handle case where no "image_version" is provided by the JSON
                     if (artwork.getImageVersions() != null) {
 
                         List<String> imageVersionList = artwork.getImageVersions();
@@ -336,6 +338,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                 // Set the image with Picasso
                 // Check first if the url in null or empty
                 if (artworkThumbnailString == null || artworkThumbnailString.isEmpty()) {
+
                     // If it's empty or null -> set the placeholder
                     Picasso.get()
                             .load(R.color.colorPrimary)
@@ -355,13 +358,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
                                     Bitmap bitmap = ((BitmapDrawable)
                                             artworkThumbnail.getDrawable()).getBitmap();
                                     artworkThumbnail.setImageBitmap(bitmap);
-
-                                    Palette palette = Palette.from(bitmap).generate();
-                                    int generatedMutedColor = palette.getMutedColor(mMutedColor);
-                                    int generatedLightColor = palette.getLightVibrantColor(mLightMutedColor);
-
-                                    //artworkCard.setCardBackgroundColor(generatedMutedColor);
-                                    //artworkArtist.setTextColor(generatedLightColor);
 
                                     // Set the item animator here
                                     //setItemAnimator(itemView, position);
