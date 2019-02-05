@@ -657,12 +657,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             String versionString;
             // Get the first entry from this list, which corresponds to "large"
             String largeVersion = "large";
-            if (imageVersionList.contains(largeVersion)) {
-                int versionNumber = imageVersionList.indexOf(largeVersion);
-                versionString = imageVersionList.get(versionNumber);
-            } else {
-                versionString = imageVersionList.get(0);
-            }
+            versionString = getVersionString(imageVersionList, largeVersion);
 
             ImageLinks imageLinksObject = currentArtist.getLinks();
             MainImage mainImageObject = imageLinksObject.getImage();

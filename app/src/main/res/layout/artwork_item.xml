@@ -33,21 +33,23 @@
   ~
   -->
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
+    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    style="@style/Widget.MaterialComponents.CardView"
+    app:cardBackgroundColor="@color/colorBackground"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="0dp"
     app:cardPreventCornerOverlap="true"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="3dp"
-    app:cardBackgroundColor="@color/cardBackground">
+    app:strokeColor="@color/colorLightGray"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,19 +61,19 @@
             android:id="@+id/artwork_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_4dp"
+            android:layout_marginBottom="@dimen/margin_16dp"
+            android:adjustViewBounds="true"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
-            android:scaleType="fitStart"
-            android:adjustViewBounds="true"/>
+            android:scaleType="fitStart" />
 
         <TextView
             android:id="@+id/artwork_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/amethysta"
+            android:fontFamily="@font/poppins_light"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
@@ -80,7 +82,8 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
             android:textStyle="bold"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
@@ -89,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/amethysta"
+            android:fontFamily="@font/poppins"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
@@ -98,7 +101,8 @@
             android:paddingBottom="@dimen/padding_16dp"
             android:textAllCaps="true"
             android:textColor="@color/colorText"
+            android:textSize="14sp"
             tools:text="Artist name" />
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</android.support.design.card.MaterialCardView>
