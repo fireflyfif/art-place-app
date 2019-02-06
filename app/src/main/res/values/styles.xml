@@ -76,6 +76,8 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
 
+    <!--Custom Progress Bar,
+    source: http://www.zoftino.com/android-progressbar-and-custom-progressbar-examples -->
     <style name="MyProgressBarRectangle" parent="@style/Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateDrawable">@drawable/progressbar_custom</item>
         <item name="android:minHeight">80dp</item>

@@ -44,11 +44,11 @@
                     android:fromDegrees="45"
                     android:pivotX="50%"
                     android:pivotY="50%"
-                    android:toDegrees="-315">
+                    android:toDegrees="405">
                     <shape android:shape="rectangle">
                         <size
                             android:width="80dp"
-                            android:height="80dp"/>
+                            android:height="90dp"/>
                         <stroke
                             android:width="6dp"
                             android:color="@color/colorAccent"/>
@@ -60,11 +60,11 @@
                     android:fromDegrees="90"
                     android:pivotX="50%"
                     android:pivotY="50%"
-                    android:toDegrees="270">
+                    android:toDegrees="-450">
                     <shape android:shape="rectangle">
                         <size
                             android:width="80dp"
-                            android:height="80dp"/>
+                            android:height="90dp"/>
                         <stroke
                             android:width="6dp"
                             android:color="@color/colorBackgroundDarker"/>

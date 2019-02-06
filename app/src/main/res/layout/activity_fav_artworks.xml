@@ -78,6 +78,7 @@
         android:id="@+id/fav_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/MyProgressBarRectangle"
         android:layout_gravity="center" />
 
 </android.support.design.widget.CoordinatorLayout>
