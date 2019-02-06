@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
@@ -34,21 +33,12 @@
   ~
   -->
 
-<resources>
-    <color name="colorPrimary">#fafafa</color>
-    <color name="colorPrimaryDark">#c7c7c7</color>
-    <color name="colorAccent">#7c4dff</color>
-    <color name="colorBackground">#e0e0e0</color>
-    <color name="colorBackgroundDarker">#FFA09BAC</color>
-    <color name="cardBackground">#eeeeee</color>
-    <color name="colorAccentLight">#b388ff</color>
-    <color name="colorAccentDark">#651fff</color>
-
-    <color name="colorText">#616161</color>
-    <color name="colorWhiteTransparent">#80FFFFFF</color>
-    <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorCardStroke">#C5C5C5</color>
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#000000</color>
-
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M10,6L8.59,7.41 13.17,12l-4.58,4.59L10,18l6,-6z"/>
+</vector>

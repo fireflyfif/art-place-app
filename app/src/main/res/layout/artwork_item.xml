@@ -48,7 +48,7 @@
     app:cardCornerRadius="5dp"
     app:cardElevation="0dp"
     app:cardPreventCornerOverlap="true"
-    app:strokeColor="@color/colorLightGray"
+    app:strokeColor="@color/colorCardStroke"
     app:strokeWidth="1dp">
 
     <LinearLayout

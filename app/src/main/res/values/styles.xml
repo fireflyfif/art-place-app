@@ -74,7 +74,12 @@
         <item name="android:layout_marginRight">@dimen/margin_8dp</item>
         <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">@dimen/margin_16dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
 
+    <style name="MyProgressBarRectangle" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/progressbar_custom</item>
+        <item name="android:minHeight">80dp</item>
+        <item name="android:minWidth">200dp</item>
     </style>
 
 </resources>

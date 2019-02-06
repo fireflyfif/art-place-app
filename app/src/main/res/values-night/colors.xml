@@ -47,6 +47,6 @@
     <color name="colorText">#fafafa</color>
     <color name="colorWhiteTransparent">#80FFFFFF</color>
     <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorCardStroke">#272727</color>
 
 </resources>

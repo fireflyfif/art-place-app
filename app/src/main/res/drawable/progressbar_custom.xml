@@ -34,21 +34,43 @@
   ~
   -->
 
-<resources>
-    <color name="colorPrimary">#fafafa</color>
-    <color name="colorPrimaryDark">#c7c7c7</color>
-    <color name="colorAccent">#7c4dff</color>
-    <color name="colorBackground">#e0e0e0</color>
-    <color name="colorBackgroundDarker">#FFA09BAC</color>
-    <color name="cardBackground">#eeeeee</color>
-    <color name="colorAccentLight">#b388ff</color>
-    <color name="colorAccentDark">#651fff</color>
-
-    <color name="colorText">#616161</color>
-    <color name="colorWhiteTransparent">#80FFFFFF</color>
-    <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorCardStroke">#C5C5C5</color>
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#000000</color>
-
-</resources>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/progress"
+        android:top="16dp"
+        android:bottom="16dp">
+        <layer-list>
+            <item>
+                <rotate
+                    android:fromDegrees="45"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="-315">
+                    <shape android:shape="rectangle">
+                        <size
+                            android:width="80dp"
+                            android:height="80dp"/>
+                        <stroke
+                            android:width="6dp"
+                            android:color="@color/colorAccent"/>
+                    </shape>
+                </rotate>
+            </item>
+            <item>
+                <rotate
+                    android:fromDegrees="90"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="270">
+                    <shape android:shape="rectangle">
+                        <size
+                            android:width="80dp"
+                            android:height="80dp"/>
+                        <stroke
+                            android:width="6dp"
+                            android:color="@color/colorBackgroundDarker"/>
+                    </shape>
+                </rotate>
+            </item>
+        </layer-list>
+    </item>
+</layer-list>
