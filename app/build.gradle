@@ -111,6 +111,10 @@ dependencies {
     // Photoview for zooming
     implementation 'com.commit451:PhotoView:1.2.4'
 
+    // Navigation Component dependency
+    implementation "android.arch.navigation:navigation-fragment-ktx:$navVersion"
+    implementation "android.arch.navigation:navigation-ui-ktx:$navVersion"
+
     // Test dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

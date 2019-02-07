@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -33,46 +34,31 @@
   ~
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinator_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    tools:context=".ui.mainactivity.MainActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:theme="@style/Theme.AppCompat.DayNight"
-            app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/PopupMenuStyle" />
-
-    </android.support.design.widget.AppBarLayout>
+    android:id="@+id/navigation"
+    app:startDestination="@id/artworks_fragment">
 
     <fragment
-        android:id="@+id/nav_host_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/navigation"
-        app:defaultNavHost="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:background="@color/colorPrimary"/>
-
-    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
-
-</android.support.design.widget.CoordinatorLayout>
+        android:id="@+id/artworks_fragment"
+        android:name="com.example.android.artplace.ui.artworks.ArtworksFragment"
+        android:label="ArtworksFragment" >
+        <action
+            android:id="@+id/action_artworks_fragment_to_artwork_detail"
+            app:destination="@id/artwork_detail" />
+    </fragment>
+    <activity
+        android:id="@+id/artwork_detail"
+        android:name="com.example.android.artplace.ui.artworkdetail.ArtworkDetailActivity"
+        android:label="activity_artwork_detail"
+        tools:layout="@layout/activity_artwork_detail" />
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.example.android.artplace.ui.searchresults.SearchFragment"
+        android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/favorites_fragment"
+        android:name="com.example.android.artplace.ui.favorites.FavoritesFragment"
+        android:label="FavoritesFragment" />
+</navigation>

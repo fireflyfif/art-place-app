@@ -64,6 +64,9 @@ import com.example.android.artplace.ui.searchresults.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -80,8 +83,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @BindView(R.id.bottom_navigation)
     AHBottomNavigation bottomNavigation;
-    @BindView(R.id.view_pager_content)
-    MainViewPager viewPager;
+    /*@BindView(R.id.view_pager_content)
+    MainViewPager viewPager;*/
+
+
+    @BindView(R.id.nav_host_fragment)
+    NavHostFragment navHostFragment;
+    private NavController mNavController;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -109,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
 
+        //mNavController = Navigation.findNavController(this);
+
         Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
@@ -123,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
         mTracker = application.getDefaultTracker();
 
-        setupViewPager();
+        //setupViewPager();
         setupBottomNavStyle();
 
         // Add items to the Bottom Navigation
@@ -135,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             public boolean onTabSelected(int position, boolean wasSelected) {
 
                 bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-                viewPager.setCurrentItem(position);
+                //viewPager.setCurrentItem(position);
 
                 mPosition = position;
                 // Set the title on the toolbar according to
@@ -227,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.setTranslucentNavigationEnabled(true);
     }
 
-    private void setupViewPager() {
+    /*private void setupViewPager() {
         viewPager.setPagingEnabled(false);
         // Set the offset to 3 so that the Pager Adapter keeps in memory
         // all 3 Fragments and doesn't load it
@@ -239,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         mPagerAdapter.addFragments(createFavFragment());
 
         viewPager.setAdapter(mPagerAdapter);
-    }
+    }*/
 
     @Override
     public void onRefreshConnection() {
@@ -307,5 +317,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         return ContextCompat.getColor(this, color);
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        return super.onSupportNavigateUp();
+    }
 }
