@@ -54,7 +54,7 @@ public interface ArtsyApiInterface {
 
 
     /**
-     * Endpoint for fetching Artworks
+     * Endpoint for fetching ArtworksFragment
      * link: https://api.artsy.net/api/artworks?size=10 + header with token
      *
      * @param itemSize displayed items to the user

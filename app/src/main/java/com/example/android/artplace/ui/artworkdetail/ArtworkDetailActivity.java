@@ -174,7 +174,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
 
-    // Similar Artworks Views
+    // Similar ArtworksFragment Views
     @BindView(R.id.similar_artworks_rv)
     RecyclerView similarArtworksRv;
     private SimilarArtworksAdapter mSimilarArtAdapter;
@@ -498,7 +498,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         SimilarArtworksLink similarArtworksLink = imageLinksObject.getSimilarArtworks();
         mSimilarArtworksLink = similarArtworksLink.getHref();
-        Log.d(TAG, "Similar Artworks link: " + mSimilarArtworksLink);
+        Log.d(TAG, "Similar ArtworksFragment link: " + mSimilarArtworksLink);
         initSimilarViewModel(mSimilarArtworksLink);
     }
 
@@ -685,7 +685,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * Method for initializing the ViewModel of the Similar Artworks
+     * Method for initializing the ViewModel of the Similar ArtworksFragment
      *
      * @param similarArtLink is the given link to the similar artworks
      */

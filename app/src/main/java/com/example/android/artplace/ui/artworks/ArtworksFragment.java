@@ -79,8 +79,6 @@ import com.google.android.gms.analytics.Tracker;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.android.artplace.utils.Utils.PREFS_TOKEN_KEY;
-
 
 public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener,
         SnackMessageListener {
@@ -344,7 +342,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                // Refresh Artworks
+                // Refresh ArtworksFragment
                 refreshArtworks();
                 return true;
             default:

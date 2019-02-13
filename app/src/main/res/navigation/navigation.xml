@@ -44,18 +44,18 @@
         android:id="@+id/artworks_destination"
         android:name="com.example.android.artplace.ui.artworks.ArtworksFragment"
         tools:layout="@layout/fragment_artworks"
-        android:label="ArtworksFragment" />
+        android:label="Artworks" />
 
     <fragment
         android:id="@+id/search_destination"
         android:name="com.example.android.artplace.ui.searchresults.SearchFragment"
         tools:layout="@layout/fragment_search"
-        android:label="SearchFragment" />
+        android:label="Search" />
 
     <fragment
         android:id="@+id/favorites_destination"
         android:name="com.example.android.artplace.ui.favorites.FavoritesFragment"
         tools:layout="@layout/fragment_favorites"
-        android:label="FavoritesFragment" />
+        android:label="Favorites" />
 
 </navigation>

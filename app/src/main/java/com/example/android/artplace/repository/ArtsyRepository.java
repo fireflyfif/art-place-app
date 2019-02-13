@@ -110,7 +110,7 @@ public class ArtsyRepository {
 
 
     /**
-     * Getter method to load the Similar Artworks
+     * Getter method to load the Similar ArtworksFragment
      */
     public LiveData<List<Artwork>> getSimilarArtFromLink(String similarArtUrl) {
         return loadSimilarArtworks(similarArtUrl);
@@ -119,7 +119,7 @@ public class ArtsyRepository {
     /**
      * Method for accessing the Similar artworks endpoint from the Artsy API
      *
-     * @param similarArtUrl is the Url to the Similar Artworks results
+     * @param similarArtUrl is the Url to the Similar ArtworksFragment results
      * @return loaded results from the Artsy response
      */
     private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {

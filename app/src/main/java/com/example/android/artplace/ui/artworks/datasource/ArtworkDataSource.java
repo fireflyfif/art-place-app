@@ -120,7 +120,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                         callback.onResult(artworkList = embeddedArtworks.getArtworks(), null, 2L);
 
-                        Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
+                        Log.d(TAG, "List of ArtworksFragment loadInitial : " + artworkList.size());
 
                         mNetworkState.postValue(NetworkState.LOADED);
                         mInitialLoading.postValue(NetworkState.LOADED);
@@ -215,10 +215,10 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                                 callback.onResult(artworkList, nextKey);
 
-                                Log.d(TAG, "List of Artworks loadAfter : " + artworkList.size());
+                                Log.d(TAG, "List of ArtworksFragment loadAfter : " + artworkList.size());
                             }
 
-                            Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
+                            Log.d(TAG, "List of ArtworksFragment loadInitial : " + artworkList.size());
 
                             mNetworkState.postValue(NetworkState.LOADED);
                             mInitialLoading.postValue(NetworkState.LOADED);

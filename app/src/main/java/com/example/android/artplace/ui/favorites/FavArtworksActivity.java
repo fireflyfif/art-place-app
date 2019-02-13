@@ -131,7 +131,7 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
         mAdapter = new FavArtworkListAdapter(this, this);
         emptyText.setVisibility(View.INVISIBLE);
 
-        // Show the whole list of Favorite Artworks via the ViewModel
+        // Show the whole list of Favorite ArtworksFragment via the ViewModel
         getFavArtworks();
 
         favArtworksRv.setAdapter(mAdapter);

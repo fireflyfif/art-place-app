@@ -59,8 +59,12 @@ import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     Toolbar toolbar;
 
     private Tracker mTracker;
-    private BottomNavAdapter mPagerAdapter;
     private SharedPreferences mPreferences;
     private boolean mIsDayMode;
     private String mTitle;
@@ -108,71 +111,36 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
-        setToolbarTitle(mPosition);
+        //setToolbarTitle(mPosition);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mTitle);
         }
+
 
         // Setup the Navigation with just two lines
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         // Setup Bottom navigation with Navigation Controller
         NavigationUI.setupWithNavController(bottomNavigation, navController);
 
+        // Specify the top level navigation so that there is no Up Button
+        // source: https://stackoverflow.com/a/53251574/8132331
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.artworks_destination);
+        topLevelDestinations.add(R.id.search_destination);
+        topLevelDestinations.add(R.id.favorites_destination);
+
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+
         // Obtain the shared Tracker instance.
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
         mTracker = application.getDefaultTracker();
 
-        //setupViewPager();
-        //setupBottomNavStyle();
-
-        // Add items to the Bottom Navigation
-        //addBottomNavigationItems();
-        //bottomNavigation.getSelectedItemId(R.id.artworks_destination);
-
-        //bottomNavigation.setCurrentItem(mPosition);
-
-        /*bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.artworks_destination:
-                        toolbar.setTitle("Artworks");
-                        break;
-                    case R.id.search_destination:
-                        toolbar.setTitle("Search");
-                        break;
-                    case R.id.favorites_destination:
-                        toolbar.setTitle("Favorites");
-                        break;
-                }
-
-                return true;
-            }
-        });*/
-
-        /*bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
-            @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
-
-                bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-                //viewPager.setCurrentItem(position);
-
-                mPosition = position;
-                // Set the title on the toolbar according to
-                // the position of the clicked Fragment
-                setToolbarTitle(position);
-
-                return true;
-            }
-        });*/
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
     }
-
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -180,60 +148,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         // Save the position of the selected Fragment
         outState.putInt(POSITION_KEY, mPosition);
     }
-
-    /**
-     * Method for setting the title on the Toolbar for each Fragment
-     *
-     * @param position of the current Fragment
-     */
-    private void setToolbarTitle(int position) {
-        switch (position) {
-            case 0:
-                mTitle = getString(R.string.title_artworks);
-                toolbar.setTitle(mTitle);
-                break;
-            case 1:
-                mTitle = getString(R.string.title_search);
-                toolbar.setTitle(mTitle);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_favorites);
-                toolbar.setTitle(mTitle);
-                break;
-            default:
-                break;
-        }
-    }
-
-
-    /*private void setupBottomNavStyle() {
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
-
-        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPrimary),
-                fetchColor(R.color.colorAccent));
-
-        bottomNavigation.setColored(false);
-
-        // Hide the navigation when the user scroll the Rv
-        //bottomNavigation.setBehaviorTranslationEnabled(true);
-        bottomNavigation.setTranslucentNavigationEnabled(true);
-    }*/
-
-    /*private void setupViewPager() {
-        viewPager.setPagingEnabled(false);
-        // Set the offset to 3 so that the Pager Adapter keeps in memory
-        // all 3 Fragments and doesn't load it
-        viewPager.setOffscreenPageLimit(3);
-        mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
-
-        mPagerAdapter.addFragments(createArtworksFragment());
-        mPagerAdapter.addFragments(createSearchFragment());
-        mPagerAdapter.addFragments(createFavFragment());
-
-        viewPager.setAdapter(mPagerAdapter);
-    }*/
 
     @Override
     public void onRefreshConnection() {
