@@ -34,28 +34,20 @@
   ~
   -->
 
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation"
-    app:startDestination="@id/artworks_destination">
-
-    <fragment
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
         android:id="@+id/artworks_destination"
-        android:name="com.example.android.artplace.ui.artworks.ArtworksFragment"
-        tools:layout="@layout/fragment_artworks"
-        android:label="ArtworksFragment" />
+        android:icon="@drawable/ic_frame"
+        android:title="@string/title_artworks"/>
 
-    <fragment
+    <item
         android:id="@+id/search_destination"
-        android:name="com.example.android.artplace.ui.searchresults.SearchFragment"
-        tools:layout="@layout/fragment_search"
-        android:label="SearchFragment" />
+        android:icon="@drawable/ic_search_24dp"
+        android:title="@string/search"/>
 
-    <fragment
+    <item
         android:id="@+id/favorites_destination"
-        android:name="com.example.android.artplace.ui.favorites.FavoritesFragment"
-        tools:layout="@layout/fragment_favorites"
-        android:label="FavoritesFragment" />
+        android:icon="@drawable/ic_favorite_border_24dp"
+        android:title="@string/favorites_title"/>
 
-</navigation>
+</menu>

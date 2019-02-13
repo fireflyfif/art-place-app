@@ -34,28 +34,8 @@
   ~
   -->
 
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation"
-    app:startDestination="@id/artworks_destination">
-
-    <fragment
-        android:id="@+id/artworks_destination"
-        android:name="com.example.android.artplace.ui.artworks.ArtworksFragment"
-        tools:layout="@layout/fragment_artworks"
-        android:label="ArtworksFragment" />
-
-    <fragment
-        android:id="@+id/search_destination"
-        android:name="com.example.android.artplace.ui.searchresults.SearchFragment"
-        tools:layout="@layout/fragment_search"
-        android:label="SearchFragment" />
-
-    <fragment
-        android:id="@+id/favorites_destination"
-        android:name="com.example.android.artplace.ui.favorites.FavoritesFragment"
-        tools:layout="@layout/fragment_favorites"
-        android:label="FavoritesFragment" />
-
-</navigation>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true"
+        android:color="@color/colorAccent" />
+    <item android:color="@color/colorBackgroundDarker" />
+</selector>
