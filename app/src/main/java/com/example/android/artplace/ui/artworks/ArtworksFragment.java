@@ -113,6 +113,10 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Required empty public constructor
     }
 
+    public static ArtworksFragment newInstance() {
+        return new ArtworksFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
