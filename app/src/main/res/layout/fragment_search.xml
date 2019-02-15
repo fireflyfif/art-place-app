@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -40,6 +39,7 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:gravity="center_horizontal"
     tools:context=".ui.mainactivity.MainActivity">
 
@@ -48,17 +48,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
-        tools:listitem="@layout/search_result_item"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:spanCount="2"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        tools:listitem="@layout/search_result_item" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/bottom_nav_margin"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/padding_16dp"
-        android:layout_marginBottom="@dimen/bottom_nav_margin">
+        android:padding="@dimen/padding_16dp">
 
         <TextView
             android:id="@+id/error_message_search"
@@ -72,9 +72,9 @@
 
         <ProgressBar
             android:id="@+id/progress_bar_search"
+            style="@style/MyProgressBarRectangle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/MyProgressBarRectangle"
             android:padding="@dimen/padding_10dp" />
 
     </LinearLayout>

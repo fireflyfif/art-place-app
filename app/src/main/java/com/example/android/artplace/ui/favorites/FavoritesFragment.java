@@ -108,6 +108,10 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     // Required empty public constructor
     public FavoritesFragment() {}
 
+    public static FavoritesFragment newInstance() {
+        return new FavoritesFragment();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

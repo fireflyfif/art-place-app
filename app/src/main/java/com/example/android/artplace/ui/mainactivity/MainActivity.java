@@ -46,6 +46,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -69,6 +70,7 @@ import java.util.Set;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.Navigator;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import butterknife.BindView;
@@ -102,10 +104,13 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private Fragment fragmentFavs = new FavoritesFragment();
     private Fragment activeFragment = fragmentArtworks;
     private final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private FragmentTransaction mTransaction;
 
     private String tagFirst = "fragment_first";
     private String tagSecond = "fragment_second";
     private String tagThird = "fragment_third";
+
+    private Fragment mFragments[] = new Fragment[3];
 
 
     @Override
@@ -118,27 +123,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         ButterKnife.bind(this);
 
-        if (savedInstanceState == null) {
-
-        }
-
-
-
-        if (mFragmentManager.findFragmentByTag(tagFirst) == null) {
-
-            Log.d(TAG, "Checking for fragment tag: null");
-        } else {
-
-            Log.d(TAG, "Checking for fragment tag: " + tagFirst);
-        }
-
-
-
         if (savedInstanceState != null) {
             // Get the position of the selected Fragment
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
-
         Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
@@ -153,41 +141,48 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         // Setup Bottom navigation with Navigation Controller
         NavigationUI.setupWithNavController(bottomNavigation, navController);
 
-        // TODO: Use FragmentManager in order to show and hide Fragments so that they stay active all the time
-        // Comments: Terrible solution, with problems on rotation
-        // source: https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
-        getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment, fragmentFavs).hide(fragmentFavs).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment, fragmentSearch).hide(fragmentSearch).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment, fragmentArtworks).commit();
+        // --- // --- //
 
-        // Overriding the item selected listener to change the default behaviour of recreation of
-        // fragments on every navigation change
-        bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
+//        Fragment artworksFragment = ArtworksFragment.newInstance();
+
+        /*if (mFragmentManager.findFragmentByTag(tagFirst) == null) {
+            mTransaction = mFragmentManager.beginTransaction();
+            mTransaction.add(R.id.nav_host_fragment, artworksFragment, tagFirst).commit();
+        }*/
+
+        // Doesn't solve the issue with re-creating fragments upon destination changes
+        /*bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
+            Fragment fragment = null;
+            Fragment currentFragment = mFragmentManager.findFragmentById(R.id.nav_host_fragment);
+
             switch (menuItem.getItemId()) {
                 case R.id.artworks_destination:
-                    toolbar.setTitle("Artworks");
-                    mFragmentManager.beginTransaction().hide(activeFragment).show(fragmentArtworks).commit();
-                    //mFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragmentArtworks).commit();
-                    activeFragment = fragmentArtworks;
-                    return true;
+                    if (!(currentFragment instanceof ArtworksFragment)) {
+                        fragment = ArtworksFragment.newInstance();
+                    }
+
+                    break;
 
                 case R.id.search_destination:
-                    toolbar.setTitle("Search");
-                    mFragmentManager.beginTransaction().hide(activeFragment).show(fragmentSearch).commit();
-                    //mFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragmentSearch).commit();
-                    activeFragment = fragmentSearch;
-                    return true;
+                    if (!(currentFragment instanceof SearchFragment)) {
+                        fragment = SearchFragment.newInstance();
+                    }
+
+                    break;
 
                 case R.id.favorites_destination:
-                    toolbar.setTitle("Favorites");
-                    mFragmentManager.beginTransaction().hide(activeFragment).show(fragmentFavs).commit();
-                    //mFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragmentFavs).commit();
-                    activeFragment = fragmentFavs;
-                    return true;
-            }
+                    if (!(currentFragment instanceof FavoritesFragment)) {
+                        fragment = FavoritesFragment.newInstance();
+                    }
 
-            return false;
-        });
+                    break;
+            }
+            mFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment, tagFirst).commit();
+
+            return true;
+        });*/
+
+        // --- // --- //
 
         // Specify the top level navigation so that there is no Up Button on them
         // source: https://stackoverflow.com/a/53251574/8132331
@@ -206,6 +201,19 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
+    }
+
+    private void switchFragment(int index) {
+        mTransaction = mFragmentManager.beginTransaction();
+        String tag = mFragments[index].getTag();
+
+        if (mFragmentManager.findFragmentByTag(tag) == null) {
+            mTransaction.add(R.id.nav_host_fragment, mFragments[index], tag);
+        }
+
+        mTransaction.hide(mFragments[0]);
+        mTransaction.show(mFragments[index]);
+        mTransaction.commit();
     }
 
     @Override
