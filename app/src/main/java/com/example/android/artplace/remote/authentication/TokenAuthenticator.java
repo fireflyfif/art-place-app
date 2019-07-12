@@ -52,7 +52,7 @@ import okhttp3.Route;
 import static com.example.android.artplace.utils.Utils.HEADER_TOKEN_KEY;
 
 // This class should be called when the token expires
-// source:https://github.com/square/okhttp/wiki/Recipes#handling-authentication
+// source:http://square.github.io/okhttp/recipes/
 public class TokenAuthenticator implements Authenticator {
 
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
