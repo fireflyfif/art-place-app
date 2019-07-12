@@ -19,11 +19,11 @@ android {
         buildConfigField "String", "TOKEN", apiToken
 
         def clientId = project.hasProperty('clientId') ? clientId :
-                (System.getenv('CLIENT_ID') ?: "\"\"")
+                (System.getenv('CLIENT_ID') ?: "\"0274fc5233d29f6d421b\"")
         buildConfigField "String", "CLIENT_ID", clientId
 
         def clientSecret = project.hasProperty('clientSecret') ? clientSecret :
-                (System.getenv('CLIENT_SECRET') ?: "\"\"")
+                (System.getenv('CLIENT_SECRET') ?: "\"15d9d4d3e81e4742408e844be202b8e4\"")
         buildConfigField "String", "CLIENT_SECRET", clientSecret
 
         vectorDrawables.useSupportLibrary = true
@@ -116,10 +116,11 @@ dependencies {
     // Navigation Component dependency
     implementation "android.arch.navigation:navigation-fragment-ktx:$navVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$navVersion"
+//    implementation "android.arch.navigation:navigation-fragment:$navVersion"
 
     // Test dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'android.arch.navigation:navigation-fragment:1.0.0-rc02'
+
 }
