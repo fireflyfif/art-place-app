@@ -37,6 +37,7 @@ package com.example.android.artplace.ui.mainactivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
@@ -116,12 +117,16 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
 
         if (savedInstanceState != null) {
             // Get the position of the selected Fragment

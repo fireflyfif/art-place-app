@@ -40,6 +40,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -224,6 +225,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artwork_detail);
 
         ButterKnife.bind(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
 
         setSupportActionBar(toolbar);
 
