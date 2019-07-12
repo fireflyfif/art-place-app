@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@drawable/bottom_nav_background"
+        android:background="@color/colorPrimaryDark"
         app:itemIconTint="@drawable/nav_item_foreground"
         app:itemTextColor="@drawable/nav_item_foreground"
         app:menu="@menu/bottom_nav_menu" />
