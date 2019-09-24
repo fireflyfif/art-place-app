@@ -12,7 +12,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        // TODO: Always hide the TOKEN; Has to be refreshed every 6 days!!!
+        // TODO: Always hide the TOKEN
         def apiToken = project.hasProperty('token') ? apiToken :
                 (System.getenv('TOKEN') ?: "\"\"")
         buildConfigField "String", "TOKEN", apiToken
