@@ -35,20 +35,16 @@
 
 package com.example.android.artplace.ui.mainactivity;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
@@ -56,24 +52,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.ui.artworks.ArtworksFragment;
-import com.example.android.artplace.ui.favorites.FavoritesFragment;
-import com.example.android.artplace.ui.mainactivity.adapters.BottomNavAdapter;
-import com.example.android.artplace.ui.searchresults.SearchFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.Navigator;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -101,23 +94,15 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private int mPosition;
 
     private Fragment fragmentArtworks = new ArtworksFragment();
-    private Fragment fragmentSearch = new SearchFragment();
-    private Fragment fragmentFavs = new FavoritesFragment();
-    private Fragment activeFragment = fragmentArtworks;
     private final FragmentManager mFragmentManager = getSupportFragmentManager();
     private FragmentTransaction mTransaction;
-
-    private String tagFirst = "fragment_first";
-    private String tagSecond = "fragment_second";
-    private String tagThird = "fragment_third";
-
     private Fragment mFragments[] = new Fragment[3];
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set the theme before creating the View
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -135,59 +120,16 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
-        //setToolbarTitle(mPosition);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mTitle);
         }
 
+        // TODO: Leaving the Navigation component aside, because of recreation of fragments on every tab switched
         // Setup the Navigation with just two lines
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         // Setup Bottom navigation with Navigation Controller
         NavigationUI.setupWithNavController(bottomNavigation, navController);
-
-        // --- // --- //
-
-//        Fragment artworksFragment = ArtworksFragment.newInstance();
-
-        /*if (mFragmentManager.findFragmentByTag(tagFirst) == null) {
-            mTransaction = mFragmentManager.beginTransaction();
-            mTransaction.add(R.id.nav_host_fragment, artworksFragment, tagFirst).commit();
-        }*/
-
-        // Doesn't solve the issue with re-creating fragments upon destination changes
-        /*bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
-            Fragment fragment = null;
-            Fragment currentFragment = mFragmentManager.findFragmentById(R.id.nav_host_fragment);
-
-            switch (menuItem.getItemId()) {
-                case R.id.artworks_destination:
-                    if (!(currentFragment instanceof ArtworksFragment)) {
-                        fragment = ArtworksFragment.newInstance();
-                    }
-
-                    break;
-
-                case R.id.search_destination:
-                    if (!(currentFragment instanceof SearchFragment)) {
-                        fragment = SearchFragment.newInstance();
-                    }
-
-                    break;
-
-                case R.id.favorites_destination:
-                    if (!(currentFragment instanceof FavoritesFragment)) {
-                        fragment = FavoritesFragment.newInstance();
-                    }
-
-                    break;
-            }
-            mFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment, tagFirst).commit();
-
-            return true;
-        });*/
-
-        // --- // --- //
 
         // Specify the top level navigation so that there is no Up Button on them
         // source: https://stackoverflow.com/a/53251574/8132331
@@ -206,19 +148,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
-    }
-
-    private void switchFragment(int index) {
-        mTransaction = mFragmentManager.beginTransaction();
-        String tag = mFragments[index].getTag();
-
-        if (mFragmentManager.findFragmentByTag(tag) == null) {
-            mTransaction.add(R.id.nav_host_fragment, mFragments[index], tag);
-        }
-
-        mTransaction.hide(mFragments[0]);
-        mTransaction.show(mFragments[index]);
-        mTransaction.commit();
     }
 
     @Override
@@ -254,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.main_menu, menu);
         return false;
     }
 
@@ -273,25 +201,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void savePrefs(boolean state) {
-        mPreferences = getApplicationContext()
-                .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putBoolean(THEME_PREFERENCE_KEY, state);
-        editor.apply();
-    }
-
-    /**
-     * Simple method for fetching colors
-     * source: https://android.jlelse.eu/ultimate-guide-to-bottom-navigation-on-android-75e4efb8105f
-     *
-     * @param color to fetch
-     * @return int color value
-     */
-    private int fetchColor(@ColorRes int color) {
-        return ContextCompat.getColor(this, color);
     }
 
     @Override

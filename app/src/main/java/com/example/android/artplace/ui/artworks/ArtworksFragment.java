@@ -134,6 +134,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_artworks, container, false);
+        Log.d(TAG, "onCreateView called");
 
         ButterKnife.bind(this, rootView);
 
