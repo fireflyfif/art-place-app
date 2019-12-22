@@ -21,6 +21,7 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          # Uncomment this once the unit tests are fixed
 #      - run:
 #          name: Run Tests
 #          command: ./gradlew lint test
