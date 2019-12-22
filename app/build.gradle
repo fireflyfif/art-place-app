@@ -12,11 +12,6 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        // TODO: Always hide the TOKEN
-        def apiToken = project.hasProperty('token') ? apiToken :
-                (System.getenv('TOKEN') ?: "\"\"")
-        buildConfigField "String", "TOKEN", apiToken
-
         def clientId = project.hasProperty('clientId') ? clientId :
                 (System.getenv('CLIENT_ID') ?: "\"\"")
         buildConfigField "String", "CLIENT_ID", clientId
