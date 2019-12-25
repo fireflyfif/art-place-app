@@ -58,7 +58,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <app.app.android.artplace.ui.mainactivity.adapters.MainViewPager
+    <dev.iotarho.artplace.app.ui.mainactivity.adapters.MainViewPager
         android:id="@+id/view_pager_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
