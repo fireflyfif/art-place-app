@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        android:configChanges="uiMode">
         <activity
             android:name="dev.iotarho.artplace.app.ui.mainactivity.MainActivity"
             android:launchMode="singleTop">

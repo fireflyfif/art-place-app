@@ -33,24 +33,36 @@
   ~
   -->
 
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_24dp"
         android:orderInCategory="100"
-        android:title="Search Artworks"
-        app:showAsAction="always"
-        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+        android:title="@string/menu_search_artworks"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_refresh"
-        android:title="@string/refresh"
-        android:orderInCategory="200"
-        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_refresh_24dp"
-        tools:ignore="HardcodedText" />
+        android:orderInCategory="200"
+        android:title="@string/refresh"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_dark_mode"
+        android:icon="@drawable/ic_refresh_24dp"
+        android:orderInCategory="300"
+        android:title="Go dark"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_light_mode"
+        android:icon="@drawable/ic_refresh_24dp"
+        android:orderInCategory="300"
+        android:title="Go light"
+        app:showAsAction="never" />
 
 </menu>

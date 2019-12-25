@@ -37,6 +37,7 @@ package dev.iotarho.artplace.app.ui.mainactivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -44,7 +45,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -89,12 +92,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private String mTitle;
     private int mPosition;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Set the theme before creating the View
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -136,6 +135,23 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                // Night mode is not active, we're using the light theme
+                Log.d(TAG, "mode is light");
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode is active, we're using dark theme
+                Log.d(TAG, "mode is dark");
+                break;
+        }
     }
 
     @Override
@@ -262,6 +278,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 return false;
 
             case R.id.action_refresh:
+                return false;
+
+            case R.id.action_dark_mode:
                 return false;
 
             default:

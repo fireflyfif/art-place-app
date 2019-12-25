@@ -77,6 +77,7 @@ import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
 import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
+import dev.iotarho.artplace.app.utils.ThemeUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 
 
@@ -341,8 +342,17 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                // Refresh Artworks
                 refreshArtworks();
+                return true;
+
+            case R.id.action_dark_mode:
+                // todo: save it in prefs
+                ThemeUtils.applyTheme(1);
+                return true;
+
+            case R.id.action_light_mode:
+                // todo: save it in prefs
+                ThemeUtils.applyTheme(0);
                 return true;
             default:
                 break;
