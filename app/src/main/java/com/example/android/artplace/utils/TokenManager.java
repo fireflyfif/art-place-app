@@ -37,7 +37,7 @@ package com.example.android.artplace.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.artplace.callbacks.FetchTokenCallback;

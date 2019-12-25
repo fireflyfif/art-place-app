@@ -43,7 +43,7 @@
         android:orderInCategory="100"
         android:title="Search Artworks"
         app:showAsAction="always"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
         android:id="@+id/action_refresh"

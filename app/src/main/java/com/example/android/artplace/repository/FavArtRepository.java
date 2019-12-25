@@ -36,10 +36,9 @@
 package com.example.android.artplace.repository;
 
 import android.app.Application;
-import android.arch.paging.DataSource;
+import androidx.paging.DataSource;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ListView;
 
 import com.example.android.artplace.AppExecutors;
 import com.example.android.artplace.callbacks.ResultFromDbCallback;

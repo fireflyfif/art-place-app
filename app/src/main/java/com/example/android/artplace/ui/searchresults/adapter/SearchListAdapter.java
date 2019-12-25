@@ -35,11 +35,11 @@
 
 package com.example.android.artplace.ui.searchresults.adapter;
 
-import android.arch.paging.PagedListAdapter;
+import androidx.paging.PagedListAdapter;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +54,6 @@ import com.example.android.artplace.R;
 import com.example.android.artplace.callbacks.OnRefreshListener;
 import com.example.android.artplace.callbacks.OnResultClickListener;
 import com.example.android.artplace.model.Thumbnail;
-import com.example.android.artplace.model.search.EmbeddedResults;
 import com.example.android.artplace.model.search.LinksResult;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.utils.NetworkState;

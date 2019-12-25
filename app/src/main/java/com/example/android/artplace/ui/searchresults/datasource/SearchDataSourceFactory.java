@@ -35,13 +35,11 @@
 
 package com.example.android.artplace.ui.searchresults.datasource;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.DataSource;
+import androidx.lifecycle.MutableLiveData;
+import androidx.paging.DataSource;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.repository.ArtsyRepository;
-import com.example.android.artplace.utils.TokenManager;
 
 public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 

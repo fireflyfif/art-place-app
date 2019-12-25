@@ -35,23 +35,20 @@
 
 package com.example.android.artplace.ui.artworks;
 
-import android.app.Application;
-import android.arch.core.util.Function;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
-import android.arch.paging.LivePagedListBuilder;
-import android.arch.paging.PagedList;
+import androidx.arch.core.util.Function;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.example.android.artplace.AppExecutors;
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSourceFactory;
 import com.example.android.artplace.ui.artworks.datasource.ArtworkDataSource;
 import com.example.android.artplace.model.artworks.Artwork;
 import com.example.android.artplace.utils.NetworkState;
-import com.example.android.artplace.utils.TokenManager;
 
 import static com.example.android.artplace.utils.Utils.INITIAL_SIZE_HINT;
 import static com.example.android.artplace.utils.Utils.PAGE_SIZE;
