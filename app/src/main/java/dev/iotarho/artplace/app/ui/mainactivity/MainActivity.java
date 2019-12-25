@@ -45,7 +45,6 @@ import android.view.MenuItem;
 
 import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -57,7 +56,6 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksFragment;
@@ -116,10 +114,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             getSupportActionBar().setTitle(mTitle);
         }
 
-        // Obtain the shared Tracker instance.
-        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) getApplication();
-
         setupViewPager();
         setupBottomNavStyle();
 
@@ -127,20 +121,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         addBottomNavigationItems();
         bottomNavigation.setCurrentItem(mPosition);
 
-        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
-            @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
+        bottomNavigation.setOnTabSelectedListener((position, wasSelected) -> {
 
-                bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-                viewPager.setCurrentItem(position);
+            bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
+            viewPager.setCurrentItem(position);
 
-                mPosition = position;
-                // Set the title on the toolbar according to
-                // the position of the clicked Fragment
-                setToolbarTitle(position);
+            mPosition = position;
+            // Set the title on the toolbar according to
+            // the position of the clicked Fragment
+            setToolbarTitle(position);
 
-                return true;
-            }
+            return true;
         });
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -298,6 +289,4 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private int fetchColor(@ColorRes int color) {
         return ContextCompat.getColor(this, color);
     }
-
-
 }

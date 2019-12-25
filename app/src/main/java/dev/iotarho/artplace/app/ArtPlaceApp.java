@@ -40,15 +40,11 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import dev.iotarho.artplace.app.remote.ArtsyApiInterface;
-import dev.iotarho.artplace.app.remote.ArtsyApiManager;
-import dev.iotarho.artplace.app.utils.TokenManager;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
 public class ArtPlaceApp extends Application {
-
-    private ArtsyApiInterface mArtsyApi;
 
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
@@ -65,6 +61,7 @@ public class ArtPlaceApp extends Application {
         super.onCreate();
 
         sInstance = this;
+        FirebaseAnalytics.getInstance(getApplicationContext());
     }
 
     public static ArtPlaceApp getInstance() {
@@ -83,37 +80,18 @@ public class ArtPlaceApp extends Application {
     }
 
     /**
-    Helper method that gets the context of the application
+     * Helper method that gets the context of the application
      */
     private static ArtPlaceApp get(Context context) {
         return (ArtPlaceApp) context.getApplicationContext();
     }
 
     /**
-    Method that is used for initializing  the ViewModel,
-    because the ViewModel class has a parameter of ArtPlaceApp
+     * Method that is used for initializing  the ViewModel,
+     * because the ViewModel class has a parameter of ArtPlaceApp
      */
     public static ArtPlaceApp create(Context context) {
         return ArtPlaceApp.get(context);
-    }
-
-
-    /**
-     * Method that creates a Retrofit instance from the ArtsyApiManager
-     */
-    public ArtsyApiInterface getArtsyApi(TokenManager tokenManager) {
-        if (mArtsyApi == null) {
-            mArtsyApi = ArtsyApiManager.createApiCall(ArtsyApiInterface.class, tokenManager);
-        }
-        return mArtsyApi;
-    }
-
-    public ArtsyApiInterface getToken() {
-        if (mArtsyApi == null) {
-            //mArtsyApi = ArtsyApiManager.createServiceWithAuth(ArtsyApiInterface.class);
-        }
-
-        return mArtsyApi;
     }
 
 }

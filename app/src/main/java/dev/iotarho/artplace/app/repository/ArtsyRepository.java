@@ -69,14 +69,6 @@ public class ArtsyRepository {
     private static volatile ArtsyRepository INSTANCE;
 
     private TokenManager mTokenManager;
-    //private ArtsyApiInterface mService;
-
-
-   /* private void withRefresh(Runnable runnable) {
-        if (mTokenManager.fetchToken()) {
-            runnable.run()
-        }
-    }*/
 
     // Private constructor of the Repository class
     private ArtsyRepository(TokenManager tokenManager) {

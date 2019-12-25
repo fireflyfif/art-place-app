@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "938496722558",
+    "firebase_url": "https://art-place-app.firebaseio.com",
+    "project_id": "art-place-app",
+    "storage_bucket": "art-place-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938496722558:android:bc4d02790daf547fc6ba2f",
+        "android_client_info": {
+          "package_name": "dev.iotarho.artplace.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "938496722558-bbbgqcb42643enl07fcj0fuhd8n32ud2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.iotarho.artplace.app",
+            "certificate_hash": "b4fe5e8c3d6909db4662e33846c84194c4975501"
+          }
+        },
+        {
+          "client_id": "938496722558-0olrvre3c30epv6g6284kjpsd0fo2gu5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI-QEyhN3k0v3hGbtWp9RU8N-7PB5WaN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "938496722558-0olrvre3c30epv6g6284kjpsd0fo2gu5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

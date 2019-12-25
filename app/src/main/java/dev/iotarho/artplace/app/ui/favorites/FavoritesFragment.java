@@ -66,7 +66,6 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnFavItemClickListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
@@ -130,12 +129,7 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
-
         ButterKnife.bind(this, rootView);
-
-        // Obtain the shared Tracker instance.
-        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) Objects.requireNonNull(getActivity()).getApplication();
 
         mFavArtworksViewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
 

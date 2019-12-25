@@ -56,7 +56,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
@@ -105,10 +104,6 @@ public class ArtistDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artist_detail);
 
         ButterKnife.bind(this);
-
-        // Obtain the shared Tracker instance.
-        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) getApplication();
 
         setSupportActionBar(toolbar);
 

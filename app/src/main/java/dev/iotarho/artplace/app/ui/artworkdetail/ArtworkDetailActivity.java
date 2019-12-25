@@ -75,7 +75,6 @@ import java.util.List;
 import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.ResultFromDbCallback;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
@@ -223,10 +222,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        // Obtain the shared Tracker instance.
-        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) getApplication();
 
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);

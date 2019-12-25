@@ -62,7 +62,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnFavItemClickListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
@@ -115,10 +114,6 @@ public class FavArtworksActivity extends AppCompatActivity implements OnFavItemC
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.favorites_title);
         }
-
-        // Obtain the shared Tracker instance.
-        // source: https://developers.google.com/analytics/devguides/collection/android/v4/
-        ArtPlaceApp application = (ArtPlaceApp) getApplication();
 
         mFavArtworksViewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
 
