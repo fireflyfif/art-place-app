@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.android.artplace">
+    package="dev.iotarho.artplace.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".ArtPlaceApp"
+        android:name="app.app.android.artplace.ArtPlaceApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.mainactivity.MainActivity"
+            android:name="app.app.android.artplace.ui.mainactivity.MainActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.app.searchable"
@@ -32,51 +32,51 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.artworkdetail.ArtworkDetailActivity"
+            android:name="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.mainactivity.MainActivity">
+            android:parentActivityName="app.app.android.artplace.ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.mainactivity.MainActivity" />
+                android:value="app.app.android.artplace.ui.mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.artistdetail.ArtistDetailActivity"
-            android:parentActivityName=".ui.artworkdetail.ArtworkDetailActivity">
+            android:name="app.app.android.artplace.ui.artistdetail.ArtistDetailActivity"
+            android:parentActivityName="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.artworkdetail.ArtworkDetailActivity" />
+                android:value="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity" />
         </activity>
         <activity
-            android:name=".ui.favorites.FavArtworksActivity"
-            android:parentActivityName=".ui.mainactivity.MainActivity">
+            android:name="app.app.android.artplace.ui.favorites.FavArtworksActivity"
+            android:parentActivityName="app.app.android.artplace.ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.mainactivity.MainActivity" />
+                android:value="app.app.android.artplace.ui.mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.FavDetailActivity"
-            android:parentActivityName=".ui.favorites.FavArtworksActivity">
+            android:name="app.app.android.artplace.ui.FavDetailActivity"
+            android:parentActivityName="app.app.android.artplace.ui.favorites.FavArtworksActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.favorites.FavArtworksActivity" />
+                android:value="app.app.android.artplace.ui.favorites.FavArtworksActivity" />
         </activity>
         <activity
-            android:name=".ui.searchdetail.SearchDetailActivity"
-            android:parentActivityName=".ui.mainactivity.MainActivity">
+            android:name="app.app.android.artplace.ui.searchdetail.SearchDetailActivity"
+            android:parentActivityName="app.app.android.artplace.ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.mainactivity.MainActivity" />
+                android:value="app.app.android.artplace.ui.mainactivity.MainActivity" />
         </activity>
 
-        <activity android:name=".ui.LargeArtworkActivity"
-            android:parentActivityName=".ui.artworkdetail.ArtworkDetailActivity">
+        <activity android:name="app.app.android.artplace.ui.LargeArtworkActivity"
+            android:parentActivityName="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.artworkdetail.ArtworkDetailActivity" />
+                android:value="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity" />
 
         </activity>
 
-        <receiver android:name=".widget.ArtPlaceWidget">
+        <receiver android:name="app.app.android.artplace.widget.ArtPlaceWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
@@ -90,7 +90,7 @@
         </receiver>
 
         <service
-            android:name=".widget.FavoritesWidgetService"
+            android:name="app.app.android.artplace.widget.FavoritesWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <meta-data

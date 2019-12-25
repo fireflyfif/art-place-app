@@ -41,7 +41,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".ui.mainactivity.MainActivity">
+    tools:context="app.app.android.artplace.ui.mainactivity.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_rv"

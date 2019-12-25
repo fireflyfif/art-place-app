@@ -40,7 +40,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.artworkdetail.ArtworkDetailActivity">
+    tools:context="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_artist"

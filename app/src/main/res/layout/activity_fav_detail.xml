@@ -42,7 +42,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.FavDetailActivity">
+    tools:context="app.app.android.artplace.ui.FavDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/fav_detail_appbar"
