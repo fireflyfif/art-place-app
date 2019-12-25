@@ -39,8 +39,7 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    tools:context=".ui.mainactivity.MainActivity">
+    android:gravity="center_horizontal">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_main"
@@ -59,7 +58,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.android.artplace.ui.mainactivity.adapters.MainViewPager
+    <dev.iotarho.artplace.app.ui.mainactivity.adapters.MainViewPager
         android:id="@+id/view_pager_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
