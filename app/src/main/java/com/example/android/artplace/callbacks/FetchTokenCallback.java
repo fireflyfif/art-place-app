@@ -35,7 +35,7 @@
 
 package com.example.android.artplace.callbacks;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.example.android.artplace.model.token.TypeToken;
 

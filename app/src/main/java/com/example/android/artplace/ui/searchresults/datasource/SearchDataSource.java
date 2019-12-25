@@ -35,12 +35,11 @@
 
 package com.example.android.artplace.ui.searchresults.datasource;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.PageKeyedDataSource;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.paging.PageKeyedDataSource;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.Links;
 import com.example.android.artplace.model.Next;
 import com.example.android.artplace.model.search.EmbeddedResults;
@@ -48,9 +47,7 @@ import com.example.android.artplace.model.search.Result;
 import com.example.android.artplace.model.search.SearchWrapperResponse;
 import com.example.android.artplace.repository.ArtsyRepository;
 import com.example.android.artplace.utils.NetworkState;
-import com.example.android.artplace.utils.TokenManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

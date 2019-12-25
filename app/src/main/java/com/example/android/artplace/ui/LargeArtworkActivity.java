@@ -36,7 +36,7 @@
 package com.example.android.artplace.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import com.example.android.artplace.R;

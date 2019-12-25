@@ -37,7 +37,7 @@ package com.example.android.artplace;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;

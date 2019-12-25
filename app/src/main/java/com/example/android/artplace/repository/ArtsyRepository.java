@@ -35,12 +35,11 @@
 
 package com.example.android.artplace.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.model.artists.Artist;
 import com.example.android.artplace.model.artists.ArtistWrapperResponse;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
@@ -50,7 +49,6 @@ import com.example.android.artplace.model.artworks.EmbeddedArtworks;
 import com.example.android.artplace.model.search.ShowContent;
 import com.example.android.artplace.remote.ArtsyApiInterface;
 import com.example.android.artplace.remote.ArtsyApiManager;
-import com.example.android.artplace.remote.authentication.TokenService;
 import com.example.android.artplace.utils.TokenManager;
 
 import java.util.ArrayList;

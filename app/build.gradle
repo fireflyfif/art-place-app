@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.example.android.artplace"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         def clientId = project.hasProperty('clientId') ? clientId :
                 (System.getenv('CLIENT_ID') ?: "\"\"")
@@ -49,12 +49,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:$rootProject.androidSupportVersion"
-    implementation "com.android.support:support-v4:$rootProject.androidSupportVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.androidSupportVersion"
-    implementation "com.android.support:design:$rootProject.androidSupportVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.androidSupportVersion"
+    implementation "androidx.appcompat:appcompat:$rootProject.androidXAppCompatVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.androidXAppCompatVersion"
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
+    implementation 'androidx.cardview:cardview:1.0.0'
 
     // Retrofit library dependencies
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
@@ -68,37 +67,32 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
 
     // Lifecycle AAC dependencies
-    implementation "android.arch.lifecycle:extensions:$rootProject.androidArchVersion"
-    implementation "android.arch.lifecycle:viewmodel:$rootProject.androidArchVersion"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.1.0'
 
     // Paging library dependency
-    implementation 'android.arch.paging:runtime:1.0.1'
+    implementation 'androidx.paging:paging-runtime:2.1.1'
 
     // ButterKnife Dependency
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
-
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     // Room Library Dependencies
-    implementation "android.arch.persistence.room:runtime:$rootProject.androidArchVersion"
-    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.androidArchVersion"
-
-    // Google Service - Ads Dependency
-    implementation "com.google.android.gms:play-services-ads:$rootProject.playServicesAdsVersion"
+    implementation 'androidx.room:room-runtime:2.2.3'
+    annotationProcessor 'androidx.room:room-compiler:2.2.3'
 
     // Google Service - Analytics Dependency
     implementation "com.google.android.gms:play-services-analytics:$rootProject.playServicesAnalyticsVersion"
 
     // Palette Library dependency
-    implementation "com.android.support:palette-v7:$rootProject.androidSupportVersion"
+    implementation 'androidx.palette:palette:1.0.0'
 
     // Fresco Library for blurring images Dependencies
     implementation "com.facebook.fresco:fresco:$rootProject.frescoVersion"
     implementation "jp.wasabeef:fresco-processors:$rootProject.frescoProcessorsVersion"
 
     // Bottom Navigation Library Dependency
-    implementation 'com.aurelhubert:ahbottomnavigation:2.1.0'
+    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
 
     // Library for formatting Markdown text
     implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
@@ -108,6 +102,6 @@ dependencies {
 
     // Test dependencies
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

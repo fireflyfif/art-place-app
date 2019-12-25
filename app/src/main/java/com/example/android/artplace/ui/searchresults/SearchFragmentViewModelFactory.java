@@ -35,14 +35,11 @@
 
 package com.example.android.artplace.ui.searchresults;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 
-import com.example.android.artplace.ArtPlaceApp;
 import com.example.android.artplace.repository.ArtsyRepository;
-import com.example.android.artplace.ui.searchresults.adapter.SearchListAdapter;
-import com.example.android.artplace.utils.TokenManager;
 
 public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory {
 

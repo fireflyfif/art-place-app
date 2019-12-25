@@ -35,17 +35,15 @@
 
 package com.example.android.artplace.remote;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.example.android.artplace.callbacks.FetchTokenCallback;
 import com.example.android.artplace.model.CustomArtsyDeserializer;
 import com.example.android.artplace.model.artists.CustomArtistsDeserializer;
 import com.example.android.artplace.model.artists.EmbeddedArtists;
 import com.example.android.artplace.model.artworks.ArtworkWrapperResponse;
 import com.example.android.artplace.model.artworks.CustomArtworksDeserializer;
 import com.example.android.artplace.model.artworks.EmbeddedArtworks;
-import com.example.android.artplace.model.token.TypeToken;
 import com.example.android.artplace.remote.authentication.TokenAuthenticator;
 import com.example.android.artplace.utils.TokenManager;
 import com.google.gson.Gson;

@@ -35,22 +35,22 @@
 
 package com.example.android.artplace.ui.artworkdetail;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -90,9 +90,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
@@ -181,8 +178,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
-    @BindView(R.id.adView)
-    AdView adView;
 
     private Artwork mArtworkObject;
     private String mArtworkIdString;
@@ -235,16 +230,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // source: https://developers.google.com/analytics/devguides/collection/android/v4/
         ArtPlaceApp application = (ArtPlaceApp) getApplication();
         mTracker = application.getDefaultTracker();
-
-        // Initialize Ads
-        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        // TODO: Add my own ID
-        MobileAds.initialize(this, getString(R.string.admob_id));
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        adView.loadAd(adRequest);
 
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);

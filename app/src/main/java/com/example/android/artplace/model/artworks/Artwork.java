@@ -37,7 +37,7 @@ package com.example.android.artplace.model.artworks;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.util.DiffUtil;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.android.artplace.model.ImageLinks;
 import com.google.gson.annotations.Expose;

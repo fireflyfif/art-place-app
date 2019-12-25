@@ -33,7 +33,7 @@
   ~
   -->
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artist_cardview"
@@ -46,7 +46,7 @@
     android:layout_marginBottom="@dimen/margin_bottom_cardview"
     app:cardBackgroundColor="@color/cardBackground">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -235,6 +235,6 @@
             app:layout_constraintTop_toTopOf="@+id/artist_bio_label"
             tools:text="Bio of the artist here" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
