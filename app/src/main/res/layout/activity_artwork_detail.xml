@@ -39,8 +39,7 @@
     android:id="@+id/coordinator_artwork"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="app.app.android.artplace.ui.artworkdetail.ArtworkDetailActivity">
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"

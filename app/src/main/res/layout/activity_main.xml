@@ -39,8 +39,7 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    tools:context="app.app.android.artplace.ui.mainactivity.MainActivity">
+    android:gravity="center_horizontal">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_main"
