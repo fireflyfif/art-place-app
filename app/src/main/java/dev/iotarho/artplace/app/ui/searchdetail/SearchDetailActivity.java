@@ -52,7 +52,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.palette.graphics.Palette;
 
@@ -70,9 +69,7 @@ import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
-import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
-import dev.iotarho.artplace.app.utils.TokenManager;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -149,10 +146,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView artistBioLabel;
 
     private ShowsDetailViewModel mShowsViewModel;
-    private ShowDetailViewModelFactory mShowFactory;
     private ArtistsDetailViewModel mArtistViewModel;
-    private ArtistDetailViewModelFactory mArtistFactory;
-    private TokenManager mTokenManager;
     private int mGeneratedLightColor;
 
 
@@ -167,12 +161,6 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        //SharedPreferences preferences = getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
-        // Initialize the TokenManager
-        mTokenManager = TokenManager.getInstance(this);
-        mArtistFactory = new ArtistDetailViewModelFactory(mTokenManager);
-        mShowFactory = new ShowDetailViewModelFactory(mTokenManager);
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {
@@ -291,16 +279,13 @@ public class SearchDetailActivity extends AppCompatActivity {
                 }
 
                 Permalink permalink = linksResult.getPermalink();
-                readMoreButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (permalink != null) {
-                            String readMoreLink = permalink.getHref();
-                            Log.d(TAG, "Perma Link: " + readMoreLink);
-                            Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
-                            openUrlIntent.setData(Uri.parse(readMoreLink));
-                            startActivity(openUrlIntent);
-                        }
+                readMoreButton.setOnClickListener(v -> {
+                    if (permalink != null) {
+                        String readMoreLink = permalink.getHref();
+                        Log.d(TAG, "Perma Link: " + readMoreLink);
+                        Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
+                        openUrlIntent.setData(Uri.parse(readMoreLink));
+                        startActivity(openUrlIntent);
                     }
                 });
             }
@@ -313,16 +298,12 @@ public class SearchDetailActivity extends AppCompatActivity {
      * @param selfLink is the link that should be passed as a link to be used as a new call
      */
     private void initShowsContentViewModel(String selfLink) {
-        mShowsViewModel = ViewModelProviders.of(this, mShowFactory).get(ShowsDetailViewModel.class);
+        mShowsViewModel = ViewModelProviders.of(this).get(ShowsDetailViewModel.class);
         mShowsViewModel.initSearchLink(selfLink);
 
-        mShowsViewModel.getResultSelfLink().observe(this, new Observer<ShowContent>() {
-
-            @Override
-            public void onChanged(@Nullable ShowContent showContent) {
-                if (showContent != null) {
-                    setupShowsContentUi(showContent);
-                }
+        mShowsViewModel.getResultSelfLink().observe(this, showContent -> {
+            if (showContent != null) {
+                setupShowsContentUi(showContent);
             }
         });
     }
@@ -374,15 +355,12 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
 
-        mArtistViewModel = ViewModelProviders.of(this, mArtistFactory).get(ArtistsDetailViewModel.class);
+        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistData(receivedArtistUrlString);
 
-        mArtistViewModel.getArtistData().observe(this, new Observer<Artist>() {
-            @Override
-            public void onChanged(@Nullable Artist artists) { // onChanged is never called?
-                if (artists != null) {
-                    setupArtistUi(artists);
-                }
+        mArtistViewModel.getArtistData().observe(this, artists -> { // onChanged is never called?
+            if (artists != null) {
+                setupArtistUi(artists);
             }
         });
     }

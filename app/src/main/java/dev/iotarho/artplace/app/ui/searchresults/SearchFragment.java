@@ -59,9 +59,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -76,7 +74,6 @@ import dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity;
 import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
-import dev.iotarho.artplace.app.utils.TokenManager;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -107,7 +104,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mSearchType;
-    private TokenManager mTokenManager;
 
     private SharedPreferences mSharedPreferences;
 
@@ -126,9 +122,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
             mSearchType = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
         }
-
-        // Initialize the TokenManager
-        mTokenManager = TokenManager.getInstance(getActivity());
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -150,7 +143,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
         ButterKnife.bind(this, rootView);
 
-        mViewModelFactory = Injection.provideSearchViewModelFactory(mTokenManager, mQueryWordString, mSearchType);
+        mViewModelFactory = Injection.provideSearchViewModelFactory(mQueryWordString, mSearchType);
 
         // Set the UI
         setupUi();
@@ -176,58 +169,48 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         // Initialize the ViewModel
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
-        mViewModel.getSearchResultsLiveData().observe(this, new Observer<PagedList<Result>>() {
-
-            @Override
-            public void onChanged(@Nullable PagedList<Result> results) {
-                if (results != null) {
-                    // Submit the list to the PagedListAdapter
-                    mSearchAdapter.submitList(results);
-                }
+        mViewModel.getSearchResultsLiveData().observe(this, results -> {
+            if (results != null) {
+                // Submit the list to the PagedListAdapter
+                mSearchAdapter.submitList(results);
             }
         });
 
-        mViewModel.getNetworkState().observe(this, new Observer<NetworkState>() {
-            @Override
-            public void onChanged(@Nullable NetworkState networkState) {
-                if (networkState != null) {
-                    mSearchAdapter.setNetworkState(networkState);
-                }
+        mViewModel.getNetworkState().observe(this, networkState -> {
+            if (networkState != null) {
+                mSearchAdapter.setNetworkState(networkState);
             }
         });
 
-        mViewModel.getInitialLoading().observe(this, new Observer<NetworkState>() {
-            @Override
-            public void onChanged(@Nullable NetworkState networkState) {
-                if (networkState != null) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    errorMessage.setText(R.string.loading_results_message);
+        mViewModel.getInitialLoading().observe(this, networkState -> {
+            if (networkState != null) {
+                progressBar.setVisibility(View.VISIBLE);
+                errorMessage.setText(R.string.loading_results_message);
+                errorMessage.setVisibility(View.VISIBLE);
+
+                if (networkState.getStatus() == NetworkState.Status.SUCCESS
+                        && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                    Log.d(TAG, "Network Status: " + networkState.getStatus());
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setText(R.string.no_data_found);
                     errorMessage.setVisibility(View.VISIBLE);
+                    Snackbar.make(coordinatorLayout, "Please search for another word.",
+                            Snackbar.LENGTH_LONG).show();
+                }
 
-                    if (networkState.getStatus() == NetworkState.Status.SUCCESS
-                            && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                        Log.d(TAG, "Network Status: " + networkState.getStatus());
-                        progressBar.setVisibility(View.GONE);
-                        errorMessage.setText(R.string.no_data_found);
-                        errorMessage.setVisibility(View.VISIBLE);
-                        Snackbar.make(coordinatorLayout, "Please search for another word.",
-                                Snackbar.LENGTH_LONG).show();
-                    }
+                if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    Log.d(TAG, "Network Status: " + networkState.getStatus());
+                    progressBar.setVisibility(View.INVISIBLE);
+                    errorMessage.setVisibility(View.INVISIBLE);
+                }
 
-                    if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                        Log.d(TAG, "Network Status: " + networkState.getStatus());
-                        progressBar.setVisibility(View.INVISIBLE);
-                        errorMessage.setVisibility(View.INVISIBLE);
-                    }
-
-                    if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                        Log.d(TAG, "Network Status: " + networkState.getStatus());
-                        progressBar.setVisibility(View.GONE);
-                        // TODO: Hide this message when no connection but some cache results still visible
-                        errorMessage.setVisibility(View.VISIBLE);
-                        Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                                Snackbar.LENGTH_LONG).show();
-                    }
+                if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                    Log.d(TAG, "Network Status: " + networkState.getStatus());
+                    progressBar.setVisibility(View.GONE);
+                    // TODO: Hide this message when no connection but some cache results still visible
+                    errorMessage.setVisibility(View.VISIBLE);
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -262,17 +245,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 .get(SearchFragmentViewModel.class);
 
         mViewModel.refreshSearchLiveData(queryWord, searchType)
-                .observe(this, new Observer<PagedList<Result>>() {
-
-            @Override
-            public void onChanged(@Nullable PagedList<Result> results) {
-                if (results != null) {
-                    Log.d(TAG, "Size of the result: " + results.size());
-                    // Submit the list to the PagedListAdapter
-                    mSearchAdapter.submitList(results);
-                }
-            }
-        });
+                .observe(this, results -> {
+                    if (results != null) {
+                        Log.d(TAG, "Size of the result: " + results.size());
+                        // Submit the list to the PagedListAdapter
+                        mSearchAdapter.submitList(results);
+                    }
+                });
 
         // Set the Adapter on the RecyclerView
         searchResultsRv.setAdapter(mSearchAdapter);

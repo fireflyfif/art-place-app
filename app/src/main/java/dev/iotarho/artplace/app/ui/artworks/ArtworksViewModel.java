@@ -64,9 +64,9 @@ public class ArtworksViewModel extends ViewModel {
     private ArtsyRepository mRepo;
 
 
-    public ArtworksViewModel(ArtsyRepository repository) {
-        mRepo = repository;
-        init(repository);
+    public ArtworksViewModel() {
+        mRepo = ArtsyRepository.getInstance();
+        init(mRepo);
     }
 
     /**
@@ -79,21 +79,11 @@ public class ArtworksViewModel extends ViewModel {
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
-            @Override
-            public LiveData<NetworkState> apply(ArtworkDataSource input) {
-                return input.getNetworkState();
-            }
-        });
+                (Function<ArtworkDataSource, LiveData<NetworkState>>) input -> input.getNetworkState());
 
         // Initialize the Loading state liveData
         mInitialLoading = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                new Function<ArtworkDataSource, LiveData<NetworkState>>() {
-                    @Override
-                    public LiveData<NetworkState> apply(ArtworkDataSource input) {
-                        return input.getInitialLoading();
-                    }
-                });
+                (Function<ArtworkDataSource, LiveData<NetworkState>>) input -> input.getInitialLoading());
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()

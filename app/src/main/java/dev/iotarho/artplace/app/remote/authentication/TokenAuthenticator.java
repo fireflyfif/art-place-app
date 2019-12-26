@@ -43,6 +43,7 @@ import java.io.IOException;
 
 import dev.iotarho.artplace.app.callbacks.FetchTokenCallback;
 import dev.iotarho.artplace.app.model.token.TypeToken;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 import dev.iotarho.artplace.app.utils.Utils;
 import okhttp3.Authenticator;
@@ -51,21 +52,23 @@ import okhttp3.Response;
 import okhttp3.Route;
 
 // This class should be called when the token expires
-// source:https://github.com/square/okhttp/wiki/Recipes#handling-authentication
+// source: https://square.github.io/okhttp/recipes/
 public class TokenAuthenticator implements Authenticator {
 
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
 
     private static TokenAuthenticator INSTANCE;
-    private TokenManager mTokenManager;
+//    private TokenManager mTokenManager;
+    private PreferenceUtils mPreferenceUtils;
 
-    private TokenAuthenticator(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    private TokenAuthenticator() {
+//        mTokenManager = tokenManager;
+        mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
+    public static synchronized TokenAuthenticator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator(tokenManager);
+            INSTANCE = new TokenAuthenticator();
         }
         return INSTANCE;
     }
@@ -80,7 +83,7 @@ public class TokenAuthenticator implements Authenticator {
         // TODO: Don't refresh if already we have it saved and it's not expired
         // Always do it in a synchronise block
         Log.d(TAG, "Trying to fetch the token from authenticate");
-        mTokenManager.fetchToken(new FetchTokenCallback() {
+       /* mTokenManager.fetchToken(new FetchTokenCallback() {
             @Override
             public void onSuccess(@NonNull TypeToken tokenObject) {
                 // TODO: What?
@@ -90,10 +93,10 @@ public class TokenAuthenticator implements Authenticator {
             public void onError(@NonNull Throwable throwable) {
 
             }
-        });
+        });*/
 
         // Get the currently stored token
-        String currentToken = mTokenManager.getToken(); // gets null, because nothing is saved into SharedPrefs yet
+        String currentToken = mPreferenceUtils.getToken(); // gets null, because nothing is saved into SharedPrefs yet
 
         // TODO: Check if the date is expired, do not check if token is the same!!!
         /*if (currentToken != null && currentToken.equals(token)) {

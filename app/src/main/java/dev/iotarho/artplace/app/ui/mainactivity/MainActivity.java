@@ -264,32 +264,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         appBarLayout.setExpanded(true, true);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.main_menu, menu);
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return false;
-
-            case R.id.action_refresh:
-                return false;
-
-            case R.id.action_dark_mode:
-                return false;
-
-            default:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void savePrefs(boolean state) {
         mPreferences = getApplicationContext()
                 .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);

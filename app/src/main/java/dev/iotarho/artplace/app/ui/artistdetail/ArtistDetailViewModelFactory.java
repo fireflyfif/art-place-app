@@ -41,7 +41,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import dev.iotarho.artplace.app.utils.TokenManager;
 
-public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
+/*public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
 
     private TokenManager mTokenManager;
 
@@ -58,4 +58,4 @@ public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }
-}
+}*/

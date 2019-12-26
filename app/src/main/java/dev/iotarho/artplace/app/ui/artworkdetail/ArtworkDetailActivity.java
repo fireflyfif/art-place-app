@@ -92,11 +92,9 @@ import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
-import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.utils.StringUtils;
-import dev.iotarho.artplace.app.utils.TokenManager;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
@@ -197,8 +195,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String mSimilarArtworksLink;
 
     private ArtistsDetailViewModel mArtistViewModel;
-    private ArtistDetailViewModelFactory mViewModelFactory;
-    private TokenManager mTokenManager;
 
     private boolean mIsFavorite;
 
@@ -232,10 +228,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
-            // Initialize the TokenManager
-            mTokenManager = TokenManager.getInstance(this);
-            mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
-
             if (mArtworkObject != null) {
                 setupUi(mArtworkObject);
             }
@@ -243,22 +235,19 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         // Check if the item exists in the db already or not!!!
         // TODO: Remove Repository instance from Activity!
-        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, new ResultFromDbCallback() {
-            @Override
-            public void setResult(boolean isFav) {
-                if (isFav) {
-                    mIsFavorite = true;
-                    mFavButton.setTag(FAV_TAG);
-                    // Set the button to display it's already added
-                    Log.d(TAG, "Item already exists in the db.");
-                    mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
-                } else {
-                    // Add to the db
-                    mIsFavorite = false;
-                    mFavButton.setTag(NON_FAV_TAG);
-                    Log.d(TAG, "Insert a new item into the db");
-                    mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
-                }
+        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, isFav -> {
+            if (isFav) {
+                mIsFavorite = true;
+                mFavButton.setTag(FAV_TAG);
+                // Set the button to display it's already added
+                Log.d(TAG, "Item already exists in the db.");
+                mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
+            } else {
+                // Add to the db
+                mIsFavorite = false;
+                mFavButton.setTag(NON_FAV_TAG);
+                Log.d(TAG, "Insert a new item into the db");
+                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
             }
         });
 
@@ -425,16 +414,13 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                     .into(artworkImage);
 
             // If there is an image set a click listener on it
-            artworkImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Open new Activity
-                    Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
-                            LargeArtworkActivity.class);
-                    largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, mLargerImageLinkString);
-                    Log.d(TAG, "Larger link to image: " + mLargerImageLinkString);
-                    startActivity(largeImageIntent);
-                }
+            artworkImage.setOnClickListener(v -> {
+                // Open new Activity
+                Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
+                        LargeArtworkActivity.class);
+                largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, mLargerImageLinkString);
+                Log.d(TAG, "Larger link to image: " + mLargerImageLinkString);
+                startActivity(largeImageIntent);
             });
         }
 
@@ -520,18 +506,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      */
     private void initArtistViewModel(String artistLink) {
         // Initialize the ViewModel
-        mArtistViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ArtistsDetailViewModel.class);
+        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
 
-        mArtistViewModel.getArtistDataFromArtwork().observe(this, new Observer<List<Artist>>() {
-            @Override
-            public void onChanged(@Nullable List<Artist> artists) {
-                if (artists != null) {
+        mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
+            if (artists != null) {
 
-                    for (int i = 0; i < artists.size(); i++) {
-                        Artist artistCurrent = artists.get(i);
-                        setupArtistUI(artistCurrent);
-                    }
+                for (int i = 0; i < artists.size(); i++) {
+                    Artist artistCurrent = artists.get(i);
+                    setupArtistUI(artistCurrent);
                 }
             }
         });

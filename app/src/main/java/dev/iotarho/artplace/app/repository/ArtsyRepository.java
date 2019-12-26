@@ -53,6 +53,7 @@ import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.remote.ArtsyApiInterface;
 import dev.iotarho.artplace.app.remote.ArtsyApiManager;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,35 +70,35 @@ public class ArtsyRepository {
     private static volatile ArtsyRepository INSTANCE;
 
     private TokenManager mTokenManager;
+    private PreferenceUtils mPreferenceUtils;
 
     // Private constructor of the Repository class
-    private ArtsyRepository(TokenManager tokenManager) {
+    private ArtsyRepository() {
         // Prevent from the reflection api
         if (INSTANCE != null) {
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
         }
-        mTokenManager = tokenManager;
+        mTokenManager = TokenManager.getInstance();
+        mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static ArtsyRepository getInstance(TokenManager tokenManager) {
+    public static ArtsyRepository getInstance() {
         // Double check locking pattern
         if (INSTANCE == null) {
 
             // if there is no instance available, create a new one
             synchronized (ArtsyRepository.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new ArtsyRepository(tokenManager);
+                    INSTANCE = new ArtsyRepository();
                 }
             }
         }
         return INSTANCE;
     }
 
-    // TODO: Q: Should I add the TokenManager in the scope of this method?
     public ArtsyApiInterface getArtsyApi() {
-        return ArtsyApiManager.createApiCall(ArtsyApiInterface.class, mTokenManager);
+        return ArtsyApiManager.createApiCall(ArtsyApiInterface.class, mTokenManager, mPreferenceUtils);
     }
-
 
     /**
      * Getter method to load the Similar Artworks

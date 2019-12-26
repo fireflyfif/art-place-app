@@ -50,31 +50,29 @@ public class ArtistsDetailViewModel extends ViewModel {
     private LiveData<List<Artist>> mArtistListData;
     private LiveData<Artist> mArtistData;
     private LiveData<List<Artwork>> mSimilarArtworkLink;
-    private TokenManager mTokenManager;
 
-    public ArtistsDetailViewModel(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    public ArtistsDetailViewModel() {
     }
 
     public void initArtistDataFromArtwork(String artistUrl) {
         if (mArtistListData != null) {
             return;
         }
-        mArtistListData = ArtsyRepository.getInstance(mTokenManager).getArtistFromLink(artistUrl);
+        mArtistListData = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
     }
 
     public void initArtistData(String artistUrl) {
         if (mArtistData != null) {
             return;
         }
-        mArtistData = ArtsyRepository.getInstance(mTokenManager).getArtistInfoFromLink(artistUrl);
+        mArtistData = ArtsyRepository.getInstance().getArtistInfoFromLink(artistUrl);
     }
 
     public void initSimilarArtworksData(String similarArtUrl) {
         if (mSimilarArtworkLink != null) {
             return;
         }
-        mSimilarArtworkLink = ArtsyRepository.getInstance(mTokenManager).getSimilarArtFromLink(similarArtUrl);
+        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
     }
 
     public LiveData<List<Artist>> getArtistDataFromArtwork() {

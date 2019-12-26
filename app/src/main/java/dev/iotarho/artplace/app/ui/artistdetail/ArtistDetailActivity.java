@@ -94,8 +94,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistBioLabel;
 
     private ArtistsDetailViewModel mArtistViewModel;
-    private ArtistDetailViewModelFactory mViewModelFactory;
-    private TokenManager mTokenManager;
+//    private ArtistDetailViewModelFactory mViewModelFactory;
+//    private TokenManager mTokenManager;
 
 
     @Override
@@ -124,11 +124,11 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 SharedPreferences preferences = getSharedPreferences(Utils.PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
                 // Initialize the TokenManager
-                mTokenManager = TokenManager.getInstance(this);
+//                mTokenManager = TokenManager.getInstance(this);
 
                 // Initialize the ViewModel
-                mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
-                mArtistViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ArtistsDetailViewModel.class);
+//                mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
+                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
                 mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
                 mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {

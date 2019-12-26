@@ -51,6 +51,7 @@ import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.CustomArtworksDeserializer;
 import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
 import dev.iotarho.artplace.app.remote.authentication.TokenAuthenticator;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 import dev.iotarho.artplace.app.utils.Utils;
 import okhttp3.Interceptor;
@@ -66,6 +67,7 @@ public class ArtsyApiManager {
 
     private final static OkHttpClient sClient = buildClient();
     private final static Retrofit sRetrofit = buildRetrofit(sClient);
+    private PreferenceUtils mPreferenceUtils;
 
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
@@ -100,45 +102,42 @@ public class ArtsyApiManager {
     }
 
     // Provide the Retrofit call
-    public static <T> T createApiCall(Class<T> service, TokenManager tokenManager) {
+    public static <T> T createApiCall(Class<T> service, final TokenManager tokenManager, final PreferenceUtils preferenceUtils) {
 
         // For logging the url that is being made
         HttpLoggingInterceptor logsInterceptor = new HttpLoggingInterceptor();
         logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient newClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request newRequest;
+                .addInterceptor(chain -> {
+                    Request newRequest;
 
-                        // The token needs to be saved first before it can be fetched from shared prefs
-                        String tokenString = tokenManager.getToken();
-                        // If there si no token saved in shared preferences, that means the app is
-                        // launched for the first time and we need to fetch the token
-                        if (tokenString == null || tokenString.equals("")) {
-                            Log.d(TAG, "Token in intercept is null or empty");
-                            // The token should be fetch here only the first time, after that the
-                            // Authenticator will handle refreshing it
-                            tokenString = tokenManager.fetchTokenFirstTime();
+                    // The token needs to be saved first before it can be fetched from shared prefs
+                    String tokenString = preferenceUtils.getToken();
+                    // If there si no token saved in shared preferences, that means the app is
+                    // launched for the first time and we need to fetch the token
+                    if (tokenString == null || tokenString.equals("")) {
+                        Log.d(TAG, "Token in intercept is null or empty");
+                        // The token should be fetch here only the first time, after that the
+                        // Authenticator will handle refreshing it
+                        tokenString = tokenManager.fetchTokenFirstTime();
 
-                            Log.d(TAG, "Token fetched for the first time: " + tokenString);
-                        }
-
-                        newRequest = chain
-                                .request()
-                                .newBuilder()
-                                // Temp way of hard-coding the token
-                                //.addHeader("X-XAPP-Token", token)
-                                .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
-                                .build();
-                        Log.d(TAG, "Token in intercept is: " + tokenString);
-
-                        return chain.proceed(newRequest);
+                        Log.d(TAG, "Token fetched for the first time: " + tokenString);
                     }
+
+                    newRequest = chain
+                            .request()
+                            .newBuilder()
+                            // Temp way of hard-coding the token
+                            //.addHeader("X-XAPP-Token", token)
+                            .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
+                            .build();
+                    Log.d(TAG, "Token in intercept is: " + tokenString);
+
+                    return chain.proceed(newRequest);
                 })
                 // Add the authenticator where the refreshed token is being fetched
-                .authenticator(TokenAuthenticator.getInstance(tokenManager))
+                .authenticator(TokenAuthenticator.getInstance())
                 .addInterceptor(logsInterceptor)
                 .build();
 

@@ -42,6 +42,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
+
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
 public class ArtPlaceApp extends Application {
@@ -62,6 +64,7 @@ public class ArtPlaceApp extends Application {
 
         sInstance = this;
         FirebaseAnalytics.getInstance(getApplicationContext());
+        PreferenceUtils.createInstance(getApplicationContext());
     }
 
     public static ArtPlaceApp getInstance() {
