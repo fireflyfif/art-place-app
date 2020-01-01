@@ -44,6 +44,11 @@
     <color name="colorAccentLight">#b388ff</color>
     <color name="colorAccentDark">#651fff</color>
 
+    <!-- Pop Art colors-->
+    <color name="colorPopRed">#FE4A49</color>
+    <color name="colorPopBlue">#2AB7CA</color>
+    <color name="colorPopYellow">#FED766</color>
+
     <color name="colorText">#fafafa</color>
     <color name="colorWhiteTransparent">#80FFFFFF</color>
     <color name="colorIconsInactive">#a4a4a4</color>

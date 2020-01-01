@@ -37,17 +37,16 @@ package dev.iotarho.artplace.app.ui.mainactivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -188,11 +187,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void addBottomNavigationItems() {
 
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
-                getString(R.string.title_artworks), R.drawable.ic_frame);
+                R.string.title_artworks, R.drawable.ic_red_dot, R.color.colorPopRed);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
-                getString(R.string.search), R.drawable.ic_search_24dp);
+                R.string.search, R.drawable.ic_blue_dot, R.color.colorPopBlue);
         AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(
-                getString(R.string.title_favorites), R.drawable.ic_favorite_24dp);
+                R.string.title_favorites, R.drawable.ic_yellow_dot, R.color.colorPopYellow);
 
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
@@ -217,18 +216,52 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void setupBottomNavStyle() {
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
+//        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPopRed), fetchColor(R.color.colorPopYellow));
 
-        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPrimary),
-                fetchColor(R.color.colorAccent));
 
-        bottomNavigation.setColored(false);
+        // Set default background color for AHBottomNavigation
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorBlack));
 
-        // Hide the navigation when the user scroll the Rv
-        //bottomNavigation.setBehaviorTranslationEnabled(true);
-        bottomNavigation.setTranslucentNavigationEnabled(true);
+        // Change colors for AHBottomNavigation
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorPopRed));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorBlack));
+
+        // Force to tint the drawable (useful for font with icon for example)
+        bottomNavigation.setForceTint(true);
+
+        // Manage titles for AHBottomNavigation
+        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.SHOW_WHEN_ACTIVE);
+//        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
+        //bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_HIDE);
+
+        // Use colored navigation with circle reveal effect
+        bottomNavigation.setColored(true);
+
+        // Disable the translation inside the CoordinatorLayout
+        bottomNavigation.setBehaviorTranslationEnabled(false);
+        //        bottomNavigation.setTranslucentNavigationEnabled(false);
+
+
+//        bottomNavigation.setItemDisableColor(fetchColor(R.color.colorPopYellow));
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_enabled}, // enabled
+                new int[] {-android.R.attr.state_enabled}, // disabled
+                new int[] {-android.R.attr.state_checked}, // unchecked
+                new int[] { android.R.attr.state_pressed}  // pressed
+        };
+
+        int[] colors = new int[] {
+                R.color.colorPopBlue,
+                R.color.colorPopRed,
+                R.color.colorPopYellow,
+                R.color.colorAccent
+        };
+
+        ColorStateList myList = new ColorStateList(states, colors);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            bottomNavigation.setBackgroundTintList(myList);
+//            bottomNavigation.setForegroundTintList(myList);
+        }
     }
 
     private void setupViewPager() {
