@@ -45,5 +45,8 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowActionBarOverlay">true</item>
 
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
     </style>
 </resources>
