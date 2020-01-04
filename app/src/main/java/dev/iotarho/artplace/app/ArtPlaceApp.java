@@ -43,6 +43,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -51,11 +52,12 @@ public class ArtPlaceApp extends Application {
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
     private static volatile ArtPlaceApp sInstance;
+    private static PreferenceUtils sPrefsUtils;
 
     // Set the theme to the whole app
-    static {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-    }
+   /* static {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    }*/
 
 
     @Override

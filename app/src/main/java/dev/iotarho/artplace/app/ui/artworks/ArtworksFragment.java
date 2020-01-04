@@ -73,6 +73,7 @@ import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity;
 import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
 import dev.iotarho.artplace.app.utils.ThemeUtils;
 
@@ -95,6 +96,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
+    private PreferenceUtils mPreferenceUtils;
 
     private PagedList<Artwork> mArtworksList;
 
@@ -108,6 +110,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mPreferenceUtils = PreferenceUtils.getInstance();
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
@@ -296,13 +300,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 return true;
 
             case R.id.action_dark_mode:
-                // todo: save it in prefs
-                ThemeUtils.applyTheme(1);
+                mPreferenceUtils.saveThemePrefs(1);
+                ThemeUtils.applyTheme(mPreferenceUtils.getThemeFromPrefs());
                 return true;
 
             case R.id.action_light_mode:
-                // todo: save it in prefs
-                ThemeUtils.applyTheme(0);
+                mPreferenceUtils.saveThemePrefs(0);
+                ThemeUtils.applyTheme(mPreferenceUtils.getThemeFromPrefs());
                 return true;
             default:
                 break;

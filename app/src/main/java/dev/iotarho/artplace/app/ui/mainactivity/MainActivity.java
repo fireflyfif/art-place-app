@@ -35,15 +35,7 @@
 
 package dev.iotarho.artplace.app.ui.mainactivity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,11 +57,12 @@ import dev.iotarho.artplace.app.ui.favorites.FavoritesFragment;
 import dev.iotarho.artplace.app.ui.mainactivity.adapters.BottomNavAdapter;
 import dev.iotarho.artplace.app.ui.mainactivity.adapters.MainViewPager;
 import dev.iotarho.artplace.app.ui.searchresults.SearchFragment;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String THEME_PREFERENCE_KEY = "theme_prefs";
     private static final String POSITION_KEY = "position";
 
     @BindView(R.id.appbar_main)
@@ -86,13 +79,15 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     Toolbar toolbar;
 
     private BottomNavAdapter mPagerAdapter;
-    private SharedPreferences mPreferences;
-    private boolean mIsDayMode;
     private String mTitle;
     private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // set the theme from Preferences
+        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
+        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -103,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
 
-        Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
         setToolbarTitle(mPosition);
@@ -131,30 +125,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
             return true;
         });
-
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                // Night mode is not active, we're using the light theme
-                Log.d(TAG, "mode is light");
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                // Night mode is active, we're using dark theme
-                Log.d(TAG, "mode is dark");
-                break;
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save the position of the selected Fragment
         outState.putInt(POSITION_KEY, mPosition);
@@ -187,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void addBottomNavigationItems() {
 
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
-                R.string.title_artworks, R.drawable.ic_red_dot, R.color.colorPopRed);
+                getString(R.string.title_artworks), R.drawable.ic_red_dot);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
-                R.string.search, R.drawable.ic_blue_dot, R.color.colorPopBlue);
+                getString(R.string.search), R.drawable.ic_red_dot);
         AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(
-                R.string.title_favorites, R.drawable.ic_yellow_dot, R.color.colorPopYellow);
+                getString(R.string.title_favorites), R.drawable.ic_red_dot);
 
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
@@ -216,52 +190,21 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void setupBottomNavStyle() {
-//        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPopRed), fetchColor(R.color.colorPopYellow));
-
-
         // Set default background color for AHBottomNavigation
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorBlack));
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
 
         // Change colors for AHBottomNavigation
         bottomNavigation.setAccentColor(fetchColor(R.color.colorPopRed));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorBlack));
-
-        // Force to tint the drawable (useful for font with icon for example)
-        bottomNavigation.setForceTint(true);
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorPopBlue));
 
         // Manage titles for AHBottomNavigation
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.SHOW_WHEN_ACTIVE);
-//        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-        //bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_HIDE);
 
         // Use colored navigation with circle reveal effect
-        bottomNavigation.setColored(true);
+        bottomNavigation.setColored(false);
 
-        // Disable the translation inside the CoordinatorLayout
-        bottomNavigation.setBehaviorTranslationEnabled(false);
-        //        bottomNavigation.setTranslucentNavigationEnabled(false);
-
-
-//        bottomNavigation.setItemDisableColor(fetchColor(R.color.colorPopYellow));
-        int[][] states = new int[][] {
-                new int[] { android.R.attr.state_enabled}, // enabled
-                new int[] {-android.R.attr.state_enabled}, // disabled
-                new int[] {-android.R.attr.state_checked}, // unchecked
-                new int[] { android.R.attr.state_pressed}  // pressed
-        };
-
-        int[] colors = new int[] {
-                R.color.colorPopBlue,
-                R.color.colorPopRed,
-                R.color.colorPopYellow,
-                R.color.colorAccent
-        };
-
-        ColorStateList myList = new ColorStateList(states, colors);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            bottomNavigation.setBackgroundTintList(myList);
-//            bottomNavigation.setForegroundTintList(myList);
-        }
+        // Hide the navigation when the user scroll the Rv
+        bottomNavigation.setBehaviorTranslationEnabled(true);
     }
 
     private void setupViewPager() {
@@ -280,14 +223,12 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public void onRefreshConnection() {
-        Log.d(TAG, "onRefreshConnection is now triggered");
         setAppBarVisible();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         // Show the AppBarLayout every time after resume
         setAppBarVisible();
     }
@@ -295,14 +236,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void setAppBarVisible() {
         // Set the AppBarLayout to expanded
         appBarLayout.setExpanded(true, true);
-    }
-
-    private void savePrefs(boolean state) {
-        mPreferences = getApplicationContext()
-                .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putBoolean(THEME_PREFERENCE_KEY, state);
-        editor.apply();
     }
 
     /**

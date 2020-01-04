@@ -7,17 +7,18 @@ public class ThemeUtils {
     public static void applyTheme(int theme) {
         switch (theme) {
             case 0:
-                //lightMode
+                // light Mode
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
             case 1:
-                // darkMode
+                // dark Mode
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
             case 2:
-                // batterySaverMode
+                // battery Saver Mode
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
                 break;
+            case -1:
             default:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;

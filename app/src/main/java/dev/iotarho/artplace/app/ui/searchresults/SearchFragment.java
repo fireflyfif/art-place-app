@@ -262,8 +262,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 .getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(PREFERENCE_SEARCH_WORD, searchQuery);
-        // Use apply() instead of commit(), because it is being saved on the background
-        editor.apply();
+        editor.apply(); // use apply() instead of commit(), because it is being saved on the background
         Log.d(TAG, "Saved into shared prefs");
     }
 
@@ -289,12 +288,12 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         // source: https://stackoverflow.com/a/29916353/8132331
         Drawable drawable = menu.findItem(R.id.action_search).getIcon();
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.colorText));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.colorText));
         menu.findItem(R.id.action_search).setIcon(drawable);
 
         // Set the SearchView
         SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         if (mSearchView != null && !mQueryWordString.isEmpty()) {
             mSearchView.onActionViewExpanded();
@@ -302,7 +301,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             mSearchView.clearFocus();
         }
 
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
         // Set the Submit Button
         mSearchView.setSubmitButtonEnabled(false);
 

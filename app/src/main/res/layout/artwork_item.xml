@@ -66,14 +66,15 @@
             android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
-            android:scaleType="fitStart" />
+            android:scaleType="fitStart"
+            tools:src="@drawable/pop_art_placeholder" />
 
         <TextView
             android:id="@+id/artwork_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/poppins_light"
+            android:fontFamily="@font/work_sans_semibold"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
@@ -83,7 +84,7 @@
             android:paddingBottom="@dimen/padding_10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/colorText"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
@@ -92,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/work_sans"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"

@@ -7,9 +7,10 @@ import androidx.preference.PreferenceManager;
 
 import dev.iotarho.artplace.app.model.token.TypeToken;
 
-import static dev.iotarho.artplace.app.utils.Utils.TOKEN_VALUE_KEY;
-
 public class PreferenceUtils {
+
+    private static final String PREFS_KEY_TOKEN = "prefs_token_key";
+    private static final String PREFS_KEY_APP_THEME = "prefs_key_theme";
 
     private static volatile PreferenceUtils sInstance;
     private static final Object LOCK = new Object();
@@ -36,15 +37,19 @@ public class PreferenceUtils {
         return sInstance;
     }
 
+    public void saveThemePrefs(int themeInt) {
+        mPrefs.edit().putInt(PREFS_KEY_APP_THEME, themeInt).apply();
+    }
+
+    public int getThemeFromPrefs() {
+        return mPrefs.getInt(PREFS_KEY_APP_THEME, -1);
+    }
+
     public void saveToken(TypeToken tokenObject) {
-        mPrefs
-                .edit()
-                .putString(TOKEN_VALUE_KEY, tokenObject.getToken())
-                .apply();
+        mPrefs.edit().putString(PREFS_KEY_TOKEN, tokenObject.getToken()).apply();
     }
 
     public String getToken() {
-        return mPrefs
-                .getString(TOKEN_VALUE_KEY, "");
+        return mPrefs.getString(PREFS_KEY_TOKEN, "");
     }
 }
