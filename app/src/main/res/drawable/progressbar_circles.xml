@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/progress"
+        android:top="16dp"
+        android:bottom="16dp">
+        <layer-list>
+            <item>
+                <rotate
+                    android:fromDegrees="45"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="405"
+                    android:drawable="@drawable/ic_ellipse_1">
+                </rotate>
+            </item>
+            <item>
+            <rotate
+                android:fromDegrees="90"
+                android:pivotX="50%"
+                android:pivotY="50%"
+                android:toDegrees="-450"
+                android:drawable="@drawable/ic_ellipse_2">
+            </rotate>
+            </item>
+            <item>
+                <rotate
+                    android:fromDegrees="90"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="450"
+                    android:drawable="@drawable/ic_ellipse_3">
+                </rotate>
+            </item>
+        </layer-list>
+    </item>
+</layer-list>

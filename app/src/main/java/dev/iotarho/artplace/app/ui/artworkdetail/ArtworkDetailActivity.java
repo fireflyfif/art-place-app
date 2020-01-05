@@ -76,7 +76,6 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
-import dev.iotarho.artplace.app.callbacks.ResultFromDbCallback;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.SimilarArtworksLink;

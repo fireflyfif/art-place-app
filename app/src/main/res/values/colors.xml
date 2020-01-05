@@ -37,12 +37,18 @@
 <resources>
     <color name="colorPrimary">#fafafa</color>
     <color name="colorPrimaryDark">#c7c7c7</color>
-    <color name="colorAccent">#7c4dff</color>
+    <color name="colorAccent">#FE4A49</color>
     <color name="colorBackground">#e0e0e0</color>
     <color name="colorBackgroundDarker">#FFA09BAC</color>
     <color name="cardBackground">#eeeeee</color>
-    <color name="colorAccentLight">#b388ff</color>
-    <color name="colorAccentDark">#651fff</color>
+    <color name="colorAccentLight">#f36e6f</color>
+    <color name="colorAccentDark">#f5262b</color>
+
+    <color name="colorPrimaryDarker20">#f5f5f5</color>
+    <color name="colorPrimaryDarker10">#212121</color>
+    <color name="colorPrimaryLighter10">#373737</color>
+    <color name="colorPrimaryLighter20">#4d4d4d</color>
+    <color name="colorPrimaryLighter30">#646464</color>
 
     <!-- Pop Art colors-->
     <color name="colorPopRed">#FE4A49</color>
@@ -53,6 +59,7 @@
     <color name="colorWhiteTransparent">#80FFFFFF</color>
     <color name="colorIconsInactive">#a4a4a4</color>
     <color name="colorCardStroke">#C5C5C5</color>
+
     <color name="colorWhite">#ffffff</color>
     <color name="colorBlack">#000000</color>
 

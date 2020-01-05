@@ -35,6 +35,7 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -50,10 +51,12 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
+            android:elevation="@dimen/padding_10dp"
             android:theme="@style/Theme.AppCompat.DayNight"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/PopupMenuStyle" />
+            app:popupTheme="@style/PopupMenuStyle"
+            tools:targetApi="lollipop" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -61,8 +64,10 @@
         android:id="@+id/view_pager_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="?android:attr/colorBackground"/>
+        app:background="?attr/colorSurface"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!--android:background="@color/colorPrimaryDarker20"-->
 
     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
         android:id="@+id/bottom_navigation"

@@ -95,8 +95,6 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     RecyclerView searchResultsRv;
     @BindView(R.id.progress_bar_search)
     ProgressBar progressBar;
-    @BindView(R.id.error_message_search)
-    TextView errorMessage;
 
     private SearchFragmentViewModel mViewModel;
     private SearchListAdapter mSearchAdapter;
@@ -185,15 +183,11 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         mViewModel.getInitialLoading().observe(this, networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
-                errorMessage.setText(R.string.loading_results_message);
-                errorMessage.setVisibility(View.VISIBLE);
 
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS
                         && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.GONE);
-                    errorMessage.setText(R.string.no_data_found);
-                    errorMessage.setVisibility(View.VISIBLE);
                     Snackbar.make(coordinatorLayout, "Please search for another word.",
                             Snackbar.LENGTH_LONG).show();
                 }
@@ -201,14 +195,11 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
-                    errorMessage.setVisibility(View.INVISIBLE);
                 }
 
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.GONE);
-                    // TODO: Hide this message when no connection but some cache results still visible
-                    errorMessage.setVisibility(View.VISIBLE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                             Snackbar.LENGTH_LONG).show();
                 }

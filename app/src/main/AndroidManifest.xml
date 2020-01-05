@@ -48,13 +48,6 @@
                 android:value="dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity" />
         </activity>
         <activity
-            android:name="dev.iotarho.artplace.app.ui.favorites.FavArtworksActivity"
-            android:parentActivityName="dev.iotarho.artplace.app.ui.mainactivity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="dev.iotarho.artplace.app.ui.mainactivity.MainActivity" />
-        </activity>
-        <activity
             android:name="dev.iotarho.artplace.app.ui.FavDetailActivity"
             android:parentActivityName="dev.iotarho.artplace.app.ui.favorites.FavArtworksActivity">
             <meta-data

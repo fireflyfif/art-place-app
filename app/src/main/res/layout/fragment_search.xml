@@ -51,31 +51,12 @@
         app:spanCount="2"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_16dp"
-        android:layout_marginBottom="@dimen/bottom_nav_margin">
-
-        <TextView
-            android:id="@+id/error_message_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/amethysta"
-            android:gravity="center"
-            android:padding="@dimen/padding_16dp"
-            android:text="@string/error_msg"
-            android:textColor="@color/colorAccent" />
-
-        <ProgressBar
-            android:id="@+id/progress_bar_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/MyProgressBarRectangle"
-            android:padding="@dimen/padding_10dp" />
-
-    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar_search"
+        style="@style/MyProgressBarRectangle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/padding_10dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

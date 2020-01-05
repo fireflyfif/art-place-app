@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
 
         // Change colors for AHBottomNavigation
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorPopRed));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorPopBlue));
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccentLight));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
 
         // Manage titles for AHBottomNavigation
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.SHOW_WHEN_ACTIVE);

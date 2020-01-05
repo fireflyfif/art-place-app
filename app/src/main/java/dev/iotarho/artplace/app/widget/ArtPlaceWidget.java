@@ -52,7 +52,6 @@ import androidx.annotation.RequiresApi;
 import java.util.Objects;
 
 import dev.iotarho.artplace.app.R;
-import dev.iotarho.artplace.app.ui.favorites.FavArtworksActivity;
 import dev.iotarho.artplace.app.ui.mainactivity.MainActivity;
 
 /**
@@ -103,7 +102,7 @@ public class ArtPlaceWidget extends AppWidgetProvider {
         // Set the Remote Adapter to the ListView
         views.setRemoteAdapter(R.id.appwidget_fav_grid, intent);
 
-        Intent favIntent = new Intent(context, FavArtworksActivity.class);
+        Intent favIntent = new Intent(context, MainActivity.class);
         favIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         favIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, favIntent,

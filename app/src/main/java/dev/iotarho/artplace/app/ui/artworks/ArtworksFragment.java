@@ -38,7 +38,6 @@ package dev.iotarho.artplace.app.ui.artworks;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -91,8 +90,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     RecyclerView artworksRv;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
-    @BindView(R.id.error_message)
-    TextView errorMessage;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
@@ -170,21 +167,15 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         mViewModel.getInitialLoading().observe(this, networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
-                errorMessage.setText(R.string.loading_results_message);
-                errorMessage.setVisibility(View.VISIBLE);
                 // When the NetworkStatus is Successful
                 // hide both the Progress Bar and the error message
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
                     progressBar.setVisibility(View.INVISIBLE);
-                    errorMessage.setVisibility(View.INVISIBLE);
                 }
                 // When the NetworkStatus is Failed
                 // show the error message and hide the Progress Bar
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
                     progressBar.setVisibility(View.GONE);
-                    // TODO: Hide this message when no connection but some cache results still visible
-                    errorMessage.setText(getString(R.string.error_msg));
-                    errorMessage.setVisibility(View.VISIBLE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                             Snackbar.LENGTH_LONG).show();
                 }
