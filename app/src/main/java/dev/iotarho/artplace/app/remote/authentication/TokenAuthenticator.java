@@ -58,11 +58,11 @@ public class TokenAuthenticator implements Authenticator {
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
 
     private static TokenAuthenticator INSTANCE;
-//    private TokenManager mTokenManager;
+    private TokenManager mTokenManager;
     private PreferenceUtils mPreferenceUtils;
 
     private TokenAuthenticator() {
-//        mTokenManager = tokenManager;
+        mTokenManager = TokenManager.getInstance();
         mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
@@ -82,18 +82,19 @@ public class TokenAuthenticator implements Authenticator {
         // Refresh the token here: fetch and then save
         // TODO: Don't refresh if already we have it saved and it's not expired
         // Always do it in a synchronise block
-        Log.d(TAG, "Trying to fetch the token from authenticate");
-       /* mTokenManager.fetchToken(new FetchTokenCallback() {
+        mTokenManager.fetchToken(new FetchTokenCallback() {
             @Override
             public void onSuccess(@NonNull TypeToken tokenObject) {
-                // TODO: What?
+                // This fetch the token when needed
+                // prevent fetching it 3 times
+                Log.d(TAG, "token fetched successfully");
             }
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-
+                Log.d(TAG, "error while fetching the token");
             }
-        });*/
+        });
 
         // Get the currently stored token
         String currentToken = mPreferenceUtils.getToken(); // gets null, because nothing is saved into SharedPrefs yet

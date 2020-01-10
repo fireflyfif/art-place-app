@@ -99,10 +99,6 @@ public class TokenManager {
     }
 
     public void fetchToken(FetchTokenCallback callback) {
-        /*final String token = // get token from shared preferences
-                if (isTokenValid(token)) {
-
-        } else {*/
         synchronized (this) {
             ArtsyApiManager.createService(TokenService.class).refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
                     .enqueue(new Callback<TypeToken>() {
@@ -115,7 +111,7 @@ public class TokenManager {
 
                                     // Get the value of the token as a reference in the callback
                                     // source: https://stackoverflow.com/a/44881355/8132331
-                                    if(callback != null) {
+                                    if (callback != null) {
                                         callback.onSuccess(tokenObject);
                                     }
                                     // Check the token
@@ -138,17 +134,5 @@ public class TokenManager {
                     });
         }
     }
-
-    /**
-     * Create the service for fetching the token
-     * @return service for the Token
-     */
-    private TokenService getTokenService() {
-//        if (mTokenService == null) {
-//            mTokenService = ArtsyApiManager.createService(TokenService.class);
-//        }
-        return ArtsyApiManager.createService(TokenService.class);
-    }
-
 }
 
