@@ -113,6 +113,7 @@ public class TokenManager {
                                     // source: https://stackoverflow.com/a/44881355/8132331
                                     if (callback != null) {
                                         callback.onSuccess(tokenObject);
+                                        Log.d(TAG, "Token successfully fetched: " + newToken);
                                     }
                                     // Check the token
                                     Log.d(TAG, "Token saved into SharedPrefs: " + newToken);
@@ -125,9 +126,10 @@ public class TokenManager {
                         }
 
                         @Override
-                        public void onFailure(Call<TypeToken> call, Throwable t) {
+                        public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
                             Log.e(TAG, "Error when fetching the toke");
                             if (callback != null) {
+                                Log.e(TAG, "error while fetching the token: " + t.getMessage());
                                 callback.onError(t);
                             }
                         }

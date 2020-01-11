@@ -98,7 +98,7 @@ public class TokenAuthenticator implements Authenticator {
 
         // Get the currently stored token
         String currentToken = mPreferenceUtils.getToken(); // gets null, because nothing is saved into SharedPrefs yet
-
+        Log.d(TAG, "token from prefs: " + currentToken);
         // TODO: Check if the date is expired, do not check if token is the same!!!
         /*if (currentToken != null && currentToken.equals(token)) {
             // Refresh the token here

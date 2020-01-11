@@ -106,7 +106,7 @@ public class ArtsyApiManager {
 
         // For logging the url that is being made
         HttpLoggingInterceptor logsInterceptor = new HttpLoggingInterceptor();
-        logsInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logsInterceptor.level(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient newClient = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
@@ -153,7 +153,7 @@ public class ArtsyApiManager {
      * Second Retrofit object
      * @param newClient
      * @return
-     */
+     *//*
     @NonNull
     private static Retrofit getRetrofit(OkHttpClient newClient) {
         return new Retrofit.Builder()
@@ -161,7 +161,7 @@ public class ArtsyApiManager {
                 .client(newClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-    }
+    }*/
 
     /*
     Register the TypeAdapter here for deserializing the model
