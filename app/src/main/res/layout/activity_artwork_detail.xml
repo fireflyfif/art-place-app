@@ -52,12 +52,12 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorBackground"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorPrimary"
-            app:titleEnabled="false"
-            android:background="@color/colorBackground"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
 
             <FrameLayout
                 android:id="@+id/photo_container"
@@ -69,20 +69,20 @@
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
                     android:src="@color/colorPrimaryDark" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
                     android:layout_gravity="center"
+                    android:layout_margin="15dp"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:adjustViewBounds="true"
                     android:src="@color/colorPrimary" />
 
                 <View
@@ -173,13 +173,13 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         android:outlineAmbientShadowColor="@color/colorAccent"
         android:outlineSpotShadowColor="@color/colorAccent"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="6dp"
         app:fabCradleRoundedCornerRadius="25dp"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        tools:targetApi="lollipop" />
+        tools:targetApi="p" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -83,7 +83,7 @@
                 app:layout_constraintTop_toTopOf="@+id/background_title_layout"
                 tools:text="Artwork Full Title Here Full Title Here Full Title Here" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/artwork_artist_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -92,7 +92,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@android:color/transparent"
+                android:background="?android:attr/selectableItemBackground"
+                app:backgroundTint="@android:color/transparent"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:textColor="@color/colorAccent"
@@ -104,7 +105,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/artwork_title"
-                tools:text="Artist" />
+                tools:text="Artist"
+                tools:targetApi="m" />
 
             <View
                 android:id="@+id/divider_2"

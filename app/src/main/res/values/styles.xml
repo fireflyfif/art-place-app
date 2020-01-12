@@ -51,7 +51,7 @@
     </style>
 
     <style name="PopupMenuStyle" parent="ThemeOverlay.MaterialComponents.Light">
-       <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">?attr/colorSurface</item>
     </style>
 
     <style name="details_label" parent="Theme.MaterialComponents">

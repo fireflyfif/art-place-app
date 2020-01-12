@@ -35,9 +35,8 @@
   -->
 
 <resources>
-
     <color name="colorPrimary">#373737</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryDark">#111111</color>
     <color name="colorAccent">#2AB7CA</color>
     <!--<color name="colorBackground">#5d5d5d</color>-->
     <color name="colorBackground">@color/colorPrimary</color>
@@ -48,7 +47,6 @@
 
     <color name="colorPrimaryDarker20">#141414</color>
     <color name="colorPrimaryDarker10">#212121</color>
-    <color name="colorPrimaryLighter10">#373737</color>
     <color name="colorPrimaryLighter20">#4d4d4d</color>
     <color name="colorPrimaryLighter30">#646464</color>
 

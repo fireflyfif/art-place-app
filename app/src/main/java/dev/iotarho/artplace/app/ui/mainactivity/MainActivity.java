@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.addItem(favoritesItem);
     }
 
-    //TODO: Make these three methods into one
     private Fragment createArtworksFragment() {
         Fragment artworksFragment = new ArtworksFragment();
         // Set arguments here

@@ -669,12 +669,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     }
 
     private void clickFab() {
-        mFavButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setIconOnFab(v);
-            }
-        });
+        mFavButton.setOnClickListener(this::setIconOnFab);
     }
 
     /**

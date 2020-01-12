@@ -51,6 +51,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
+            android:background="@color/colorPrimary"
             android:elevation="@dimen/padding_10dp"
             android:theme="@style/Theme.AppCompat.DayNight"
             app:layout_collapseMode="pin"
@@ -66,8 +67,6 @@
         android:layout_height="match_parent"
         app:background="?attr/colorSurface"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <!--android:background="@color/colorPrimaryDarker20"-->
 
     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
         android:id="@+id/bottom_navigation"
