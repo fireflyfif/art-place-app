@@ -35,6 +35,8 @@
 
 package dev.iotarho.artplace.app.remote;
 
+import java.util.Map;
+
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artists.ArtistWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
@@ -43,6 +45,7 @@ import dev.iotarho.artplace.app.model.search.ShowContent;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
 public interface ArtsyApiInterface {
@@ -59,13 +62,18 @@ public interface ArtsyApiInterface {
     Call<ArtworkWrapperResponse> getArtworksData(@Query("size") int itemSize);
 
 
+    @GET("/api/artworks")
+    Call<ArtworkWrapperResponse> getDynamicArtworks(@Query("size") int itemSize, @QueryMap Map<String, Object> map);
+
+
     @GET
     Call<ArtworkWrapperResponse> getArtworksByArtistData(@Url String artworksLink);
 
 
     /**
      * Make call according to the url that is received from the json response
-     * @param nextUrl is dynamic link for next page with items
+     *
+     * @param nextUrl  is dynamic link for next page with items
      * @param itemSize is the size of requested items at once
      * @return the response for the next page
      */
@@ -86,7 +94,7 @@ public interface ArtsyApiInterface {
 
     /**
      * Make call to the artist endpoint that looks like that:
-     *  https://api.artsy.net/api/artists/4d8b92b34eb68a1b2c0003f4
+     * https://api.artsy.net/api/artists/4d8b92b34eb68a1b2c0003f4
      *
      * @param artistLink is the link taken from previous call
      * @return
