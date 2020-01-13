@@ -39,6 +39,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
+            debuggable true
             testCoverageEnabled = true
         }
     }
