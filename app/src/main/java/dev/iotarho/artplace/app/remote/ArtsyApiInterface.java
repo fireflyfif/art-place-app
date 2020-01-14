@@ -62,8 +62,13 @@ public interface ArtsyApiInterface {
     Call<ArtworkWrapperResponse> getArtworksData(@Query("size") int itemSize);
 
 
+    // TODO: Decide if this could be used
     @GET("/api/artworks")
     Call<ArtworkWrapperResponse> getDynamicArtworks(@Query("size") int itemSize, @QueryMap Map<String, Object> map);
+
+
+    @GET("/api/artists")
+    Call<ArtworkWrapperResponse> getArtist(@Query("size") int itemSize, @QueryMap Map<String, Object> map);
 
 
     @GET

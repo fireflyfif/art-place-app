@@ -43,7 +43,7 @@ public class Utils {
     public static final String BASE_ARTSY_URL = "https://api.artsy.net/";
     public static final String HEADER_TOKEN_KEY = "X-XAPP-Token";
     public static final int PAGE_SIZE = 80;
-    public static final int INITIAL_SIZE_HINT = 50;
+    public static final int INITIAL_SIZE_HINT = 20;
     public static final int PREFETCH_DISTANCE_HINT = 20;
     public static final String PREFS_TOKEN_KEY = "com.example.android.artplace.PREFS_TOKEN_KEY";
     public static final String TOKEN_VALUE_KEY = "token_value";

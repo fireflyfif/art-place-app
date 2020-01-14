@@ -42,7 +42,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.model.Links;
@@ -61,18 +63,18 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
     private ArtPlaceApp mAppController;
-    //private TokenManager mTokenManager;
     private ArtsyRepository mRepository;
 
     private final MutableLiveData<NetworkState> mNetworkState;
     private final MutableLiveData<NetworkState> mInitialLoading;
+
+    private Map<String, Object> map;
 
     private String mNextUrl;
 
 
     public ArtworkDataSource(ArtPlaceApp appController, ArtsyRepository repository) {
         mAppController = appController;
-//        mTokenManager = tokenManager;
         mRepository = repository;
 
         mNetworkState = new MutableLiveData();
@@ -95,7 +97,9 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        //mRepository.getArtsyApi(mTokenManager).getArtworksData()
+        map = new HashMap<>();
+        map.put("artist_id", "4d8b92b34eb68a1b2c0003f4");
+
         mRepository.getArtsyApi().getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
             List<Artwork> artworkList = new ArrayList<>();
@@ -111,7 +115,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
 
                         links = artworkWrapperResponse.getLinks();
-                        if (links != null) {
+                        if (links != null && next.getHref() != null) {
                             next = links.getNext();
                             mNextUrl = next.getHref();
                             Log.d(TAG, "Link to next (loadInitial): " + mNextUrl);

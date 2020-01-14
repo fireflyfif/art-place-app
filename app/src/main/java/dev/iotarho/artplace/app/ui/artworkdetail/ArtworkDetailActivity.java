@@ -667,12 +667,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initSimilarArtworksData(similarArtLink);
 
-        mArtistViewModel.getSimilarArtworksData().observe(this, new Observer<List<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable List<Artwork> artworkList) {
-                if (artworkList != null) {
-                    setupSimilarArtworksUI(artworkList);
-                }
+        mArtistViewModel.getSimilarArtworksData().observe(this, artworkList -> {
+            if (artworkList != null) {
+                setupSimilarArtworksUI(artworkList);
             }
         });
     }
