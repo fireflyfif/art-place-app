@@ -95,7 +95,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        //mRepository.getArtsyApi(mTokenManager).getArtworksData()
         mRepository.getArtsyApi().getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             ArtworkWrapperResponse artworkWrapperResponse = new ArtworkWrapperResponse();
             List<Artwork> artworkList = new ArrayList<>();

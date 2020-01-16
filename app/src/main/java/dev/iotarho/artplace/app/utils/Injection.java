@@ -35,26 +35,13 @@
 
 package dev.iotarho.artplace.app.utils;
 
-import dev.iotarho.artplace.app.repository.ArtsyRepository;
-import dev.iotarho.artplace.app.ui.artworks.ArtworksFragmentViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModelFactory;
 
 public class Injection {
 
-    private static ArtsyRepository provideRepository(TokenManager tokenManager) {
-        return ArtsyRepository.getInstance(tokenManager);
-    }
-
-    public static ArtworksFragmentViewModelFactory provideArtworksViewModelFactory(TokenManager tokenManager) {
-        ArtsyRepository repository = provideRepository(tokenManager);
-        return new ArtworksFragmentViewModelFactory(repository);
-    }
-
     public static SearchFragmentViewModelFactory provideSearchViewModelFactory(
-            TokenManager tokenManager,
             String queryWord,
             String typeWord) {
-        ArtsyRepository repository = provideRepository(tokenManager);
-        return new SearchFragmentViewModelFactory(repository, queryWord, typeWord);
+        return new SearchFragmentViewModelFactory(queryWord, typeWord);
     }
 }

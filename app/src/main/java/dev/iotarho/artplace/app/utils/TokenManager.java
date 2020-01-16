@@ -35,8 +35,6 @@
 
 package dev.iotarho.artplace.app.utils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -52,9 +50,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static dev.iotarho.artplace.app.utils.Utils.PREFS_TOKEN_KEY;
-import static dev.iotarho.artplace.app.utils.Utils.TOKEN_VALUE_KEY;
-
 /**
  * Helper class for saving the token into SharedPreferences
  */
@@ -62,49 +57,18 @@ public class TokenManager {
 
     private static final String TAG = TokenManager.class.getSimpleName();
 
-    private SharedPreferences mPrefs;
-    //private SharedPreferences.Editor mEditor;
-    private Context mContext;
-
-    //private TokenService mTokenService;
-
+    private PreferenceUtils mPreferenceUtils;
     private static TokenManager INSTANCE;
 
-    private TokenManager(Context context) {
-        mContext = context;
-        mPrefs = context.getSharedPreferences(PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
+    private TokenManager() {
+        mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static synchronized TokenManager getInstance(Context context) {
+    public static synchronized TokenManager getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenManager(context);
+            INSTANCE = new TokenManager();
         }
         return INSTANCE;
-    }
-
-    public void saveToken(TypeToken tokenObject) {
-        Log.d(TAG, "Get token: " + tokenObject.getToken());
-        mPrefs.edit().putString(TOKEN_VALUE_KEY, tokenObject.getToken()).apply();
-//        mEditor.putString(PREFS_TOKEN_KEY, tokenObject.ex()).commit();
-    }
-
-    public void deleteToken() {
-        mPrefs.edit().remove(TOKEN_VALUE_KEY).apply();
-    }
-
-    public String getToken() {
-        return mPrefs.getString(TOKEN_VALUE_KEY, "");
-//        return mPrefs.getString(KEY_EXPIRY, "");
-    }
-
-    // TODO: Not sure if I need this method?
-    public TypeToken getNewToken() {
-        TypeToken token = new TypeToken();
-        String tokenString = token.getToken();
-        Log.d(TAG, "Get new token from TypeToken: " + tokenString);
-
-        token.setToken(mPrefs.getString(TOKEN_VALUE_KEY, tokenString));
-        return token;
     }
 
     public String fetchTokenFirstTime() {
@@ -123,10 +87,11 @@ public class TokenManager {
                     firstTimeToken = typeToken.getToken();
                     tokenExpirationDate = typeToken.getExpiresAt();
 
-                    saveToken(typeToken);
+                    Log.d(TAG, "saving token into preferences: " + typeToken.getToken());
+                    mPreferenceUtils.saveToken(typeToken);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "error fetching the token: " + e.getMessage());
             }
         }
         Log.d(TAG, "First time token fetched: " + firstTimeToken + " Expired at: " + tokenExpirationDate);
@@ -134,10 +99,6 @@ public class TokenManager {
     }
 
     public void fetchToken(FetchTokenCallback callback) {
-        /*final String token = // get token from shared preferences
-                if (isTokenValid(token)) {
-
-        } else {*/
         synchronized (this) {
             ArtsyApiManager.createService(TokenService.class).refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
                     .enqueue(new Callback<TypeToken>() {
@@ -150,13 +111,14 @@ public class TokenManager {
 
                                     // Get the value of the token as a reference in the callback
                                     // source: https://stackoverflow.com/a/44881355/8132331
-                                    if(callback != null) {
+                                    if (callback != null) {
                                         callback.onSuccess(tokenObject);
+                                        Log.d(TAG, "Token successfully fetched: " + newToken);
                                     }
                                     // Check the token
                                     Log.d(TAG, "Token saved into SharedPrefs: " + newToken);
                                     // Save the token into SharedPreferences
-                                    saveToken(tokenObject);
+                                    mPreferenceUtils.saveToken(tokenObject);
                                 }
                             } else {
                                 Log.e(TAG, "Error when fetching the toke: %s" + response.message());
@@ -164,26 +126,15 @@ public class TokenManager {
                         }
 
                         @Override
-                        public void onFailure(Call<TypeToken> call, Throwable t) {
+                        public void onFailure(@NonNull Call<TypeToken> call, @NonNull Throwable t) {
                             Log.e(TAG, "Error when fetching the toke");
                             if (callback != null) {
+                                Log.e(TAG, "error while fetching the token: " + t.getMessage());
                                 callback.onError(t);
                             }
                         }
                     });
         }
     }
-
-    /**
-     * Create the service for fetching the token
-     * @return service for the Token
-     */
-    private TokenService getTokenService() {
-//        if (mTokenService == null) {
-//            mTokenService = ArtsyApiManager.createService(TokenService.class);
-//        }
-        return ArtsyApiManager.createService(TokenService.class);
-    }
-
 }
 

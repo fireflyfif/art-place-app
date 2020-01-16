@@ -39,6 +39,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
+            debuggable true
             testCoverageEnabled = true
         }
     }
@@ -56,6 +57,7 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation "androidx.preference:preference:1.1.0"
 
     // Retrofit library dependencies
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"

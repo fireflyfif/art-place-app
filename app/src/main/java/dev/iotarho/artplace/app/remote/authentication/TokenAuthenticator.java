@@ -43,6 +43,7 @@ import java.io.IOException;
 
 import dev.iotarho.artplace.app.callbacks.FetchTokenCallback;
 import dev.iotarho.artplace.app.model.token.TypeToken;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 import dev.iotarho.artplace.app.utils.Utils;
 import okhttp3.Authenticator;
@@ -51,21 +52,23 @@ import okhttp3.Response;
 import okhttp3.Route;
 
 // This class should be called when the token expires
-// source:https://github.com/square/okhttp/wiki/Recipes#handling-authentication
+// source: https://square.github.io/okhttp/recipes/
 public class TokenAuthenticator implements Authenticator {
 
     private static final String TAG = TokenAuthenticator.class.getSimpleName();
 
     private static TokenAuthenticator INSTANCE;
     private TokenManager mTokenManager;
+    private PreferenceUtils mPreferenceUtils;
 
-    private TokenAuthenticator(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    private TokenAuthenticator() {
+        mTokenManager = TokenManager.getInstance();
+        mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static synchronized TokenAuthenticator getInstance(TokenManager tokenManager) {
+    public static synchronized TokenAuthenticator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TokenAuthenticator(tokenManager);
+            INSTANCE = new TokenAuthenticator();
         }
         return INSTANCE;
     }
@@ -79,22 +82,23 @@ public class TokenAuthenticator implements Authenticator {
         // Refresh the token here: fetch and then save
         // TODO: Don't refresh if already we have it saved and it's not expired
         // Always do it in a synchronise block
-        Log.d(TAG, "Trying to fetch the token from authenticate");
         mTokenManager.fetchToken(new FetchTokenCallback() {
             @Override
             public void onSuccess(@NonNull TypeToken tokenObject) {
-                // TODO: What?
+                // This fetch the token when needed
+                // prevent fetching it 3 times
+                Log.d(TAG, "token fetched successfully");
             }
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-
+                Log.d(TAG, "error while fetching the token");
             }
         });
 
         // Get the currently stored token
-        String currentToken = mTokenManager.getToken(); // gets null, because nothing is saved into SharedPrefs yet
-
+        String currentToken = mPreferenceUtils.getToken(); // gets null, because nothing is saved into SharedPrefs yet
+        Log.d(TAG, "token from prefs: " + currentToken);
         // TODO: Check if the date is expired, do not check if token is the same!!!
         /*if (currentToken != null && currentToken.equals(token)) {
             // Refresh the token here

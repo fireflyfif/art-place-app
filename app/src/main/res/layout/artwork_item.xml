@@ -44,9 +44,9 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/colorBackground"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="5dp"
-    app:cardElevation="0dp"
+    app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true"
     app:strokeColor="@color/colorCardStroke"
     app:strokeWidth="1dp">
@@ -61,30 +61,30 @@
             android:id="@+id/artwork_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_16dp"
+            android:layout_marginBottom="@dimen/margin_8dp"
             android:adjustViewBounds="true"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
-            android:scaleType="fitStart" />
+            android:scaleType="fitStart"
+            tools:src="@drawable/pop_art_placeholder" />
 
         <TextView
             android:id="@+id/artwork_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/poppins_light"
+            android:fontFamily="@font/work_sans"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"
             android:paddingTop="@dimen/padding_10dp"
             android:paddingEnd="@dimen/padding_10dp"
             android:paddingRight="@dimen/padding_10dp"
-            android:paddingBottom="@dimen/padding_10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:paddingBottom="@dimen/padding_8dp"
+            android:textAllCaps="true"
             android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textSize="16sp"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/work_sans_light"
             android:maxLines="2"
             android:paddingStart="@dimen/padding_10dp"
             android:paddingLeft="@dimen/padding_10dp"

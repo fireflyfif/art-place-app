@@ -40,22 +40,19 @@ import androidx.lifecycle.ViewModel;
 
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
-import dev.iotarho.artplace.app.utils.TokenManager;
 
 public class ShowsDetailViewModel extends ViewModel {
 
     private LiveData<ShowContent> mContentLiveData;
-    private TokenManager mTokenManager;
 
-    public ShowsDetailViewModel(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    public ShowsDetailViewModel() {
     }
 
     public void initSearchLink(String selfLink) {
         if (mContentLiveData != null) {
             return;
         }
-        mContentLiveData = ArtsyRepository.getInstance(mTokenManager).getSearchContentLink(selfLink);
+        mContentLiveData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
     }
 
     public LiveData<ShowContent> getResultSelfLink() {

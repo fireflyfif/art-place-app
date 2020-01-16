@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        android:configChanges="uiMode">
         <activity
             android:name="dev.iotarho.artplace.app.ui.mainactivity.MainActivity"
             android:launchMode="singleTop">
@@ -45,13 +46,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity" />
-        </activity>
-        <activity
-            android:name="dev.iotarho.artplace.app.ui.favorites.FavArtworksActivity"
-            android:parentActivityName="dev.iotarho.artplace.app.ui.mainactivity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="dev.iotarho.artplace.app.ui.mainactivity.MainActivity" />
         </activity>
         <activity
             android:name="dev.iotarho.artplace.app.ui.FavDetailActivity"

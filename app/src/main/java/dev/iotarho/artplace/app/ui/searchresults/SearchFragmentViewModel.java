@@ -70,10 +70,10 @@ public class SearchFragmentViewModel extends ViewModel {
     private ArtsyRepository mRepo;
 
 
-    public SearchFragmentViewModel(ArtsyRepository repository, String queryWord, String typeWord) {
+    public SearchFragmentViewModel(String queryWord, String typeWord) {
         mQueryWord = queryWord;
         mTypeWord = typeWord;
-        mRepo = repository;
+        mRepo = ArtsyRepository.getInstance();
 
         init();
     }
@@ -85,21 +85,11 @@ public class SearchFragmentViewModel extends ViewModel {
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                new Function<SearchDataSource, LiveData<NetworkState>>() {
-            @Override
-            public LiveData<NetworkState> apply(SearchDataSource input) {
-                return input.getNetworkState();
-            }
-        });
+                (Function<SearchDataSource, LiveData<NetworkState>>) input -> input.getNetworkState());
 
         // Initialize the Loading state liveData
         mInitialLoading = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                new Function<SearchDataSource, LiveData<NetworkState>>() {
-                    @Override
-                    public LiveData<NetworkState> apply(SearchDataSource input) {
-                        return input.getLoadingState();
-                    }
-                });
+                (Function<SearchDataSource, LiveData<NetworkState>>) input -> input.getLoadingState());
 
 
         // Configure the PagedList.Config

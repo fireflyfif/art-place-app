@@ -35,15 +35,9 @@
 
 package dev.iotarho.artplace.app.ui.mainactivity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -63,11 +57,12 @@ import dev.iotarho.artplace.app.ui.favorites.FavoritesFragment;
 import dev.iotarho.artplace.app.ui.mainactivity.adapters.BottomNavAdapter;
 import dev.iotarho.artplace.app.ui.mainactivity.adapters.MainViewPager;
 import dev.iotarho.artplace.app.ui.searchresults.SearchFragment;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String THEME_PREFERENCE_KEY = "theme_prefs";
     private static final String POSITION_KEY = "position";
 
     @BindView(R.id.appbar_main)
@@ -84,16 +79,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     Toolbar toolbar;
 
     private BottomNavAdapter mPagerAdapter;
-    private SharedPreferences mPreferences;
-    private boolean mIsDayMode;
     private String mTitle;
     private int mPosition;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Set the theme before creating the View
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        // set the theme from Preferences
+        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
+        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -105,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
 
-        Log.d(TAG, "onCreate: position: " + mPosition);
         // Set the title on the toolbar according to
         // the position of the clicked Fragment
         setToolbarTitle(mPosition);
@@ -133,13 +125,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
             return true;
         });
-
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mIsDayMode = mPreferences.getBoolean(THEME_PREFERENCE_KEY, false);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save the position of the selected Fragment
         outState.putInt(POSITION_KEY, mPosition);
@@ -172,18 +161,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void addBottomNavigationItems() {
 
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
-                getString(R.string.title_artworks), R.drawable.ic_frame);
+                getString(R.string.title_artworks), R.drawable.ic_red_dot);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
-                getString(R.string.search), R.drawable.ic_search_24dp);
+                getString(R.string.search), R.drawable.ic_red_dot);
         AHBottomNavigationItem favoritesItem = new AHBottomNavigationItem(
-                getString(R.string.title_favorites), R.drawable.ic_favorite_24dp);
+                getString(R.string.title_favorites), R.drawable.ic_red_dot);
 
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
         bottomNavigation.addItem(favoritesItem);
     }
 
-    //TODO: Make these three methods into one
     private Fragment createArtworksFragment() {
         Fragment artworksFragment = new ArtworksFragment();
         // Set arguments here
@@ -201,18 +189,21 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void setupBottomNavStyle() {
+        // Set default background color for AHBottomNavigation
         bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
+
+        // Change colors for AHBottomNavigation
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccentLight));
         bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
 
-        bottomNavigation.setColoredModeColors(fetchColor(R.color.colorPrimary),
-                fetchColor(R.color.colorAccent));
+        // Manage titles for AHBottomNavigation
+        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.SHOW_WHEN_ACTIVE);
 
+        // Use colored navigation with circle reveal effect
         bottomNavigation.setColored(false);
 
         // Hide the navigation when the user scroll the Rv
-        //bottomNavigation.setBehaviorTranslationEnabled(true);
-        bottomNavigation.setTranslucentNavigationEnabled(true);
+        bottomNavigation.setBehaviorTranslationEnabled(true);
     }
 
     private void setupViewPager() {
@@ -231,14 +222,12 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public void onRefreshConnection() {
-        Log.d(TAG, "onRefreshConnection is now triggered");
         setAppBarVisible();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         // Show the AppBarLayout every time after resume
         setAppBarVisible();
     }
@@ -246,37 +235,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private void setAppBarVisible() {
         // Set the AppBarLayout to expanded
         appBarLayout.setExpanded(true, true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.main_menu, menu);
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return false;
-
-            case R.id.action_refresh:
-                return false;
-
-            default:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void savePrefs(boolean state) {
-        mPreferences = getApplicationContext()
-                .getSharedPreferences(THEME_PREFERENCE_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putBoolean(THEME_PREFERENCE_KEY, state);
-        editor.apply();
     }
 
     /**
