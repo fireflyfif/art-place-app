@@ -32,7 +32,8 @@
   ~
   ~
   -->
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
@@ -47,13 +48,13 @@
     android:layout_marginTop="@dimen/card_view_vertical_margin"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="@dimen/fav_cardview_corners"
     app:cardElevation="3dp"
     app:cardPreventCornerOverlap="true">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -91,7 +92,6 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/colorText"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -150,7 +150,5 @@
             app:layout_constraintTop_toTopOf="@+id/background"
             tools:text="Artwork Year" />
 
-
-
-    </android.support.constraint.ConstraintLayout>
-</android.support.design.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

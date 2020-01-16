@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -37,18 +36,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/colorBackground</item>
+        <!--<item name="android:windowBackground">@color/colorPrimary</item>-->
         <item name="windowActionBar">false</item>
         <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">?colorPrimary</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">?colorPrimary</item>
     </style>
 
-    <style name="PopupMenuStyle" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:background">@color/colorBackground</item>
+    <style name="PopupMenuStyle" parent="ThemeOverlay.MaterialComponents">
+        <item name="android:background">?attr/colorSurface</item>
     </style>
 
 </resources>

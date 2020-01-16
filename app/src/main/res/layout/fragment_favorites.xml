@@ -33,44 +33,35 @@
   ~
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fav_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    tools:context=".ui.favorites.FavArtworksActivity">
+    android:gravity="center_horizontal">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fav_artworks_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/bottom_nav_margin"
+    <TextView
+        android:id="@+id/fav_empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/work_sans"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_16dp">
+        android:text="@string/empty_msg"
+        app:fontFamily="sans-serif-condensed" />
 
-        <TextView
-            android:id="@+id/fav_empty_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/empty_msg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:fontFamily="@font/amethysta" />
+    <ProgressBar
+        android:id="@+id/fav_progress_bar"
+        style="@style/MyProgressBarRectangle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/padding_10dp" />
 
-        <ProgressBar
-            android:id="@+id/fav_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

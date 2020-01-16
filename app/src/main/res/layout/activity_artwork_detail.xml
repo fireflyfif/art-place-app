@@ -33,32 +33,31 @@
   ~
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_artwork"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.artworkdetail.ArtworkDetailActivity">
+    android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-        <android.support.design.widget.CollapsingToolbarLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorBackground"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorPrimary"
-            app:titleEnabled="false"
-            android:background="@color/colorBackground"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
 
             <FrameLayout
                 android:id="@+id/photo_container"
@@ -70,20 +69,20 @@
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
                     android:src="@color/colorPrimaryDark" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
                     android:layout_gravity="center"
+                    android:layout_margin="15dp"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:adjustViewBounds="true"
                     android:src="@color/colorPrimary" />
 
                 <View
@@ -94,19 +93,19 @@
 
             </FrameLayout>
 
-            <android.support.v7.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_detail"
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize"
                 android:background="@null"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_overlapTop="@dimen/overlap_layout"
@@ -154,18 +153,9 @@
             <include layout="@layout/similar_artworks_cardview" />
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
-
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fav_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -178,18 +168,18 @@
         app:pressedTranslationZ="@dimen/fab_pressed_transition"
         app:srcCompat="@drawable/ic_favorite_border_24dp" />
 
-    <android.support.design.bottomappbar.BottomAppBar
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         android:outlineAmbientShadowColor="@color/colorAccent"
         android:outlineSpotShadowColor="@color/colorAccent"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="6dp"
         app:fabCradleRoundedCornerRadius="25dp"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        tools:targetApi="lollipop" />
+        tools:targetApi="p" />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
