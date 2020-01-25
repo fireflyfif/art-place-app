@@ -113,15 +113,15 @@ public class TokenManager {
                                     // source: https://stackoverflow.com/a/44881355/8132331
                                     if (callback != null) {
                                         callback.onSuccess(tokenObject);
-                                        Log.d(TAG, "Token successfully fetched: " + newToken);
+                                        Log.d(TAG, "token successfully fetched: " + newToken);
                                     }
                                     // Check the token
-                                    Log.d(TAG, "Token saved into SharedPrefs: " + newToken);
+                                    Log.d(TAG, "token saved into SharedPrefs: " + newToken);
                                     // Save the token into SharedPreferences
                                     mPreferenceUtils.saveToken(tokenObject);
                                 }
                             } else {
-                                Log.e(TAG, "Error when fetching the toke: %s" + response.message());
+                                Log.e(TAG, "Error when fetching the token: " + response.message());
                             }
                         }
 

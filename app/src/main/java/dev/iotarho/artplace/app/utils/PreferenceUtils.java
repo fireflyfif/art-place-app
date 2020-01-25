@@ -10,6 +10,7 @@ import dev.iotarho.artplace.app.model.token.TypeToken;
 public class PreferenceUtils {
 
     private static final String PREFS_KEY_TOKEN = "prefs_token_key";
+    private static final String PREFS_KEY_TOKEN_EXPIRY = "prefs_token_expiry_key";
     private static final String PREFS_KEY_APP_THEME = "prefs_key_theme";
 
     private static volatile PreferenceUtils sInstance;
@@ -47,6 +48,14 @@ public class PreferenceUtils {
 
     public void saveToken(TypeToken tokenObject) {
         mPrefs.edit().putString(PREFS_KEY_TOKEN, tokenObject.getToken()).apply();
+    }
+
+    public void saveExpiryDateOfToken(TypeToken tokenObject) {
+        mPrefs.edit().putString(PREFS_KEY_TOKEN_EXPIRY, tokenObject.getExpiresAt()).apply();
+    }
+
+    public String getExpiryDate() {
+        return mPrefs.getString(PREFS_KEY_TOKEN_EXPIRY, "");
     }
 
     public String getToken() {

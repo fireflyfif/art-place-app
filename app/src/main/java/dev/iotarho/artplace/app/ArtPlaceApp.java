@@ -38,12 +38,10 @@ package dev.iotarho.artplace.app;
 import android.app.Application;
 import android.content.Context;
 
-import androidx.appcompat.app.AppCompatDelegate;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
-import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -54,11 +52,6 @@ public class ArtPlaceApp extends Application {
     private static volatile ArtPlaceApp sInstance;
     private static PreferenceUtils sPrefsUtils;
 
-    // Set the theme to the whole app
-   /* static {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-    }*/
-
 
     @Override
     public void onCreate() {
@@ -67,6 +60,8 @@ public class ArtPlaceApp extends Application {
         sInstance = this;
         FirebaseAnalytics.getInstance(getApplicationContext());
         PreferenceUtils.createInstance(getApplicationContext());
+
+        AndroidThreeTen.init(this);
     }
 
     public static ArtPlaceApp getInstance() {

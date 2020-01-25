@@ -128,8 +128,6 @@ public class ArtsyApiManager {
                     newRequest = chain
                             .request()
                             .newBuilder()
-                            // Temp way of hard-coding the token
-                            //.addHeader("X-XAPP-Token", token)
                             .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
                             .build();
                     Log.d(TAG, "Token in intercept is: " + tokenString);

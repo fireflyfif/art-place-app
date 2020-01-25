@@ -77,7 +77,11 @@ public class TokenAuthenticator implements Authenticator {
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
         // Get token used in request
         String token = response.header(Utils.HEADER_TOKEN_KEY);
-        Log.d(TAG, "The used token for the call: " + token);
+        Log.d(TAG, "token from the header: " + token); // null
+
+        if (response.code() == 401) { //
+
+        }
 
         // Refresh the token here: fetch and then save
         // TODO: Don't refresh if already we have it saved and it's not expired
@@ -87,27 +91,34 @@ public class TokenAuthenticator implements Authenticator {
             public void onSuccess(@NonNull TypeToken tokenObject) {
                 // This fetch the token when needed
                 // prevent fetching it 3 times
-                Log.d(TAG, "token fetched successfully");
+                String refreshedToken = tokenObject.getToken();
+                String expiresAt = tokenObject.getExpiresAt();
+                mPreferenceUtils.saveToken(tokenObject);
+                mPreferenceUtils.saveExpiryDateOfToken(tokenObject);
+
+                Log.d(TAG, "token fetched successfully, refreshedToken: " + refreshedToken + " ," + expiresAt);
             }
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-                Log.d(TAG, "error while fetching the token");
+                Log.d(TAG, "error while fetching the token, " + throwable.getMessage());
             }
         });
 
         // Get the currently stored token
-        String currentToken = mPreferenceUtils.getToken(); // gets null, because nothing is saved into SharedPrefs yet
-        Log.d(TAG, "token from prefs: " + currentToken);
-        // TODO: Check if the date is expired, do not check if token is the same!!!
-        /*if (currentToken != null && currentToken.equals(token)) {
-            // Refresh the token here
-            mTokenManager.fetchToken();
-        }*/
+        String savedToken = mPreferenceUtils.getToken();
+        Log.d(TAG, "token from prefs: " + savedToken);
+        String expiresAt = mPreferenceUtils.getExpiryDate();
+        Log.d(TAG, "token expired on: " + expiresAt);
+        if (Utils.isNullOrEmpty(expiresAt) && Utils.isTokenExpired(expiresAt)) {
+            Log.d(TAG, "token expired on: " + expiresAt);
+            // todo: make a call to refresh the token
+        }
+
         return response
                 .request()
                 .newBuilder()
-                .header(Utils.HEADER_TOKEN_KEY, currentToken)
+                .header(Utils.HEADER_TOKEN_KEY, savedToken)
                 .build();
     }
 }
