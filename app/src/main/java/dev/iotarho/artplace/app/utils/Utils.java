@@ -59,6 +59,9 @@ public class Utils {
     }
 
     public static boolean isTokenExpired(@NonNull String expiresAt) {
+        if (isNullOrEmpty(expiresAt)) {
+            return false;
+        }
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("u-M-d");
         // get only the date of the expiry string
         // e.g. 2014-09-05T12:39:09.200Z
