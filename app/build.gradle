@@ -19,8 +19,8 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID'])
-        buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET'])
+        buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID']) ?: '"Define your personal client id"'
+        buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET']) ?: '"Define your personal client secret"'
 
         vectorDrawables.useSupportLibrary = true
     }
