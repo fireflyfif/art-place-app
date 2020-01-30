@@ -2,13 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
-
-    def apikeyPropertiesFile = rootProject.file("apikey.properties")
-    def apikeyProperties = new Properties()
-    apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
     defaultConfig {
         applicationId "dev.iotarho.artplace.app"
@@ -19,8 +16,12 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID']) ?: '"Define your personal client id"'
-        buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET']) ?: '"Define your personal client secret"'
+        def apikeyPropertiesFile = rootProject.file("apikey.properties")
+        def apikeyProperties = new Properties()
+        apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+        buildConfigField('String', "CLIENT_ID", apikeyProperties["CLIENT_ID"])
+        buildConfigField('String', "CLIENT_SECRET", apikeyProperties["CLIENT_SECRET"])
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -32,6 +33,7 @@ android {
             storePassword 'udacity'
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
