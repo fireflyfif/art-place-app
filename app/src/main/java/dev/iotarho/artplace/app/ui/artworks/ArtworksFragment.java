@@ -48,17 +48,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -90,6 +90,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     RecyclerView artworksRv;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private ArtworkListAdapter mPagedListAdapter;
     private ArtworksViewModel mViewModel;
@@ -148,7 +150,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         // Call submitList() method of the PagedListAdapter when a new page is available
         mViewModel.getArtworkLiveData().observe(this, artworks -> {
@@ -192,7 +194,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setRecyclerView();
 
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this).get(ArtworksViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         mViewModel.refreshArtworkLiveData().observe(this, artworks -> {
             if (artworks != null) {

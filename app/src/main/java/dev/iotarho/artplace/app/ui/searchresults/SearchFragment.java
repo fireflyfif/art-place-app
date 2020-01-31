@@ -50,7 +50,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,7 +58,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -165,7 +164,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         setupRecyclerView();
 
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
+        mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
         mViewModel.getSearchResultsLiveData().observe(this, results -> {
             if (results != null) {
@@ -232,7 +231,7 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
                 + searchType);
 
         // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory)
+        mViewModel = new ViewModelProvider(this, mViewModelFactory)
                 .get(SearchFragmentViewModel.class);
 
         mViewModel.refreshSearchLiveData(queryWord, searchType)

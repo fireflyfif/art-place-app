@@ -20,8 +20,8 @@ android {
         def apikeyProperties = new Properties()
         apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
-        buildConfigField('String', "CLIENT_ID", apikeyProperties["CLIENT_ID"])
-        buildConfigField('String', "CLIENT_SECRET", apikeyProperties["CLIENT_SECRET"])
+        buildConfigField('String', "CLIENT_ID", apikeyProperties["CLIENT_ID"]) ?: '"Define your personal client id"'
+        buildConfigField('String', "CLIENT_SECRET", apikeyProperties["CLIENT_SECRET"]) ?: '"Define your personal client secret"'
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -58,6 +58,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$rootProject.androidXAppCompatVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation "androidx.preference:preference:1.1.0"
 
