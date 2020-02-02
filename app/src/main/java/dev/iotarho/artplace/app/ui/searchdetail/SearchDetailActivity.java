@@ -52,7 +52,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -298,7 +298,7 @@ public class SearchDetailActivity extends AppCompatActivity {
      * @param selfLink is the link that should be passed as a link to be used as a new call
      */
     private void initShowsContentViewModel(String selfLink) {
-        mShowsViewModel = ViewModelProviders.of(this).get(ShowsDetailViewModel.class);
+        mShowsViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
         mShowsViewModel.initSearchLink(selfLink);
 
         mShowsViewModel.getResultSelfLink().observe(this, showContent -> {
@@ -355,7 +355,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
 
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+        mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistData(receivedArtistUrlString);
 
         mArtistViewModel.getArtistData().observe(this, artists -> { // onChanged is never called?

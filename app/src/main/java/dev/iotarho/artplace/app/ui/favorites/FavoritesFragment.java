@@ -54,7 +54,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -131,7 +131,7 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, rootView);
 
-        mFavArtworksViewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
+        mFavArtworksViewModel = new ViewModelProvider(this).get(FavArtworksViewModel.class);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         favArtworksRv.setLayoutManager(layoutManager);
