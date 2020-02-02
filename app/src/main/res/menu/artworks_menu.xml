@@ -49,20 +49,20 @@
         android:icon="@drawable/ic_refresh_24dp"
         android:orderInCategory="200"
         android:title="@string/refresh"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_dark_mode"
         android:icon="@drawable/ic_refresh_24dp"
         android:orderInCategory="300"
-        android:title="Go dark"
+        android:title="@string/menu_title_dark"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_light_mode"
         android:icon="@drawable/ic_refresh_24dp"
         android:orderInCategory="300"
-        android:title="Go light"
+        android:title="@string/menu_title_light"
         app:showAsAction="never" />
 
 </menu>

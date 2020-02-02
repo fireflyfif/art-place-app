@@ -61,6 +61,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -76,13 +77,16 @@ import dev.iotarho.artplace.app.utils.NetworkState;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
+public class SearchFragment extends Fragment implements
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        OnResultClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
     private static final String ARG_SEARCH_TITLE = "search_title";
 
     private static final String PREFERENCE_SEARCH_KEY = "search_prefs";
-    private static final String PREFERENCE_SEARCH_WORD= "search_word";
+    private static final String PREFERENCE_SEARCH_WORD = "search_word";
 
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
     private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
@@ -94,6 +98,9 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     RecyclerView searchResultsRv;
     @BindView(R.id.progress_bar_search)
     ProgressBar progressBar;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
 
     private SearchFragmentViewModel mViewModel;
     private SearchListAdapter mSearchAdapter;
@@ -106,7 +113,8 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
 
 
     // Required empty public constructor
-    public SearchFragment() {}
+    public SearchFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +154,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         setupUi();
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     private void setupRecyclerView() {
@@ -410,14 +425,14 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "SearchFragment: onPause called" );
+        Log.d(TAG, "SearchFragment: onPause called");
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "SearchFragment: onResume called" );
+        Log.d(TAG, "SearchFragment: onResume called");
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -441,5 +456,13 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Intent intent = new Intent(getActivity(), SearchDetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRefresh() {
+        requestNewCall(mQueryWordString, mSearchType);
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

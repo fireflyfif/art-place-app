@@ -61,4 +61,6 @@
     <string name="description">Description</string>
     <string name="full_title">Full Title</string>
     <string name="menu_search_artworks">Search Artworks</string>
+    <string name="menu_title_dark">Go dark</string>
+    <string name="menu_title_light">Go light</string>
 </resources>

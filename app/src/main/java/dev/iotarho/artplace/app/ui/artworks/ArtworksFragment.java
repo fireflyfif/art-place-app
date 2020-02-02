@@ -49,6 +49,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -77,8 +79,10 @@ import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
 import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 
-public class ArtworksFragment extends Fragment implements OnArtworkClickListener, OnRefreshListener,
-        SnackMessageListener {
+public class ArtworksFragment extends Fragment implements OnArtworkClickListener,
+        OnRefreshListener,
+        SnackMessageListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = ArtworksFragment.class.getSimpleName();
     private static final String ARG_ARTWORKS_TITLE = "artworks_title";
@@ -129,6 +133,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         setupUi();
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     private void setRecyclerView() {
@@ -306,5 +317,13 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshArtworks();
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }
