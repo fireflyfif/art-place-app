@@ -74,7 +74,7 @@ public class TokenAuthenticator implements Authenticator {
     }
 
     @Override
-    public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
+    public Request authenticate(Route route, @NonNull Response response) throws IOException {
         // Get token used in request
         String token = response.header(Utils.HEADER_TOKEN_KEY);
         Log.d(TAG, "token from the header: " + token); // null
@@ -84,31 +84,37 @@ public class TokenAuthenticator implements Authenticator {
         Log.d(TAG, "token from prefs: " + savedToken);
         String expiresAt = mPreferenceUtils.getExpiryDate();
         Log.d(TAG, "token expires on: " + expiresAt);
-        if (Utils.isTokenExpired(expiresAt)) {
+
+        // block of code not in use
+        // this check was failing the refreshing of the token, after expires,
+        // because the expiresAt was an empty string
+        // todo: check why the expiresAt is null sometimes?
+        if (!Utils.isTokenExpired(expiresAt)) {
             Log.d(TAG, "token has expired on: " + expiresAt);
-            // Refresh the token here: fetch and then save
-            // TODO: Don't refresh if already we have it saved and it's not expired
-            // Always do it in a synchronise block
-            synchronized (TokenAuthenticator.class) {
-                mTokenManager.fetchToken(new FetchTokenCallback() {
-                    @Override
-                    public void onSuccess(@NonNull TypeToken tokenObject) {
-                        // This fetch the token when needed
-                        // prevent fetching it 3 times
-                        String refreshedToken = tokenObject.getToken();
-                        String expiresAt = tokenObject.getExpiresAt();
-                        mPreferenceUtils.saveToken(tokenObject);
-                        mPreferenceUtils.saveExpiryDateOfToken(tokenObject);
+        }
+        // block of code not in use
 
-                        Log.d(TAG, "token fetched successfully, refreshedToken: " + refreshedToken + " ," + expiresAt);
-                    }
+        // Refresh the token here: fetch and then save
+        // Always do it in a synchronise block
+        synchronized (TokenAuthenticator.class) {
+            mTokenManager.fetchToken(new FetchTokenCallback() {
+                @Override
+                public void onSuccess(@NonNull TypeToken tokenObject) {
+                    // This fetch the token when needed
+                    // prevent fetching it 3 times
+                    String refreshedToken = tokenObject.getToken();
+                    String expiresAt = tokenObject.getExpiresAt();
+                    mPreferenceUtils.saveToken(refreshedToken);
+                    mPreferenceUtils.saveExpiryDateOfToken(expiresAt);
 
-                    @Override
-                    public void onError(@NonNull Throwable throwable) {
-                        Log.d(TAG, "error while fetching the token, " + throwable.getMessage());
-                    }
-                });
-            }
+                    Log.d(TAG, "token fetched successfully, refreshedToken: " + refreshedToken + " ," + expiresAt);
+                }
+
+                @Override
+                public void onError(@NonNull Throwable throwable) {
+                    Log.d(TAG, "error while fetching the token, " + throwable.getMessage());
+                }
+            });
         }
 
         return response

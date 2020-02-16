@@ -46,12 +46,12 @@ public class PreferenceUtils {
         return mPrefs.getInt(PREFS_KEY_APP_THEME, -1);
     }
 
-    public void saveToken(TypeToken tokenObject) {
-        mPrefs.edit().putString(PREFS_KEY_TOKEN, tokenObject.getToken()).apply();
+    public void saveToken(String tokenString) {
+        mPrefs.edit().putString(PREFS_KEY_TOKEN, tokenString).apply();
     }
 
-    public void saveExpiryDateOfToken(TypeToken tokenObject) {
-        mPrefs.edit().putString(PREFS_KEY_TOKEN_EXPIRY, tokenObject.getExpiresAt()).apply();
+    public void saveExpiryDateOfToken(String expiresAtString) {
+        mPrefs.edit().putString(PREFS_KEY_TOKEN_EXPIRY, expiresAtString).apply();
     }
 
     public String getExpiryDate() {

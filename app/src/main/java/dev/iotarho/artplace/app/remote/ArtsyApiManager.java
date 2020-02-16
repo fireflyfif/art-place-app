@@ -58,6 +58,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -116,12 +117,11 @@ public class ArtsyApiManager {
                     String tokenString = preferenceUtils.getToken();
                     // If there si no token saved in shared preferences, that means the app is
                     // launched for the first time and we need to fetch the token
-                    if (tokenString == null || tokenString.equals("")) {
+                    if (Utils.isNullOrEmpty(tokenString)) {
                         Log.d(TAG, "Token in intercept is null or empty");
                         // The token should be fetch here only the first time, after that the
                         // Authenticator will handle refreshing it
                         tokenString = tokenManager.fetchTokenFirstTime();
-
                         Log.d(TAG, "Token fetched for the first time: " + tokenString);
                     }
 

@@ -73,8 +73,8 @@ public class TokenManager {
 
     public String fetchTokenFirstTime() {
         Response<TypeToken> response;
-        String firstTimeToken = null;
-        String tokenExpirationDate = null;
+        String firstTimeToken = "";
+        String tokenExpirationDate = "";
 
         synchronized (this) {
             try {
@@ -84,11 +84,15 @@ public class TokenManager {
                         .execute();
                 if (response.isSuccessful()) {
                     TypeToken typeToken = response.body();
-                    firstTimeToken = typeToken.getToken();
-                    tokenExpirationDate = typeToken.getExpiresAt();
+                    if (typeToken != null) {
+                        firstTimeToken = typeToken.getToken();
+                        tokenExpirationDate = typeToken.getExpiresAt();
 
-                    Log.d(TAG, "saving token into preferences: " + typeToken.getToken());
-                    mPreferenceUtils.saveToken(typeToken);
+                        Log.d(TAG, "saving token into preferences: " + typeToken.getToken());
+                        mPreferenceUtils.saveToken(firstTimeToken);
+                        mPreferenceUtils.saveExpiryDateOfToken(tokenExpirationDate);
+                    }
+
                 }
             } catch (IOException e) {
                 Log.e(TAG, "error fetching the token: " + e.getMessage());
@@ -107,21 +111,12 @@ public class TokenManager {
                             if (response.isSuccessful()) {
                                 TypeToken tokenObject = response.body();
                                 if (tokenObject != null) {
+                                    callback.onSuccess(tokenObject);
                                     String newToken = tokenObject.getToken();
-
-                                    // Get the value of the token as a reference in the callback
-                                    // source: https://stackoverflow.com/a/44881355/8132331
-                                    if (callback != null) {
-                                        callback.onSuccess(tokenObject);
-                                        Log.d(TAG, "token successfully fetched: " + newToken);
-                                    }
-                                    // Check the token
-                                    Log.d(TAG, "token saved into SharedPrefs: " + newToken);
-                                    // Save the token into SharedPreferences
-                                    mPreferenceUtils.saveToken(tokenObject);
+                                    mPreferenceUtils.saveToken(newToken); // save the token into SharedPreferences
                                 }
                             } else {
-                                Log.e(TAG, "Error when fetching the token: " + response.message());
+                                Log.e(TAG, "Error while fetching the token: " + response.message());
                             }
                         }
 
