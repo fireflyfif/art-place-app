@@ -33,7 +33,7 @@
   ~
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/show_cardview"
@@ -43,8 +43,7 @@
     android:layout_marginLeft="@dimen/margin_horizontal_cardview"
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
-    android:layout_marginBottom="@dimen/margin_bottom_cardview"
-    app:cardBackgroundColor="@color/cardBackground">
+    android:layout_marginBottom="@dimen/margin_bottom_cardview">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -55,11 +54,11 @@
             android:id="@+id/show_bg"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/colorAccent"
+            android:background="@color/color_primary"
             android:gravity="center_horizontal"
             android:padding="@dimen/padding_10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/color_surface"
             app:fontFamily="@font/amethysta"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -189,4 +188,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -123,7 +123,7 @@ public class FavDetailActivity extends AppCompatActivity {
         }
 
         if (toolbar != null) {
-            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                     PorterDuff.Mode.SRC_ATOP);
         }
 
@@ -141,7 +141,7 @@ public class FavDetailActivity extends AppCompatActivity {
             String favDimensCmString = getIntent().getStringExtra(ARTWORK_DIMENS_CM_KEY);
 
             collapsingToolbarLayout.setTitle(favTitleString);
-            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
             favTitle.setText(favTitleString);
             favArtist.setText(favArtistString);
@@ -159,9 +159,9 @@ public class FavDetailActivity extends AppCompatActivity {
             // Instantiate Image Request using Post Processor as parameter
             if (favImageString == null || favImageString.isEmpty()) {
                 Picasso.get()
-                        .load(R.color.colorPrimary)
-                        .error(R.color.colorPrimary)
-                        .placeholder(R.color.colorPrimary)
+                        .load(R.color.color_primary)
+                        .error(R.color.color_error)
+                        .placeholder(R.color.color_primary)
                         .into(favImage);
 
             } else {
@@ -181,8 +181,8 @@ public class FavDetailActivity extends AppCompatActivity {
 
                 Picasso.get()
                         .load(Uri.parse(favImageString))
-                        .error(R.color.colorPrimary)
-                        .placeholder(R.color.colorPrimary)
+                        .error(R.color.color_error)
+                        .placeholder(R.color.color_primary)
                         .into(favImage);
             }
 

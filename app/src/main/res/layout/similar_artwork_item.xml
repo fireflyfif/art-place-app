@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/margin_4dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/color_primary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
             android:scaleType="fitCenter" />
@@ -61,7 +61,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/margin_4dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/color_primary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
             android:scaleType="centerCrop" />
@@ -81,7 +81,7 @@
         android:paddingEnd="@dimen/padding_10dp"
         android:paddingRight="@dimen/padding_10dp"
         android:paddingBottom="@dimen/padding_6dp"
-        android:textColor="@color/colorAccentLight"
+        android:textColor="@color/color_on_primary"
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
@@ -99,7 +99,7 @@
         android:paddingRight="@dimen/padding_10dp"
         android:paddingBottom="@dimen/padding_16dp"
         android:textAllCaps="true"
-        android:textColor="@color/colorText"
+        android:textColor="@color/color_surface"
         android:textStyle="bold"
         tools:text="Title of Artwork" />
 

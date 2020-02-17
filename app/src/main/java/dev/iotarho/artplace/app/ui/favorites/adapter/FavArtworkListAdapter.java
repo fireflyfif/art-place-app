@@ -155,14 +155,14 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                     String favThumbnailPathString = favArtwork.getArtworkThumbnailPath();
                     Picasso.get()
                             .load(Uri.parse(favThumbnailPathString))
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(favThumbnail);
                 } else {
                     Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .load(R.color.color_primary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(favThumbnail);
                 }
             }

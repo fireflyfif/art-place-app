@@ -260,7 +260,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // source: https://stackoverflow.com/a/29916353/8132331
         Drawable drawable = menu.findItem(R.id.action_refresh).getIcon();
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.colorText));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.color_on_surface));
         menu.findItem(R.id.action_refresh).setIcon(drawable);
 
         // Set the Search View

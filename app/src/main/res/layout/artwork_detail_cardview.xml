@@ -33,7 +33,7 @@
   ~
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
@@ -44,7 +44,6 @@
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
     android:layout_marginBottom="@dimen/margin_bottom_cardview"
-    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="3dp"
     app:cardPreventCornerOverlap="true">
 
@@ -58,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:background="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -72,7 +70,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:textColor="@color/colorText"
+                android:textColor="?colorSurface"
                 android:textIsSelectable="true"
                 android:textSize="24sp"
                 android:gravity="center_horizontal"
@@ -96,11 +94,11 @@
                 app:backgroundTint="@android:color/transparent"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/color_primary"
                 android:textStyle="bold"
                 android:drawableEnd="@drawable/ic_chevron_right_24dp"
                 android:drawableRight="@drawable/ic_chevron_right_24dp"
-                android:drawableTint="@color/colorAccent"
+                android:drawableTint="@color/color_primary"
                 app:fontFamily="@font/poppins"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +115,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@color/colorAccentDark"
+                android:background="@color/color_primary_variant"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/artwork_artist_button" />
@@ -135,11 +133,10 @@
                 android:fontFamily="@font/poppins_light"
                 android:gravity="center_horizontal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/colorText"
+                android:textColor="@color/color_surface"
                 android:textIsSelectable="true"
                 android:textSize="@dimen/year_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -240,7 +237,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/dimensions_label"
-            android:textColor="@color/colorText"
+            android:textColor="@color/color_surface"
             android:textSize="12sp"
             app:fontFamily="@font/poppins_light"
             app:layout_constraintStart_toStartOf="parent"
@@ -257,7 +254,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/museum_label"
-            android:textColor="@color/colorText"
+            android:textColor="@color/color_surface"
             android:textSize="12sp"
             app:fontFamily="@font/poppins_light"
             app:layout_constraintEnd_toEndOf="parent"
@@ -275,7 +272,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/information_label"
-            android:textColor="@color/colorText"
+            android:textColor="@color/color_surface"
             android:textSize="12sp"
             app:fontFamily="@font/poppins_light"
             app:layout_constraintEnd_toEndOf="parent"
@@ -292,7 +289,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="32dp"
-            android:background="@color/colorBackground"
+            android:background="@color/color_surface"
             app:escapeHtml="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -301,4 +298,4 @@
             tools:text="Artwork Additional Information" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

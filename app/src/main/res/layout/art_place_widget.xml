@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/color_background"
         android:orientation="vertical">
 
         <TextView
@@ -62,12 +62,12 @@
             android:contentDescription="@string/appwidget_text"
             android:drawableBottom="@drawable/ic_favorite_24dp"
             android:drawablePadding="@dimen/padding_6dp"
-            android:drawableTint="@color/colorAccent"
+            android:drawableTint="@color/color_primary"
             android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:padding="@dimen/padding_16dp"
             android:text="@string/appwidget_text"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/color_primary"
             android:textSize="@dimen/widget_empty_text_size"
             android:textStyle="italic"
             android:visibility="visible" />

@@ -36,8 +36,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
+   <!-- <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        &lt;!&ndash; Customize your theme here. &ndash;&gt;
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -48,7 +48,7 @@
         <item name="android:navigationBarColor" tools:targetApi="lollipop">?colorPrimary</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">?colorPrimary</item>
-    </style>
+    </style>-->
 
     <style name="PopupMenuStyle" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="android:background">?attr/colorSurface</item>
@@ -68,6 +68,25 @@
         <item name="android:indeterminateDrawable">@drawable/progressbar_circles</item>
         <item name="android:minHeight">80dp</item>
         <item name="android:minWidth">200dp</item>
+    </style>
+
+    <!--Bottom Sheets-->
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+<!--        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?colorSurface</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+    <style name="Widget.MyTheme.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">?shapeAppearanceLargeComponent</item>
+    </style>
+
+    <!--Navigation Drawer-->
+    <style name="Widget.MyTheme.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextAppearance">?textAppearanceBody2</item>
     </style>
 
 </resources>

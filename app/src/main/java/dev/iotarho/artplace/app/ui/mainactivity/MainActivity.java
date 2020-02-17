@@ -85,13 +85,16 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // set the theme from Preferences
-        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
-        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
+//        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
+//        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
+        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
 
         if (savedInstanceState != null) {
             // Get the position of the selected Fragment
@@ -190,11 +193,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void setupBottomNavStyle() {
         // Set default background color for AHBottomNavigation
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.colorPrimary));
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.color_background));
 
         // Change colors for AHBottomNavigation
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccentLight));
-        bottomNavigation.setInactiveColor(fetchColor(R.color.colorIconsInactive));
+        bottomNavigation.setAccentColor(fetchColor(R.color.color_primary));
+        bottomNavigation.setInactiveColor(fetchColor(R.color.color_secondary));
 
         // Manage titles for AHBottomNavigation
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.SHOW_WHEN_ACTIVE);

@@ -150,7 +150,7 @@
                         android:paddingEnd="@dimen/padding_6dp"
                         android:paddingRight="@dimen/padding_6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/color_primary"
                         tools:text="Artwork" />
 
                     <ImageView
@@ -176,7 +176,7 @@
                         android:paddingBottom="@dimen/padding_8dp"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/color_on_secondary"
                         tools:text="Description here" />
 
                 </LinearLayout>

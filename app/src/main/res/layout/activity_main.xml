@@ -47,11 +47,11 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.AppCompat.DayNight">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
-            android:background="@color/colorPrimary"
+            style="?toolbarStyle"
             android:elevation="@dimen/padding_10dp"
             android:theme="@style/Theme.AppCompat.DayNight"
             app:layout_collapseMode="pin"

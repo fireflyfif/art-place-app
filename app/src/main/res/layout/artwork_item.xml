@@ -33,23 +33,34 @@
   ~
   -->
 
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
-    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="5dp"
     app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true"
-    app:strokeColor="@color/colorCardStroke"
-    app:strokeWidth="1dp">
+    app:strokeColor="@color/color_background"
+    app:strokeWidth="1dp">-->
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/artwork_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/card_view_margin"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardPreventCornerOverlap="true"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="3dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_8dp"
             android:adjustViewBounds="true"
-            android:background="@color/colorPrimary"
+            android:background="?colorSurface"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
             android:scaleType="fitStart"
@@ -83,7 +94,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_8dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:textColor="?colorSurface"
             android:textSize="16sp"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
@@ -100,9 +111,9 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_16dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:textColor="?colorSurface"
             android:textSize="14sp"
             tools:text="Artist name" />
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

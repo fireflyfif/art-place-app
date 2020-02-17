@@ -33,7 +33,7 @@
   ~
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artist_cardview"
@@ -43,8 +43,7 @@
     android:layout_marginLeft="@dimen/margin_horizontal_cardview"
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
-    android:layout_marginBottom="@dimen/margin_bottom_cardview"
-    app:cardBackgroundColor="@color/cardBackground">
+    android:layout_marginBottom="@dimen/margin_bottom_cardview">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -55,11 +54,11 @@
             android:id="@+id/artist_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccentLight"
+            android:background="@color/color_primary_variant"
             android:gravity="center_horizontal"
             android:padding="@dimen/padding_10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/color_surface"
             android:textIsSelectable="true"
             app:fontFamily="@font/amethysta"
             app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +95,7 @@
             android:layout_marginTop="@dimen/margin_16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:background="@color/colorAccent"
+            android:background="@color/color_primary_variant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/artist_lifespan" />
@@ -237,4 +236,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

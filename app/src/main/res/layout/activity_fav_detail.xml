@@ -63,14 +63,13 @@
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
                 android:fitsSystemWindows="true">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/image_height"
-                    android:src="@color/colorPrimary" />
+                    android:src="@color/color_primary" />
 
                 <ImageView
                     android:id="@+id/fav_detail_artwork_image"
@@ -115,7 +114,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/fav_detail_card_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -123,8 +122,7 @@
                 android:layout_marginLeft="@dimen/margin_8dp"
                 android:layout_marginEnd="@dimen/margin_8dp"
                 android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_16dp"
-                app:cardBackgroundColor="@color/cardBackground">
+                android:layout_marginBottom="@dimen/margin_16dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -135,19 +133,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
-                        android:background="@color/colorPrimaryDark"
-                        android:orientation="vertical">
+                        android:background="@color/color_primary"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
                             android:id="@+id/fav_detail_artist"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
                             android:gravity="center_horizontal"
                             android:padding="@dimen/padding_6dp"
                             android:textAllCaps="true"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                            android:textColor="@color/colorText"
+                            android:textColor="?colorOnSurface"
                             app:fontFamily="@font/amethysta"
                             tools:text="Artist" />
 
@@ -157,8 +157,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
                             android:padding="@dimen/padding_6dp"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                            android:textColor="@color/colorText"
+                            android:textAppearance="?textAppearanceHeadline6"
+                            android:textColor="?colorControlNormal"
                             app:fontFamily="@font/amethysta"
                             tools:text="Artwork Title" />
 
@@ -170,7 +170,7 @@
                             android:fontFamily="@font/amethysta"
                             android:gravity="center_horizontal"
                             android:padding="@dimen/padding_6dp"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="?colorOnSurface"
                             tools:text="1599-1600" />
 
                     </LinearLayout>
@@ -183,7 +183,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/amethysta"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_detail_category"
                         app:layout_constraintTop_toBottomOf="@+id/fav_detail_category"
@@ -198,7 +198,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/amethysta"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/category_label"
                         app:layout_constraintTop_toTopOf="@+id/category_label"
@@ -214,7 +214,7 @@
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginBottom="@dimen/last_margin_bottom"
                         android:fontFamily="@font/amethysta"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_cm"
@@ -229,7 +229,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/amethysta"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_in"
                         app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_in"
@@ -243,7 +243,7 @@
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/amethysta"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/fav_detail_medium"
                         app:layout_constraintTop_toBottomOf="@+id/fav_detail_medium"
@@ -258,7 +258,7 @@
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:text="@string/category_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:fontFamily="@font/amethysta"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/background_title_layout" />
@@ -271,7 +271,7 @@
                         android:layout_marginLeft="16dp"
                         android:text="@string/medium_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:fontFamily="@font/amethysta"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_detail_medium" />
@@ -284,7 +284,7 @@
                         android:layout_marginLeft="@dimen/margin_16dp"
                         android:text="@string/dimensions_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:fontFamily="@font/amethysta"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_artwork_dimens_in" />
@@ -297,13 +297,13 @@
                         android:layout_marginLeft="@dimen/margin_16dp"
                         android:text="@string/location_label"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/colorText"
+                        android:textColor="?colorOnSurface"
                         app:fontFamily="@font/amethysta"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/fav_detail_museum" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

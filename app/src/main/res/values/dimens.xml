@@ -72,4 +72,9 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="padding_8dp">8dp</dimen>
     <dimen name="card_view_vertical_margin">3dp</dimen>
     <dimen name="fav_cardview_corners">5dp</dimen>
+
+    <!--Emphasis modifiers for "on" colors-->
+    <dimen name="alpha_emphasis_high">@dimen/material_emphasis_high_type</dimen>
+    <dimen name="alpha_emphasis_medium">@dimen/material_emphasis_medium</dimen>
+    <dimen name="alpha_emphasis_disabled">@dimen/material_emphasis_disabled</dimen>
 </resources>

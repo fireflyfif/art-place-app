@@ -52,7 +52,7 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBackground"
+            android:background="@color/color_background"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorPrimary"
@@ -71,7 +71,7 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:src="@color/colorPrimaryDark" />
+                    android:src="@color/color_on_primary" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
@@ -83,7 +83,7 @@
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:src="@color/colorPrimary" />
+                    android:src="@color/color_primary" />
 
                 <View
                     android:layout_width="match_parent"
@@ -130,7 +130,7 @@
                 android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/artist_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/colorText"
+                android:textColor="@color/color_on_secondary"
                 app:fontFamily="@font/amethysta" />
 
             <include layout="@layout/artist_detail_cardview" />
@@ -147,7 +147,7 @@
                 android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/similar_artworks_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/colorText"
+                android:textColor="?colorOnSurface"
                 app:fontFamily="@font/amethysta" />
 
             <include layout="@layout/similar_artworks_cardview" />
@@ -173,9 +173,9 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:backgroundTint="@color/colorPrimary"
-        android:outlineAmbientShadowColor="@color/colorAccent"
-        android:outlineSpotShadowColor="@color/colorAccent"
+        android:backgroundTint="?colorSurface"
+        android:outlineAmbientShadowColor="@color/color_primary"
+        android:outlineSpotShadowColor="@color/color_primary"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="6dp"

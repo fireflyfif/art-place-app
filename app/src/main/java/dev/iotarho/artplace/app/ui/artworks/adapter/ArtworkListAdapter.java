@@ -338,16 +338,16 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                     // If it's empty or null -> set the placeholder
                     Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .load(R.color.color_primary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(artworkThumbnail);
                 } else {
                     // If it's not empty -> load the image
                     Picasso.get()
                             .load(Uri.parse(artworkThumbnailString))
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(artworkThumbnail, new Callback() {
                                 @Override
                                 public void onSuccess() {

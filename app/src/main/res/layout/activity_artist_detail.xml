@@ -68,7 +68,7 @@
                     android:contentDescription="@string/detail_image_artist_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    android:src="@color/colorPrimary" />
+                    android:src="@color/color_on_primary" />
 
                 <View
                     android:layout_width="match_parent"

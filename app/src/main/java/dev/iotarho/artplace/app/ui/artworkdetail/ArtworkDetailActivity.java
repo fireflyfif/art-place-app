@@ -272,7 +272,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Set the Up Button Navigation to another color
         // source: https://stackoverflow.com/a/26837072/8132331
         if (toolbar != null) {
-            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                     PorterDuff.Mode.SRC_ATOP);
         }
 
@@ -280,7 +280,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mTitleString = currentArtwork.getTitle();
             artworkName.setText(mTitleString);
             collapsingToolbarLayout.setTitle(mTitleString);
-            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
             Log.d(TAG, "Title of the artwork: " + mTitleString);
 
         } else {
@@ -400,16 +400,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         // Set the large image with Picasso
         if (mLargeArtworkLinkString == null || mLargeArtworkLinkString.isEmpty()) {
             Picasso.get()
-                    .load(R.color.colorPrimary)
-                    .placeholder(R.color.colorPrimary)
-                    .error(R.color.colorPrimary)
+                    .load(R.color.color_primary)
+                    .placeholder(R.color.color_primary)
+                    .error(R.color.color_error)
                     .into(artworkImage);
         } else {
 
             Picasso.get()
                     .load(Uri.parse(mLargeArtworkLinkString))
-                    .placeholder(R.color.colorPrimary)
-                    .error(R.color.colorPrimary)
+                    .placeholder(R.color.color_primary)
+                    .error(R.color.color_error)
                     .into(artworkImage);
 
             // If there is an image set a click listener on it

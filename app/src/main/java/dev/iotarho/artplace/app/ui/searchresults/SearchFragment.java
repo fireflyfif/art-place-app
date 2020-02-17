@@ -293,7 +293,7 @@ public class SearchFragment extends Fragment implements
         // source: https://stackoverflow.com/a/29916353/8132331
         Drawable drawable = menu.findItem(R.id.action_search).getIcon();
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.colorText));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.color_on_surface));
         menu.findItem(R.id.action_search).setIcon(drawable);
 
         // Set the SearchView

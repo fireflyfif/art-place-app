@@ -138,16 +138,16 @@ public class SimilarArtworksAdapter extends RecyclerView.Adapter<SimilarArtworks
                 if (artworkThumbnailString == null || TextUtils.isEmpty(artworkThumbnailString)) {
                     // If it's empty or null -> set the placeholder
                     Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .load(R.color.color_primary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(similarArtworkThumbnail);
                 } else {
                     // If it's not empty -> load the image
                     Picasso.get()
                             .load(Uri.parse(artworkThumbnailString))
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(similarArtworkThumbnail, new Callback() {
                                 @Override
                                 public void onSuccess() {

@@ -170,7 +170,7 @@ public class SearchDetailActivity extends AppCompatActivity {
                 if (mResults != null) {
 
                     if (toolbar != null) {
-                        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+                        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                                 PorterDuff.Mode.SRC_ATOP);
                     }
 
@@ -196,7 +196,7 @@ public class SearchDetailActivity extends AppCompatActivity {
         Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
 
         collapsingToolbarLayout.setTitle(titleString);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
         contentTitle.setText(titleString);
         contentType.setText(typeString);
@@ -212,15 +212,15 @@ public class SearchDetailActivity extends AppCompatActivity {
                     // Set the backdrop image
                     Picasso.get()
                             .load(imageThumbnailString)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(contentImage);
 
                     // Set the second image
                     Picasso.get()
                             .load(imageThumbnailString)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(secondImage, new Callback() {
                                 @Override
                                 public void onSuccess() {
@@ -243,16 +243,16 @@ public class SearchDetailActivity extends AppCompatActivity {
                 } else {
                     // Set the backdrop image
                     Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .load(R.color.color_primary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(contentImage);
 
                     // Set the second image
                     Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .load(R.color.color_primary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(secondImage);
                 }
 
