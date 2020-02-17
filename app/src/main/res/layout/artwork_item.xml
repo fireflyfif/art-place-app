@@ -33,7 +33,8 @@
   ~
   -->
 
-<!--<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
@@ -47,20 +48,7 @@
     app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true"
     app:strokeColor="@color/color_background"
-    app:strokeWidth="1dp">-->
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/artwork_cardview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/card_view_margin"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardPreventCornerOverlap="true"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="3dp">
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,7 +62,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_8dp"
             android:adjustViewBounds="true"
-            android:background="?colorSurface"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
             android:scaleType="fitStart"
@@ -93,8 +80,8 @@
             android:paddingEnd="@dimen/padding_10dp"
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_8dp"
-            android:textAllCaps="true"
-            android:textColor="?colorSurface"
+            android:textAllCaps="false"
+            android:textColor="?colorControlNormal"
             android:textSize="16sp"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
@@ -111,9 +98,9 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_16dp"
             android:textAllCaps="true"
-            android:textColor="?colorSurface"
+            android:textColor="?colorControlNormal"
             android:textSize="14sp"
             tools:text="Artist name" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
