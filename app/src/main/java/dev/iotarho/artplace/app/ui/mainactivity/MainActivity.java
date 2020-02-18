@@ -84,10 +84,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // set the theme from Preferences
-//        PreferenceUtils preferenceUtils = PreferenceUtils.getInstance();
-//        ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void setupBottomNavStyle() {
         // Set default background color for AHBottomNavigation
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.color_background));
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.color_surface));
 
         // Change colors for AHBottomNavigation
         bottomNavigation.setAccentColor(fetchColor(R.color.color_primary));

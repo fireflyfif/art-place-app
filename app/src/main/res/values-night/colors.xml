@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -35,33 +34,33 @@
   -->
 
 <resources>
-  <!--  <color name="colorPrimary">#373737</color>
-    <color name="colorPrimaryDark">#111111</color>
-    <color name="colorAccent">#2AB7CA</color>
-    &lt;!&ndash;<color name="colorBackground">#5d5d5d</color>&ndash;&gt;
-    <color name="colorBackground">@color/colorPrimary</color>
-    <color name="cardBackground">@color/colorPrimaryDarker10</color>
-    &lt;!&ndash;<color name="cardBackground">#404040</color>&ndash;&gt;
-    <color name="colorAccentLight">#83dbe4</color>
-    <color name="colorAccentDark">#2292a2</color>
-
-    <color name="colorPrimaryDarker20">#141414</color>
-    <color name="colorPrimaryDarker10">#212121</color>
-    <color name="colorPrimaryLighter20">#4d4d4d</color>
-    <color name="colorPrimaryLighter30">#646464</color>
-
-    &lt;!&ndash; Pop Art colors&ndash;&gt;
-    <color name="colorPopRed">#FE4A49</color>
-    <color name="colorPopBlue">#2AB7CA</color>
-    <color name="colorPopYellow">#FED766</color>
-
-    <color name="colorText">#fafafa</color>
-    <color name="colorWhiteTransparent">#80FFFFFF</color>
-    <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorCardStroke">#272727</color>
-
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#000000</color>-->
+<!--      <color name="colorPrimary">#373737</color>-->
+<!--      <color name="colorPrimaryDark">#111111</color>-->
+<!--      <color name="colorAccent">#2AB7CA</color>-->
+<!--      &lt;!&ndash;<color name="colorBackground">#5d5d5d</color>&ndash;&gt;-->
+<!--      <color name="colorBackground">@color/colorPrimary</color>-->
+<!--      <color name="cardBackground">@color/colorPrimaryDarker10</color>-->
+<!--      &lt;!&ndash;<color name="cardBackground">#404040</color>&ndash;&gt;-->
+<!--      <color name="colorAccentLight">#83dbe4</color>-->
+<!--      <color name="colorAccentDark">#2292a2</color>-->
+<!--  -->
+<!--      <color name="colorPrimaryDarker20">#141414</color>-->
+<!--      <color name="colorPrimaryDarker10">#212121</color>-->
+<!--      <color name="colorPrimaryLighter20">#4d4d4d</color>-->
+<!--      <color name="colorPrimaryLighter30">#646464</color>-->
+<!--  -->
+<!--      &lt;!&ndash; Pop Art colors&ndash;&gt;-->
+<!--      <color name="colorPopRed">#FE4A49</color>-->
+<!--      <color name="colorPopBlue">#2AB7CA</color>-->
+<!--      <color name="colorPopYellow">#FED766</color>-->
+<!--  -->
+<!--      <color name="colorText">#fafafa</color>-->
+<!--      <color name="colorWhiteTransparent">#80FFFFFF</color>-->
+<!--      <color name="colorIconsInactive">#a4a4a4</color>-->
+<!--      <color name="colorCardStroke">#272727</color>-->
+<!--  -->
+<!--      <color name="colorWhite">#ffffff</color>-->
+<!--      <color name="colorBlack">#000000</color>-->
 
 
     <!--DARK COLOR THEME-->
@@ -73,6 +72,8 @@
     <color name="color_secondary">#FED766</color>
     <color name="color_secondary_variant">#FED766</color>
 
+    <color name="color_red">#FE4A49</color>
+
     <color name="color_background">#000000</color>
     <color name="color_surface">#121212</color>
     <color name="color_error">#cf6679</color>
@@ -80,7 +81,7 @@
     <color name="color_on_primary">#000000</color>
     <color name="color_on_secondary">#000000</color>
     <color name="color_on_background">#ffffff</color>
-    <color name="color_on_surface">#FE4A49</color>
+    <color name="color_on_surface">#646464</color>
     <color name="color_on_error">#000000</color>
 
 </resources>

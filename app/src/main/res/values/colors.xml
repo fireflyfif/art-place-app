@@ -73,6 +73,8 @@
     <color name="color_secondary">#FE4A49</color>
     <color name="color_secondary_variant">#f5262b</color>
 
+    <color name="color_red">#FE4A49</color>
+
     <!--colorBackground appears behind scrollable content and is used for the default window-->
     <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
     <!--and menus. colorError is used to indicate an error state for components such as-->
@@ -86,7 +88,7 @@
     <color name="color_on_primary">#ffffff</color>
     <color name="color_on_secondary">#000000</color>
     <color name="color_on_background">#000000</color>
-    <color name="color_on_surface">#D3FE4A49</color>
+    <color name="color_on_surface">#646464</color>
     <color name="color_on_error">#ffffff</color>
 
 </resources>
