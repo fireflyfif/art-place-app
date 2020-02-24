@@ -78,6 +78,8 @@ import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
 import dev.iotarho.artplace.app.utils.NetworkState;
 import dev.iotarho.artplace.app.utils.StringUtils;
+import dev.iotarho.artplace.app.utils.Utils;
+import okhttp3.internal.Util;
 
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
 public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder>
@@ -334,24 +336,18 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                 // Set the image with Picasso
                 // Check first if the url in null or empty
-                if (artworkThumbnailString == null || artworkThumbnailString.isEmpty()) {
-
+                if (Utils.isNullOrEmpty(artworkThumbnailString)) {
                     // If it's empty or null -> set the placeholder
-                    Picasso.get()
-                            .load(R.color.color_primary)
-                            .placeholder(R.color.color_primary)
-                            .error(R.color.color_error)
-                            .into(artworkThumbnail);
+                    artworkThumbnail.setImageResource(R.color.color_on_surface);
                 } else {
                     // If it's not empty -> load the image
                     Picasso.get()
                             .load(Uri.parse(artworkThumbnailString))
-                            .placeholder(R.color.color_primary)
+                            .placeholder(R.color.color_surface)
                             .error(R.color.color_error)
                             .into(artworkThumbnail, new Callback() {
                                 @Override
                                 public void onSuccess() {
-
                                     Bitmap bitmap = ((BitmapDrawable)
                                             artworkThumbnail.getDrawable()).getBitmap();
                                     artworkThumbnail.setImageBitmap(bitmap);

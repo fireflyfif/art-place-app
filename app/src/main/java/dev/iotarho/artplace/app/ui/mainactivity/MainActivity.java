@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private void setupBottomNavStyle() {
         // Set default background color for AHBottomNavigation
-        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.color_surface));
+        bottomNavigation.setDefaultBackgroundColor(fetchColor(R.color.color_on_surface));
 
         // Change colors for AHBottomNavigation
         bottomNavigation.setAccentColor(fetchColor(R.color.color_primary));

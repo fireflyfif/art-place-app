@@ -51,7 +51,7 @@
     </style>-->
 
     <style name="PopupMenuStyle" parent="ThemeOverlay.MaterialComponents.Light">
-        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:background">?colorSurface</item>
     </style>
 
     <style name="details_label" parent="Theme.MaterialComponents">
@@ -75,7 +75,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
 <!--        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>-->
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+<!--        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>-->
         <item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>
         <item name="android:navigationBarColor" tools:ignore="NewApi">?colorSurface</item>
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
