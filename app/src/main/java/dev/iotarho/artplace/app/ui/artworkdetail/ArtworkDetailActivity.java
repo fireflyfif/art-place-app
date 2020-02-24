@@ -94,6 +94,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.utils.StringUtils;
+import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class ArtworkDetailActivity extends AppCompatActivity {
@@ -120,7 +121,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artwork_title)
     TextView artworkName;
     @BindView(R.id.artwork_artist_button)
-    Button artistNameButton;
+    TextView artistNameButton;
     @BindView(R.id.artwork_medium)
     TextView artworkMedium;
     @BindView(R.id.artwork_category)
@@ -398,17 +399,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
         // Set the large image with Picasso
-        if (mLargeArtworkLinkString == null || mLargeArtworkLinkString.isEmpty()) {
-            Picasso.get()
-                    .load(R.color.color_primary)
-                    .placeholder(R.color.color_primary)
-                    .error(R.color.color_error)
-                    .into(artworkImage);
+        if (Utils.isNullOrEmpty(mLargeArtworkLinkString)) {
+            artworkImage.setImageResource(R.color.color_on_surface);
         } else {
-
             Picasso.get()
                     .load(Uri.parse(mLargeArtworkLinkString))
-                    .placeholder(R.color.color_primary)
+                    .placeholder(R.color.color_on_surface)
                     .error(R.color.color_error)
                     .into(artworkImage);
 
@@ -543,23 +539,20 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                 // Set the name of the Artist to the Button
                 artistNameButton.setText(mArtistNameString);
 
-                artistNameButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                artistNameButton.setOnClickListener(v -> {
 
-                        // Check first if the artist name is not null or "N/A"
-                        if ((mArtistNameString == null) || (mArtistNameString.equals("N/A")) || TextUtils.isEmpty(mArtistNameString)) {
-                            // Show a message to the user that there is no artist for the selected artwork
-                            Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                        // Send the name of the artwork as extra
-                        intent.putExtra(ARTWORK_TITLE_KEY, mTitleString);
-                        intent.putExtra(ARTIST_URL_KEY, mArtistUrl);
-                        startActivity(intent);
+                    // Check first if the artist name is not null or "N/A"
+                    if ((mArtistNameString == null) || (mArtistNameString.equals("N/A")) || TextUtils.isEmpty(mArtistNameString)) {
+                        // Show a message to the user that there is no artist for the selected artwork
+                        Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
+                        return;
                     }
+
+                    Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
+                    // Send the name of the artwork as extra
+                    intent.putExtra(ARTWORK_TITLE_KEY, mTitleString);
+                    intent.putExtra(ARTIST_URL_KEY, mArtistUrl);
+                    startActivity(intent);
                 });
 
             } else {

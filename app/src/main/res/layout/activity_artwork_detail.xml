@@ -52,10 +52,10 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/color_background"
+            android:background="?colorButtonNormal"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="?attr/colorOnSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
@@ -71,7 +71,7 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:src="@color/color_on_primary" />
+                    android:src="?colorOnSurface" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
@@ -83,7 +83,7 @@
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:src="@color/color_primary" />
+                    android:src="?colorOnSurface" />
 
                 <View
                     android:layout_width="match_parent"
@@ -173,9 +173,9 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:backgroundTint="?colorSurface"
-        android:outlineAmbientShadowColor="@color/color_primary"
-        android:outlineSpotShadowColor="@color/color_primary"
+        android:backgroundTint="?colorOnSurface"
+        android:outlineAmbientShadowColor="?colorSurface"
+        android:outlineSpotShadowColor="?colorSurface"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="6dp"
