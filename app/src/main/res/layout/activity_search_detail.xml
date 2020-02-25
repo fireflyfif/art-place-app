@@ -112,7 +112,7 @@
                 app:cardCornerRadius="4dp">
 
                 <LinearLayout
-                    android:id="@+id/background_title_layout"
+                    android:id="@+id/artwork_title_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"

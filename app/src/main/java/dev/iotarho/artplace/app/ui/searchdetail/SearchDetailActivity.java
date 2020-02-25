@@ -92,7 +92,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
-    @BindView(R.id.background_title_layout)
+    @BindView(R.id.artwork_title_layout)
     LinearLayout bgLayout;
     @BindView(R.id.card_view_content)
     CardView cardView;

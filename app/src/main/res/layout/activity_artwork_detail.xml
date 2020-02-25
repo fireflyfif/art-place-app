@@ -78,7 +78,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="15dp"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
@@ -108,6 +111,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fadingEdge="none"
         app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -147,7 +151,6 @@
                 android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/similar_artworks_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?colorOnSurface"
                 app:fontFamily="@font/amethysta" />
 
             <include layout="@layout/similar_artworks_cardview" />
