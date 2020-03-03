@@ -133,9 +133,10 @@
                 android:paddingEnd="@dimen/padding_6dp"
                 android:paddingRight="@dimen/padding_6dp"
                 android:text="@string/artist_label"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="@color/color_on_secondary"
-                app:fontFamily="@font/amethysta" />
+                android:fontFamily="@font/work_sans_light" />
 
             <include layout="@layout/artist_detail_cardview" />
 

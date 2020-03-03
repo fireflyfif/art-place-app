@@ -295,9 +295,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         museum = currentArtwork.getCollectingInstitution();
         artworkMuseum.setText(Utils.isNullOrEmpty(museum) ? emptyField : museum);
 
-        String collectingInstitution = currentArtwork.getCollectingInstitution();
-        artworkMuseum.setText(Utils.isNullOrEmpty(collectingInstitution) ? emptyField : collectingInstitution);
-
         Dimensions dimensionObject = currentArtwork.getDimensions();
         if (dimensionObject != null) {
             CmSize cmSizeObject = dimensionObject.getCmSize();
@@ -323,7 +320,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         MainImage mainImageObject = imageLinksObject.getImage();
 
         if (currentArtwork.getImageVersions() != null) {
-
             List<String> imageVersionList = currentArtwork.getImageVersions();
 
             String largeVersion = "large";
@@ -474,16 +470,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
         // Get the name of the artist
         artistNameString = currentArtist.getName();
-        boolean hasName = Utils.isNullOrEmpty(artistNameString);
-        artistName.setText(hasName ? emptyField : artistNameString);
+        boolean hasNoName = Utils.isNullOrEmpty(artistNameString);
+        artistName.setText(hasNoName ? emptyField : artistNameString);
         // Set the name of the Artist to the Button
-        artistNameButton.setText(hasName ? emptyField : artistNameString);
+        artistNameButton.setText(hasNoName ? emptyField : artistNameString);
         // Check first if the artist name is not null or empty
-        if (hasName) {
+        if (hasNoName) {
             // Hide the Artist CardView if there is no info about the Artist
             artistCard.setVisibility(View.GONE);
             artistNameButton.setVisibility(View.GONE);
-
+        } else {
             artistNameButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
                 // Send the name of the artwork as extra

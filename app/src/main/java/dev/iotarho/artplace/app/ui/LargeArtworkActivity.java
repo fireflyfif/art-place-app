@@ -36,7 +36,6 @@
 package dev.iotarho.artplace.app.ui;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -46,7 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class LargeArtworkActivity extends AppCompatActivity {
 
@@ -68,12 +66,7 @@ public class LargeArtworkActivity extends AppCompatActivity {
 
             Picasso.get().load(imageLinkLarger).into(zoomImage);
 
-            zoomImage.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-                @Override
-                public void onPhotoTap(View view, float x, float y) {
-                    zoomImage.setAdjustViewBounds(true);
-                }
-            });
+            zoomImage.setOnPhotoTapListener((view, x, y) -> zoomImage.setAdjustViewBounds(true));
         }
 
     }
