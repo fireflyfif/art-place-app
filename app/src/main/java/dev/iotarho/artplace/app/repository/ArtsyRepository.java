@@ -213,7 +213,6 @@ public class ArtsyRepository {
         getArtsyApi().getArtistInfoFromLink(artistUrl)
                 .enqueue(new Callback<Artist>() {
                     Artist artistData = new Artist();
-
                     @Override
                     public void onResponse(@NonNull Call<Artist> call,
                                            @NonNull Response<Artist> response) {

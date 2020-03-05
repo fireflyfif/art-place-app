@@ -293,6 +293,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         artworkDate.setText(Utils.isNullOrEmpty(date) ? emptyField : date);
 
         museum = currentArtwork.getCollectingInstitution();
+        Log.d(TAG, "Artwork museum is: " + museum);
         artworkMuseum.setText(Utils.isNullOrEmpty(museum) ? emptyField : museum);
 
         Dimensions dimensionObject = currentArtwork.getDimensions();
@@ -367,27 +368,22 @@ public class ArtworkDetailActivity extends AppCompatActivity {
                         .into(artworkImage);
 
                 // If there is an image set a click listener on it
-                artworkImage.setOnClickListener(v -> {
-                    // Open new Activity
-                    Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
-                            LargeArtworkActivity.class);
-                    largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, largeArtworkLink);
-                    Log.d(TAG, "Larger link to image: " + largeArtworkLink);
-                    startActivity(largeImageIntent);
-                });
+                openArtworkFullScreen();
             }
         }
 
+        // TODO: Remove this option if showing all artist info in one screen
         if (imageLinksObject.getArtists() != null) {
             ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
             artistUrl = artistsLinkObject.getHref(); // This link needs a token
+            Log.d(TAG, "artistUrl = " + artistUrl);
 
             // Initialize the artist ViewModel
             initArtistViewModel(artistUrl);
             String artworkId = currentArtwork.getId();
 
-            String artistNameFromSlug = StringUtils.getArtistNameFromSlug(currentArtwork);
-            Log.d(TAG, "Name of Artist after extraction: " + artistNameFromSlug);
+//            String artistNameFromSlug = StringUtils.getArtistNameFromSlug(currentArtwork);
+//            Log.d(TAG, "Name of Artist after extraction: " + artistNameFromSlug);
         }
 
         // Get the Permalink for sharing it outside the app
@@ -398,6 +394,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         String similarArtworksLink = similarArtworksLinkObject.getHref();
         Log.d(TAG, "Similar Artworks link: " + similarArtworksLink);
         initSimilarViewModel(similarArtworksLink);
+    }
+
+    private void openArtworkFullScreen() {
+        artworkImage.setOnClickListener(v -> {
+            // Open new Activity
+            Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
+                    LargeArtworkActivity.class);
+            largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, largeArtworkLink);
+            startActivity(largeImageIntent);
+        });
     }
 
     private String getVersionString(List<String> imageVersionList, String versionString) {

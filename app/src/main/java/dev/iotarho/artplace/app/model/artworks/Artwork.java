@@ -84,7 +84,6 @@ public class Artwork implements Parcelable {
     e.g. "gustav-klimt-der-kuss-the-kiss"
      */
     @SerializedName("slug")
-    @Expose
     private String slug;
 
     /*
@@ -92,7 +91,6 @@ public class Artwork implements Parcelable {
     e.g. "Der Kuss (The Kiss)"
      */
     @SerializedName("title")
-    @Expose
     private String title;
 
     /*
@@ -102,7 +100,6 @@ public class Artwork implements Parcelable {
     e.g. "Painting"
      */
     @SerializedName("category")
-    @Expose
     private String category;
 
     /*
@@ -110,7 +107,6 @@ public class Artwork implements Parcelable {
     e.g. "Oil and gold leaf on canvas"
      */
     @SerializedName("medium")
-    @Expose
     private String medium;
 
     /*
@@ -118,11 +114,9 @@ public class Artwork implements Parcelable {
     e.g. "1907-1908"
      */
     @SerializedName("date")
-    @Expose
     private String date;
 
     @SerializedName("dimensions")
-    @Expose
     private Dimensions dimensions;
 
     /*
@@ -130,7 +124,6 @@ public class Artwork implements Parcelable {
     e.g. "Österreichische Galerie Belvedere, Vienna"
      */
     @SerializedName("collecting_institution")
-    @Expose
     private String collectingInstitution;
 
     /*
@@ -138,33 +131,20 @@ public class Artwork implements Parcelable {
     e.g. "[Image source](https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg)"
      */
     @SerializedName("additional_information")
-    @Expose
     private String additionalInformation;
 
     /*
     Available image versions.
     [Needed for the @{ImageLinks}]
-    "image_versions": [
-                    "square",
-                    "small",
-                    "large_rectangle",
-                    "large",
-                    "tall",
-                    "medium",
-                    "medium_rectangle",
-                    "larger",
-                    "normalized"
-                ]
+    "image_versions": [ "square", "small",  "large_rectangle", "large", "tall", "medium", "medium_rectangle", "larger", "normalized" ]
      */
     @SerializedName("image_versions")
-    @Expose
     private List<String> imageVersions = null;
 
     /*
     Links to the images for the current artwork
      */
     @SerializedName("_links")
-    @Expose
     private ImageLinks links;
 
 

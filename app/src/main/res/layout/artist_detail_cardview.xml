@@ -84,7 +84,7 @@
                 android:id="@+id/artist_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/work_sans"
+                android:fontFamily="@font/work_sans_medium"
                 android:gravity="center_horizontal"
                 android:padding="@dimen/padding_10dp"
                 android:textColor="@color/color_surface"
@@ -128,7 +128,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/artist_lifespan" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -246,7 +245,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="@dimen/margin_8dp"
                 android:layout_marginRight="@dimen/margin_8dp"
-                android:fontFamily="@font/work_sans"
+                android:fontFamily="@font/work_sans_light"
                 android:text="@string/biography_label"
                 android:textSize="12sp"
                 android:textStyle="normal"
