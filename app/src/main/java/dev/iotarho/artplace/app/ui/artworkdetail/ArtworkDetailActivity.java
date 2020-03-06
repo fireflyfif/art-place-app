@@ -78,6 +78,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
+import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.SimilarArtworksLink;
 import dev.iotarho.artplace.app.model.Thumbnail;
@@ -172,6 +173,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.similar_artworks_rv)
     RecyclerView similarArtworksRv;
 
+    @BindView(R.id.artworks_by_artist_rv)
+    RecyclerView artworksByArtistRv;
+
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
 
@@ -223,6 +227,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
         }
+
+        // Initialize the ViewModel
+        mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
@@ -450,10 +457,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      * @param artistLink is the given link to the artist
      */
     private void initArtistViewModel(String artistLink) {
-        // Initialize the ViewModel
-        mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
-
         mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
             if (artists != null) {
 
@@ -565,6 +569,12 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             artistBio.setVisibility(View.GONE);
             artistBioLabel.setVisibility(View.GONE);
         }
+
+        ImageLinks imageLinks = currentArtist.getLinks();
+        ArtworksLink artworksLink = imageLinks.getArtworksLink();
+        String href = artworksLink.getHref();
+        Log.d(TAG, "temp, href of artworks: " + href);
+        initArtworksByArtistsViewModel(href);
     }
 
     /**
@@ -573,10 +583,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      * @param similarArtLink is the given link to the similar artworks
      */
     private void initSimilarViewModel(String similarArtLink) {
-        // Initialize the ViewModel
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initSimilarArtworksData(similarArtLink);
-
         mArtistViewModel.getSimilarArtworksData().observe(this, new Observer<List<Artwork>>() {
             @Override
             public void onChanged(@Nullable List<Artwork> artworkList) {
@@ -588,7 +595,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
-
         SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(this, artworkList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
@@ -598,6 +604,19 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     private void clickFab() {
         mFavButton.setOnClickListener(this::setIconOnFab);
+    }
+
+    private void initArtworksByArtistsViewModel(String artworksLink) {
+        mArtistViewModel.initArtworksByArtistData(artworksLink);
+        mArtistViewModel.getArtworksByArtistsData().observe(this, artworks -> setupArtworksByArtist(artworks));
+    }
+
+    private void setupArtworksByArtist(List<Artwork> artworksList) {
+        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(this, artworksList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL,  false);
+        artworksByArtistRv.setLayoutManager(layoutManager);
+        artworksByArtistRv.setAdapter(similarArtworksAdapter);
     }
 
     /**

@@ -50,6 +50,7 @@ public class ArtistsDetailViewModel extends ViewModel {
     private LiveData<List<Artist>> mArtistListData;
     private LiveData<Artist> mArtistData;
     private LiveData<List<Artwork>> mSimilarArtworkLink;
+    private LiveData<List<Artwork>> artworksByArtistData;
 
     public ArtistsDetailViewModel() {
     }
@@ -75,6 +76,13 @@ public class ArtistsDetailViewModel extends ViewModel {
         mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
     }
 
+    public void initArtworksByArtistData(String artworksLink) {
+        if (artworksByArtistData != null) {
+            return;
+        }
+        artworksByArtistData = ArtsyRepository.getInstance().getArtworksFromLink(artworksLink);
+    }
+
     public LiveData<List<Artist>> getArtistDataFromArtwork() {
         return mArtistListData;
     }
@@ -85,6 +93,10 @@ public class ArtistsDetailViewModel extends ViewModel {
 
     public LiveData<List<Artwork>> getSimilarArtworksData() {
         return mSimilarArtworkLink;
+    }
+
+    public LiveData<List<Artwork>> getArtworksByArtistsData() {
+        return artworksByArtistData;
     }
 
 }

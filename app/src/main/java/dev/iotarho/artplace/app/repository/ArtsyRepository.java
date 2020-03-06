@@ -114,40 +114,29 @@ public class ArtsyRepository {
      * @return loaded results from the Artsy response
      */
     private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
-
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
-
-        getArtsyApi().getSimilarArtLink(similarArtUrl)
-                .enqueue(new Callback<ArtworkWrapperResponse>() {
-
-                    ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
-                    EmbeddedArtworks embeddedArtworks = new EmbeddedArtworks();
-                    List<Artwork> similarArtList = new ArrayList<>();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ArtworkWrapperResponse> call,
-                                           @NonNull Response<ArtworkWrapperResponse> response) {
-
-                        if (response.isSuccessful()) {
-                            artworkWrapper = response.body();
-                            if (artworkWrapper != null) {
-                                embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
-
-                                similarArtList = embeddedArtworks.getArtworks();
-                                similarArtData.setValue(similarArtList);
-                            }
-                            Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
-                        } else {
-                            similarArtData.setValue(null);
-                            Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getSimilarArtLink(similarArtUrl).enqueue(new Callback<ArtworkWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtworkWrapperResponse artworkWrapper = response.body();
+                    if (artworkWrapper != null) {
+                        EmbeddedArtworks embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
+                        List<Artwork> similarArtList = embeddedArtworks.getArtworks();
+                        similarArtData.setValue(similarArtList);
                     }
+                    Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
+                } else {
+                    similarArtData.setValue(null);
+                    Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return similarArtData;
     }
@@ -157,45 +146,62 @@ public class ArtsyRepository {
     }
 
     private LiveData<List<Artist>> loadArtistFromLink(String artistUrl) {
-
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getArtistLink(artistUrl)
-                .enqueue(new Callback<ArtistWrapperResponse>() {
-                    ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
-                    EmbeddedArtists embeddedArtists = new EmbeddedArtists();
-                    List<Artist> artistList = new ArrayList<>();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ArtistWrapperResponse> call,
-                                           @NonNull Response<ArtistWrapperResponse> response) {
-                        if (response.isSuccessful()) {
-
-                            artistWrapperResponse = response.body();
-
-                            if (artistWrapperResponse != null) {
-                                embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
-
-                                if (embeddedArtists != null) {
-                                    artistList = embeddedArtists.getArtists();
-
-                                    artistLiveData.setValue(artistList);
-                                }
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            artistLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
+        getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtistWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtistWrapperResponse artistWrapperResponse = response.body();
+                    if (artistWrapperResponse != null) {
+                        EmbeddedArtists embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
+                        if (embeddedArtists != null) {
+                            List<Artist> artistList = embeddedArtists.getArtists();
+                            artistLiveData.setValue(artistList);
                         }
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.code());
+                } else {
+                    artistLiveData.setValue(null);
+                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return artistLiveData;
+    }
+
+    public LiveData<List<Artwork>> getArtworksFromLink(String artworksUrl) {
+        return loadArtworksFromLink(artworksUrl);
+    }
+
+    private LiveData<List<Artwork>> loadArtworksFromLink(String artworksUrl) {
+        MutableLiveData<List<Artwork>> artworkListData = new MutableLiveData<>();
+        getArtsyApi().getArtworksByArtistData(artworksUrl).enqueue(new Callback<ArtworkWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtworkWrapperResponse artworkWrapper = response.body();
+                    if (artworkWrapper != null) {
+                        EmbeddedArtworks embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
+                        List<Artwork> artworksList = embeddedArtworks.getArtworks();
+                        artworkListData.setValue(artworksList);
+                    }
+                } else {
+                    artworkListData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+        return artworkListData;
     }
 
     public LiveData<Artist> getArtistInfoFromLink(String artistUrl) {
@@ -207,33 +213,27 @@ public class ArtsyRepository {
      * consisted of the id of the artist
      */
     private LiveData<Artist> loadArtistInfoFromLink(String artistUrl) {
-
         MutableLiveData<Artist> artistLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getArtistInfoFromLink(artistUrl)
-                .enqueue(new Callback<Artist>() {
-                    Artist artistData = new Artist();
-                    @Override
-                    public void onResponse(@NonNull Call<Artist> call,
-                                           @NonNull Response<Artist> response) {
-                        if (response.isSuccessful()) {
-                            artistData = response.body();
-
-                            if (artistData != null) {
-                                artistLiveData.setValue(artistData);
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            artistLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getArtistInfoFromLink(artistUrl).enqueue(new Callback<Artist>() {
+            @Override
+            public void onResponse(@NonNull Call<Artist> call, @NonNull Response<Artist> response) {
+                if (response.isSuccessful()) {
+                    Artist artistData = response.body();
+                    if (artistData != null) {
+                        artistLiveData.setValue(artistData);
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.code());
+                } else {
+                    artistLiveData.setValue(null);
+                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return artistLiveData;
     }
@@ -243,37 +243,28 @@ public class ArtsyRepository {
     }
 
     private LiveData<ShowContent> loadSearchContentLink(String selfLink) {
-
         MutableLiveData<ShowContent> searchLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getDetailContentFromSearchLink(selfLink)
-                .enqueue(new Callback<ShowContent>() {
-
-                    ShowContent showContent = new ShowContent();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ShowContent> call,
-                                           @NonNull Response<ShowContent> response) {
-                        if (response.isSuccessful()) {
-
-                            showContent = response.body();
-                            if (showContent != null) {
-                                searchLiveData.setValue(showContent);
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            searchLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getDetailContentFromSearchLink(selfLink).enqueue(new Callback<ShowContent>() {
+            @Override
+            public void onResponse(@NonNull Call<ShowContent> call, @NonNull Response<ShowContent> response) {
+                if (response.isSuccessful()) {
+                    ShowContent showContent = response.body();
+                    if (showContent != null) {
+                        searchLiveData.setValue(showContent);
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.code());
+                } else {
+                    searchLiveData.setValue(null);
+                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
+                Log.d(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return searchLiveData;
     }
-
 }

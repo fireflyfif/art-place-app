@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class ArtworksLink implements Parcelable {
+public class ArtworksLink implements Parcelable {
 
     @SerializedName("href")
     @Expose

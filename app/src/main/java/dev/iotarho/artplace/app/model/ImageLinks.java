@@ -85,6 +85,14 @@ public class ImageLinks implements Parcelable {
     @SerializedName("artists")
     private ArtistsLink artists;
 
+    public ArtworksLink getArtworksLink() {
+        return artworksLink;
+    }
+
+    public void setArtworksLink(ArtworksLink artworksLink) {
+        this.artworksLink = artworksLink;
+    }
+
     public Thumbnail getThumbnail() {
         return thumbnail;
     }

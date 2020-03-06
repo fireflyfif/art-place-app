@@ -87,7 +87,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Result> callback) {
-
         // Update NetworkState
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
@@ -99,31 +98,19 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
             mQueryString = "Andy Warhol";
         }
 
-        mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(
-                new Callback<SearchWrapperResponse>() {
-
-            SearchWrapperResponse searchResponse = new SearchWrapperResponse();
-            List<Result> resultList = new ArrayList<>();
-
-            Links links = new Links();
-            Next next = new Next();
-
+        mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
-
                 if (response.isSuccessful()) {
-                    searchResponse = response.body();
-
+                    SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
-
                         mNetworkState.postValue(NetworkState.LOADED);
                         mInitialLoading.postValue(NetworkState.LOADED);
 
                         // Get the next link for paging the results
-                        links = searchResponse.getLinks();
+                        Links links = searchResponse.getLinks();
                         if (links != null) {
-                            next = links.getNext();
-
+                            Next next = links.getNext();
                             if (next != null) {
                                 mNextUrl = next.getHref();
                             }
@@ -135,7 +122,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
-                        resultList = embeddedResults.getResults();
+                        List<Result> resultList = embeddedResults.getResults();
 
                         Log.d(LOG_TAG, "List of results: " + resultList.size());
 
@@ -178,7 +165,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-
                 mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
@@ -188,7 +174,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
-
         // Ignore this, because we don't need to load anything before the initial load of data
     }
 
@@ -201,33 +186,21 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
-
-        mRepository.getArtsyApi().getNextLinkForSearch(mNextUrl,
-                params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
-
-            SearchWrapperResponse searchResponse = new SearchWrapperResponse();
-            List<Result> resultList = new ArrayList<>();
-
-            Links links = new Links();
-            Next next = new Next();
-
+        mRepository.getArtsyApi().getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
-
-                    searchResponse = response.body();
-
+                    SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
-
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
 
                         int totalCount = searchResponse.getTotalCount();
                         Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
 
                         if (totalCount != 0) {
-                            links = searchResponse.getLinks();
+                            Links links = searchResponse.getLinks();
                             if (links != null) {
-                                next = links.getNext();
+                                Next next = links.getNext();
 
                                 // Try and catch block doesn't crash the app,
                                 // and stops when there is no more next urls for next page
@@ -245,7 +218,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                                 Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
                             }
-
                         } else {
                             mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
@@ -264,7 +236,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                             Log.d(LOG_TAG, "Next key : " + nextKey);
 
-                            resultList = embeddedResults.getResults();
+                            List<Result> resultList = embeddedResults.getResults();
 
                             callback.onResult(resultList, nextKey);
 
