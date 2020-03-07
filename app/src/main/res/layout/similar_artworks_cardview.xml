@@ -38,26 +38,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/similar_artworks_cardview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/margin_horizontal_cardview"
     android:layout_marginLeft="@dimen/margin_horizontal_cardview"
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
-    android:layout_marginBottom="@dimen/card_bottom_margin"
-    app:contentPadding="@dimen/margin_6dp"
-    tools:showIn="@layout/activity_artwork_detail">
+    android:layout_marginBottom="60dp"
+    app:cardBackgroundColor="?colorOnSurface"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="6dp"
+    app:cardPreventCornerOverlap="true">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <View
+            android:id="@+id/background_2"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:alpha="0.8"
+            android:background="@drawable/ic_yellow_dot_big"
+            android:rotation="15.0"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:translationY="-120dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/similar_artworks_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/work_sans_medium"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/padding_10dp"
+            android:textColor="?colorControlNormal"
+            android:textIsSelectable="true"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Similar Artworks" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/similar_artworks_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="horizontal"/>
+            android:scrollbars="horizontal"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:translationY="-50dp"
+            android:layout_marginTop="@dimen/margin_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/background_2" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

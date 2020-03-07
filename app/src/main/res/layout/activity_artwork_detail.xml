@@ -126,33 +126,30 @@
                 android:id="@+id/artist_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_8dp"
-                android:paddingStart="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingEnd="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_6dp"
+                android:layout_marginBottom="@dimen/margin_6dp"
                 android:text="@string/artist_label"
                 android:textSize="14sp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="@color/color_on_secondary"
                 android:fontFamily="@font/work_sans_light" />
 
-            <include layout="@layout/artist_detail_cardview" />
+            <include
+                android:id="@+id/artist_cardview"
+                layout="@layout/artist_detail_cardview" />
 
             <TextView
                 android:id="@+id/similar_artworks_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_8dp"
-                android:paddingStart="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingEnd="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginBottom="@dimen/margin_6dp"
                 android:text="@string/similar_artworks_label"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:fontFamily="@font/amethysta" />
+                android:textSize="14sp"
+                android:fontFamily="@font/work_sans_light" />
 
             <include layout="@layout/similar_artworks_cardview" />
 

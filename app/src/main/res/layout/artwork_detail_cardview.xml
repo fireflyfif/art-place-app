@@ -115,6 +115,7 @@
                 android:textColor="?colorControlNormal"
                 android:textIsSelectable="true"
                 android:textSize="@dimen/year_text_size"
+                android:layout_marginTop="@dimen/margin_6dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"

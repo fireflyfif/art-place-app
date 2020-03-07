@@ -96,7 +96,10 @@
         app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/artist_detail_cardview" />
+        <include
+            android:id="@+id/artist_cardview"
+            layout="@layout/artist_detail_cardview"
+            android:visibility="gone"/>
 
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

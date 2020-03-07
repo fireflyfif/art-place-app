@@ -45,18 +45,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,6 +66,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -94,8 +94,7 @@ import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
-import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
-import dev.iotarho.artplace.app.utils.StringUtils;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksAdapter;
 import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
@@ -151,7 +150,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_label)
     TextView artistLabel;
     @BindView(R.id.artist_cardview)
-    CardView artistCard;
+    MaterialCardView artistCard;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
@@ -459,34 +458,32 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private void initArtistViewModel(String artistLink) {
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
         mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
-            if (artists != null) {
-
+            if (artists != null && artists.size() != 0) {
                 for (int i = 0; i < artists.size(); i++) {
                     Artist artistCurrent = artists.get(i);
                     setupArtistUI(artistCurrent);
                 }
+            } else {
+                artistLabel.setVisibility(View.GONE);
+                artistCard.setVisibility(View.GONE);
             }
         });
     }
 
     private void setupArtistUI(Artist currentArtist) {
-        if (currentArtist == null) {
-            // Hide the Artist CardView if there is no info about the Artist
-            artistCard.setVisibility(View.GONE);
-            return;
-        }
-
         emptyField = getString(R.string.not_applicable);
 
         // Get the name of the artist
         artistNameString = currentArtist.getName();
-        boolean hasNoName = Utils.isNullOrEmpty(artistNameString);
-        artistName.setText(hasNoName ? emptyField : artistNameString);
+        boolean unknownArtist = Utils.isNullOrEmpty(artistNameString);
+        Log.d(TAG, "setupArtistUI, unknownArtist - " + unknownArtist);
+        artistName.setText(unknownArtist ? emptyField : artistNameString);
         // Set the name of the Artist to the Button
-        artistNameButton.setText(hasNoName ? emptyField : artistNameString);
+        artistNameButton.setText(unknownArtist ? emptyField : artistNameString);
         // Check first if the artist name is not null or empty
-        if (hasNoName) {
+        if (unknownArtist) {
             // Hide the Artist CardView if there is no info about the Artist
+
             artistCard.setVisibility(View.GONE);
             artistNameButton.setVisibility(View.GONE);
         } else {
@@ -584,18 +581,15 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      */
     private void initSimilarViewModel(String similarArtLink) {
         mArtistViewModel.initSimilarArtworksData(similarArtLink);
-        mArtistViewModel.getSimilarArtworksData().observe(this, new Observer<List<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable List<Artwork> artworkList) {
-                if (artworkList != null) {
-                    setupSimilarArtworksUI(artworkList);
-                }
+        mArtistViewModel.getSimilarArtworksData().observe(this, artworkList -> {
+            if (artworkList != null) {
+                setupSimilarArtworksUI(artworkList);
             }
         });
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
-        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(this, artworkList);
+        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworkList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         similarArtworksRv.setLayoutManager(layoutManager);
@@ -608,14 +602,16 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     private void initArtworksByArtistsViewModel(String artworksLink) {
         mArtistViewModel.initArtworksByArtistData(artworksLink);
-        mArtistViewModel.getArtworksByArtistsData().observe(this, artworks -> setupArtworksByArtist(artworks));
+        mArtistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(this, artworksList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL,  false);
-        artworksByArtistRv.setLayoutManager(layoutManager);
+        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworksList);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+//                LinearLayoutManager.HORIZONTAL,  false);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(similarArtworksAdapter);
     }
 
@@ -653,20 +649,17 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private void deleteItemFromFav(String artworkId) {
         FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
         Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_SHORT).show();
-        Log.d(TAG, "Delete the item from the db");
     }
 
     /**
      * Method for adding an item to the database
      */
     private void addArtworkToFavorites() {
-
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artistNameString,
                 category, medium, date, museum, artworkThumbnail, largeArtworkLink, dimensInString, dimensCmString);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
         Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_SHORT).show();
-        Log.d(TAG, "Insert a new item into the db");
     }
 
     @Override
