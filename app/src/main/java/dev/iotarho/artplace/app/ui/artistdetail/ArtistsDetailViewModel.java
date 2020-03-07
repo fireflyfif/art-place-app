@@ -43,7 +43,6 @@ import java.util.List;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
-import dev.iotarho.artplace.app.utils.TokenManager;
 
 public class ArtistsDetailViewModel extends ViewModel {
 

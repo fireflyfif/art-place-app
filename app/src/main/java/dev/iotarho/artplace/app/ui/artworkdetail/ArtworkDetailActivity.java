@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +78,7 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
@@ -98,7 +100,7 @@ import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksAdapter;
 import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
-public class ArtworkDetailActivity extends AppCompatActivity {
+public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
@@ -193,11 +195,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     private String date;
     private String museum;
     private String largeArtworkLink;
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 
     private ArtistsDetailViewModel mArtistViewModel;
     private boolean mIsFavorite;
@@ -589,7 +586,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
-        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworkList);
+        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworkList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         similarArtworksRv.setLayoutManager(layoutManager);
@@ -606,13 +603,10 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworksList);
-
+        ArtworksAdapter artworksByArtist = new ArtworksAdapter(artworksList, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
-//                LinearLayoutManager.HORIZONTAL,  false);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
-        artworksByArtistRv.setAdapter(similarArtworksAdapter);
+        artworksByArtistRv.setAdapter(artworksByArtist);
     }
 
     /**
@@ -684,6 +678,11 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefreshConnection() {
+      // TODO: implement how to behave on refresh
     }
 }
 

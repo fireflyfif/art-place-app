@@ -61,6 +61,7 @@ import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
+import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
 public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.ViewHolder> {
@@ -70,15 +71,14 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
 
-    private Context mContext;
     private NetworkState mNetworkState;
     private OnRefreshListener mRefreshHandler;
     private OnResultClickListener mClickHandler;
 
-    public SearchListAdapter(Context context, OnResultClickListener clickHandler) {
+    public SearchListAdapter(OnResultClickListener clickHandler, OnRefreshListener refreshListener) {
         super(Result.DIFF_CALLBACK);
-        mContext = context;
         mClickHandler = clickHandler;
+        mRefreshHandler = refreshListener;
     }
 
     @NonNull
@@ -88,7 +88,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
         if (viewType == TYPE_PROGRESS) {
             View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
-            return new NetworkStateItemViewHolder(view);
+            return new NetworkStateItemViewHolder(view, mRefreshHandler);
         } else {
             View view = layoutInflater.inflate(R.layout.search_result_item, parent, false);
             return new SearchResultViewHolder(view);
@@ -97,7 +97,6 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
         if (holder instanceof SearchResultViewHolder) {
             if (getItem(position) != null) {
                 ((SearchResultViewHolder) holder).bindTo(getItem(position), position);
@@ -202,7 +201,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         }
     }
 
-    public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /*public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.network_state_layout)
         LinearLayout networkLayout;
@@ -256,5 +255,5 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         public void onClick(View v) {
             mRefreshHandler.onRefreshConnection();
         }
-    }
+    }*/
 }

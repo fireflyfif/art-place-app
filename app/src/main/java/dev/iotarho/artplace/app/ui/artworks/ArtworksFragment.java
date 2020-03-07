@@ -152,11 +152,10 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         artworksRv.setLayoutManager(staggeredGridLayoutManager);
 
         // Set the PagedListAdapter
-        mPagedListAdapter = new ArtworkListAdapter(getContext(), this, this);
+        mPagedListAdapter = new ArtworkListAdapter(this, this);
     }
 
     private void setupUi() {
-
         // Setup the RecyclerView
         setRecyclerView();
 
@@ -164,7 +163,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         // Call submitList() method of the PagedListAdapter when a new page is available
-        mViewModel.getArtworkLiveData().observe(this, artworks -> {
+        mViewModel.getArtworkLiveData().observe(requireActivity(), artworks -> {
             if (artworks != null) {
                 // When a new page is available, call submitList() method of the PagedListAdapter
                 mPagedListAdapter.submitList(artworks);
@@ -175,9 +174,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         });
 
         // Call setNetworkState() method of the PagedListAdapter for setting the Network state
-        mViewModel.getNetworkState().observe(this, networkState -> mPagedListAdapter.setNetworkState(networkState));
+        mViewModel.getNetworkState().observe(requireActivity(), networkState -> mPagedListAdapter.setNetworkState(networkState));
 
-        mViewModel.getInitialLoading().observe(this, networkState -> {
+        mViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
                 // When the NetworkStatus is Successful
@@ -207,7 +206,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
-        mViewModel.refreshArtworkLiveData().observe(this, artworks -> {
+        mViewModel.refreshArtworkLiveData().observe(requireActivity(), artworks -> {
             if (artworks != null) {
                 mPagedListAdapter.submitList(null);
                 // When a new page is available, call submitList() method of the PagedListAdapter
@@ -252,7 +251,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.artworks_menu, menu);
@@ -260,14 +259,16 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // source: https://stackoverflow.com/a/29916353/8132331
         Drawable drawable = menu.findItem(R.id.action_refresh).getIcon();
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.color_on_surface));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.color_on_surface));
         menu.findItem(R.id.action_refresh).setIcon(drawable);
 
         // Set the Search View
         SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        if (searchManager != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+        }
         mSearchView.setSubmitButtonEnabled(false);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

@@ -46,28 +46,51 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
+import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
+import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
+import dev.iotarho.artplace.app.utils.NetworkState;
 
-public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksViewHolder> {
+// TODO: Change name of the class to reflect which artworks are shown
+public class ArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = ArtworksAdapter.class.getSimpleName();
-    private List<Artwork> mArtworkList;
 
-    public ArtworksAdapter(List<Artwork> artworkList) {
+    private static final int TYPE_PROGRESS = 0;
+    private static final int TYPE_ITEM = 1;
+
+    private NetworkState mNetworkState;
+
+    private List<Artwork> mArtworkList;
+    private OnRefreshListener mRefreshHandler;
+
+    public ArtworksAdapter(List<Artwork> artworkList, OnRefreshListener refreshListener) {
         mArtworkList = artworkList;
+        mRefreshHandler = refreshListener;
     }
 
     @NonNull
     @Override
-    public ArtworksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.similar_artwork_item, parent, false);
-        return new ArtworksViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        if (viewType == TYPE_PROGRESS) {
+            View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
+            return new NetworkStateItemViewHolder(view, mRefreshHandler);
+        } else {
+            View view = layoutInflater.inflate(R.layout.similar_artwork_item, parent, false);
+            return new ArtworksViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ArtworksViewHolder holder, int position) {
-        Artwork artwork = mArtworkList.get(position);
-        holder.bindTo(artwork);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ArtworksViewHolder) {
+            Artwork artwork = mArtworkList.get(position);
+            ((ArtworksViewHolder) holder).bindTo(artwork);
+        } else {
+            ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
+        }
     }
 
     @Override
@@ -77,5 +100,18 @@ public class ArtworksAdapter extends RecyclerView.Adapter<ArtworksViewHolder> {
         }
         Log.d(TAG, "Size of the Similar Artworks list: " + mArtworkList);
         return mArtworkList.size();
+    }
+
+    private boolean hasExtraRow() {
+        return mNetworkState != null && mNetworkState != NetworkState.LOADED;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (hasExtraRow() && position == getItemCount() - 1) {
+            return TYPE_PROGRESS;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 }

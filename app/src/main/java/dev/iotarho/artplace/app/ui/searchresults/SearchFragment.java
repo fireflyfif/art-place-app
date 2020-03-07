@@ -68,19 +68,21 @@ import com.google.android.material.snackbar.Snackbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity;
 import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class SearchFragment extends Fragment implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         OnResultClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
     private static final String ARG_SEARCH_TITLE = "search_title";
@@ -171,7 +173,7 @@ public class SearchFragment extends Fragment implements
 
         searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
 
-        mSearchAdapter = new SearchListAdapter(getContext(), this);
+        mSearchAdapter = new SearchListAdapter(this, this);
     }
 
     private void setupUi() {
@@ -464,5 +466,11 @@ public class SearchFragment extends Fragment implements
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void onRefreshConnection() {
+        // TODO: implement how to behave on refresh
+//        new RetrieveNetworkConnectivity(this, this).execute();
     }
 }
