@@ -74,6 +74,10 @@
 
     <color name="color_red">#FE4A49</color>
 
+    <color name="color_text_white">#ffffff</color>
+    <color name="color_bg_transparent_25">#65000000</color>
+    <color name="color_bg_transparent_90">#D9000000</color>
+
     <color name="color_background">#000000</color>
     <color name="color_surface">#292929</color>
     <color name="color_error">#cf6679</color>

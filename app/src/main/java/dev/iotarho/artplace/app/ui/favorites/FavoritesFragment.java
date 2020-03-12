@@ -103,7 +103,8 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     private String mTitle;
 
     // Required empty public constructor
-    public FavoritesFragment() {}
+    public FavoritesFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,13 +116,11 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         if (savedInstanceState != null) {
             mTitle = savedInstanceState.getString(ARG_FAV_TITLE);
         }
-
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putString(ARG_FAV_TITLE, mTitle);
     }
 
@@ -133,10 +132,10 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
         mFavArtworksViewModel = new ViewModelProvider(this).get(FavArtworksViewModel.class);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        favArtworksRv.setLayoutManager(layoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
+        favArtworksRv.setLayoutManager(linearLayoutManager);
 
-        mAdapter = new FavArtworkListAdapter(getContext(), this);
+        mAdapter = new FavArtworkListAdapter(this);
         emptyText.setVisibility(View.INVISIBLE);
 
         // Show the whole list of Favorite Artworks via the ViewModel

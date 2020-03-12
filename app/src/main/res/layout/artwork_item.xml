@@ -44,7 +44,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="5dp"
+    app:cardCornerRadius="@dimen/fav_cardview_corners"
     app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true"
     app:cardBackgroundColor="?colorOnSurface">
@@ -63,6 +63,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
+            android:background="?colorOnSurface"
             android:scaleType="fitStart"
             tools:src="@drawable/pop_art_placeholder" />
 

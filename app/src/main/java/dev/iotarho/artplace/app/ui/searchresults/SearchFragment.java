@@ -183,20 +183,20 @@ public class SearchFragment extends Fragment implements
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
-        mViewModel.getSearchResultsLiveData().observe(this, results -> {
+        mViewModel.getSearchResultsLiveData().observe(requireActivity(), results -> {
             if (results != null) {
                 // Submit the list to the PagedListAdapter
                 mSearchAdapter.submitList(results);
             }
         });
 
-        mViewModel.getNetworkState().observe(this, networkState -> {
+        mViewModel.getNetworkState().observe(requireActivity(), networkState -> {
             if (networkState != null) {
                 mSearchAdapter.setNetworkState(networkState);
             }
         });
 
-        mViewModel.getInitialLoading().observe(this, networkState -> {
+        mViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
 
