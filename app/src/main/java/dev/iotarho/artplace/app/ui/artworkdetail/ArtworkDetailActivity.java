@@ -92,7 +92,8 @@ import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
-import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksAdapter;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
@@ -582,7 +583,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
-        ArtworksAdapter similarArtworksAdapter = new ArtworksAdapter(artworkList, this);
+        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(artworkList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         similarArtworksRv.setLayoutManager(layoutManager);
@@ -599,7 +600,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        ArtworksAdapter artworksByArtist = new ArtworksAdapter(artworksList, this);
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);

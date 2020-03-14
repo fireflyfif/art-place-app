@@ -35,7 +35,6 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/similar_artworks_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -43,7 +42,7 @@
     android:layout_marginLeft="@dimen/margin_horizontal_cardview"
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
-    android:layout_marginBottom="60dp"
+    android:layout_marginBottom="50dp"
     app:cardBackgroundColor="?colorOnSurface"
     app:cardCornerRadius="8dp"
     app:cardElevation="6dp"
@@ -83,7 +82,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Similar Artworks" />
+            android:text="@string/similar_artworks_label" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/similar_artworks_rv"

@@ -127,11 +127,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_16dp"
                 android:layout_marginEnd="@dimen/margin_16dp"
-                android:layout_marginTop="@dimen/margin_6dp"
-                android:layout_marginBottom="@dimen/margin_6dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginBottom="@dimen/margin_8dp"
                 android:text="@string/artist_label"
                 android:textSize="14sp"
-                android:textColor="@color/color_on_secondary"
+                android:textColor="?colorControlNormal"
                 android:fontFamily="@font/work_sans_light" />
 
             <include
@@ -144,10 +144,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_16dp"
                 android:layout_marginEnd="@dimen/margin_16dp"
-                android:layout_marginTop="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_6dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginBottom="@dimen/margin_8dp"
                 android:text="@string/similar_artworks_label"
                 android:textSize="14sp"
+                android:textColor="?colorControlNormal"
                 android:fontFamily="@font/work_sans_light" />
 
             <include layout="@layout/similar_artworks_cardview" />

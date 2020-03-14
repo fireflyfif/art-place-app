@@ -49,13 +49,12 @@ import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
-import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
 // TODO: Change name of the class to reflect which artworks are shown
-public class ArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ArtworksByArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = ArtworksAdapter.class.getSimpleName();
+    private static final String TAG = ArtworksByArtistAdapter.class.getSimpleName();
 
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
@@ -65,7 +64,7 @@ public class ArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<Artwork> mArtworkList;
     private OnRefreshListener mRefreshHandler;
 
-    public ArtworksAdapter(List<Artwork> artworkList, OnRefreshListener refreshListener) {
+    public ArtworksByArtistAdapter(List<Artwork> artworkList, OnRefreshListener refreshListener) {
         mArtworkList = artworkList;
         mRefreshHandler = refreshListener;
     }
@@ -78,7 +77,7 @@ public class ArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
             return new NetworkStateItemViewHolder(view, mRefreshHandler);
         } else {
-            View view = layoutInflater.inflate(R.layout.similar_artwork_item, parent, false);
+            View view = layoutInflater.inflate(R.layout.artwork_by_artist_item, parent, false);
             return new ArtworksViewHolder(view);
         }
     }
