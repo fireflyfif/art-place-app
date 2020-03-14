@@ -56,8 +56,7 @@
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?attr/colorOnSurface"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleEnabled="false">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
                 android:id="@+id/photo_container"
@@ -86,7 +85,7 @@
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:src="?colorOnSurface" />
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <View
                     android:layout_width="match_parent"

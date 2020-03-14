@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="?attr/colorOnSurface"
             app:expandedTitleGravity="start|bottom"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -69,7 +69,7 @@
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/image_height"
-                    android:src="@color/color_primary" />
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <ImageView
                     android:id="@+id/fav_detail_artwork_image"
@@ -80,7 +80,8 @@
                     android:layout_marginBottom="@dimen/square_image_margin"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <View
                     android:layout_width="match_parent"
@@ -122,19 +123,38 @@
                 android:layout_marginLeft="@dimen/margin_8dp"
                 android:layout_marginEnd="@dimen/margin_8dp"
                 android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_16dp">
+                android:layout_marginBottom="@dimen/margin_16dp"
+                app:cardBackgroundColor="?colorOnSurface"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="6dp"
+                app:cardPreventCornerOverlap="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <LinearLayout
+                    <View
+                        android:id="@+id/background_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:alpha="0.5"
+                        android:background="@drawable/ic_red_dot_big"
+                        android:scaleX="1.5"
+                        android:scaleY="1.3"
+                        android:translationY="-100dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/artwork_title_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
-                        android:background="@color/color_primary"
-                        android:orientation="vertical"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="24dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -143,165 +163,193 @@
                             android:id="@+id/fav_detail_artist"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/work_sans_semibold"
                             android:gravity="center_horizontal"
-                            android:padding="@dimen/padding_6dp"
                             android:textAllCaps="true"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                            android:textColor="?colorOnSurface"
-                            app:fontFamily="@font/amethysta"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            android:textSize="22sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
                             tools:text="Artist" />
 
                         <TextView
                             android:id="@+id/fav_detail_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/work_sans"
                             android:gravity="center_horizontal"
-                            android:padding="@dimen/padding_6dp"
-                            android:textAppearance="?textAppearanceHeadline6"
                             android:textColor="?colorControlNormal"
-                            app:fontFamily="@font/amethysta"
+                            android:textSize="22sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_detail_artist"
                             tools:text="Artwork Title" />
+
+                        <View
+                            android:id="@+id/divider_2"
+                            android:layout_width="80dp"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:background="?colorPrimary"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_detail_title" />
 
                         <TextView
                             android:id="@+id/fav_detail_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/margin_8dp"
-                            android:fontFamily="@font/amethysta"
+                            android:fontFamily="@font/work_sans"
                             android:gravity="center_horizontal"
                             android:padding="@dimen/padding_6dp"
-                            android:textColor="?colorOnSurface"
+                            android:textColor="?colorControlNormal"
+                            android:textSize="18sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/divider_2"
                             tools:text="1599-1600" />
 
-                    </LinearLayout>
+                        <TextView
+                            android:id="@+id/category_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:fontFamily="@font/work_sans_light"
+                            android:text="@string/category_label"
+                            android:textColor="?colorControlNormal"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_detail_date" />
 
-                    <TextView
-                        android:id="@+id/fav_detail_medium"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/fav_detail_category"
-                        app:layout_constraintTop_toBottomOf="@+id/fav_detail_category"
-                        tools:text="Artwork Medium" />
+                        <TextView
+                            android:id="@+id/fav_detail_category"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="42dp"
+                            android:layout_marginLeft="42dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:fontFamily="@font/work_sans"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/category_label"
+                            app:layout_constraintTop_toTopOf="@+id/category_label"
+                            tools:text="Painting" />
 
-                    <TextView
-                        android:id="@+id/fav_detail_category"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_32dp"
-                        android:layout_marginLeft="@dimen/margin_32dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/category_label"
-                        app:layout_constraintTop_toTopOf="@+id/category_label"
-                        tools:text="Painting" />
+                        <TextView
+                            android:id="@+id/medium_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/work_sans_light"
+                            android:text="@string/medium_label"
+                            android:textColor="?colorControlNormal"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_detail_category" />
 
+                        <TextView
+                            android:id="@+id/fav_detail_medium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/margin_8dp"
+                            android:layout_marginRight="@dimen/margin_8dp"
+                            android:fontFamily="@font/work_sans"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/fav_detail_category"
+                            app:layout_constraintTop_toTopOf="@+id/medium_label"
+                            tools:text="Artwork Medium" />
 
-                    <TextView
-                        android:id="@+id/fav_detail_museum"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:layout_marginBottom="@dimen/last_margin_bottom"
-                        android:fontFamily="@font/amethysta"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_cm"
-                        app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_cm"
-                        tools:text="Artwork place of exhibiting" />
+                        <TextView
+                            android:id="@+id/dimens_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/work_sans_light"
+                            android:text="@string/dimensions_label"
+                            android:textColor="?colorControlNormal"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_detail_medium" />
 
-                    <TextView
-                        android:id="@+id/fav_artwork_dimens_cm"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_8dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_in"
-                        app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_in"
-                        tools:text="80 × 55.6 cm" />
+                        <TextView
+                            android:id="@+id/fav_artwork_dimens_in"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/margin_16dp"
+                            android:layout_marginRight="@dimen/margin_16dp"
+                            android:fontFamily="@font/work_sans"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/fav_detail_medium"
+                            app:layout_constraintTop_toTopOf="@+id/dimens_label"
+                            tools:text="31 1/2 × 21 7/8 in" />
 
-                    <TextView
-                        android:id="@+id/fav_artwork_dimens_in"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/fav_detail_medium"
-                        app:layout_constraintTop_toBottomOf="@+id/fav_detail_medium"
-                        tools:text="31 1/2 × 21 7/8 in" />
+                        <TextView
+                            android:id="@+id/fav_artwork_dimens_cm"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_8dp"
+                            android:layout_marginEnd="@dimen/margin_8dp"
+                            android:layout_marginRight="@dimen/margin_8dp"
+                            android:fontFamily="@font/work_sans"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_in"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_in"
+                            tools:text="80 × 55.6 cm" />
 
-                    <TextView
-                        android:id="@+id/category_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16dp"
-                        android:layout_marginLeft="@dimen/margin_16dp"
-                        android:layout_marginTop="@dimen/margin_16dp"
-                        android:text="@string/category_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                        android:textColor="?colorOnSurface"
-                        app:fontFamily="@font/amethysta"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/artwork_title_layout" />
+                        <TextView
+                            android:id="@+id/location_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/work_sans_light"
+                            android:text="@string/location_label"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_dimens_cm" />
 
-                    <TextView
-                        android:id="@+id/medium_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginLeft="16dp"
-                        android:text="@string/medium_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="?colorOnSurface"
-                        app:fontFamily="@font/amethysta"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fav_detail_medium" />
+                        <TextView
+                            android:id="@+id/fav_detail_museum"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/margin_16dp"
+                            android:layout_marginRight="@dimen/margin_16dp"
+                            android:layout_marginBottom="@dimen/last_margin_bottom"
+                            android:fontFamily="@font/work_sans"
+                            android:textColor="?colorControlNormal"
+                            android:textIsSelectable="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/fav_artwork_dimens_cm"
+                            app:layout_constraintTop_toTopOf="@+id/location_label"
+                            tools:text="Artwork place of exhibiting" />
 
-                    <TextView
-                        android:id="@+id/dimens_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16dp"
-                        android:layout_marginLeft="@dimen/margin_16dp"
-                        android:text="@string/dimensions_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="?colorOnSurface"
-                        app:fontFamily="@font/amethysta"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fav_artwork_dimens_in" />
-
-                    <TextView
-                        android:id="@+id/textView4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16dp"
-                        android:layout_marginLeft="@dimen/margin_16dp"
-                        android:text="@string/location_label"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="?colorOnSurface"
-                        app:fontFamily="@font/amethysta"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fav_detail_museum" />
-
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

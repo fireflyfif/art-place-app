@@ -45,12 +45,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -642,7 +639,12 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
      */
     private void deleteItemFromFav(String artworkId) {
         FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
-        Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_SHORT).show();
+        Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_LONG);
+        View view = snack.getView();
+        TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
+        snack.show();
     }
 
     /**
@@ -653,7 +655,12 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                 category, medium, date, museum, artworkThumbnail, largeArtworkLink, dimensInString, dimensCmString);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
-        Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_SHORT).show();
+        Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_LONG);
+        View view = snack.getView();
+        TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
+        snack.show();
     }
 
     @Override
