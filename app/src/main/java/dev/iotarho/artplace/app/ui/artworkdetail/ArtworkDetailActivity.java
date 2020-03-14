@@ -39,7 +39,6 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -281,7 +280,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         artworkTitle = currentArtwork.getTitle();
         artworkNameTextView.setText(Utils.isNullOrEmpty(artworkTitle) ? emptyField : artworkTitle);
         collapsingToolbarLayout.setTitle(artworkTitle);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_secondary));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
         medium = currentArtwork.getMedium();
         artworkMedium.setText(Utils.isNullOrEmpty(medium) ? emptyField : medium);
@@ -515,7 +514,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         if (currentArtist.getLocation() != null) {
             String artistLocationString = currentArtist.getLocation();
             // Hide the location field if it's empty
-            if (TextUtils.isEmpty(artistLocationString)) {
+            if (Utils.isNullOrEmpty(artistLocationString)) {
                 artistLocation.setVisibility(View.GONE);
                 artistLocationLabel.setVisibility(View.GONE);
             }
@@ -673,7 +672,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {// Share the Permalink here
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            if (permaLink != null || !TextUtils.isEmpty(permaLink)) {
+            if (!Utils.isNullOrEmpty(permaLink)) {
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, permaLink);
                 startActivity(shareIntent);
