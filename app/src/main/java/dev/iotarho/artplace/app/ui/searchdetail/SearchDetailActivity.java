@@ -36,6 +36,7 @@
 package dev.iotarho.artplace.app.ui.searchdetail;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -44,6 +45,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,6 +61,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
@@ -70,6 +73,7 @@ import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
+import dev.iotarho.artplace.app.utils.Utils;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -81,7 +85,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.content_title)
     TextView contentTitle;
     @BindView(R.id.content_type)
-    Button contentType;
+    TextView contentType;
     @BindView(R.id.content_image)
     ImageView contentImage;
     @BindView(R.id.content_image2)
@@ -92,18 +96,16 @@ public class SearchDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
-    @BindView(R.id.background_title_layout)
+    @BindView(R.id.artwork_title_layout)
     LinearLayout bgLayout;
     @BindView(R.id.card_view_content)
     CardView cardView;
     @BindView(R.id.read_more_button)
-    Button readMoreButton;
+    ImageButton readMoreButton;
 
     // Show Card Views
     @BindView(R.id.show_cardview)
     CardView showCardView;
-    @BindView(R.id.show_bg)
-    View showBackground;
     @BindView(R.id.show_start_date)
     TextView showStartDate;
     @BindView(R.id.show_start_label)
@@ -144,6 +146,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
+    @BindDimen(R.dimen.margin_42dp)
+    int bottomMargin;
 
     private ShowsDetailViewModel mShowsViewModel;
     private ArtistsDetailViewModel mArtistViewModel;
@@ -170,7 +174,7 @@ public class SearchDetailActivity extends AppCompatActivity {
                 if (mResults != null) {
 
                     if (toolbar != null) {
-                        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+                        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                                 PorterDuff.Mode.SRC_ATOP);
                     }
 
@@ -195,8 +199,17 @@ public class SearchDetailActivity extends AppCompatActivity {
 
         Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
 
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_enabled}, // enabled
+        };
+        int[] colors = new int[] {
+                getResources().getColor(R.color.color_on_background),
+        };
+
         collapsingToolbarLayout.setTitle(titleString);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+        collapsingToolbarLayout.setExpandedTitleTextColor(new ColorStateList(states, colors));
+        collapsingToolbarLayout.setExpandedTitleMarginBottom(bottomMargin);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
         contentTitle.setText(titleString);
         contentType.setText(typeString);
@@ -208,19 +221,22 @@ public class SearchDetailActivity extends AppCompatActivity {
                 Thumbnail thumbnail = linksResult.getThumbnail();
                 String imageThumbnailString = thumbnail.getHref();
 
-                if (imageThumbnailString != null || imageThumbnailString.isEmpty()) {
+                if (Utils.isNullOrEmpty(imageThumbnailString)) {
+                    contentImage.setImageResource(R.color.color_on_secondary);
+                    secondImage.setImageResource(R.color.color_on_secondary);
+                } else {
                     // Set the backdrop image
                     Picasso.get()
                             .load(imageThumbnailString)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(contentImage);
 
                     // Set the second image
                     Picasso.get()
                             .load(imageThumbnailString)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(secondImage, new Callback() {
                                 @Override
                                 public void onSuccess() {
@@ -240,20 +256,6 @@ public class SearchDetailActivity extends AppCompatActivity {
 
                                 }
                             });
-                } else {
-                    // Set the backdrop image
-                    Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
-                            .into(contentImage);
-
-                    // Set the second image
-                    Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
-                            .into(secondImage);
                 }
 
 
@@ -309,9 +311,6 @@ public class SearchDetailActivity extends AppCompatActivity {
     }
 
     private void setupShowsContentUi(ShowContent showContent) {
-
-        showBackground.setBackgroundColor(mGeneratedLightColor);
-
         if (showContent.getPressRelease() != null) {
             String pressRelease = showContent.getPressRelease();
             showPress.setText(pressRelease);
@@ -371,8 +370,6 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (currentArtist.getName() != null) {
             String artistNameString = currentArtist.getName();
             artistName.setText(artistNameString);
-            artistName.setBackgroundColor(mGeneratedLightColor);
-            Log.d(TAG, "Artist name:" + artistNameString);
         } else {
             artistName.setText(getString(R.string.not_applicable));
         }

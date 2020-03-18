@@ -96,7 +96,6 @@ public class ArtworksViewModel extends ViewModel {
                         .setPageSize(PAGE_SIZE)
                         .build();
 
-
         mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
                 //.setInitialLoadKey()
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())

@@ -58,17 +58,16 @@ import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnFavItemClickListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
+import dev.iotarho.artplace.app.utils.Utils;
 
 public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, RecyclerView.ViewHolder> {
 
-    private Context mContext;
     private List<FavoriteArtworks> mFavArtworkList;
 
     private OnFavItemClickListener mCallback;
 
-    public FavArtworkListAdapter(Context context, OnFavItemClickListener onFavItemClickListener) {
+    public FavArtworkListAdapter(OnFavItemClickListener onFavItemClickListener) {
         super(FavoriteArtworks.DIFF_CALLBACK);
-        mContext = context;
         mCallback = onFavItemClickListener;
     }
 
@@ -120,14 +119,9 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
 
         @BindView(R.id.fav_artwork_thumbnail)
         ImageView favThumbnail;
+
         @BindView(R.id.fav_artwork_title)
         TextView favTitle;
-        @BindView(R.id.fav_artwork_category)
-        TextView favCategory;
-        @BindView(R.id.fav_artwork_medium)
-        TextView favMedium;
-        @BindView(R.id.fav_artwork_year)
-        TextView favYear;
 
         public FavArtworksViewHolder(View itemView) {
             super(itemView);
@@ -142,28 +136,15 @@ public class FavArtworkListAdapter extends PagedListAdapter<FavoriteArtworks, Re
                 String favTitleString = favArtwork.getArtworkTitle();
                 favTitle.setText(favTitleString);
 
-                String favCategoryString = favArtwork.getArtworkCategory();
-                favCategory.setText(favCategoryString);
-
-                String favMediumString = favArtwork.getArtworkMedium();
-                favMedium.setText(favMediumString);
-
-                String favYearString = favArtwork.getArtworkDate();
-                favYear.setText(favYearString);
-
-                if (favArtwork.getArtworkThumbnailPath() != null) {
-                    String favThumbnailPathString = favArtwork.getArtworkThumbnailPath();
+                if (!Utils.isNullOrEmpty(favArtwork.getArtworkImagePath())) {
+                    String favThumbnailPathString = favArtwork.getArtworkImagePath();
                     Picasso.get()
                             .load(Uri.parse(favThumbnailPathString))
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
+                            .placeholder(R.color.color_primary)
+                            .error(R.color.color_error)
                             .into(favThumbnail);
                 } else {
-                    Picasso.get()
-                            .load(R.color.colorPrimary)
-                            .placeholder(R.color.colorPrimary)
-                            .error(R.color.colorPrimary)
-                            .into(favThumbnail);
+                    favThumbnail.setImageResource(R.color.color_primary);
                 }
             }
         }

@@ -55,9 +55,11 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class FavDetailActivity extends AppCompatActivity {
@@ -101,6 +103,8 @@ public class FavDetailActivity extends AppCompatActivity {
     TextView favDimensCm;
     @BindView(R.id.fav_artwork_dimens_in)
     TextView favDimensIn;
+    @BindDimen(R.dimen.margin_42dp)
+    int bottomMargin;
 
     private Postprocessor mPostprocessor;
     private ImageRequest mImageRequest;
@@ -123,7 +127,7 @@ public class FavDetailActivity extends AppCompatActivity {
         }
 
         if (toolbar != null) {
-            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                     PorterDuff.Mode.SRC_ATOP);
         }
 
@@ -141,7 +145,8 @@ public class FavDetailActivity extends AppCompatActivity {
             String favDimensCmString = getIntent().getStringExtra(ARTWORK_DIMENS_CM_KEY);
 
             collapsingToolbarLayout.setTitle(favTitleString);
-            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
+            collapsingToolbarLayout.setExpandedTitleMarginBottom(bottomMargin);
+            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
             favTitle.setText(favTitleString);
             favArtist.setText(favArtistString);
@@ -157,15 +162,9 @@ public class FavDetailActivity extends AppCompatActivity {
             mPostprocessor = new BlurPostprocessor(this, 20);
 
             // Instantiate Image Request using Post Processor as parameter
-            if (favImageString == null || favImageString.isEmpty()) {
-                Picasso.get()
-                        .load(R.color.colorPrimary)
-                        .error(R.color.colorPrimary)
-                        .placeholder(R.color.colorPrimary)
-                        .into(favImage);
-
+            if (Utils.isNullOrEmpty(favImageString)) {
+                favImage.setImageResource(R.color.color_on_surface);
             } else {
-
                 mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(favImageString))
                         .setPostprocessor(mPostprocessor)
                         .build();
@@ -181,8 +180,8 @@ public class FavDetailActivity extends AppCompatActivity {
 
                 Picasso.get()
                         .load(Uri.parse(favImageString))
-                        .error(R.color.colorPrimary)
-                        .placeholder(R.color.colorPrimary)
+                        .error(R.color.color_error)
+                        .placeholder(R.color.color_primary)
                         .into(favImage);
             }
 

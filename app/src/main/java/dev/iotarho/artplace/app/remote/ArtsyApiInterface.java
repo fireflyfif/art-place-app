@@ -94,6 +94,9 @@ public interface ArtsyApiInterface {
     @GET
     Call<Artist> getArtistInfoFromLink(@Url String artistLink);
 
+    @GET
+    Call<Artist> getArtworksOfArtistFromLink(@Url String artworksLink);
+
     /**
      * Make call according to the url that is received from the JSON
      *

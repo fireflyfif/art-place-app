@@ -52,12 +52,11 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBackground"
+            android:background="?colorButtonNormal"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleEnabled="false">
+            app:contentScrim="?attr/colorOnSurface"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
                 android:id="@+id/photo_container"
@@ -71,19 +70,22 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:src="@color/colorPrimaryDark" />
+                    android:src="?colorOnSurface" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="15dp"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/detail_image_description"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitStart"
-                    android:src="@color/colorPrimary" />
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <View
                     android:layout_width="match_parent"
@@ -108,6 +110,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fadingEdge="none"
         app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -122,33 +125,31 @@
                 android:id="@+id/artist_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_8dp"
-                android:paddingStart="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingEnd="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginBottom="@dimen/margin_8dp"
                 android:text="@string/artist_label"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/colorText"
-                app:fontFamily="@font/amethysta" />
+                android:textSize="14sp"
+                android:textColor="?colorControlNormal"
+                android:fontFamily="@font/work_sans_light" />
 
-            <include layout="@layout/artist_detail_cardview" />
+            <include
+                android:id="@+id/artist_cardview"
+                layout="@layout/artist_detail_cardview" />
 
             <TextView
                 android:id="@+id/similar_artworks_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_8dp"
-                android:paddingStart="@dimen/padding_6dp"
-                android:paddingLeft="@dimen/padding_6dp"
-                android:paddingTop="@dimen/padding_6dp"
-                android:paddingEnd="@dimen/padding_6dp"
-                android:paddingRight="@dimen/padding_6dp"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginBottom="@dimen/margin_8dp"
                 android:text="@string/similar_artworks_label"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/colorText"
-                app:fontFamily="@font/amethysta" />
+                android:textSize="14sp"
+                android:textColor="?colorControlNormal"
+                android:fontFamily="@font/work_sans_light" />
 
             <include layout="@layout/similar_artworks_cardview" />
 
@@ -173,9 +174,9 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:backgroundTint="@color/colorPrimary"
-        android:outlineAmbientShadowColor="@color/colorAccent"
-        android:outlineSpotShadowColor="@color/colorAccent"
+        android:backgroundTint="?colorOnSurface"
+        android:outlineAmbientShadowColor="?colorSurface"
+        android:outlineSpotShadowColor="?colorSurface"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="6dp"

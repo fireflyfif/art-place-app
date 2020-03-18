@@ -215,8 +215,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
         // Handle no image cases with placeholders
         Picasso.get()
                 .load(Uri.parse(newArtistLinkString))
-                .placeholder(R.color.colorPrimary)
-                .error(R.color.colorPrimary)
+                .placeholder(R.color.color_primary)
+                .error(R.color.color_error)
                 .into(artistImage);
 
         if (currentArtist.getBiography() != null) {

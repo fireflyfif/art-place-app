@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="?attr/colorOnSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -66,7 +66,8 @@
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/image_height"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <View
                     android:layout_width="match_parent"
@@ -100,19 +101,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_view_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/margin_8dp"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:layout_marginEnd="@dimen/margin_8dp"
-                android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_marginBottom="@dimen/margin_16dp"
-                app:cardCornerRadius="4dp">
+                android:layout_marginStart="@dimen/margin_horizontal_cardview"
+                android:layout_marginLeft="@dimen/margin_horizontal_cardview"
+                android:layout_marginEnd="@dimen/margin_horizontal_cardview"
+                android:layout_marginRight="@dimen/margin_horizontal_cardview"
+                android:layout_marginBottom="@dimen/margin_bottom_cardview"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="6dp"
+                app:cardPreventCornerOverlap="true">
 
                 <LinearLayout
-                    android:id="@+id/background_title_layout"
+                    android:id="@+id/artwork_title_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
@@ -128,12 +131,13 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="@dimen/margin_8dp"
                         android:layout_marginRight="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
+                        android:fontFamily="@font/work_sans_medium"
                         android:gravity="center_horizontal"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                        android:textColor="?colorControlNormal"
+                        android:textSize="22sp"
                         tools:text="Andy Warhol, $ (1981)" />
 
-                    <Button
+                    <TextView
                         android:id="@+id/content_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -144,27 +148,29 @@
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:layout_marginBottom="@dimen/margin_8dp"
                         android:background="@android:color/transparent"
-                        android:fontFamily="@font/amethysta"
+                        android:fontFamily="@font/work_sans"
+                        android:textSize="18sp"
                         android:paddingStart="@dimen/padding_6dp"
                         android:paddingLeft="@dimen/padding_6dp"
                         android:paddingEnd="@dimen/padding_6dp"
                         android:paddingRight="@dimen/padding_6dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="?colorControlNormal"
                         tools:text="Artwork" />
 
                     <ImageView
                         android:id="@+id/content_image2"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
-                        android:scaleType="fitCenter" />
+                        android:scaleType="fitCenter"
+                        tools:src="@drawable/pop_art_placeholder"/>
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/read_more_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:background="@android:color/transparent"
-                        android:fontFamily="@font/amethysta"
+                        android:fontFamily="@font/work_sans"
                         android:text="@string/read_more_button" />
 
                     <TextView
@@ -172,16 +178,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_8dp"
-                        android:fontFamily="@font/amethysta"
+                        android:fontFamily="@font/work_sans"
                         android:paddingBottom="@dimen/padding_8dp"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/color_on_secondary"
                         tools:text="Description here" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <include layout="@layout/show_detail_cardview" />
 

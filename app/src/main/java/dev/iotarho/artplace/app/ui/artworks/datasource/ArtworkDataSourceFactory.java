@@ -38,7 +38,6 @@ package dev.iotarho.artplace.app.ui.artworks.datasource;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
 
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
 
@@ -46,20 +45,17 @@ public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> 
 
     private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
     private ArtworkDataSource mDataSource;
-    private ArtPlaceApp mArtPlaceApp;
     private ArtsyRepository mRepository;
 
 
-    // TODO: Remove the ArtPlaceApp dependency
     public ArtworkDataSourceFactory(ArtsyRepository repository) {
-        //mArtPlaceApp = artPlaceApp;
         mRepository = repository;
         mArtworksDataSourceLiveData = new MutableLiveData<>();
     }
 
     @Override
     public DataSource<Long, Artwork> create() {
-        mDataSource = new ArtworkDataSource(mArtPlaceApp, mRepository);
+        mDataSource = new ArtworkDataSource(mRepository);
         mArtworksDataSourceLiveData.postValue(mDataSource);
 
         return mDataSource;

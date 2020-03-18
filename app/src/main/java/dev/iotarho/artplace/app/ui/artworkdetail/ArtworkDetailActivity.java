@@ -39,23 +39,20 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,6 +63,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -76,7 +74,9 @@ import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
+import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.SimilarArtworksLink;
 import dev.iotarho.artplace.app.model.Thumbnail;
@@ -92,11 +92,12 @@ import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
-import dev.iotarho.artplace.app.utils.StringUtils;
+import dev.iotarho.artplace.app.utils.Utils;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
-public class ArtworkDetailActivity extends AppCompatActivity {
+public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
@@ -118,9 +119,9 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artwork_cardview)
     CardView artworkCardView;
     @BindView(R.id.artwork_title)
-    TextView artworkName;
+    TextView artworkNameTextView;
     @BindView(R.id.artwork_artist_button)
-    Button artistNameButton;
+    TextView artistNameButton;
     @BindView(R.id.artwork_medium)
     TextView artworkMedium;
     @BindView(R.id.artwork_category)
@@ -148,7 +149,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_label)
     TextView artistLabel;
     @BindView(R.id.artist_cardview)
-    CardView artistCard;
+    MaterialCardView artistCard;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
@@ -169,32 +170,30 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     // Similar Artworks Views
     @BindView(R.id.similar_artworks_rv)
     RecyclerView similarArtworksRv;
-    private SimilarArtworksAdapter mSimilarArtAdapter;
+
+    @BindView(R.id.artworks_by_artist_rv)
+    RecyclerView artworksByArtistRv;
 
     @BindView(R.id.fav_button)
     FloatingActionButton mFavButton;
 
     private Artwork mArtworkObject;
-    private String mArtworkIdString;
-    private String mTitleString;
-    private String mMediumString;
-    private String mCategoryString;
-    private String mDateString;
-    private String mMuseumString;
-    private String mLargeArtworkLinkString;
-    private String mNewSquareArtworkLinkString;
-    private String mLargerImageLinkString;
-    private String mArtistNameFromSlug;
-    private String mArtistNameString;
-    private String mArtworkThumbnailString;
-    private String mDimensInCmString;
-    private String mDimensInInchString;
-    private String mArtistUrl;
-    private String mPermalinkForShare;
-    private String mSimilarArtworksLink;
+    private String emptyField;
+    private String artworkTitle;
+    private String artworkId;
+    private String artistUrl;
+    private String permaLink;
+    private String artworkThumbnail;
+    private String artistNameString;
+    private String dimensInString;
+    private String dimensCmString;
+    private String category;
+    private String medium;
+    private String date;
+    private String museum;
+    private String largeArtworkLink;
 
     private ArtistsDetailViewModel mArtistViewModel;
-
     private boolean mIsFavorite;
 
     // Variables for Fresco Library
@@ -222,33 +221,40 @@ public class ArtworkDetailActivity extends AppCompatActivity {
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
         }
 
+        // Initialize the ViewModel
+        mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
 
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
-                setupUi(mArtworkObject);
+                emptyField = getString(R.string.not_applicable);
+                setupUi(mArtworkObject, emptyField);
+
+                artworkId = mArtworkObject.getId();
+                Log.d(TAG, "Received artwork id: " + artworkId);
+
+                // Check if the item exists in the db already or not!!!
+                // TODO: Remove Repository instance from Activity!
+                FavArtRepository.getInstance(getApplication()).executeGetItemById(artworkId, isFav -> {
+                    if (isFav) {
+                        mIsFavorite = true;
+                        mFavButton.setTag(FAV_TAG);
+                        // Set the button to display it's already added
+                        Log.d(TAG, "Item already exists in the db.");
+                        mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
+                    } else {
+                        // Add to the db
+                        mIsFavorite = false;
+                        mFavButton.setTag(NON_FAV_TAG);
+                        Log.d(TAG, "Insert a new item into the db");
+                        mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
+                    }
+                });
             }
         }
-
-        // Check if the item exists in the db already or not!!!
-        // TODO: Remove Repository instance from Activity!
-        FavArtRepository.getInstance(getApplication()).executeGetItemById(mArtworkIdString, isFav -> {
-            if (isFav) {
-                mIsFavorite = true;
-                mFavButton.setTag(FAV_TAG);
-                // Set the button to display it's already added
-                Log.d(TAG, "Item already exists in the db.");
-                mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
-            } else {
-                // Add to the db
-                mIsFavorite = false;
-                mFavButton.setTag(NON_FAV_TAG);
-                Log.d(TAG, "Insert a new item into the db");
-                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
-            }
-        });
 
         clickFab();
     }
@@ -264,89 +270,49 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void setupUi(Artwork currentArtwork) {
-
-        mArtworkIdString = currentArtwork.getId();
-        Log.d(TAG, "Received artwork id: " + mArtworkIdString);
-
+    private void setupUi(Artwork currentArtwork, String emptyField) {
         // Set the Up Button Navigation to another color
         // source: https://stackoverflow.com/a/26837072/8132331
         if (toolbar != null) {
-            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorAccent),
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.color_primary),
                     PorterDuff.Mode.SRC_ATOP);
         }
 
-        if (currentArtwork.getTitle() != null) {
-            mTitleString = currentArtwork.getTitle();
-            artworkName.setText(mTitleString);
-            collapsingToolbarLayout.setTitle(mTitleString);
-            collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorAccent));
-            Log.d(TAG, "Title of the artwork: " + mTitleString);
+        artworkTitle = currentArtwork.getTitle();
+        artworkNameTextView.setText(Utils.isNullOrEmpty(artworkTitle) ? emptyField : artworkTitle);
+        collapsingToolbarLayout.setTitle(artworkTitle);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
 
+        medium = currentArtwork.getMedium();
+        artworkMedium.setText(Utils.isNullOrEmpty(medium) ? emptyField : medium);
+
+        category = currentArtwork.getCategory();
+        artworkCategory.setText(Utils.isNullOrEmpty(category) ? emptyField : category);
+
+        date = currentArtwork.getDate();
+        artworkDate.setText(Utils.isNullOrEmpty(date) ? emptyField : date);
+
+        museum = currentArtwork.getCollectingInstitution();
+        Log.d(TAG, "Artwork museum is: " + museum);
+        artworkMuseum.setText(Utils.isNullOrEmpty(museum) ? emptyField : museum);
+
+        Dimensions dimensionObject = currentArtwork.getDimensions();
+        if (dimensionObject != null) {
+            CmSize cmSizeObject = dimensionObject.getCmSize();
+            dimensCmString = cmSizeObject.getText();
+            dimensCm.setText(Utils.isNullOrEmpty(dimensCmString) ? emptyField : dimensCmString);
+
+            InSize inSizeObject = dimensionObject.getInSize();
+            dimensInString = inSizeObject.getText();
+            dimensIn.setText(Utils.isNullOrEmpty(dimensInString) ? emptyField : dimensInString);
+        }
+
+        String addInfo = currentArtwork.getAdditionalInformation();
+        // Hide the Additional Information if the field is empty
+        if (Utils.isNullOrEmpty(addInfo)) {
+            artworkInfoMarkdown.setVisibility(View.GONE);
+            artworkInfoLabel.setVisibility(View.GONE);
         } else {
-            artworkName.setText(R.string.not_applicable);
-        }
-
-        if (currentArtwork.getMedium() != null) {
-            mMediumString = currentArtwork.getMedium();
-            artworkMedium.setText(mMediumString);
-        } else {
-            artworkMedium.setText(R.string.not_applicable);
-        }
-
-        if (currentArtwork.getCategory() != null) {
-            mCategoryString = currentArtwork.getCategory();
-            artworkCategory.setText(mCategoryString);
-        } else {
-            artworkCategory.setText(R.string.not_applicable);
-        }
-
-        if (currentArtwork.getDate() != null) {
-            mDateString = currentArtwork.getDate();
-            artworkDate.setText(mDateString);
-        } else {
-            artworkDate.setText(R.string.not_applicable);
-        }
-
-        if (currentArtwork.getCollectingInstitution() != null) {
-            mMuseumString = currentArtwork.getCollectingInstitution();
-            // Hide the Museum if the field is empty
-            if (TextUtils.isEmpty(mMuseumString)) {
-                artworkMuseum.setVisibility(View.GONE);
-                artworkMuseumLabel.setVisibility(View.GONE);
-            }
-            artworkMuseum.setText(mMuseumString);
-        } else {
-            artworkMuseum.setText(R.string.not_applicable);
-        }
-
-        if (currentArtwork.getDimensions() != null) {
-            Dimensions dimensionObject = currentArtwork.getDimensions();
-
-            if (dimensionObject.getCmSize() != null) {
-                CmSize cmSizeObject = dimensionObject.getCmSize();
-                mDimensInCmString = cmSizeObject.getText();
-                dimensCm.setText(mDimensInCmString);
-            } else {
-                dimensCm.setText(R.string.not_applicable);
-            }
-
-            if (dimensionObject.getInSize() != null) {
-                InSize inSizeObject = dimensionObject.getInSize();
-                mDimensInInchString = inSizeObject.getText();
-                dimensIn.setText(mDimensInInchString);
-            } else {
-                dimensIn.setText(R.string.not_applicable);
-            }
-        }
-
-        if (currentArtwork.getAdditionalInformation() != null) {
-            String addInfo = currentArtwork.getAdditionalInformation();
-            // Hide the Additional Information if the field is empty
-            if (TextUtils.isEmpty(addInfo)) {
-                artworkInfoMarkdown.setVisibility(View.GONE);
-                artworkInfoLabel.setVisibility(View.GONE);
-            }
             // Load the markdown text
             artworkInfoMarkdown.loadMarkdown(addInfo);
         }
@@ -355,7 +321,6 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         MainImage mainImageObject = imageLinksObject.getImage();
 
         if (currentArtwork.getImageVersions() != null) {
-
             List<String> imageVersionList = currentArtwork.getImageVersions();
 
             String largeVersion = "large";
@@ -376,88 +341,69 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
             // Replace the {image_version} from the artworkImgLinkString with
             // the wanted version, e.g. "large"
-            mLargeArtworkLinkString = artworkImgLinkString
-                    .replaceAll("\\{.*?\\}", versionLargeString);
-            Log.d(TAG, "New link to the image: " + mLargeArtworkLinkString);
+            largeArtworkLink = artworkImgLinkString.replaceAll("\\{.*?\\}", versionLargeString);
+            Log.d(TAG, "New link to the image: " + largeArtworkLink);
 
             // Get the first entry from this list, which corresponds to "large"
-            mNewSquareArtworkLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}",
-                    versionSquareImageString);
-            Log.d(TAG, "New link to the square image: " + mNewSquareArtworkLinkString);
+            String newSquareArtworkLink = artworkImgLinkString.replaceAll("\\{.*?\\}", versionSquareImageString);
+            Log.d(TAG, "New link to the square image: " + newSquareArtworkLink);
 
-            mLargerImageLinkString = artworkImgLinkString.replaceAll("\\{.*?\\}",
-                    versionLargerImageString);
+            String largerImageLink = artworkImgLinkString.replaceAll("\\{.*?\\}", versionLargerImageString);
 
             // Extract the string to thumbnail so that it is saved in favorites
             Thumbnail thumbnail = imageLinksObject.getThumbnail();
-            mArtworkThumbnailString = thumbnail.getHref();
+            artworkThumbnail = thumbnail.getHref();
 
             // Make the image Blurry
-            makeImageBlurry(mNewSquareArtworkLinkString);
+            makeImageBlurry(newSquareArtworkLink);
 
+            // Set the large image with Picasso
+            if (Utils.isNullOrEmpty(largeArtworkLink)) {
+                artworkImage.setImageResource(R.color.color_on_surface);
+            } else {
+                Picasso.get()
+                        .load(Uri.parse(largeArtworkLink))
+                        .placeholder(R.color.color_on_surface)
+                        .error(R.color.color_error)
+                        .into(artworkImage);
+
+                // If there is an image set a click listener on it
+                openArtworkFullScreen();
+            }
         }
 
-        // Set the large image with Picasso
-        if (mLargeArtworkLinkString == null || mLargeArtworkLinkString.isEmpty()) {
-            Picasso.get()
-                    .load(R.color.colorPrimary)
-                    .placeholder(R.color.colorPrimary)
-                    .error(R.color.colorPrimary)
-                    .into(artworkImage);
-        } else {
-
-            Picasso.get()
-                    .load(Uri.parse(mLargeArtworkLinkString))
-                    .placeholder(R.color.colorPrimary)
-                    .error(R.color.colorPrimary)
-                    .into(artworkImage);
-
-            // If there is an image set a click listener on it
-            artworkImage.setOnClickListener(v -> {
-                // Open new Activity
-                Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
-                        LargeArtworkActivity.class);
-                largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, mLargerImageLinkString);
-                Log.d(TAG, "Larger link to image: " + mLargerImageLinkString);
-                startActivity(largeImageIntent);
-            });
-        }
-
+        // TODO: Remove this option if showing all artist info in one screen
         if (imageLinksObject.getArtists() != null) {
-
             ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
-            mArtistUrl = artistsLinkObject.getHref(); // This link needs a token
+            artistUrl = artistsLinkObject.getHref(); // This link needs a token
+            Log.d(TAG, "artistUrl = " + artistUrl);
 
             // Initialize the artist ViewModel
-            initArtistViewModel(mArtistUrl);
-            Log.d(TAG, "Link to the artist: " + mArtistUrl);
-
+            initArtistViewModel(artistUrl);
             String artworkId = currentArtwork.getId();
-            Log.d(TAG, "Artwork id: " + artworkId);
 
-            mArtistNameFromSlug = StringUtils.getArtistNameFromSlug(currentArtwork);
-            Log.d(TAG, "Name of Artist after extraction: " + mArtistNameFromSlug);
-
-            //artistNameLink.setText(mArtistNameFromSlug);
-
-            String finalTitleString = mTitleString;
-
-            // Check first if the artist name is not null or "N/A"
-            if ((mArtistNameFromSlug == null) || (mArtistNameFromSlug.equals("N/A"))) {
-                // Hide the Artist CardView if there is no info about the Artist
-                artistCard.setVisibility(View.GONE);
-                artistLabel.setVisibility(View.GONE);
-            }
+//            String artistNameFromSlug = StringUtils.getArtistNameFromSlug(currentArtwork);
+//            Log.d(TAG, "Name of Artist after extraction: " + artistNameFromSlug);
         }
 
         // Get the Permalink for sharing it outside the app
         Permalink permalinkForShare = imageLinksObject.getPermalink();
-        mPermalinkForShare = permalinkForShare.getHref();
+        permaLink = permalinkForShare.getHref();
 
-        SimilarArtworksLink similarArtworksLink = imageLinksObject.getSimilarArtworks();
-        mSimilarArtworksLink = similarArtworksLink.getHref();
-        Log.d(TAG, "Similar Artworks link: " + mSimilarArtworksLink);
-        initSimilarViewModel(mSimilarArtworksLink);
+        SimilarArtworksLink similarArtworksLinkObject = imageLinksObject.getSimilarArtworks();
+        String similarArtworksLink = similarArtworksLinkObject.getHref();
+        Log.d(TAG, "Similar Artworks link: " + similarArtworksLink);
+        initSimilarViewModel(similarArtworksLink);
+    }
+
+    private void openArtworkFullScreen() {
+        artworkImage.setOnClickListener(v -> {
+            // Open new Activity
+            Intent largeImageIntent = new Intent(ArtworkDetailActivity.this,
+                    LargeArtworkActivity.class);
+            largeImageIntent.putExtra(ARTWORK_LARGER_IMAGE_KEY, largeArtworkLink);
+            startActivity(largeImageIntent);
+        });
     }
 
     private String getVersionString(List<String> imageVersionList, String versionString) {
@@ -476,7 +422,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     /**
      * Make the image blurry with the help of SimpleDraweeView View
      * Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-     *
+     * <p>
      * currently not in use
      */
     private void makeImageBlurry(String linkString) {
@@ -504,139 +450,122 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      * @param artistLink is the given link to the artist
      */
     private void initArtistViewModel(String artistLink) {
-        // Initialize the ViewModel
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
-
         mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
-            if (artists != null) {
-
+            if (artists != null && artists.size() != 0) {
                 for (int i = 0; i < artists.size(); i++) {
                     Artist artistCurrent = artists.get(i);
                     setupArtistUI(artistCurrent);
                 }
+            } else {
+                artistLabel.setVisibility(View.GONE);
+                artistCard.setVisibility(View.GONE);
             }
         });
     }
 
     private void setupArtistUI(Artist currentArtist) {
-
-        if (currentArtist == null) {
-            // Hide the Artist CardView if there is no info about the Artist
-            artistCard.setVisibility(View.GONE);
-        }
+        emptyField = getString(R.string.not_applicable);
 
         // Get the name of the artist
-        if (currentArtist != null) {
+        artistNameString = currentArtist.getName();
+        boolean unknownArtist = Utils.isNullOrEmpty(artistNameString);
+        Log.d(TAG, "setupArtistUI, unknownArtist - " + unknownArtist);
+        artistName.setText(unknownArtist ? emptyField : artistNameString);
+        // Set the name of the Artist to the Button
+        artistNameButton.setText(unknownArtist ? emptyField : artistNameString);
+        // Check first if the artist name is not null or empty
+        if (unknownArtist) {
+            // Hide the Artist CardView if there is no info about the Artist
 
-            if (currentArtist.getName() != null) {
-                mArtistNameString = currentArtist.getName();
-                artistName.setText(mArtistNameString);
+            artistCard.setVisibility(View.GONE);
+            artistNameButton.setVisibility(View.GONE);
+        } else {
+            artistNameButton.setOnClickListener(v -> {
+                Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
+                // Send the name of the artwork as extra
+                intent.putExtra(ARTWORK_TITLE_KEY, artworkTitle);
+                intent.putExtra(ARTIST_URL_KEY, artistUrl);
+                startActivity(intent);
+            });
+        }
 
-                // Check first if the artist name is not null or empty
-                if ((mArtistNameString == null) || (mArtistNameString.isEmpty())) {
-                    // Hide the Artist CardView if there is no info about the Artist
-                    artistCard.setVisibility(View.GONE);
-                    artistNameButton.setVisibility(View.GONE);
-                }
+        // Get the Home town of the artist
+        if (currentArtist.getHometown() != null) {
+            String artistHomeTownString = currentArtist.getHometown();
+            artistHomeTown.setText(artistHomeTownString);
+        } else {
+            artistHomeTown.setText(getString(R.string.not_applicable));
+        }
 
-                // Set the name of the Artist to the Button
-                artistNameButton.setText(mArtistNameString);
+        // Get the date of the birth and dead of the artist
+        String artistBirthString;
+        String artistDeathString;
+        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
+            artistBirthString = currentArtist.getBirthday();
+            artistDeathString = currentArtist.getDeathday();
 
-                artistNameButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            String lifespanConcatString = artistBirthString + " - " + artistDeathString;
+            artistLifespan.setText(lifespanConcatString);
+        } else {
+            artistLifespan.setText(getString(R.string.not_applicable));
+        }
 
-                        // Check first if the artist name is not null or "N/A"
-                        if ((mArtistNameString == null) || (mArtistNameString.equals("N/A")) || TextUtils.isEmpty(mArtistNameString)) {
-                            // Show a message to the user that there is no artist for the selected artwork
-                            Snackbar.make(coordinatorLayout, R.string.snackbar_no_data_artist, Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                        // Send the name of the artwork as extra
-                        intent.putExtra(ARTWORK_TITLE_KEY, mTitleString);
-                        intent.putExtra(ARTIST_URL_KEY, mArtistUrl);
-                        startActivity(intent);
-                    }
-                });
-
-            } else {
-                artistName.setText(getString(R.string.not_applicable));
+        // Get the location of the artist
+        if (currentArtist.getLocation() != null) {
+            String artistLocationString = currentArtist.getLocation();
+            // Hide the location field if it's empty
+            if (Utils.isNullOrEmpty(artistLocationString)) {
+                artistLocation.setVisibility(View.GONE);
+                artistLocationLabel.setVisibility(View.GONE);
             }
+            artistLocation.setText(artistLocationString);
+        } else {
+            artistLocation.setText(getString(R.string.not_applicable));
+        }
 
-            // Get the Home town of the artist
-            if (currentArtist.getHometown() != null) {
-                String artistHomeTownString = currentArtist.getHometown();
-                artistHomeTown.setText(artistHomeTownString);
-            } else {
-                artistHomeTown.setText(getString(R.string.not_applicable));
-            }
+        if (currentArtist.getNationality() != null) {
+            String artistNationalityString = currentArtist.getNationality();
+            artistNationality.setText(artistNationalityString);
+        } else {
+            artistNationality.setText(getString(R.string.not_applicable));
+        }
 
-            // Get the date of the birth and dead of the artist
-            String artistBirthString;
-            String artistDeathString;
-            if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
-                artistBirthString = currentArtist.getBirthday();
-                artistDeathString = currentArtist.getDeathday();
+        // Get the list of image versions first
+        List<String> imageVersionList = currentArtist.getImageVersions();
+        String versionString;
+        // Get the first entry from this list, which corresponds to "large"
+        String largeVersion = "large";
+        versionString = getVersionString(imageVersionList, largeVersion);
 
-                String lifespanConcatString = artistBirthString + " - " + artistDeathString;
-                artistLifespan.setText(lifespanConcatString);
-            } else {
-                artistLifespan.setText(getString(R.string.not_applicable));
-            }
+        ImageLinks imageLinksObject = currentArtist.getLinks();
+        MainImage mainImageObject = imageLinksObject.getImage();
+        // Get the link for the current artist,
+        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        String artistImgLinkString = mainImageObject.getHref();
+        // Replace the {image_version} from the artworkImgLinkString with
+        // the wanted version, e.g. "large"
+        String newArtistLinkString = artistImgLinkString
+                .replaceAll("\\{.*?\\}", versionString);
 
-            // Get the location of the artist
-            if (currentArtist.getLocation() != null) {
-                String artistLocationString = currentArtist.getLocation();
-                // Hide the location field if it's empty
-                if (TextUtils.isEmpty(artistLocationString)) {
-                    artistLocation.setVisibility(View.GONE);
-                    artistLocationLabel.setVisibility(View.GONE);
-                }
-                artistLocation.setText(artistLocationString);
-            } else {
-                artistLocation.setText(getString(R.string.not_applicable));
-            }
+        if (currentArtist.getBiography() != null) {
+            String artistBioString = currentArtist.getBiography();
+            artistBio.setText(artistBioString);
 
-            if (currentArtist.getNationality() != null) {
-                String artistNationalityString = currentArtist.getNationality();
-                artistNationality.setText(artistNationalityString);
-            } else {
-                artistNationality.setText(getString(R.string.not_applicable));
-            }
-
-            // Get the list of image versions first
-            List<String> imageVersionList = currentArtist.getImageVersions();
-            String versionString;
-            // Get the first entry from this list, which corresponds to "large"
-            String largeVersion = "large";
-            versionString = getVersionString(imageVersionList, largeVersion);
-
-            ImageLinks imageLinksObject = currentArtist.getLinks();
-            MainImage mainImageObject = imageLinksObject.getImage();
-            // Get the link for the current artist,
-            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-            String artistImgLinkString = mainImageObject.getHref();
-            // Replace the {image_version} from the artworkImgLinkString with
-            // the wanted version, e.g. "large"
-            String newArtistLinkString = artistImgLinkString
-                    .replaceAll("\\{.*?\\}", versionString);
-
-            if (currentArtist.getBiography() != null) {
-                String artistBioString = currentArtist.getBiography();
-                artistBio.setText(artistBioString);
-
-                if (currentArtist.getBiography().isEmpty()) {
-                    artistBio.setVisibility(View.GONE);
-                    artistBioLabel.setVisibility(View.GONE);
-                }
-            } else {
+            if (currentArtist.getBiography().isEmpty()) {
                 artistBio.setVisibility(View.GONE);
                 artistBioLabel.setVisibility(View.GONE);
             }
+        } else {
+            artistBio.setVisibility(View.GONE);
+            artistBioLabel.setVisibility(View.GONE);
         }
+
+        ImageLinks imageLinks = currentArtist.getLinks();
+        ArtworksLink artworksLink = imageLinks.getArtworksLink();
+        String href = artworksLink.getHref();
+        Log.d(TAG, "temp, href of artworks: " + href);
+        initArtworksByArtistsViewModel(href);
     }
 
     /**
@@ -645,31 +574,36 @@ public class ArtworkDetailActivity extends AppCompatActivity {
      * @param similarArtLink is the given link to the similar artworks
      */
     private void initSimilarViewModel(String similarArtLink) {
-        // Initialize the ViewModel
-        mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initSimilarArtworksData(similarArtLink);
-
-        mArtistViewModel.getSimilarArtworksData().observe(this, new Observer<List<Artwork>>() {
-            @Override
-            public void onChanged(@Nullable List<Artwork> artworkList) {
-                if (artworkList != null) {
-                    setupSimilarArtworksUI(artworkList);
-                }
+        mArtistViewModel.getSimilarArtworksData().observe(this, artworkList -> {
+            if (artworkList != null) {
+                setupSimilarArtworksUI(artworkList);
             }
         });
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
-
-        mSimilarArtAdapter = new SimilarArtworksAdapter(this, artworkList);
+        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(artworkList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         similarArtworksRv.setLayoutManager(layoutManager);
-        similarArtworksRv.setAdapter(mSimilarArtAdapter);
+        similarArtworksRv.setAdapter(similarArtworksAdapter);
     }
 
     private void clickFab() {
         mFavButton.setOnClickListener(this::setIconOnFab);
+    }
+
+    private void initArtworksByArtistsViewModel(String artworksLink) {
+        mArtistViewModel.initArtworksByArtistData(artworksLink);
+        mArtistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
+    }
+
+    private void setupArtworksByArtist(List<Artwork> artworksList) {
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
+        artworksByArtistRv.setAdapter(artworksByArtist);
     }
 
     /**
@@ -683,7 +617,7 @@ public class ArtworkDetailActivity extends AppCompatActivity {
         switch (tagValue) {
             case (FAV_TAG):
                 // Delete from the db
-                deleteItemFromFav();
+                deleteItemFromFav(artworkId);
                 mFavButton.setTag(NON_FAV_TAG);
                 mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
@@ -703,35 +637,30 @@ public class ArtworkDetailActivity extends AppCompatActivity {
     /**
      * Method for deleting an item from the database
      */
-    private void deleteItemFromFav() {
-        FavArtRepository.getInstance(getApplication()).deleteItem(mArtworkIdString);
-        Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_SHORT).show();
-        Log.d(TAG, "Delete the item from the db");
+    private void deleteItemFromFav(String artworkId) {
+        FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
+        Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_LONG);
+        View view = snack.getView();
+        TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
+        snack.show();
     }
 
     /**
      * Method for adding an item to the database
      */
     private void addArtworkToFavorites() {
-
-        String artworkId = mArtworkIdString;
-        String artworkTitle = mTitleString;
-        String artworkArtist = mArtistNameString;
-        String artworkCategory = mCategoryString;
-        String artworkMedium = mMediumString;
-        String artworkDate = mDateString;
-        String artworkMuseum = mMuseumString;
-        String artworkThumbnail = mArtworkThumbnailString;
-        String artworkImage = mLargeArtworkLinkString;
-        String artworkDimensInch = mDimensInInchString;
-        String artworkDimensCm = mDimensInCmString;
-
-        FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artworkArtist,
-                artworkCategory, artworkMedium, artworkDate, artworkMuseum, artworkThumbnail, artworkImage, artworkDimensInch, artworkDimensCm);
+        FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artistNameString,
+                category, medium, date, museum, artworkThumbnail, largeArtworkLink, dimensInString, dimensCmString);
 
         FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
-        Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_SHORT).show();
-        Log.d(TAG, "Insert a new item into the db");
+        Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_LONG);
+        View view = snack.getView();
+        TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
+        snack.show();
     }
 
     @Override
@@ -742,24 +671,25 @@ public class ArtworkDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_share:
-                // Share the Permalink here
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                if (mPermalinkForShare != null || !TextUtils.isEmpty(mPermalinkForShare)) {
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, mPermalinkForShare);
-                    startActivity(shareIntent);
-                    Log.d(TAG, "Shared permalink: " + mPermalinkForShare);
-                } else {
-                    Toast.makeText(this, "Nothing to share.", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            default:
-                break;
+        if (item.getItemId() == R.id.action_share) {// Share the Permalink here
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            if (!Utils.isNullOrEmpty(permaLink)) {
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, permaLink);
+                startActivity(shareIntent);
+                Log.d(TAG, "Shared permalink: " + permaLink);
+            } else {
+                Toast.makeText(this, "Nothing to share.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefreshConnection() {
+      // TODO: implement how to behave on refresh
     }
 }
 

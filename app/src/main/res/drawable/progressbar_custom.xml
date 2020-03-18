@@ -51,7 +51,7 @@
                             android:height="90dp"/>
                         <stroke
                             android:width="6dp"
-                            android:color="@color/colorAccent"/>
+                            android:color="@color/color_primary"/>
                     </shape>
                 </rotate>
             </item>
@@ -67,7 +67,7 @@
                             android:height="90dp"/>
                         <stroke
                             android:width="6dp"
-                            android:color="@color/colorBackgroundDarker"/>
+                            android:color="@color/color_background"/>
                     </shape>
                 </rotate>
             </item>
