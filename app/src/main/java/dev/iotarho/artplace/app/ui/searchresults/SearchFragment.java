@@ -38,10 +38,8 @@ package dev.iotarho.artplace.app.ui.searchresults;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,20 +73,14 @@ import dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity;
 import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
-import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
-
-import static android.content.Context.MODE_PRIVATE;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.Utils;
 
 public class SearchFragment extends Fragment implements
-        SharedPreferences.OnSharedPreferenceChangeListener,
         OnResultClickListener,
         SwipeRefreshLayout.OnRefreshListener, OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
-    private static final String ARG_SEARCH_TITLE = "search_title";
-
-    private static final String PREFERENCE_SEARCH_KEY = "search_prefs";
-    private static final String PREFERENCE_SEARCH_WORD = "search_word";
 
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
     private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
@@ -111,8 +103,7 @@ public class SearchFragment extends Fragment implements
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mSearchType;
 
-    private SharedPreferences mSharedPreferences;
-
+    private PreferenceUtils prefUtils;
 
     // Required empty public constructor
     public SearchFragment() {
@@ -130,8 +121,7 @@ public class SearchFragment extends Fragment implements
             mSearchType = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
         }
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        prefUtils = PreferenceUtils.getInstance();
     }
 
     @Override
@@ -226,16 +216,15 @@ public class SearchFragment extends Fragment implements
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    public synchronized void requestNewCall(String queryWord, String searchType) {
+    private synchronized void requestNewCall(String queryWord, String searchType) {
 
         // Setup the RecyclerView first
         setupRecyclerView();
 
         // TODO: Generate a method for getting the query word from shared preferences
-        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
+        mQueryWordString = prefUtils.getSearchQuery();
 
-        if (queryWord == null || queryWord.isEmpty()) {
+        if (Utils.isNullOrEmpty(queryWord)) {
             queryWord = "Andy Warhol";
         }
 
@@ -264,31 +253,21 @@ public class SearchFragment extends Fragment implements
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    private void saveToSharedPreference(String searchQuery) {
-        mSharedPreferences = getActivity()
-                .getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_SEARCH_WORD, searchQuery);
-        editor.apply(); // use apply() instead of commit(), because it is being saved on the background
-        Log.d(TAG, "Saved into shared prefs");
-    }
-
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_search).setVisible(true);
         Log.d(TAG, "onPrepareOptionsMenu called");
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.search_menu, menu);
 
         // TODO: Generate a method for getting the query word from shared preferences
-        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
+        mQueryWordString = prefUtils.getSearchQuery();
         Log.d(TAG, "onCreateOptionsMenu: Query word " + mQueryWordString);
 
         // Make the icon with a dynamic tint
@@ -318,7 +297,7 @@ public class SearchFragment extends Fragment implements
 
                 query = String.valueOf(mSearchView.getQuery());
                 // Save the search query into SharedPreference
-                saveToSharedPreference(query);
+                prefUtils.safeSearchQuery(query);
                 requestNewCall(query, mSearchType);
                 mQueryWordString = query;
                 Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
@@ -410,44 +389,15 @@ public class SearchFragment extends Fragment implements
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        if (key.equals(PREFERENCE_SEARCH_KEY)) {
-            mSharedPreferences = getActivity()
-                    .getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-
-            if (mSharedPreferences.contains(PREFERENCE_SEARCH_WORD)) {
-                mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
-
-                Log.d(TAG, "onSharedPreferenceChanged: Saved search query: " + mQueryWordString);
-            }
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         Log.d(TAG, "SearchFragment: onPause called");
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "SearchFragment: onResume called");
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
