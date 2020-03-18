@@ -98,7 +98,6 @@ public class SearchFragment extends Fragment implements
 
     private SearchFragmentViewModel mViewModel;
     private SearchListAdapter mSearchAdapter;
-    private SearchView mSearchView;
     private String mQueryWordString;
     private SearchFragmentViewModelFactory mViewModelFactory;
     private String mSearchType;
@@ -140,6 +139,7 @@ public class SearchFragment extends Fragment implements
 
         ButterKnife.bind(this, rootView);
 
+        mQueryWordString = prefUtils.getSearchQuery();
         mViewModelFactory = Injection.provideSearchViewModelFactory(mQueryWordString, mSearchType);
 
         // Set the UI
@@ -162,14 +162,12 @@ public class SearchFragment extends Fragment implements
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
         searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
-
         mSearchAdapter = new SearchListAdapter(this, this);
+        // Set the Adapter on the RecyclerView
+        searchResultsRv.setAdapter(mSearchAdapter);
     }
 
     private void setupUi() {
-        // Setup the RecyclerView first
-        setupRecyclerView();
-
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
 
@@ -212,52 +210,27 @@ public class SearchFragment extends Fragment implements
             }
         });
 
-        // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(mSearchAdapter);
+        // Setup the RecyclerView first
+        setupRecyclerView();
     }
 
     private synchronized void requestNewCall(String queryWord, String searchType) {
-
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        // TODO: Generate a method for getting the query word from shared preferences
-        mQueryWordString = prefUtils.getSearchQuery();
-
-        if (Utils.isNullOrEmpty(queryWord)) {
-            queryWord = "Andy Warhol";
-        }
-
-        mQueryWordString = queryWord;
-        mSearchType = searchType;
-
-        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString + "\nBut the reference queryWord is: "
-                + queryWord);
-        Log.d(TAG, "requestNewCall: Type word: " + mSearchType + "\nBut the reference for search type is: "
-                + searchType);
-
+        Log.d(TAG, "requestNewCall: queryWord: " + queryWord + " searchType: " + searchType);
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this, mViewModelFactory)
                 .get(SearchFragmentViewModel.class);
 
         mViewModel.refreshSearchLiveData(queryWord, searchType)
-                .observe(this, results -> {
-                    if (results != null) {
-                        Log.d(TAG, "Size of the result: " + results.size());
-                        // Submit the list to the PagedListAdapter
-                        mSearchAdapter.submitList(results);
-                    }
-                });
-
-        // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(mSearchAdapter);
+                .observe(this, results -> mSearchAdapter.submitList(results));
     }
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_search).setVisible(true);
-        Log.d(TAG, "onPrepareOptionsMenu called");
     }
 
     @Override
@@ -278,42 +251,41 @@ public class SearchFragment extends Fragment implements
         menu.findItem(R.id.action_search).setIcon(drawable);
 
         // Set the SearchView
-        SearchManager searchManager =
-                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        if (mSearchView != null && !mQueryWordString.isEmpty()) {
-            mSearchView.onActionViewExpanded();
-            mSearchView.setQuery(mQueryWordString, true);
-            mSearchView.clearFocus();
+        SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        if (searchView == null || searchManager == null) {
+            return;
         }
 
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
-        // Set the Submit Button
-        mSearchView.setSubmitButtonEnabled(false);
+        if (!Utils.isNullOrEmpty(mQueryWordString)) {
+            searchView.onActionViewExpanded();
+            searchView.setQuery(mQueryWordString, true);
+            searchView.clearFocus();
+        }
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                query = String.valueOf(mSearchView.getQuery());
                 // Save the search query into SharedPreference
-                prefUtils.safeSearchQuery(query);
+                prefUtils.saveSearchQuery(query);
                 requestNewCall(query, mSearchType);
-                mQueryWordString = query;
-                Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
+                Log.d(TAG, "onQueryTextSubmit, query: " + query);
 
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "SearchFragment: onQueryTextChange called");
-
-                if (newText.length() > 2) {
+                Log.d(TAG, "onQueryTextChange, newText: " + newText);
+                if (newText.length() > 4) {
                     requestNewCall(newText, mSearchType);
                 }
 
-                return true;
+                return false;
             }
         });
     }
@@ -389,18 +361,6 @@ public class SearchFragment extends Fragment implements
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "SearchFragment: onPause called");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "SearchFragment: onResume called");
-    }
-
-    @Override
     public void onResultClick(Result result) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(RESULT_PARCEL_KEY, result);
@@ -412,7 +372,7 @@ public class SearchFragment extends Fragment implements
 
     @Override
     public void onRefresh() {
-        requestNewCall(mQueryWordString, mSearchType);
+        requestNewCall(prefUtils.getSearchQuery(), mSearchType);
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }

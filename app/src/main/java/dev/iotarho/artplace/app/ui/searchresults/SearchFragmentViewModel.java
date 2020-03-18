@@ -85,11 +85,11 @@ public class SearchFragmentViewModel extends ViewModel {
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                (Function<SearchDataSource, LiveData<NetworkState>>) input -> input.getNetworkState());
+                (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
 
         // Initialize the Loading state liveData
         mInitialLoading = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                (Function<SearchDataSource, LiveData<NetworkState>>) input -> input.getLoadingState());
+                (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
 
 
         // Configure the PagedList.Config

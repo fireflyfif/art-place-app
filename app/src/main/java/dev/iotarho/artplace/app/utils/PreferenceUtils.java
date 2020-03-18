@@ -65,10 +65,10 @@ public class PreferenceUtils {
     }
 
     public String getSearchQuery() {
-        return mPrefs.getString(PREFERENCE_SEARCH_WORD, "");
+        return mPrefs.getString(PREFERENCE_SEARCH_WORD, "Andy Warhol");
     }
 
-    public void safeSearchQuery(String searchQuery) {
+    public void saveSearchQuery(String searchQuery) {
         mPrefs.edit().putString(PREFERENCE_SEARCH_WORD, searchQuery).apply();
     }
 }
