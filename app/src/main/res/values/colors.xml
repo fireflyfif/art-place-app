@@ -35,34 +35,6 @@
   -->
 
 <resources>
-    <!--<color name="colorPrimary">#fafafa</color>
-    <color name="colorPrimaryDark">#c7c7c7</color>
-    <color name="colorAccent">#FE4A49</color>
-    <color name="colorBackground">#e0e0e0</color>
-    <color name="colorBackgroundDarker">#FFA09BAC</color>
-    <color name="cardBackground">#eeeeee</color>
-    <color name="colorAccentLight">#f36e6f</color>
-    <color name="colorAccentDark">#f5262b</color>
-
-    <color name="colorPrimaryDarker20">#f5f5f5</color>
-    <color name="colorPrimaryDarker10">#212121</color>
-    <color name="colorPrimaryLighter20">#4d4d4d</color>
-    <color name="colorPrimaryLighter30">#646464</color>
-
-    &lt;!&ndash; Pop Art colors&ndash;&gt;
-    <color name="colorPopRed">#FE4A49</color>
-    <color name="colorPopBlue">#2AB7CA</color>
-    <color name="colorPopYellow">#FED766</color>
-
-    <color name="colorText">#616161</color>
-    <color name="colorWhiteTransparent">#80FFFFFF</color>
-    <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorCardStroke">#C5C5C5</color>
-
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#000000</color>-->
-
-
     <!--LIGHT COLOR THEME-->
 
     <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
