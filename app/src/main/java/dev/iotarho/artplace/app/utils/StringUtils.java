@@ -40,6 +40,7 @@ import android.util.Log;
 import java.text.Normalizer;
 
 import dev.iotarho.artplace.app.model.artworks.Artwork;
+import dev.iotarho.artplace.app.model.search.ShowContent;
 
 // Helper method for extracting the name of the Artist from the slug received for each artwork response
 // in the form of (e.g. "gustav-klimt-der-kuss-the-kiss")
@@ -70,8 +71,7 @@ public class StringUtils {
                 .replaceAll(",", "")
                 .replaceAll(":", "")
                 .replaceAll("-", " ")
-                .replaceAll("[()]", "")
-                ;
+                .replaceAll("[()]", "");
 
         Log.d(TAG, "StringUtils: New title string: " + newTitleString);
 
@@ -100,4 +100,12 @@ public class StringUtils {
         }
     }
 
+    public static String getDate(String startDate) {
+        // startDate = "2017-05-31T18:30:05+00:00"
+        int indexOf = startDate.indexOf("T");
+        if (indexOf == -1) {
+            return "";
+        }
+        return startDate.substring(0, indexOf); //this will give 2017-05-31
+    }
 }

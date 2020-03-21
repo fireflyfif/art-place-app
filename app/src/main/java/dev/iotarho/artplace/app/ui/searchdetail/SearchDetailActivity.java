@@ -73,6 +73,7 @@ import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
+import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 
 public class SearchDetailActivity extends AppCompatActivity {
@@ -333,7 +334,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
         if (showContent.getStartAt() != null) {
             String startDate = showContent.getStartAt();
-            showStartDate.setText(startDate);
+            showStartDate.setText(StringUtils.getDate(startDate));
 
             if (showContent.getStartAt().isEmpty()) {
                 showStartDate.setVisibility(View.GONE);
@@ -343,7 +344,7 @@ public class SearchDetailActivity extends AppCompatActivity {
 
         if (showContent.getEndAt() != null) {
             String endDate = showContent.getEndAt();
-            showEndDate.setText(endDate);
+            showEndDate.setText(StringUtils.getDate(endDate));
 
             if (showContent.getEndAt().isEmpty()) {
                 showEndDate.setVisibility(View.GONE);

@@ -84,6 +84,7 @@ public class SearchFragment extends Fragment implements
 
     private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
     private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
+    private static final String ITEM_CHECKED_SAVE_STATE = "search_type";
     private static final String RESULT_PARCEL_KEY = "results_key";
 
     @BindView(R.id.coordinator_layout)
@@ -98,9 +99,10 @@ public class SearchFragment extends Fragment implements
 
     private SearchFragmentViewModel mViewModel;
     private SearchListAdapter mSearchAdapter;
-    private String mQueryWordString;
+    private String queryString;
     private SearchFragmentViewModelFactory mViewModelFactory;
-    private String mSearchType;
+    private String searchTypeString;
+    private boolean isMenuItemChecked;
 
     private PreferenceUtils prefUtils;
 
@@ -116,8 +118,9 @@ public class SearchFragment extends Fragment implements
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
-            mSearchType = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
+            queryString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
+            searchTypeString = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
+            isMenuItemChecked = savedInstanceState.getBoolean(ITEM_CHECKED_SAVE_STATE);
         }
 
         prefUtils = PreferenceUtils.getInstance();
@@ -127,8 +130,9 @@ public class SearchFragment extends Fragment implements
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
-        outState.putString(SEARCH_TYPE_SAVE_STATE, mSearchType);
+        outState.putString(SEARCH_QUERY_SAVE_STATE, queryString);
+        outState.putString(SEARCH_TYPE_SAVE_STATE, searchTypeString);
+        outState.putBoolean(ITEM_CHECKED_SAVE_STATE, isMenuItemChecked);
     }
 
     @Nullable
@@ -139,8 +143,8 @@ public class SearchFragment extends Fragment implements
 
         ButterKnife.bind(this, rootView);
 
-        mQueryWordString = prefUtils.getSearchQuery();
-        mViewModelFactory = Injection.provideSearchViewModelFactory(mQueryWordString, mSearchType);
+        queryString = prefUtils.getSearchQuery();
+        mViewModelFactory = Injection.provideSearchViewModelFactory(queryString, searchTypeString);
 
         // Set the UI
         setupUi();
@@ -170,7 +174,6 @@ public class SearchFragment extends Fragment implements
     private void setupUi() {
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
-
         mViewModel.getSearchResultsLiveData().observe(requireActivity(), results -> {
             if (results != null) {
                 // Submit the list to the PagedListAdapter
@@ -230,7 +233,11 @@ public class SearchFragment extends Fragment implements
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_search).setVisible(true);
+        if (isMenuItemChecked) {
+            menu.findItem(R.id.action_search).setChecked(true);
+        } else {
+            menu.findItem(R.id.action_search).setChecked(false);
+        }
     }
 
     @Override
@@ -239,29 +246,28 @@ public class SearchFragment extends Fragment implements
 
         inflater.inflate(R.menu.search_menu, menu);
 
-        // TODO: Generate a method for getting the query word from shared preferences
-        mQueryWordString = prefUtils.getSearchQuery();
-        Log.d(TAG, "onCreateOptionsMenu: Query word " + mQueryWordString);
+        queryString = prefUtils.getSearchQuery();
+        Log.d(TAG, "onCreateOptionsMenu: Query word " + queryString);
 
         // Make the icon with a dynamic tint
         // source: https://stackoverflow.com/a/29916353/8132331
-        Drawable drawable = menu.findItem(R.id.action_search).getIcon();
+        /*Drawable drawable = menu.findItem(R.id.action_search).getIcon();
         drawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.color_on_surface));
-        menu.findItem(R.id.action_search).setIcon(drawable);
+        menu.findItem(R.id.action_search).setIcon(drawable);*/
 
         // Set the SearchView
         SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
-        if (searchView == null || searchManager == null) {
+        if (searchManager == null) {
             return;
         }
 
-        if (!Utils.isNullOrEmpty(mQueryWordString)) {
+        if (!Utils.isNullOrEmpty(queryString)) {
             searchView.onActionViewExpanded();
-            searchView.setQuery(mQueryWordString, true);
+            searchView.setQuery(queryString, true);
             searchView.clearFocus();
         }
 
@@ -272,7 +278,7 @@ public class SearchFragment extends Fragment implements
             public boolean onQueryTextSubmit(String query) {
                 // Save the search query into SharedPreference
                 prefUtils.saveSearchQuery(query);
-                requestNewCall(query, mSearchType);
+                requestNewCall(query, searchTypeString);
                 Log.d(TAG, "onQueryTextSubmit, query: " + query);
 
                 return false;
@@ -282,7 +288,7 @@ public class SearchFragment extends Fragment implements
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "onQueryTextChange, newText: " + newText);
                 if (newText.length() > 4) {
-                    requestNewCall(newText, mSearchType);
+                    requestNewCall(newText, searchTypeString);
                 }
 
                 return false;
@@ -309,49 +315,47 @@ public class SearchFragment extends Fragment implements
                 return true;*/
 
             case R.id.action_type_artist:
-                item.setChecked(true);
-                // Set the type to artist
-                mSearchType = "artist";
+                // TODO: Still doesn't work ????
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    isMenuItemChecked = false;
+                } else {
+                    item.setChecked(true);
+                    isMenuItemChecked = true;
+                    searchTypeString = "artist"; // Set the type to artist
+                    requestNewCall(queryString, searchTypeString);
+                }
 
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_artwork:
-                item.setChecked(true);
-                // Set the type to artwork
-                mSearchType = "artwork";
+                item.setChecked(isMenuItemChecked);
+                searchTypeString = "artwork";  // Set the type to artwork
+                requestNewCall(queryString, searchTypeString);
 
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_gene:
+                item.setChecked(isMenuItemChecked);
+                searchTypeString = "gene"; // Set the type to gene
+                requestNewCall(queryString, searchTypeString);
 
-                item.setChecked(true);
-                // Set the type to gene
-                mSearchType = "gene";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_show:
-                item.setChecked(true);
-                // Set the type to show
-                mSearchType = "show";
+                item.setChecked(isMenuItemChecked);
+                searchTypeString = "show";  // Set the type to show
+                requestNewCall(queryString, searchTypeString);
 
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_none:
-                item.setChecked(true);
-                requestNewCall(mQueryWordString, null);
+                item.setChecked(isMenuItemChecked);
+                requestNewCall(queryString, null);
 
                 return true;
 
@@ -372,7 +376,7 @@ public class SearchFragment extends Fragment implements
 
     @Override
     public void onRefresh() {
-        requestNewCall(prefUtils.getSearchQuery(), mSearchType);
+        requestNewCall(prefUtils.getSearchQuery(), searchTypeString);
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }

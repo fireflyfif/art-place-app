@@ -67,153 +67,140 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--<View
-            android:id="@+id/show_bg"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/artwork_title_layout"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            tools:background="?colorPrimary"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/padding_10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/artwork_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/show_start_date"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_42dp"
-            android:layout_marginLeft="@dimen/margin_42dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:fontFamily="@font/work_sans"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/show_start_label"
-            app:layout_constraintTop_toTopOf="@+id/show_start_label"
-            tools:text="2017-04-16" />
-
-        <TextView
-            android:id="@+id/show_end_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_16dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:fontFamily="@font/work_sans"
-            android:paddingBottom="@dimen/padding_8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/show_start_date"
-            app:layout_constraintTop_toBottomOf="@+id/show_start_date"
-            tools:text="2016-11-19" />
-
-
-        <TextView
-            android:id="@+id/show_end_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_marginStart="24dp"
             android:layout_marginLeft="24dp"
-            android:layout_marginTop="@dimen/margin_16dp"
-            android:layout_marginEnd="@dimen/margin_8dp"
-            android:layout_marginRight="@dimen/margin_8dp"
-            android:fontFamily="@font/work_sans_light"
-            android:text="@string/end_at"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/show_end_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/show_start_date" />
-
-        <TextView
-            android:id="@+id/show_start_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="@dimen/margin_16dp"
-            android:fontFamily="@font/work_sans_light"
-            android:text="@string/start_at"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/show_description_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/margin_8dp"
-            android:layout_marginRight="@dimen/margin_8dp"
-            android:fontFamily="@font/work_sans"
-            android:text="@string/description"
-            app:layout_constraintEnd_toStartOf="@+id/show_press_release"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/show_end_date" />
-
-        <TextView
-            android:id="@+id/show_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:fontFamily="@font/work_sans"
-            android:paddingBottom="@dimen/padding_8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/show_end_date"
-            app:layout_constraintTop_toBottomOf="@+id/show_end_date"
-            tools:text="Description of the show here Description of the show here Description of the show here Description of the show here " />
-
-        <TextView
-            android:id="@+id/show_press_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:fontFamily="@font/work_sans_light"
-            android:text="@string/press"
-            app:layout_constraintEnd_toStartOf="@+id/show_description"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/show_description" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/show_press_release"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/work_sans"
-            android:textIsSelectable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/show_description"
-            app:layout_constraintTop_toBottomOf="@+id/show_description"
-            app:layout_constraintVertical_bias="0.836"
-            tools:text="Content Press Release Content Press Release Content Press Release Content Press Release" />
+            <TextView
+                android:id="@+id/show_start_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/start_at"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/show_start_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/work_sans"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/show_start_label"
+                app:layout_constraintTop_toBottomOf="@+id/show_start_label"
+                tools:text="2017-04-16" />
+
+            <TextView
+                android:id="@+id/show_end_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/end_at"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_start_date" />
+
+            <TextView
+                android:id="@+id/show_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/work_sans"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/show_end_label"
+                app:layout_constraintTop_toBottomOf="@+id/show_end_label"
+                tools:text="2016-11-19" />
+
+            <TextView
+                android:id="@+id/show_description_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_end_date"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/show_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/work_sans"
+                android:paddingBottom="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/show_description_label"
+                app:layout_constraintTop_toBottomOf="@+id/show_description_label"
+                tools:text="Description of the show here Description of the show here Description of the show here Description of the show here "
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/show_press_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/press"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_description" />
+
+            <TextView
+                android:id="@+id/show_press_release"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/work_sans"
+                android:paddingBottom="24dp"
+                android:textIsSelectable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/show_press_label"
+                app:layout_constraintTop_toBottomOf="@+id/show_press_label"
+                tools:text="Content Press Release Content Press Release Content Press Release Content Press Release" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
