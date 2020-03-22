@@ -35,15 +35,11 @@
 
 package dev.iotarho.artplace.app.ui.searchresults.adapter;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -200,60 +196,4 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
             mClickHandler.onResultClick(currentResult);
         }
     }
-
-    /*public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        @BindView(R.id.network_state_layout)
-        LinearLayout networkLayout;
-        @BindView(R.id.network_state_pb)
-        ProgressBar progressBar;
-        @BindView(R.id.network_state_error_msg)
-        TextView errorMessage;
-        @BindView(R.id.network_state_refresh_bt)
-        ImageButton refreshButton;
-
-        private NetworkStateItemViewHolder(View itemView) {
-            super(itemView);
-
-            ButterKnife.bind(this, itemView);
-        }
-
-        private void bindView(NetworkState networkState) {
-
-            if (networkState != null) {
-
-                if (networkState.getStatus() == NetworkState.Status.RUNNING) {
-                    networkLayout.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    errorMessage.setVisibility(View.GONE);
-                    refreshButton.setVisibility(View.GONE);
-
-                } else if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    networkLayout.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    errorMessage.setVisibility(View.GONE);
-                    refreshButton.setVisibility(View.GONE);
-
-                } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                    networkLayout.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    errorMessage.setVisibility(View.VISIBLE);
-                    refreshButton.setVisibility(View.VISIBLE);
-                    // Set the click listener here
-                    refreshButton.setOnClickListener(this::onClick);
-
-                } else {
-                    networkLayout.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    errorMessage.setVisibility(View.GONE);
-                    refreshButton.setVisibility(View.GONE);
-                }
-            }
-        }
-
-        @Override
-        public void onClick(View v) {
-            mRefreshHandler.onRefreshConnection();
-        }
-    }*/
 }

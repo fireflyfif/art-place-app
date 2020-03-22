@@ -33,21 +33,24 @@
   ~
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_24dp"
+        android:iconTint="?attr/iconTintColor"
         android:orderInCategory="100"
         android:title="@string/search"
-        android:iconTint="?attr/iconTintColor"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        tools:targetApi="o" />
 
-    <group android:checkableBehavior="single"
+    <group
+        android:checkableBehavior="single"
+        android:icon="@drawable/ic_filter_list_black_24dp"
         android:orderInCategory="200"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_filter_list_black_24dp">
+        app:showAsAction="ifRoom">
 
         <!--<item
             android:id="@+id/action_type_article"

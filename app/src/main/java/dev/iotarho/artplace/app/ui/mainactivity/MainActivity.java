@@ -35,9 +35,15 @@
 
 package dev.iotarho.artplace.app.ui.mainactivity;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.SearchEvent;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String POSITION_KEY = "position";
+    public static final String SEARCH_WORD_EXTRA = "search_word_from_intent";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private BottomNavAdapter mPagerAdapter;
     private String mTitle;
     private int mPosition;
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             getSupportActionBar().setTitle(mTitle);
         }
 
+//        handleIntent(getIntent());
+
         setupViewPager();
         setupBottomNavStyle();
 
@@ -113,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.setCurrentItem(mPosition);
 
         bottomNavigation.setOnTabSelectedListener((position, wasSelected) -> {
-
             bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
             viewPager.setCurrentItem(position);
 
@@ -133,6 +142,32 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         outState.putInt(POSITION_KEY, mPosition);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // intent saved by the activity is updated in case you call getIntent() in the future
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d(TAG, "handleIntent, queryString: " + query);
+            Bundle args = new Bundle();
+            args.putString(SEARCH_WORD_EXTRA, query);
+            createSearchFragment().setArguments(args);
+        }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        Bundle appData = new Bundle();
+        appData.putString("search_word_from_intent", "query");
+        Log.d(TAG, "onSearchRequested called");
+        startSearch(null, false, appData, false);
+        return true;
+    }
+
     /**
      * Method for setting the title on the Toolbar for each Fragment
      *
@@ -145,8 +180,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 toolbar.setTitle(mTitle);
                 break;
             case 1:
-                mTitle = getString(R.string.title_search);
-                toolbar.setTitle(mTitle);
+//                mTitle = getString(R.string.title_search);
+//                toolbar.setTitle(mTitle);
+                toolbar.inflateMenu(R.menu.search_menu);
                 break;
             case 2:
                 mTitle = getString(R.string.title_favorites);
@@ -158,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void addBottomNavigationItems() {
-
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
                 getString(R.string.title_artworks), R.drawable.ic_red_dot);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
@@ -173,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private Fragment createArtworksFragment() {
         Fragment artworksFragment = new ArtworksFragment();
-        // Set arguments here
+        // Set arguments here, TODO: Why?
         Bundle bundle = new Bundle();
         artworksFragment.setArguments(bundle);
         return artworksFragment;

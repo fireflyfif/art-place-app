@@ -67,7 +67,7 @@ public class SearchFragmentViewModel extends ViewModel {
     private LiveData<PagedList<Result>> mResultPagedList;
     private String mQueryWord;
     private String mTypeWord;
-    private ArtsyRepository mRepo;
+    private ArtsyRepository mRepo; // todo: remove
 
 
     public SearchFragmentViewModel(String queryWord, String typeWord) {
@@ -79,7 +79,6 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     private void init() {
-
         // Get an instance of the DataSourceFactory class
         mSearchDataSourceFactory = new SearchDataSourceFactory(mRepo, mQueryWord, mTypeWord);
 
@@ -90,7 +89,6 @@ public class SearchFragmentViewModel extends ViewModel {
         // Initialize the Loading state liveData
         mInitialLoading = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
                 (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
-
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
