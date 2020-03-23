@@ -50,7 +50,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="65" />
+                                                <entry key="scalingPercent" value="101" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -62,7 +62,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="000000" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Desktop/Art Place App/Launch icon (circle).png" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/Launch icon (circle).png" />
                                     </map>
                                   </option>
                                 </PersistentState>
