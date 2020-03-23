@@ -74,6 +74,8 @@ import dev.iotarho.artplace.app.utils.NetworkState;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 
+import static dev.iotarho.artplace.app.ui.mainactivity.MainActivity.SEARCH_WORD_EXTRA;
+
 public class SearchFragment extends Fragment implements
         OnResultClickListener,
         SwipeRefreshLayout.OnRefreshListener, OnRefreshListener {
@@ -102,6 +104,18 @@ public class SearchFragment extends Fragment implements
     private boolean isMenuItemChecked;
 
     private PreferenceUtils prefUtils;
+
+    public static SearchFragment newInstance() {
+        return new SearchFragment();
+    }
+
+    public static SearchFragment newInstanceWithExtra(String query) {
+        SearchFragment searchFragment = new SearchFragment();
+        Bundle args = new Bundle();
+        args.putString(SEARCH_WORD_EXTRA, query);
+        searchFragment.setArguments(args);
+        return new SearchFragment();
+    }
 
     // Required empty public constructor
     public SearchFragment() {
@@ -144,15 +158,15 @@ public class SearchFragment extends Fragment implements
         Log.d(TAG, "queryString: " + queryString);
         mViewModelFactory = Injection.provideSearchViewModelFactory(queryString, searchTypeString);
 
-        // Get the search word from the intent
-        Bundle appData = getArguments();//getIntent().getBundleExtra(SearchManager.APP_DATA); //  getArguments().
-        if (appData != null) {
-            queryString = appData.getString(MainActivity.SEARCH_WORD_EXTRA);
-            Log.d(TAG, "onCreateView, queryString: " + queryString);
-        }
-
         // Initialize the ViewModel
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
+
+        // Get the search word from the intent
+        Bundle appData = getArguments(); //getIntent().getBundleExtra(SearchManager.APP_DATA);
+        if (appData != null) {
+            queryString = appData.getString(SEARCH_WORD_EXTRA);
+            Log.d(TAG, "onCreateView, queryString: " + queryString);
+        }
 
         // Set the UI
         setupUi();
@@ -256,7 +270,7 @@ public class SearchFragment extends Fragment implements
         SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+//        searchView.setMaxWidth(Integer.MIN_VALUE);
 
         if (searchManager == null) {
             return;

@@ -105,6 +105,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     private SearchView mSearchView;
 
+    public static ArtworksFragment newInstance() {
+        return new ArtworksFragment();
+    }
 
     public ArtworksFragment() {
         // Required empty public constructor

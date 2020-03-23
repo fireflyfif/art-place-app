@@ -37,6 +37,7 @@ package dev.iotarho.artplace.app.ui.mainactivity;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.database.DataSetObservable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SearchEvent;
@@ -153,9 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
             Log.d(TAG, "handleIntent, queryString: " + query);
-            Bundle args = new Bundle();
-            args.putString(SEARCH_WORD_EXTRA, query);
-            createSearchFragment().setArguments(args);
+            SearchFragment.newInstanceWithExtra(query);
         }
     }
 
@@ -180,9 +179,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 toolbar.setTitle(mTitle);
                 break;
             case 1:
-//                mTitle = getString(R.string.title_search);
-//                toolbar.setTitle(mTitle);
-                toolbar.inflateMenu(R.menu.search_menu);
+                mTitle = getString(R.string.title_search);
+                toolbar.setTitle(mTitle);
+//                toolbar.inflateMenu(R.menu.search_menu);
                 break;
             case 2:
                 mTitle = getString(R.string.title_favorites);
@@ -204,22 +203,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
         bottomNavigation.addItem(favoritesItem);
-    }
-
-    private Fragment createArtworksFragment() {
-        Fragment artworksFragment = new ArtworksFragment();
-        // Set arguments here, TODO: Why?
-        Bundle bundle = new Bundle();
-        artworksFragment.setArguments(bundle);
-        return artworksFragment;
-    }
-
-    private FavoritesFragment createFavFragment() {
-        return new FavoritesFragment();
-    }
-
-    private SearchFragment createSearchFragment() {
-        return new SearchFragment();
     }
 
     private void setupBottomNavStyle() {
@@ -247,9 +230,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         viewPager.setOffscreenPageLimit(3);
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
 
-        mPagerAdapter.addFragments(createArtworksFragment());
-        mPagerAdapter.addFragments(createSearchFragment());
-        mPagerAdapter.addFragments(createFavFragment());
+        mPagerAdapter.addFragments(ArtworksFragment.newInstance());
+        mPagerAdapter.addFragments(SearchFragment.newInstance());
+        mPagerAdapter.addFragments(FavoritesFragment.newInstance());
 
         viewPager.setAdapter(mPagerAdapter);
     }

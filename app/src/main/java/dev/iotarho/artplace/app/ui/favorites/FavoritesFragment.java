@@ -102,6 +102,10 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     private FavArtworksViewModel mFavArtworksViewModel;
     private String mTitle;
 
+    public static FavoritesFragment newInstance() {
+        return new FavoritesFragment();
+    }
+
     // Required empty public constructor
     public FavoritesFragment() {
     }
