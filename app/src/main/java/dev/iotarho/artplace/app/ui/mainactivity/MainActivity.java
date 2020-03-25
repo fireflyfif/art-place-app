@@ -37,19 +37,15 @@ package dev.iotarho.artplace.app.ui.mainactivity;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.database.DataSetObservable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SearchEvent;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -113,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mTitle);
         }
-
-//        handleIntent(getIntent());
 
         setupViewPager();
         setupBottomNavStyle();
