@@ -17,6 +17,7 @@ import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
+import dev.iotarho.artplace.app.utils.Utils;
 
 public class SearchResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -45,7 +46,6 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
     public void bindTo(Result result, int position) {
 
         currentResult = result;
-
         if (result != null) {
 
             if (result.getLinks() != null) {
@@ -56,13 +56,11 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
                     String thumbnailPathString = thumbnail.getHref();
                     Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
-                    if (thumbnailPathString == null || thumbnailPathString.isEmpty()) {
+                    if (Utils.isNullOrEmpty(thumbnailPathString) || thumbnailPathString.equals(Thumbnail.NO_IMAGE)) {
                         // If it's empty or null -> set the placeholder
-                        Picasso.get()
-                                .load(R.color.color_primary)
-                                .placeholder(R.color.color_primary)
-                                .error(R.color.color_error)
-                                .into(searchThumbnail);
+                        // TODO: Hide the whole item
+                        Log.d(TAG, "Current thumbnail is empty or null: " + thumbnailPathString);
+                        searchThumbnail.setImageResource(R.color.color_primary);
                     } else {
                         // If it's not empty -> load the image
                         Picasso.get()
@@ -86,7 +84,6 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
 
     @Override
     public void onClick(View v) {
-//        Result currentResult = getItem(getAdapterPosition());
         mClickHandler.onResultClick(currentResult);
     }
 }

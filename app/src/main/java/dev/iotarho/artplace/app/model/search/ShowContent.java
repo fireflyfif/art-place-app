@@ -99,8 +99,6 @@ public class ShowContent implements Parcelable {
 
     public ShowContent() {}
 
-
-
     public String getId() {
         return id;
     }

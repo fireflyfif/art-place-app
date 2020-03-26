@@ -43,6 +43,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Thumbnail implements Parcelable {
 
+    public static final String NO_IMAGE = "/assets/shared/missing_image.png";
+
     /*
     Link to the image thumbnail in "medium" size
      */

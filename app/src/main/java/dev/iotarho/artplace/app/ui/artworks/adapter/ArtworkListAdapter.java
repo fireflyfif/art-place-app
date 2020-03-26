@@ -58,6 +58,7 @@ import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.Utils;
 
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
 public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder> implements Filterable {
@@ -149,12 +150,20 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     }
 
     @Override
+    public void onCurrentListChanged(@Nullable PagedList<Artwork> previousList, @Nullable PagedList<Artwork> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+
+        mArtworkList = currentList;
+        notifyDataSetChanged();
+    }
+
+    /*@Override
     public void onCurrentListChanged(@Nullable PagedList<Artwork> currentList) {
         super.onCurrentListChanged(currentList);
 
         mArtworkList = currentList;
         notifyDataSetChanged();
-    }
+    }*/
 
     @Override
     public Filter getFilter() {
@@ -166,7 +175,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                 FilterResults filterResults = new FilterResults();
 
-                if (TextUtils.isEmpty(queryWord)) {
+                if (Utils.isNullOrEmpty(queryWord)) {
                     mArtworkList = getCurrentList();
                     filterResults.values = mArtworkList;
                     if (mArtworkList != null) {

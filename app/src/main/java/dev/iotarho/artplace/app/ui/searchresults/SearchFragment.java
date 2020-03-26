@@ -197,6 +197,7 @@ public class SearchFragment extends Fragment implements
         mViewModel.getSearchResultsLiveData().observe(requireActivity(), results -> {
             if (results != null) {
                 mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
+                mSearchAdapter.updateList(results);
             }
         });
 
@@ -244,7 +245,10 @@ public class SearchFragment extends Fragment implements
 
         Log.d(TAG, "requestNewCall: queryWord: " + queryWord + " searchType: " + searchType);
         mViewModel.refreshSearchLiveData(queryWord, searchType)
-                .observe(this, results -> mSearchAdapter.submitList(results));
+                .observe(this, results -> {
+                    mSearchAdapter.submitList(results);
+                    mSearchAdapter.updateList(results);
+                });
     }
 
     @Override
@@ -270,7 +274,6 @@ public class SearchFragment extends Fragment implements
         SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-//        searchView.setMaxWidth(Integer.MIN_VALUE);
 
         if (searchManager == null) {
             return;
@@ -287,6 +290,7 @@ public class SearchFragment extends Fragment implements
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit, query: " + query);
+                mSearchAdapter.getFilter().filter(query);
                 return false;
             }
 
@@ -296,6 +300,7 @@ public class SearchFragment extends Fragment implements
                 if (newText.length() > 3) {
                     // Save the search query into SharedPreference
                     prefUtils.saveSearchQuery(newText);
+                    mSearchAdapter.getFilter().filter(newText);
                     requestNewCall(newText, searchTypeString);
                 }
                 return false;

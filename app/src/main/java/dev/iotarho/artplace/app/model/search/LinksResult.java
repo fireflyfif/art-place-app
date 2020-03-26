@@ -37,6 +37,7 @@ package dev.iotarho.artplace.app.model.search;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageView;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -57,6 +58,9 @@ public class LinksResult implements Parcelable {
     @SerializedName("thumbnail")
     @Expose
     private Thumbnail thumbnail;
+
+    @SerializedName("images")
+    private ImagesObject images;
 
     public Self getSelf() {
         return self;
@@ -93,6 +97,7 @@ public class LinksResult implements Parcelable {
         dest.writeParcelable(this.self, flags);
         dest.writeParcelable(this.permalink, flags);
         dest.writeParcelable(this.thumbnail, flags);
+        dest.writeParcelable(this.images, flags);
     }
 
     public LinksResult() {
@@ -102,6 +107,7 @@ public class LinksResult implements Parcelable {
         this.self = in.readParcelable(Self.class.getClassLoader());
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
+        this.images = in.readParcelable(ImageView.class.getClassLoader());
     }
 
     public static final Creator<LinksResult> CREATOR = new Creator<LinksResult>() {
@@ -115,4 +121,12 @@ public class LinksResult implements Parcelable {
             return new LinksResult[size];
         }
     };
+
+    public ImagesObject getImages() {
+        return images;
+    }
+
+    public void setImages(ImagesObject images) {
+        this.images = images;
+    }
 }

@@ -35,22 +35,34 @@
 
 package dev.iotarho.artplace.app.ui.searchresults.adapter;
 
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
+import dev.iotarho.artplace.app.model.Thumbnail;
+import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.Utils;
 
-public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.ViewHolder> {
+public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.ViewHolder> implements Filterable {
 
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
@@ -58,6 +70,9 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     private NetworkState mNetworkState;
     private OnRefreshListener mRefreshHandler;
     private OnResultClickListener mClickHandler;
+
+    private List<Result> resultList;
+    private Result objectResult;
 
     public SearchListAdapter(OnResultClickListener clickHandler, OnRefreshListener refreshListener) {
         super(Result.DIFF_CALLBACK);
@@ -83,7 +98,8 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SearchResultViewHolder) {
             if (getItem(position) != null) {
-                ((SearchResultViewHolder) holder).bindTo(getItem(position), position);
+                Result resultItem = resultList.get(position);
+                ((SearchResultViewHolder) holder).bindTo(resultItem, position);
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
@@ -103,6 +119,22 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         }
     }
 
+    @Override
+    public int getItemCount() {
+        if (resultList != null) {
+            return resultList.size();
+        }
+        return super.getItemCount();
+    }
+
+    @Override
+    public void onCurrentListChanged(@Nullable PagedList<Result> previousList, @Nullable PagedList<Result> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+
+        resultList = currentList;
+        notifyDataSetChanged();
+    }
+
     public void setNetworkState(NetworkState newNetworkState) {
         NetworkState previousState = mNetworkState;
         boolean previousExtraRow = hasExtraRow();
@@ -118,5 +150,49 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         } else if (newExtraRow && previousState != newNetworkState){
             notifyItemChanged(getItemCount() - 1);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<Result> filteredList = new ArrayList<>();
+                FilterResults filterResults = new FilterResults();
+
+                resultList = getCurrentList();
+
+                for (Result currentResult : resultList) {
+                    LinksResult linksResult = currentResult.getLinks();
+                    Thumbnail thumbnail = linksResult.getThumbnail();
+                    String thumbnailLink = thumbnail.getHref();
+
+                    if (Utils.isNullOrEmpty(thumbnailLink) || thumbnailLink.equals(Thumbnail.NO_IMAGE)) {
+                        filteredList.remove(currentResult);
+                        Log.d("SearchListAdapter", "Removing an item without a thumbnail: " + currentResult.getTitle());
+                        resultList = filteredList;
+                    } else  {
+                        filteredList.add(currentResult);
+                        resultList = filteredList;
+                    }
+                }
+                filterResults.values = filteredList;
+                filterResults.count = filteredList.size();
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                resultList = (List<Result>) results.values;
+                Log.d("SearchListAdapter", "Filtered list, publishResults: " + results.count);
+                updateList(resultList);
+            }
+        };
+    }
+
+    public void updateList(List<Result> resultList) {
+        this.resultList = resultList;
+        Log.d("SearchListAdapter", "updateList, resultList: " + resultList.size() );
+        notifyDataSetChanged();
     }
 }
