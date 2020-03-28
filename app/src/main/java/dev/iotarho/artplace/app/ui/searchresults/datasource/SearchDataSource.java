@@ -90,12 +90,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         mInitialLoading.postValue(NetworkState.LOADING);
         mNetworkState.postValue(NetworkState.LOADING);
 
-        Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString);
-        Log.d(LOG_TAG, "search loadInitial: type word: " + mTypeString);
-
-        if (mQueryString == null || mQueryString.isEmpty()) {
-            mQueryString = "Andy Warhol";
-        }
+        Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString + "\ntype word:" + mTypeString);
 
         mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
@@ -107,14 +102,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         mInitialLoading.postValue(NetworkState.LOADED);
 
                         // Get the next link for paging the results
-                        Links links = searchResponse.getLinks();
-                        if (links != null) {
-                            Next next = links.getNext();
-                            if (next != null) {
-                                mNextUrl = next.getHref();
-                            }
-                            Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
-                        }
+                        mNextUrl = getNextPage(searchResponse);
 
                         String receivedQuery = searchResponse.getQ();
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
@@ -170,6 +158,18 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         });
     }
 
+    private String getNextPage(SearchWrapperResponse searchResponse) {
+        Links links = searchResponse.getLinks();
+        if (links != null) {
+            Next next = links.getNext();
+            if (next != null) {
+                return next.getHref();
+            }
+            Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
+        }
+        return null;
+    }
+
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
         // Ignore this, because we don't need to load anything before the initial load of data
@@ -177,10 +177,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
-
         Log.i(LOG_TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
-        Log.d(LOG_TAG, "loadAfter: query word: " + mQueryString);
-        Log.d(LOG_TAG, "loadAfter: type word: " + mTypeString);
 
         // Set Network State to Loading
         mNetworkState.postValue(NetworkState.LOADING);
@@ -196,26 +193,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
 
                         if (totalCount != 0) {
-                            Links links = searchResponse.getLinks();
-                            if (links != null) {
-                                Next next = links.getNext();
-
-                                // Try and catch block doesn't crash the app,
-                                // and stops when there is no more next urls for next page
-                                try {
-                                    mNextUrl = next.getHref();
-                                } catch (NullPointerException e) {
-                                    Log.e(LOG_TAG, "The next.getHref() is null: " + e);
-                                    // Return so that it stops repeating the same call
-                                    return;
-                                } catch (Exception e) {
-                                    Log.e(LOG_TAG, "The general exception is: " + e);
-                                    // Return so that it stops repeating the same call
-                                    return;
-                                }
-
-                                Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
-                            }
+                            mNextUrl = getNextPage(searchResponse);
                         } else {
                             mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
@@ -235,13 +213,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             Log.d(LOG_TAG, "Next key : " + nextKey);
 
                             List<Result> resultList = embeddedResults.getResults();
-
                             List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
-                            Log.d(LOG_TAG, "List of results after filtering: " + filteredList.size());
 
                             callback.onResult(filteredList, nextKey);
 
-                            Log.d(LOG_TAG, "List of Search Result loadAfter : " + resultList.size());
+                            Log.d(LOG_TAG, "List of Search Result loadAfter : " + filteredList.size());
                         }
 
                         mNetworkState.postValue(NetworkState.LOADED);

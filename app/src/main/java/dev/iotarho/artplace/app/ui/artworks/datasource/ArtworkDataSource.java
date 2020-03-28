@@ -71,8 +71,8 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     public ArtworkDataSource(ArtsyRepository repository) {
         mRepository = repository;
 
-        mNetworkState = new MutableLiveData();
-        mInitialLoading = new MutableLiveData();
+        mNetworkState = new MutableLiveData<>();
+        mInitialLoading = new MutableLiveData<>();
     }
 
     public MutableLiveData getNetworkState() {
