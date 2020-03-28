@@ -157,14 +157,6 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
         notifyDataSetChanged();
     }
 
-    /*@Override
-    public void onCurrentListChanged(@Nullable PagedList<Artwork> currentList) {
-        super.onCurrentListChanged(currentList);
-
-        mArtworkList = currentList;
-        notifyDataSetChanged();
-    }*/
-
     @Override
     public Filter getFilter() {
         return new Filter() {

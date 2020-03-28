@@ -60,6 +60,7 @@ public class LinksResult implements Parcelable {
     private Thumbnail thumbnail;
 
     @SerializedName("images")
+    @Expose
     private ImagesObject images;
 
     public Self getSelf() {
@@ -107,7 +108,7 @@ public class LinksResult implements Parcelable {
         this.self = in.readParcelable(Self.class.getClassLoader());
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
-        this.images = in.readParcelable(ImageView.class.getClassLoader());
+        this.images = in.readParcelable(ImagesObject.class.getClassLoader());
     }
 
     public static final Creator<LinksResult> CREATOR = new Creator<LinksResult>() {

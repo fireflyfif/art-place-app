@@ -47,6 +47,7 @@ import dev.iotarho.artplace.app.model.search.ShowContent;
 public class StringUtils {
 
     private static final String TAG = StringUtils.class.getSimpleName();
+    private static final String NO_IMAGE = "/assets/shared/missing_image.png";
 
     public static String getArtistNameFromSlug(Artwork artwork) {
         String artistNameFromSlug;
@@ -107,5 +108,12 @@ public class StringUtils {
             return "";
         }
         return startDate.substring(0, indexOf); //this will give 2017-05-31
+    }
+
+    public static String getImageUrl(String image) {
+        if (image.contains(NO_IMAGE)) {
+            return "";
+        }
+        return image;
     }
 }

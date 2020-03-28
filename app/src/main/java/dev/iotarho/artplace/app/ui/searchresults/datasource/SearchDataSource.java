@@ -41,7 +41,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dev.iotarho.artplace.app.model.Links;
@@ -114,7 +113,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             if (next != null) {
                                 mNextUrl = next.getHref();
                             }
-
                             Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
                         }
 
@@ -123,9 +121,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
                         List<Result> resultList = embeddedResults.getResults();
-
                         Log.d(LOG_TAG, "List of results: " + resultList.size());
-
                         // The response code is 200, but because of a typo, the API returns an empty list
                         if (resultList.size() == 0) {
                             // TODO: Show a message there is no data for this query
@@ -133,7 +129,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                         }
 
-                        callback.onResult(resultList, null, 2L);
+                        List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
+                        Log.d(LOG_TAG, "List of results after filtering: " + filteredList.size());
+
+                        callback.onResult(filteredList, null, 2L);
                     }
 
                     Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
@@ -169,7 +168,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                 Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
-
     }
 
     @Override
@@ -238,7 +236,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                             List<Result> resultList = embeddedResults.getResults();
 
-                            callback.onResult(resultList, nextKey);
+                            List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
+                            Log.d(LOG_TAG, "List of results after filtering: " + filteredList.size());
+
+                            callback.onResult(filteredList, nextKey);
 
                             Log.d(LOG_TAG, "List of Search Result loadAfter : " + resultList.size());
                         }
@@ -264,6 +265,5 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                 Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
-
     }
 }

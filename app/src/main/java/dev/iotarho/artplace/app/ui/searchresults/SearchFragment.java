@@ -197,7 +197,6 @@ public class SearchFragment extends Fragment implements
         mViewModel.getSearchResultsLiveData().observe(requireActivity(), results -> {
             if (results != null) {
                 mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
-                mSearchAdapter.updateList(results);
             }
         });
 
@@ -247,7 +246,6 @@ public class SearchFragment extends Fragment implements
         mViewModel.refreshSearchLiveData(queryWord, searchType)
                 .observe(this, results -> {
                     mSearchAdapter.submitList(results);
-                    mSearchAdapter.updateList(results);
                 });
     }
 
@@ -290,7 +288,6 @@ public class SearchFragment extends Fragment implements
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit, query: " + query);
-                mSearchAdapter.getFilter().filter(query);
                 return false;
             }
 
@@ -300,7 +297,6 @@ public class SearchFragment extends Fragment implements
                 if (newText.length() > 3) {
                     // Save the search query into SharedPreference
                     prefUtils.saveSearchQuery(newText);
-                    mSearchAdapter.getFilter().filter(newText);
                     requestNewCall(newText, searchTypeString);
                 }
                 return false;

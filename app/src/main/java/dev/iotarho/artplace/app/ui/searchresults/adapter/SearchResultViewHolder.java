@@ -50,16 +50,13 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
 
             if (result.getLinks() != null) {
                 LinksResult linksResult = result.getLinks();
-
-                if (linksResult.getThumbnail() != null) {
-                    Thumbnail thumbnail = linksResult.getThumbnail();
+                Thumbnail thumbnail = linksResult.getThumbnail();
+                if (thumbnail != null) {
                     String thumbnailPathString = thumbnail.getHref();
                     Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
-                    if (Utils.isNullOrEmpty(thumbnailPathString) || thumbnailPathString.equals(Thumbnail.NO_IMAGE)) {
+                    if (Utils.isNullOrEmpty(thumbnailPathString)) {
                         // If it's empty or null -> set the placeholder
-                        // TODO: Hide the whole item
-                        Log.d(TAG, "Current thumbnail is empty or null: " + thumbnailPathString);
                         searchThumbnail.setImageResource(R.color.color_primary);
                     } else {
                         // If it's not empty -> load the image
