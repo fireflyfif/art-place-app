@@ -102,7 +102,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
                 Artwork currentArtwork = mArtworkList.get(position);
-                ((ArtworkItemViewHolder) holder).bindTo(currentArtwork);
+                ((ArtworkItemViewHolder) holder).bindTo(currentArtwork, position);
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);

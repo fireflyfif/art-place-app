@@ -44,7 +44,6 @@ import androidx.paging.PageKeyedDataSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.iotarho.artplace.app.ArtPlaceApp;
 import dev.iotarho.artplace.app.model.Links;
 import dev.iotarho.artplace.app.model.Next;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
@@ -96,12 +95,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     ArtworkWrapperResponse artworkWrapperResponse = response.body();
                     if (artworkWrapperResponse != null) {
                         EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
-                        Links links = artworkWrapperResponse.getLinks();
-                        if (links != null) {
-                            Next next = links.getNext();
-                            mNextUrl = next.getHref();
-                            Log.d(TAG, "Link to next (loadInitial): " + mNextUrl);
-                        }
+                        mNextUrl = getNextPage(artworkWrapperResponse);
 
                         List<Artwork> artworkList = embeddedArtworks.getArtworks();
                         callback.onResult(artworkList, null, 2L);
@@ -128,7 +122,18 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
+    }
 
+    private String getNextPage(ArtworkWrapperResponse artworkWrapperResponse) {
+        Links links = artworkWrapperResponse.getLinks();
+        if (links != null) {
+            Next next = links.getNext();
+            if (next != null) {
+                return next.getHref();
+            }
+            Log.d(TAG, "loadInitial: Next page link: " + mNextUrl);
+        }
+        return null;
     }
 
     @Override
@@ -152,26 +157,7 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     if (artworkWrapperResponse != null) {
                         EmbeddedArtworks embeddedArtworks = artworkWrapperResponse.getEmbeddedArtworks();
 
-                        Links links = artworkWrapperResponse.getLinks();
-                        if (links != null) {
-                            Next next = links.getNext();
-
-                            // Try and catch block doesn't crash the app,
-                            // and stops when there is no more next urls for next page
-                            try {
-                                mNextUrl = next.getHref();
-                            } catch (NullPointerException e) {
-                                Log.e(TAG, "The next.getHref() is null: " + e);
-                                // Return so that it stops repeating the same call
-                                return;
-                            } catch (Exception e) {
-                                Log.e(TAG, "The general exception is: " + e);
-                                // Return so that it stops repeating the same call
-                                return;
-                            }
-
-                            Log.d(TAG, "Link to next: " + mNextUrl);
-                        }
+                        mNextUrl = getNextPage(artworkWrapperResponse);
 
                         List<Artwork> artworkList = new ArrayList<>();
                         ;

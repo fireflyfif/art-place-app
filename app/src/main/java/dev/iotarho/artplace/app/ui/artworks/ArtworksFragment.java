@@ -190,7 +190,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 // When the NetworkStatus is Failed
                 // show the error message and hide the Progress Bar
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                             Snackbar.LENGTH_LONG).show();
                 }

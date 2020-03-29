@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:spanCount="2"
+            app:spanCount="@integer/list_column_count"
             tools:listitem="@layout/search_result_item" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

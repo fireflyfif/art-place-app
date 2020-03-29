@@ -55,17 +55,11 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
                     String thumbnailPathString = thumbnail.getHref();
                     Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
-                    if (Utils.isNullOrEmpty(thumbnailPathString)) {
-                        // If it's empty or null -> set the placeholder
-                        searchThumbnail.setImageResource(R.color.color_primary);
-                    } else {
-                        // If it's not empty -> load the image
-                        Picasso.get()
-                                .load(thumbnailPathString)
-                                .placeholder(R.color.color_primary)
-                                .error(R.color.color_error)
-                                .into(searchThumbnail);
-                    }
+                    Picasso.get()
+                            .load(thumbnailPathString)
+                            .placeholder(R.color.color_surface)
+                            .error(R.color.color_error)
+                            .into(searchThumbnail);
                 }
             }
 
