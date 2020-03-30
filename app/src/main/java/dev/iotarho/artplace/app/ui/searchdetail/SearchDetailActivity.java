@@ -44,7 +44,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,23 +55,31 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.model.ArtworksLink;
+import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.artists.Artist;
+import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 
@@ -85,70 +92,101 @@ public class SearchDetailActivity extends AppCompatActivity {
     // Search Detail main Views
     @BindView(R.id.content_title)
     TextView contentTitle;
+
     @BindView(R.id.content_type)
     TextView contentType;
+
     @BindView(R.id.content_image)
     ImageView contentImage;
+
     @BindView(R.id.content_image2)
     ImageView secondImage;
+
     @BindView(R.id.content_description)
     TextView contentDescription;
+
     @BindView(R.id.toolbar_detail)
     Toolbar toolbar;
+
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
+
     @BindView(R.id.artwork_title_layout)
     LinearLayout bgLayout;
+
     @BindView(R.id.card_view_content)
     CardView cardView;
+
     @BindView(R.id.read_more_button)
     ImageButton readMoreButton;
 
     // Show Card Views
     @BindView(R.id.show_cardview)
     CardView showCardView;
+
     @BindView(R.id.show_start_date)
     TextView showStartDate;
+
     @BindView(R.id.show_start_label)
     TextView showStartDateLabel;
+
     @BindView(R.id.show_end_date)
     TextView showEndDate;
+
     @BindView(R.id.show_end_label)
     TextView showEndDateLabel;
+
     @BindView(R.id.show_description)
     TextView showDescription;
+
     @BindView(R.id.show_description_label)
     TextView showDescriptionLabel;
+
     @BindView(R.id.show_press_release)
     TextView showPress;
+
     @BindView(R.id.show_press_label)
     TextView showPressLabel;
 
     // Artist Card Views
     @BindView(R.id.artist_cardview)
     CardView artistCardView;
+
     @BindView(R.id.artist_name)
     TextView artistName;
+
     @BindView(R.id.artist_home)
     TextView artistHomeTown;
+
     @BindView(R.id.hometown_label)
     TextView hometownLabel;
+
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
+
     @BindView(R.id.artist_location)
     TextView artistLocation;
+
     @BindView(R.id.artist_location_label)
     TextView locationLabel;
+
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
+
     @BindView(R.id.artist_nationality_label)
     TextView artistNationalityLabel;
+
     @BindView(R.id.artist_bio)
     TextView artistBio;
+
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
+
     @BindDimen(R.dimen.margin_42dp)
     int bottomMargin;
+
+    @BindView(R.id.artworks_by_artist_rv)
+    RecyclerView artworksByArtistRv;
 
     private ShowsDetailViewModel mShowsViewModel;
     private ArtistsDetailViewModel mArtistViewModel;
@@ -358,7 +396,7 @@ public class SearchDetailActivity extends AppCompatActivity {
         mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
         mArtistViewModel.initArtistData(receivedArtistUrlString);
 
-        mArtistViewModel.getArtistData().observe(this, artists -> { // onChanged is never called?
+        mArtistViewModel.getArtistData().observe(this, artists -> {
             if (artists != null) {
                 setupArtistUi(artists);
             }
@@ -442,5 +480,23 @@ public class SearchDetailActivity extends AppCompatActivity {
             artistBio.setVisibility(View.GONE);
             artistBioLabel.setVisibility(View.GONE);
         }
+
+        ImageLinks imageLinks = currentArtist.getLinks();
+        ArtworksLink artworksLink = imageLinks.getArtworksLink();
+        String href = artworksLink.getHref();
+        Log.d(TAG, "temp, href of artworks: " + href);
+        initArtworksByArtistsViewModel(href);
+    }
+
+    private void initArtworksByArtistsViewModel(String artworksLink) {
+        mArtistViewModel.initArtworksByArtistData(artworksLink);
+        mArtistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
+    }
+
+    private void setupArtworksByArtist(List<Artwork> artworksList) {
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, null);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
+        artworksByArtistRv.setAdapter(artworksByArtist);
     }
 }
