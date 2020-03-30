@@ -32,54 +32,40 @@
   ~
   ~
   -->
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_cardview"
+    android:id="@+id/network_state_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_view_margin"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="?colorError"
-    app:cardCornerRadius="@dimen/fav_cardview_corners"
-    app:cardElevation="6dp"
-    app:cardPreventCornerOverlap="true">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_16dp">
 
-    <LinearLayout
-        android:id="@+id/network_state_layout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/network_state_error_msg"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_16dp">
+        android:fontFamily="@font/work_sans"
+        android:gravity="center"
+        android:padding="@dimen/padding_10dp"
+        android:text="@string/error_msg"
+        android:textColor="?colorControlNormal" />
 
-        <TextView
-            android:id="@+id/network_state_error_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/work_sans"
-            android:gravity="center"
-            android:padding="@dimen/padding_10dp"
-            android:text="@string/error_msg"
-            android:textColor="?colorControlNormal" />
+    <ImageButton
+        android:id="@+id/network_state_refresh_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/refresh_button_description"
+        android:focusable="true"
+        android:padding="@dimen/padding_10dp"
+        app:srcCompat="@drawable/ic_refresh_24dp" />
 
-        <ImageButton
-            android:id="@+id/network_state_refresh_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:contentDescription="@string/refresh_button_description"
-            android:focusable="true"
-            android:padding="@dimen/padding_10dp"
-            app:srcCompat="@drawable/ic_refresh_24dp" />
+    <ProgressBar
+        android:id="@+id/network_state_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_10dp" />
 
-        <ProgressBar
-            android:id="@+id/network_state_pb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_10dp" />
-
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

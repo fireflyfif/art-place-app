@@ -65,19 +65,23 @@ import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
+import dev.iotarho.artplace.app.callbacks.SnackMessageListener;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity;
 import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
 import dev.iotarho.artplace.app.utils.Utils;
 
 import static dev.iotarho.artplace.app.ui.mainactivity.MainActivity.SEARCH_WORD_EXTRA;
 
 public class SearchFragment extends Fragment implements
         OnResultClickListener,
-        SwipeRefreshLayout.OnRefreshListener, OnRefreshListener {
+        SnackMessageListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
 
@@ -212,7 +216,7 @@ public class SearchFragment extends Fragment implements
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS
                         && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Snackbar.make(coordinatorLayout, "Please search for another word.",
                             Snackbar.LENGTH_LONG).show();
                 }
@@ -224,8 +228,16 @@ public class SearchFragment extends Fragment implements
 
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
+                }
+
+                if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                    Log.d(TAG, "Network Status: " + networkState.getStatus());
+                    progressBar.setVisibility(View.INVISIBLE);
+                    // TODO: Show an empty image
+                    Snackbar.make(coordinatorLayout,"No results, sorry",
                             Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -393,7 +405,12 @@ public class SearchFragment extends Fragment implements
 
     @Override
     public void onRefreshConnection() {
-        // TODO: implement how to behave on refresh
-//        new RetrieveNetworkConnectivity(this, this).execute();
+        new RetrieveNetworkConnectivity(this).execute();
+    }
+
+    @Override
+    public void showSnackMessage(String resultMessage) {
+        Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
+        requestNewCall(queryString, searchTypeString);
     }
 }

@@ -126,10 +126,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     // Implement this method, as without the filtered list is producing an error
     @Override
     public int getItemCount() {
-        if (mArtworkList != null) {
-            return mArtworkList.size();
-        }
-        return super.getItemCount();
+        return mArtworkList != null ? mArtworkList.size() : 0;
     }
 
     public void setNetworkState(NetworkState newNetworkState) {

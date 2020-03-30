@@ -109,6 +109,10 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                 } else if (response.code() == 401) {
                     Log.d(TAG, "Error from the server message " + response.message());
 
+                } else if (response.code() == 504) { // todo: handle the timeout properly
+                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    Log.d(TAG, "Response code from initial load: " + response.code());
                 } else {
                     mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                     mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
@@ -151,7 +155,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         mRepository.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
-
                 if (response.isSuccessful()) {
                     ArtworkWrapperResponse artworkWrapperResponse = response.body();
                     if (artworkWrapperResponse != null) {
@@ -160,7 +163,6 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         mNextUrl = getNextPage(artworkWrapperResponse);
 
                         List<Artwork> artworkList = new ArrayList<>();
-                        ;
                         if (embeddedArtworks.getArtworks() != null) {
                             //long nextKey = params.key == 100 ? null: params.key + 30;
                             long nextKey;

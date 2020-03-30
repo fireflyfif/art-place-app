@@ -34,28 +34,28 @@ public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     public void bindView(NetworkState networkState) {
-
-        if (networkState != null &&
-                networkState.getStatus() == NetworkState.Status.RUNNING) {
-            networkLayout.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
-            errorMessage.setVisibility(View.GONE);
-            refreshButton.setVisibility(View.GONE);
-        } else if (networkState != null &&
-                networkState.getStatus() == NetworkState.Status.SUCCESS) {
-            networkLayout.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            errorMessage.setVisibility(View.GONE);
-            refreshButton.setVisibility(View.GONE);
-        } else if (networkState != null &&
-                networkState.getStatus() == NetworkState.Status.FAILED) {
-            networkLayout.setVisibility(View.VISIBLE);
-
-            progressBar.setVisibility(View.GONE);
-            errorMessage.setVisibility(View.VISIBLE);
-            refreshButton.setVisibility(View.VISIBLE);
-            // Set the click listener here
-            refreshButton.setOnClickListener(this::onClick);
+        if (networkState != null) {
+            switch (networkState.getStatus()) {
+                case RUNNING:
+                    networkLayout.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    errorMessage.setVisibility(View.GONE);
+                    refreshButton.setVisibility(View.GONE);
+                    break;
+                case SUCCESS:
+                    networkLayout.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.GONE);
+                    refreshButton.setVisibility(View.GONE);
+                    break;
+                case FAILED:
+                    networkLayout.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    refreshButton.setVisibility(View.VISIBLE);
+                    refreshButton.setOnClickListener(this); // Set the click listener here
+                    break;
+            }
         } else {
             networkLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);

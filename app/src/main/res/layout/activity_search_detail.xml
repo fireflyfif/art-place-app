@@ -53,7 +53,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_height"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorOnSurface"
+            app:collapsedTitleGravity="start"
+            app:contentScrim="?colorOnSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -78,14 +79,14 @@
 
             </FrameLayout>
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_detail"
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize"
                 android:background="@null"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -149,12 +150,12 @@
                         android:layout_marginBottom="@dimen/margin_8dp"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/work_sans"
-                        android:textSize="18sp"
                         android:paddingStart="@dimen/padding_6dp"
                         android:paddingLeft="@dimen/padding_6dp"
                         android:paddingEnd="@dimen/padding_6dp"
                         android:paddingRight="@dimen/padding_6dp"
                         android:textColor="?colorControlNormal"
+                        android:textSize="18sp"
                         tools:text="Artwork" />
 
                     <ImageView
@@ -162,15 +163,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:scaleType="fitCenter"
-                        tools:src="@drawable/pop_art_placeholder"/>
+                        tools:src="@drawable/pop_art_placeholder" />
 
                     <ImageButton
                         android:id="@+id/read_more_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/work_sans"
+                        android:gravity="center"
                         android:text="@string/read_more_button" />
 
                     <TextView

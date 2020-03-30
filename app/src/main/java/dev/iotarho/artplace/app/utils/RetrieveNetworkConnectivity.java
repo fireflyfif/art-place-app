@@ -55,15 +55,13 @@ public class RetrieveNetworkConnectivity extends AsyncTask<String, Void, String>
 
     private static final String TAG = RetrieveNetworkConnectivity.class.getSimpleName();
 
-    private WeakReference<ArtworksFragment> mContext;
     private SnackMessageListener mListener;
 
     boolean flag = false;
     private Exception mException;
 
 
-    public RetrieveNetworkConnectivity(ArtworksFragment context, SnackMessageListener snackMessageListener) {
-        mContext = new WeakReference<>(context);
+    public RetrieveNetworkConnectivity( SnackMessageListener snackMessageListener) {
         mListener = snackMessageListener;
     }
 

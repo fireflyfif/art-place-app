@@ -52,33 +52,31 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorControlNormal"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
-            app:contentScrim="?attr/colorOnSurface"
+            app:contentScrim="?colorOnBackground"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:fitsSystemWindows="true">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/blurry_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:src="?colorOnSurface" />
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <ImageView
                     android:id="@+id/artwork_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="48dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="48dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
@@ -110,7 +108,6 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fadingEdge="none"
         app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -126,13 +123,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_16dp"
-                android:layout_marginEnd="@dimen/margin_16dp"
                 android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
                 android:layout_marginBottom="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
                 android:text="@string/artist_label"
-                android:textSize="14sp"
                 android:textColor="?colorControlNormal"
-                android:fontFamily="@font/work_sans_light" />
+                android:textSize="14sp" />
 
             <include
                 android:id="@+id/artist_cardview"
@@ -143,13 +140,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_16dp"
-                android:layout_marginEnd="@dimen/margin_16dp"
                 android:layout_marginTop="@dimen/margin_24dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
                 android:layout_marginBottom="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
                 android:text="@string/similar_artworks_label"
-                android:textSize="14sp"
                 android:textColor="?colorControlNormal"
-                android:fontFamily="@font/work_sans_light" />
+                android:textSize="14sp" />
 
             <include layout="@layout/similar_artworks_cardview" />
 
@@ -161,7 +158,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/fab_contentDecription"
-        android:tint="@android:color/white"
+        android:tint="?android:colorBackground"
         app:behavior_autoHide="false"
         app:fabSize="normal"
         app:layout_anchor="@id/bottom_app_bar"

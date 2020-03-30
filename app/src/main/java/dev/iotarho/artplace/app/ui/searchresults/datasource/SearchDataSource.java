@@ -108,6 +108,16 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
+
+                        int totalCount = searchResponse.getTotalCount();
+                        Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
+
+                        if (totalCount != 0) {
+                            mNextUrl = getNextPage(searchResponse);
+                        } else {
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                        }
+
                         List<Result> resultList = embeddedResults.getResults();
                         Log.d(LOG_TAG, "List of results: " + resultList.size());
                         // The response code is 200, but because of a typo, the API returns an empty list
@@ -124,9 +134,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                     }
 
                     Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
-
                 } else {
-
                     switch (response.code()) {
                         case 400:
                             //TODO: Make display the following error message:
@@ -138,13 +146,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             break;
                         case 404:
                             // TODO: Not found results
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+//                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                     }
-
-                    //mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    //mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
 
                     Log.d(LOG_TAG, "Response code from initial load: " + response.code());
                 }

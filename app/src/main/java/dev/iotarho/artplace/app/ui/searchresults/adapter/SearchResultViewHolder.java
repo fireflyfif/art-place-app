@@ -17,7 +17,6 @@ import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
-import dev.iotarho.artplace.app.utils.Utils;
 
 public class SearchResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -44,33 +43,25 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
     }
 
     public void bindTo(Result result, int position) {
-
         currentResult = result;
-        if (result != null) {
 
-            if (result.getLinks() != null) {
-                LinksResult linksResult = result.getLinks();
-                Thumbnail thumbnail = linksResult.getThumbnail();
-                if (thumbnail != null) {
-                    String thumbnailPathString = thumbnail.getHref();
-                    Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
+        LinksResult linksResult = result.getLinks();
+        Thumbnail thumbnail = linksResult.getThumbnail();
+        String thumbnailPathString = thumbnail.getHref();
+        Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
-                    Picasso.get()
-                            .load(thumbnailPathString)
-                            .placeholder(R.color.color_surface)
-                            .error(R.color.color_error)
-                            .into(searchThumbnail);
-                }
-            }
+        Picasso.get()
+                .load(thumbnailPathString)
+                .placeholder(R.color.color_surface)
+                .error(R.color.color_error)
+                .into(searchThumbnail);
 
-            String titleString = result.getTitle();
-            searchTitle.setText(titleString);
-            Log.d(TAG, "Current search title: " + titleString);
+        String titleString = result.getTitle();
+        searchTitle.setText(titleString);
+        Log.d(TAG, "Current search title: " + titleString);
 
-            String typeString = result.getType();
-            searchType.setText(typeString);
-            Log.d(TAG, "Current search type: " + typeString);
-        }
+        String typeString = result.getType();
+        searchType.setText(typeString);
     }
 
     @Override

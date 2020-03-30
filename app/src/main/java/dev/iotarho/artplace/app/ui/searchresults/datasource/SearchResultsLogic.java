@@ -17,6 +17,9 @@ public class SearchResultsLogic {
     public static List<Result> getFilteredResults(List<Result> resultList) {
         List<Result> filteredList = new ArrayList<>();
         for (Result result : resultList) {
+            if (result.getLinks() == null) {
+                return null;
+            }
             LinksResult linksResult = result.getLinks();
             Thumbnail thumbnail = linksResult.getThumbnail();
             String thumbnailLink = "";
