@@ -50,6 +50,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -76,6 +77,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar_artist)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.artist_cardview)
+    MaterialCardView artistCard;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
@@ -94,19 +97,14 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistBioLabel;
 
     private ArtistsDetailViewModel mArtistViewModel;
-//    private ArtistDetailViewModelFactory mViewModelFactory;
-//    private TokenManager mTokenManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_detail);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -122,18 +120,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
-                SharedPreferences preferences = getSharedPreferences(Utils.PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
-                // Initialize the TokenManager
-//                mTokenManager = TokenManager.getInstance(this);
-
-                // Initialize the ViewModel
-//                mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
                 mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
                 mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
                 mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
                     if (artists != null) {
-
+                        artistCard.setVisibility(View.VISIBLE);
                         for (int i = 0; i < artists.size(); i++) {
                             Artist artistCurrent = artists.get(i);
                             setupUi(artistCurrent);

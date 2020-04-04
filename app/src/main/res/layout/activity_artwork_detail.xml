@@ -128,6 +128,8 @@
                 android:layout_marginBottom="@dimen/margin_8dp"
                 android:fontFamily="@font/work_sans_light"
                 android:text="@string/artist_label"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:textColor="?colorControlNormal"
                 android:textSize="14sp" />
 

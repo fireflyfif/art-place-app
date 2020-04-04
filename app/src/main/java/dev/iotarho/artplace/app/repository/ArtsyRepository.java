@@ -41,7 +41,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dev.iotarho.artplace.app.model.artists.Artist;
@@ -107,6 +106,35 @@ public class ArtsyRepository {
         return loadSimilarArtworks(similarArtUrl);
     }
 
+    public LiveData<Artwork> getArtworkFromLink(String artworkLink) {
+        return loadArtworkInfo(artworkLink);
+    }
+
+    private LiveData<Artwork> loadArtworkInfo(String artworkLink) {
+        MutableLiveData<Artwork> artworkMutableData = new MutableLiveData<>();
+        getArtsyApi().getArtworkFromLink(artworkLink).enqueue(new Callback<Artwork>() {
+            @Override
+            public void onResponse(@NonNull Call<Artwork> call, @NonNull Response<Artwork> response) {
+                if (response.isSuccessful()) {
+                    Artwork artwork = response.body();
+                    if (artwork != null) {
+                        artworkMutableData.setValue(artwork);
+                    }
+                    Log.d(TAG, "Artwork loaded successfully! " + response.code());
+                } else {
+                    artworkMutableData.setValue(null);
+                    Log.w(TAG, "Artwork load failed! " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Artwork> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+        return artworkMutableData;
+    }
+
     /**
      * Method for accessing the Similar artworks endpoint from the Artsy API
      *
@@ -128,13 +156,13 @@ public class ArtsyRepository {
                     Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
                 } else {
                     similarArtData.setValue(null);
-                    Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Similar artworks load failed! " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "OnFailure! " + t.getMessage());
             }
         });
 
@@ -162,13 +190,13 @@ public class ArtsyRepository {
                     Log.d(TAG, "Loaded successfully! " + response.code());
                 } else {
                     artistLiveData.setValue(null);
-                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "OnFailure! " + t.getMessage());
             }
         });
 
@@ -198,7 +226,7 @@ public class ArtsyRepository {
 
             @Override
             public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "OnFailure! " + t.getMessage());
             }
         });
         return artworkListData;
@@ -225,13 +253,13 @@ public class ArtsyRepository {
                     Log.d(TAG, "Loaded successfully! " + response.code());
                 } else {
                     artistLiveData.setValue(null);
-                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "OnFailure! " + t.getMessage());
             }
         });
 
@@ -255,13 +283,13 @@ public class ArtsyRepository {
                     Log.d(TAG, "Loaded successfully! " + response.code());
                 } else {
                     searchLiveData.setValue(null);
-                    Log.d(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
-                Log.d(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "OnFailure! " + t.getMessage());
             }
         });
 

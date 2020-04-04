@@ -33,8 +33,7 @@
   ~
   -->
 
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
@@ -45,10 +44,12 @@
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
     android:layout_marginBottom="@dimen/margin_bottom_cardview"
+    android:visibility="gone"
     app:cardBackgroundColor="?colorOnSurface"
     app:cardCornerRadius="8dp"
     app:cardElevation="6dp"
-    app:cardPreventCornerOverlap="true">
+    app:cardPreventCornerOverlap="true"
+    tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_constraint"
@@ -110,13 +111,13 @@
                 android:id="@+id/artwork_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_6dp"
                 android:fontFamily="@font/work_sans_light"
                 android:gravity="center_horizontal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="?colorControlNormal"
                 android:textIsSelectable="true"
                 android:textSize="@dimen/year_text_size"
-                android:layout_marginTop="@dimen/margin_6dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -127,12 +128,12 @@
                 android:id="@+id/artwork_artist_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawableTint="@color/color_primary"
                 android:fontFamily="@font/work_sans"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:layout_marginTop="6dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/color_primary"
                 android:textStyle="normal"
@@ -289,10 +290,10 @@
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
                 app:escapeHtml="false"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/info_label"
                 app:layout_constraintTop_toBottomOf="@+id/info_label"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Artwork Additional Information" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

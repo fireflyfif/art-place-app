@@ -45,6 +45,8 @@
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
     android:layout_marginBottom="30dp"
     app:cardBackgroundColor="?colorOnSurface"
+    android:visibility="gone"
+    tools:visibility="visible"
     app:cardCornerRadius="8dp"
     app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true">

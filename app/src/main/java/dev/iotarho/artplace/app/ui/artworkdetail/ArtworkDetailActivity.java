@@ -122,7 +122,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
     // Views of the Artwork
     @BindView(R.id.artwork_cardview)
-    CardView artworkCardView;
+    MaterialCardView artworkCardView;
     @BindView(R.id.artwork_title)
     TextView artworkNameTextView;
     @BindView(R.id.artwork_artist_button)
@@ -236,6 +236,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
+                artworkCardView.setVisibility(View.VISIBLE);
                 emptyField = getString(R.string.not_applicable);
                 setupArtworkInfoUi(mArtworkObject, emptyField);
 
@@ -413,13 +414,11 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         mArtistViewModel.initArtistDataFromArtwork(artistLink);
         mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
             if (artists != null && artists.size() != 0) {
-                for (int i = 0; i < artists.size(); i++) {
-                    Artist artistCurrent = artists.get(i);
-                    setupArtistUI(artistCurrent);
+                artistLabel.setVisibility(View.VISIBLE);
+                artistCard.setVisibility(View.VISIBLE);
+                for (Artist currentArtist : artists) {
+                    setupArtistUI(currentArtist);
                 }
-            } else {
-                artistLabel.setVisibility(View.GONE);
-                artistCard.setVisibility(View.GONE);
             }
         });
     }

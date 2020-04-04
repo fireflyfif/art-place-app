@@ -55,7 +55,7 @@ public class LinksResult implements Parcelable {
     private Thumbnail thumbnail;
 
     @SerializedName("images")
-    private ImagesObject images;
+    private ImagesObject images; // TODO: This needs to be moved from here
 
     public Self getSelf() {
         return self;

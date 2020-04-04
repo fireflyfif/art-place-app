@@ -40,7 +40,6 @@ import android.util.Log;
 import java.text.Normalizer;
 
 import dev.iotarho.artplace.app.model.artworks.Artwork;
-import dev.iotarho.artplace.app.model.search.ShowContent;
 
 // Helper method for extracting the name of the Artist from the slug received for each artwork response
 // in the form of (e.g. "gustav-klimt-der-kuss-the-kiss")

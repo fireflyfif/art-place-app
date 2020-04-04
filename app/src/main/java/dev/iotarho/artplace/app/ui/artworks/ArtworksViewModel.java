@@ -58,7 +58,9 @@ public class ArtworksViewModel extends ViewModel {
     private LiveData<NetworkState> mNetworkState;
     private LiveData<NetworkState> mInitialLoading;
 
-    public LiveData<PagedList<Artwork>> mArtworkLiveData;
+    private LiveData<PagedList<Artwork>> mArtworkLiveData;
+    private LiveData<Artwork> artworkLiveData;
+
     private ArtworkDataSourceFactory mArtworkDataSourceFactory;
 
     private ArtsyRepository mRepo;
@@ -79,11 +81,11 @@ public class ArtworksViewModel extends ViewModel {
 
         // Initialize the network state liveData
         mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                (Function<ArtworkDataSource, LiveData<NetworkState>>) input -> input.getNetworkState());
+                (Function<ArtworkDataSource, LiveData<NetworkState>>) ArtworkDataSource::getNetworkState);
 
         // Initialize the Loading state liveData
         mInitialLoading = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                (Function<ArtworkDataSource, LiveData<NetworkState>>) input -> input.getInitialLoading());
+                (Function<ArtworkDataSource, LiveData<NetworkState>>) ArtworkDataSource::getInitialLoading);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
@@ -112,6 +114,17 @@ public class ArtworksViewModel extends ViewModel {
 
     public LiveData<PagedList<Artwork>> getArtworkLiveData() {
         return mArtworkLiveData;
+    }
+
+    public LiveData<Artwork> getArtworkFromLink() {
+        return artworkLiveData;
+    }
+
+    public void initArtworkData(String artworkLink) {
+        if (artworkLiveData != null) {
+            return;
+        }
+        artworkLiveData = mRepo.getArtworkFromLink(artworkLink);
     }
 
     public LiveData<PagedList<Artwork>> refreshArtworkLiveData() {
