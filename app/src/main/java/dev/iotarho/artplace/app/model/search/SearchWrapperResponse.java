@@ -43,23 +43,18 @@ import dev.iotarho.artplace.app.model.Links;
 public class SearchWrapperResponse {
 
     @SerializedName("total_count")
-    @Expose
     private Integer totalCount;
 
     @SerializedName("offset")
-    @Expose
     private Integer offset;
 
     @SerializedName("q")
-    @Expose
     private String q;
 
     @SerializedName("_links")
-    @Expose
     private Links links;
 
     @SerializedName("_embedded")
-    @Expose
     private EmbeddedResults embedded;
 
     public Integer getTotalCount() {

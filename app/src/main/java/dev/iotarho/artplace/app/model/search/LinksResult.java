@@ -37,9 +37,7 @@ package dev.iotarho.artplace.app.model.search;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageView;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.Self;
@@ -48,35 +46,23 @@ import dev.iotarho.artplace.app.model.Thumbnail;
 public class LinksResult implements Parcelable {
 
     @SerializedName("self")
-    @Expose
     private Self self;
 
     @SerializedName("permalink")
-    @Expose
     private Permalink permalink;
 
     @SerializedName("thumbnail")
-    @Expose
     private Thumbnail thumbnail;
 
     @SerializedName("images")
-    @Expose
     private ImagesObject images;
 
     public Self getSelf() {
         return self;
     }
 
-    public void setSelf(Self self) {
-        this.self = self;
-    }
-
     public Permalink getPermalink() {
         return permalink;
-    }
-
-    public void setPermalink(Permalink permalink) {
-        this.permalink = permalink;
     }
 
     public Thumbnail getThumbnail() {
@@ -86,7 +72,6 @@ public class LinksResult implements Parcelable {
     public void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }
-
 
     @Override
     public int describeContents() {

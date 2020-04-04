@@ -38,7 +38,6 @@ package dev.iotarho.artplace.app.model.search;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -46,185 +45,121 @@ import java.util.List;
 public class ShowContent implements Parcelable {
 
     @SerializedName("id")
-    @Expose
     private String id;
+
     @SerializedName("created_at")
-    @Expose
     private String createdAt;
+
     @SerializedName("updated_at")
-    @Expose
     private String updatedAt;
+
     @SerializedName("name")
-    @Expose
     private String name;
+
     @SerializedName("sortable_name")
-    @Expose
     private String sortableName;
+
     @SerializedName("description")
-    @Expose
     private String description;
+
     @SerializedName("press_release")
-    @Expose
     private String pressRelease;
+
     @SerializedName("start_at")
-    @Expose
     private String startAt;
+
     @SerializedName("end_at")
-    @Expose
     private String endAt;
+
     @SerializedName("status")
-    @Expose
     private String status;
+
     @SerializedName("is_reference")
-    @Expose
     private Boolean isReference;
+
     @SerializedName("is_solo_show")
-    @Expose
     private Boolean isSoloShow;
+
     @SerializedName("is_group_show")
-    @Expose
     private Boolean isGroupShow;
+
     @SerializedName("is_institutional_show")
-    @Expose
     private Boolean isInstitutionalShow;
+
     @SerializedName("is_fair_booth")
-    @Expose
     private Boolean isFairBooth;
+
     @SerializedName("image_versions")
-    @Expose
     private List<String> imageVersions = null;
+
     @SerializedName("_links")
-    @Expose
     private LinksResult links;
 
-    public ShowContent() {}
+    public ShowContent() {
+    }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public String getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getSortableName() {
         return sortableName;
-    }
-
-    public void setSortableName(String sortableName) {
-        this.sortableName = sortableName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getPressRelease() {
         return pressRelease;
-    }
-
-    public void setPressRelease(String pressRelease) {
-        this.pressRelease = pressRelease;
     }
 
     public String getStartAt() {
         return startAt;
     }
 
-    public void setStartAt(String startAt) {
-        this.startAt = startAt;
-    }
-
     public String getEndAt() {
         return endAt;
-    }
-
-    public void setEndAt(String endAt) {
-        this.endAt = endAt;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Boolean getIsReference() {
         return isReference;
-    }
-
-    public void setIsReference(Boolean isReference) {
-        this.isReference = isReference;
     }
 
     public Boolean getIsSoloShow() {
         return isSoloShow;
     }
 
-    public void setIsSoloShow(Boolean isSoloShow) {
-        this.isSoloShow = isSoloShow;
-    }
-
     public Boolean getIsGroupShow() {
         return isGroupShow;
-    }
-
-    public void setIsGroupShow(Boolean isGroupShow) {
-        this.isGroupShow = isGroupShow;
     }
 
     public Boolean getIsInstitutionalShow() {
         return isInstitutionalShow;
     }
 
-    public void setIsInstitutionalShow(Boolean isInstitutionalShow) {
-        this.isInstitutionalShow = isInstitutionalShow;
-    }
-
     public Boolean getIsFairBooth() {
         return isFairBooth;
     }
 
-    public void setIsFairBooth(Boolean isFairBooth) {
-        this.isFairBooth = isFairBooth;
-    }
-
     public List<String> getImageVersions() {
         return imageVersions;
-    }
-
-    public void setImageVersions(List<String> imageVersions) {
-        this.imageVersions = imageVersions;
     }
 
     public LinksResult getLinks() {

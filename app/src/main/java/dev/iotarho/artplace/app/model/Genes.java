@@ -38,19 +38,12 @@ package dev.iotarho.artplace.app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Genes implements Parcelable {
 
     @SerializedName("self")
-    @Expose
     private Self self;
-
-    public Self getSelf() {
-        return self;
-    }
-
 
     @Override
     public int describeContents() {

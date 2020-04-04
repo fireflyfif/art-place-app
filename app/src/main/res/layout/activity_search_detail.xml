@@ -120,6 +120,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
@@ -127,11 +130,6 @@
                         android:id="@+id/content_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:layout_marginLeft="@dimen/margin_8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/work_sans_medium"
                         android:gravity="center_horizontal"
                         android:textColor="?colorControlNormal"
@@ -142,18 +140,9 @@
                         android:id="@+id/content_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:layout_marginLeft="@dimen/margin_8dp"
-                        android:layout_marginTop="@dimen/margin_8dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:layout_marginBottom="@dimen/margin_8dp"
-                        android:background="@android:color/transparent"
-                        android:fontFamily="@font/work_sans"
-                        android:paddingStart="@dimen/padding_6dp"
-                        android:paddingLeft="@dimen/padding_6dp"
-                        android:paddingEnd="@dimen/padding_6dp"
-                        android:paddingRight="@dimen/padding_6dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/work_sans_semibold"
                         android:textColor="?colorControlNormal"
                         android:textSize="18sp"
                         tools:text="Artwork" />
@@ -161,15 +150,17 @@
                     <ImageView
                         android:id="@+id/content_image2"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:scaleType="fitCenter"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:scaleType="fitStart"
                         tools:src="@drawable/pop_art_placeholder" />
 
-                    <ImageButton
+                    <Button
                         android:id="@+id/read_more_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
+                        android:background="?colorOnBackground"
                         android:fontFamily="@font/work_sans"
                         android:gravity="center"
                         android:text="@string/read_more_button" />
@@ -182,13 +173,14 @@
                         android:fontFamily="@font/work_sans"
                         android:paddingBottom="@dimen/padding_8dp"
                         android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/color_on_secondary"
+                        android:textColor="?colorControlNormal"
                         tools:text="Description here" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+            <include layout="@layout/artwork_detail_cardview" />
 
             <include layout="@layout/show_detail_cardview" />
 

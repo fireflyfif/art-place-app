@@ -38,7 +38,6 @@ package dev.iotarho.artplace.app.model.artworks;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -46,15 +45,10 @@ import java.util.List;
 public class EmbeddedArtworks implements Parcelable {
 
     @SerializedName("artworks")
-    @Expose
     private List<Artwork> artworks;
 
     public List<Artwork> getArtworks() {
         return artworks;
-    }
-
-    public void setArtworks(List<Artwork> artworks) {
-        this.artworks = artworks;
     }
 
 

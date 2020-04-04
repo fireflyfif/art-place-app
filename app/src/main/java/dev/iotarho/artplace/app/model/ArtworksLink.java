@@ -3,13 +3,11 @@ package dev.iotarho.artplace.app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ArtworksLink implements Parcelable {
 
     @SerializedName("href")
-    @Expose
     private String href;
 
     public String getHref() {

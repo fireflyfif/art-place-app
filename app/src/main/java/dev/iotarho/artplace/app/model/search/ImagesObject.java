@@ -3,21 +3,15 @@ package dev.iotarho.artplace.app.model.search;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ImagesObject implements Parcelable {
 
     @SerializedName("href")
-    @Expose
     private String href;
 
     public String getHref() {
         return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
     }
 
     @Override

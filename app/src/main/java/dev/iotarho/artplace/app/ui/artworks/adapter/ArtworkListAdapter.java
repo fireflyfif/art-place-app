@@ -35,7 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.artworks.adapter;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

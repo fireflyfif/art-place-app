@@ -38,7 +38,6 @@ package dev.iotarho.artplace.app.model.artworks;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.Links;
@@ -47,41 +46,25 @@ import dev.iotarho.artplace.app.model.Links;
 public class ArtworkWrapperResponse implements Parcelable {
 
     @SerializedName("total_count")
-    @Expose
     private Integer totalCount;
 
     @SerializedName("_links")
-    @Expose
     private Links links;
 
     @SerializedName("_embedded")
-    @Expose
     private EmbeddedArtworks embeddedArtworks;
 
     public Integer getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
-
     public Links getLinks() {
         return links;
-    }
-
-    public void setLinks(Links links) {
-        this.links = links;
     }
 
     public EmbeddedArtworks getEmbeddedArtworks() {
         return embeddedArtworks;
     }
-
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
-    }
-
 
     @Override
     public int describeContents() {
