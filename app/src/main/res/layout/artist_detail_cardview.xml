@@ -44,12 +44,12 @@
     android:layout_marginEnd="@dimen/margin_horizontal_cardview"
     android:layout_marginRight="@dimen/margin_horizontal_cardview"
     android:layout_marginBottom="30dp"
-    app:cardBackgroundColor="?colorOnSurface"
     android:visibility="gone"
-    tools:visibility="visible"
+    app:cardBackgroundColor="?colorOnSurface"
     app:cardCornerRadius="8dp"
     app:cardElevation="6dp"
-    app:cardPreventCornerOverlap="true">
+    app:cardPreventCornerOverlap="true"
+    tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -155,8 +155,10 @@
                 android:text="@string/hometown_label"
                 android:textSize="12sp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/artist_home" />
+                app:layout_constraintTop_toTopOf="@+id/artist_home"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_home"
@@ -169,11 +171,13 @@
                 android:fontFamily="@font/work_sans"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/hometown_label"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Baumgarten, Austria" />
+                tools:text="Baumgarten, Austria"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_nationality_label"
@@ -188,9 +192,11 @@
                 android:text="@string/nationality_label"
                 android:textSize="12sp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/artist_nationality"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/artist_home" />
+                app:layout_constraintTop_toBottomOf="@+id/artist_home"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_nationality"
@@ -201,10 +207,12 @@
                 android:fontFamily="@font/work_sans"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/artist_home"
                 app:layout_constraintTop_toTopOf="@+id/artist_nationality_label"
-                tools:text="Austrian" />
+                tools:text="Austrian"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_location_label"
@@ -219,9 +227,11 @@
                 android:text="@string/location_label"
                 android:textSize="12sp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/artist_location"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/artist_nationality" />
+                app:layout_constraintTop_toBottomOf="@+id/artist_nationality"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_location"
@@ -232,11 +242,13 @@
                 android:fontFamily="@font/work_sans"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/artist_nationality"
                 app:layout_constraintTop_toTopOf="@+id/artist_location_label"
-                tools:text="Vienna, Austria" />
+                tools:text="Vienna, Austria"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_bio_label"
@@ -251,9 +263,11 @@
                 android:text="@string/biography_label"
                 android:textSize="12sp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/artist_bio"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/artist_location" />
+                app:layout_constraintTop_toBottomOf="@+id/artist_location"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/artist_bio"
@@ -265,10 +279,12 @@
                 android:fontFamily="@font/work_sans"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/artist_location"
                 app:layout_constraintTop_toTopOf="@+id/artist_bio_label"
-                tools:text="Bio of the artist here" />
+                tools:text="Bio of the artist here"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -276,14 +292,14 @@
             android:id="@+id/artworks_by_artist_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="horizontal"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="20dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="20dp"
+            android:scrollbars="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/artist_description_layout"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/artist_description_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -157,14 +157,18 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     MaterialCardView artistCard;
     @BindView(R.id.artist_name)
     TextView artistName;
+    @BindView(R.id.hometown_label)
+    TextView hometownLabel;
     @BindView(R.id.artist_home)
     TextView artistHomeTown;
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
+    @BindView(R.id.artist_location_label)
+    TextView locationLabel;
     @BindView(R.id.artist_location)
     TextView artistLocation;
-    @BindView(R.id.artist_location_label)
-    TextView artistLocationLabel;
+    @BindView(R.id.artist_nationality_label)
+    TextView artistNationalityLabel;
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
     @BindView(R.id.artist_bio)
@@ -232,7 +236,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
-
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
 
             if (mArtworkObject != null) {
@@ -302,10 +305,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         }
 
         String addInfo = currentArtwork.getAdditionalInformation();
-        if (Utils.isNullOrEmpty(addInfo)) { // hide the Additional Information if the field is empty
-            artworkInfoMarkdown.setVisibility(View.GONE);
-            artworkInfoLabel.setVisibility(View.GONE);
-        } else {
+        if (!Utils.isNullOrEmpty(addInfo)) {
+            artworkInfoMarkdown.setVisibility(View.VISIBLE);
+            artworkInfoLabel.setVisibility(View.VISIBLE);
             artworkInfoMarkdown.loadMarkdown(addInfo); // load the markdown text
         }
 
@@ -428,16 +430,10 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
         // Get the name of the artist
         artistNameString = currentArtist.getName();
-        boolean unknownArtist = Utils.isNullOrEmpty(artistNameString);
-        artistName.setText(unknownArtist ? emptyField : artistNameString);
-        // Set the name of the Artist to the Button
-        artistNameButton.setText(unknownArtist ? emptyField : artistNameString);
-        // Check first if the artist name is not null or empty
-        if (unknownArtist) {
-            // Hide the Artist CardView if there is no info about the Artist
-            artistCard.setVisibility(View.GONE);
-            artistNameButton.setVisibility(View.GONE);
-        } else {
+        if (!Utils.isNullOrEmpty(artistNameString)) {
+            artistNameButton.setVisibility(View.VISIBLE);
+            artistName.setText(artistNameString);
+            artistNameButton.setText(artistNameString);
             artistNameButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
                 // Send the name of the artwork as extra
@@ -446,46 +442,31 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                 startActivity(intent);
             });
         }
-
-        // Get the Home town of the artist
-        if (currentArtist.getHometown() != null) {
-            String artistHomeTownString = currentArtist.getHometown();
-            artistHomeTown.setText(artistHomeTownString);
-        } else {
-            artistHomeTown.setText(getString(R.string.not_applicable));
+        // Home town
+        if (!Utils.isNullOrEmpty(currentArtist.getHometown())) {
+            artistHomeTown.setVisibility(View.VISIBLE);
+            hometownLabel.setVisibility(View.VISIBLE);
+            artistHomeTown.setText(currentArtist.getHometown());
         }
-
-        // Get the date of the birth and dead of the artist
-        String artistBirthString;
-        String artistDeathString;
-        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
-            artistBirthString = currentArtist.getBirthday();
-            artistDeathString = currentArtist.getDeathday();
+        // Birth and dead date
+        if (!Utils.isNullOrEmpty(currentArtist.getBirthday()) || !Utils.isNullOrEmpty(currentArtist.getDeathday())) {
+            String artistBirthString = currentArtist.getBirthday();
+            String artistDeathString = currentArtist.getDeathday();
 
             String lifespanConcatString = artistBirthString + " - " + artistDeathString;
             artistLifespan.setText(lifespanConcatString);
-        } else {
-            artistLifespan.setText(getString(R.string.not_applicable));
         }
-
-        // Get the location of the artist
-        if (currentArtist.getLocation() != null) {
-            String artistLocationString = currentArtist.getLocation();
-            // Hide the location field if it's empty
-            if (Utils.isNullOrEmpty(artistLocationString)) {
-                artistLocation.setVisibility(View.GONE);
-                artistLocationLabel.setVisibility(View.GONE);
-            }
-            artistLocation.setText(artistLocationString);
-        } else {
-            artistLocation.setText(getString(R.string.not_applicable));
+        // Location
+        if (!Utils.isNullOrEmpty(currentArtist.getLocation())) {
+            artistLocation.setVisibility(View.VISIBLE);
+            locationLabel.setVisibility(View.VISIBLE);
+            artistLocation.setText(currentArtist.getLocation());
         }
-
-        if (currentArtist.getNationality() != null) {
-            String artistNationalityString = currentArtist.getNationality();
-            artistNationality.setText(artistNationalityString);
-        } else {
-            artistNationality.setText(getString(R.string.not_applicable));
+        // Nationality
+        if (!Utils.isNullOrEmpty(currentArtist.getNationality())) {
+            artistNationality.setVisibility(View.VISIBLE);
+            artistNationalityLabel.setVisibility(View.VISIBLE);
+            artistNationality.setText(currentArtist.getNationality());
         }
 
         // Get the list of image versions first

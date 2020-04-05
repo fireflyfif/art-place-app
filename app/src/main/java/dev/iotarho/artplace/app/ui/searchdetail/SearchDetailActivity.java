@@ -93,6 +93,7 @@ import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
+import okhttp3.internal.Util;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -209,6 +210,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     private ArtworksViewModel artworksViewModel;
 
     private int mGeneratedLightColor;
+    private String emptyField;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -255,25 +257,23 @@ public class SearchDetailActivity extends AppCompatActivity {
 
         Self self = linksResult.getSelf();
         String selfLinkString = Objects.requireNonNull(self.getHref());
-        Log.d(TAG, "Self Link: " + selfLinkString);
+        Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
         if (typeString.equals(SHOW)) {
-            Log.d(TAG, "card: show");
+            Log.d(TAG, "temp, card: show, selfLinkString= " + selfLinkString);
             showCardView.setVisibility(View.VISIBLE);
             initShowsContentViewModel(selfLinkString);
         }
 
         if (typeString.equals(ARTIST)) {
-            Log.d(TAG, "card: artist");
-            artistCardView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "temp, card: artist, selfLinkString= " + selfLinkString);
             initArtistContentViewModel(selfLinkString);
         }
 
         if (typeString.equals(ARTWORK)) {
-            Log.d(TAG, "card: artwork, selfLinkString= " + selfLinkString);
-            // TODO: initArtworkContentViewModel(selfLinkString)
+            Log.d(TAG, "temp, card: artwork, selfLinkString= " + selfLinkString);
             // Initialize the ViewModel
-            initArtworkViewModel(selfLinkString); // todo: self links for artworks return always "artwork not found" ???
+            initArtworkViewModel(selfLinkString); // todo: self links for artworks return most of the time "artwork not found" (this was confirmed also on Postman))
         }
 
         Permalink permalink = linksResult.getPermalink();
@@ -401,80 +401,47 @@ public class SearchDetailActivity extends AppCompatActivity {
     }
 
     private void setupArtistUi(Artist currentArtist) {
-        // Get the name of the artist
-        if (currentArtist.getName() != null) {
-            String artistNameString = currentArtist.getName();
-            artistName.setText(artistNameString);
-        } else {
-            artistName.setText(getString(R.string.not_applicable));
+        if (currentArtist == null) {
+            // TODO: Meet necessary criteria for showing up artist card
+            Log.d(TAG, "temp, Artist is null");
+            return;
         }
-
-        // Get the Home town of the artist
-        if (currentArtist.getHometown() != null) {
-            String artistHomeTownString = currentArtist.getHometown();
-            artistHomeTown.setText(artistHomeTownString);
-            Log.d(TAG, "Artist hometown:" + artistHomeTownString);
-
-            if (currentArtist.getHometown().isEmpty()) {
-                artistHomeTown.setVisibility(View.INVISIBLE);
-                hometownLabel.setVisibility(View.INVISIBLE);
-            }
-        } else {
-            artistHomeTown.setText(getString(R.string.not_applicable));
+        artistCardView.setVisibility(View.VISIBLE);
+        emptyField = getString(R.string.not_applicable);
+        // Name
+        String artistNameString = currentArtist.getName();
+        artistName.setText(Utils.isNullOrEmpty(artistNameString) ? emptyField : artistNameString);
+        // Home town
+        if (!Utils.isNullOrEmpty(currentArtist.getHometown())) {
+            artistHomeTown.setVisibility(View.VISIBLE);
+            hometownLabel.setVisibility(View.VISIBLE);
+            artistHomeTown.setText(currentArtist.getHometown());
         }
-
-        // Get the date of the birth and dead of the artist
-        String artistBirthString;
-        String artistDeathString;
-        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
-            artistBirthString = currentArtist.getBirthday();
-            artistDeathString = currentArtist.getDeathday();
+        // Birth and dead date
+        if (!Utils.isNullOrEmpty(currentArtist.getBirthday()) || !Utils.isNullOrEmpty(currentArtist.getDeathday())) {
+            String artistBirthString = currentArtist.getBirthday();
+            String artistDeathString = currentArtist.getDeathday();
 
             String lifespanConcatString = artistBirthString + " - " + artistDeathString;
             artistLifespan.setText(lifespanConcatString);
-            Log.d(TAG, "Artist life span:" + lifespanConcatString);
-        } else {
-            artistLifespan.setText(getString(R.string.not_applicable));
         }
-
-        // Get the location of the artist
-        if (currentArtist.getLocation() != null) {
-            String artistLocationString = currentArtist.getLocation();
-            artistLocation.setText(artistLocationString);
-            Log.d(TAG, "Artist location:" + artistLocationString);
-
-            if (currentArtist.getLocation().isEmpty()) {
-                artistLocation.setVisibility(View.INVISIBLE);
-                locationLabel.setVisibility(View.INVISIBLE);
-            }
-        } else {
-            artistLocation.setText(getString(R.string.not_applicable));
+        // Location
+        if (!Utils.isNullOrEmpty(currentArtist.getLocation())) {
+            artistLocation.setVisibility(View.VISIBLE);
+            locationLabel.setVisibility(View.VISIBLE);
+            artistLocation.setText(currentArtist.getLocation());
         }
-
-        if (currentArtist.getNationality() != null) {
-            String artistNationalityString = currentArtist.getNationality();
-            artistNationality.setText(artistNationalityString);
-            Log.d(TAG, "Artist nationality:" + artistNationalityString);
-
-            if (currentArtist.getNationality().isEmpty()) {
-                artistNationality.setVisibility(View.INVISIBLE);
-                artistNationalityLabel.setVisibility(View.INVISIBLE);
-            }
-        } else {
-            artistNationality.setText(getString(R.string.not_applicable));
+        // Nationality
+        if (!Utils.isNullOrEmpty(currentArtist.getNationality())) {
+            artistNationality.setVisibility(View.VISIBLE);
+            artistNationalityLabel.setVisibility(View.VISIBLE);
+            artistNationality.setText(currentArtist.getNationality());
         }
-
-        if (currentArtist.getBiography() != null) {
-            String artistBioString = currentArtist.getBiography();
-            artistBio.setText(artistBioString);
-
-            if (currentArtist.getBiography().isEmpty()) {
-                artistBio.setVisibility(View.GONE);
-                artistBioLabel.setVisibility(View.GONE);
-            }
-        } else {
-            artistBio.setVisibility(View.GONE);
-            artistBioLabel.setVisibility(View.GONE);
+        // Biography
+        if (!Utils.isNullOrEmpty(currentArtist.getBiography())) {
+            artistBio.setVisibility(View.VISIBLE);
+            artistBioLabel.setVisibility(View.VISIBLE);
+            artistBio.setText(currentArtist.getBiography());
         }
 
         ImageLinks imageLinks = currentArtist.getLinks();
@@ -494,11 +461,6 @@ public class SearchDetailActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
-
-        for (Artwork currentArtwork : artworksList) {
-            // TODO: Open one of the selected artworks
-//            setupArtworkInfoUi(currentArtwork, "empty");
-        }
     }
 
     private void initArtworkViewModel(String artworkLink) {
@@ -509,15 +471,14 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     private void setupArtworkInfoUi(Artwork currentArtwork) {
         if (currentArtwork == null) {
-            Log.d(TAG, "Artwork is null");
+            Log.d(TAG, "temp, Artwork is null");
             return;
         }
+        emptyField = getString(R.string.not_applicable);
         artworkCardView.setVisibility(View.VISIBLE);
-        String emptyField = "empty";
-        if (currentArtwork.getTitle() != null) {
-            String artworkTitle = currentArtwork.getTitle();
-            artworkNameTextView.setText(Utils.isNullOrEmpty(artworkTitle) ? emptyField : artworkTitle);
-        }
+
+        String artworkTitle = currentArtwork.getTitle();
+        artworkNameTextView.setText(Utils.isNullOrEmpty(artworkTitle) ? emptyField : artworkTitle);
 
         String medium = currentArtwork.getMedium();
         artworkMedium.setText(Utils.isNullOrEmpty(medium) ? emptyField : medium);
@@ -543,10 +504,9 @@ public class SearchDetailActivity extends AppCompatActivity {
         }
 
         String addInfo = currentArtwork.getAdditionalInformation();
-        if (Utils.isNullOrEmpty(addInfo)) { // hide the Additional Information if the field is empty
-            artworkInfoMarkdown.setVisibility(View.GONE);
-            artworkInfoLabel.setVisibility(View.GONE);
-        } else {
+        if (!Utils.isNullOrEmpty(addInfo)) {
+            artworkInfoMarkdown.setVisibility(View.VISIBLE);
+            artworkInfoLabel.setVisibility(View.VISIBLE);
             artworkInfoMarkdown.loadMarkdown(addInfo); // load the markdown text
         }
         ImageLinks imageLinksObject = currentArtwork.getLinks();
@@ -563,6 +523,7 @@ public class SearchDetailActivity extends AppCompatActivity {
             // Replace the {image_version} from the artworkImgLinkString with
             // the wanted version, e.g. "large"
             String largeArtworkLink = extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);
+            Log.d(TAG, "temp, largeArtworkLink is " + largeArtworkLink);
             // Set the large image with Picasso
             Picasso.get()
                     .load(largeArtworkLink)
