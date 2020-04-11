@@ -65,6 +65,12 @@ import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -277,15 +283,48 @@ public class SearchDetailActivity extends AppCompatActivity {
         }
 
         Permalink permalink = linksResult.getPermalink();
+        String readMoreLink = permalink.getHref() == null ? "" : permalink.getHref();
+        Log.d(TAG, "Perma Link: " + readMoreLink);
+        getBioFromReadMoreLink(readMoreLink);
+
         readMoreButton.setOnClickListener(v -> {
-            if (permalink != null) {
-                String readMoreLink = permalink.getHref();
-                Log.d(TAG, "Perma Link: " + readMoreLink);
-                Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
-                openUrlIntent.setData(Uri.parse(readMoreLink));
-                startActivity(openUrlIntent);
-            }
+            Intent openUrlIntent = new Intent(Intent.ACTION_VIEW);
+            openUrlIntent.setData(Uri.parse(readMoreLink));
+            startActivity(openUrlIntent);
         });
+    }
+
+    // Scrape the Artsy website for additional information
+    private void getBioFromReadMoreLink(String readMoreLink) {
+        new Thread(() -> {
+            final StringBuilder builder = new StringBuilder();
+
+            try {
+                Document doc = Jsoup.connect(readMoreLink).get();
+                String title = doc.title();
+                Elements links = doc.select("a[href]");
+
+                Elements fresnelContainer = doc.getElementsByClass("ArtistBio__BioSpan-sc-14mck41-0 vDRHu");
+                builder.append(fresnelContainer.text());
+
+//                    builder.append(title).append("\n");
+
+                /*for (Element link : links) {
+                    Log.d(TAG, "temp, element is = " + link);
+                    builder.append("\n").append("Link : ").append(link.attr("href"))
+                            .append("\n").append("Text : ").append(link.text());
+                }*/
+            } catch (IOException e) {
+                builder.append("Error : ").append(e.getMessage()).append("\n");
+            }
+            runOnUiThread(() -> {
+//                    Log.d(TAG, "temp, artistBio = " + builder.toString());
+                artistBioLabel.setVisibility(View.VISIBLE);
+                artistBio.setVisibility(View.VISIBLE);
+                artistBio.setText(builder.toString());
+            });
+        }).start();
+
     }
 
     private void getThumbnail(LinksResult linksResult) {

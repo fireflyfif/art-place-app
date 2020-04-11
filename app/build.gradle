@@ -112,6 +112,8 @@ dependencies {
     // Photoview for zooming
     implementation 'com.commit451:PhotoView:1.2.4'
 
+    implementation 'org.jsoup:jsoup:1.11.2'
+
     // Test dependencies
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
