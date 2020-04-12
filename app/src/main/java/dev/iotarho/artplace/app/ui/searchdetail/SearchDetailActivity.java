@@ -84,6 +84,7 @@ import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.artists.Artist;
+import dev.iotarho.artplace.app.model.artworks.ArtistsLink;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.CmSize;
 import dev.iotarho.artplace.app.model.artworks.Dimensions;
@@ -108,6 +109,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     private static final String SHOW = "show";
     private static final String ARTIST = "artist";
     private static final String ARTWORK = "artwork";
+    public static final String ARTIST_BIO = "ArtistBio__BioSpan-sc-14mck41-0 vDRHu";
     private int mLightMutedColor = 0xFFAAAAAA;
     private static final String IMAGE_LARGE = "large";
     private static final String IMAGE_SQUARE = "square";
@@ -304,8 +306,9 @@ public class SearchDetailActivity extends AppCompatActivity {
                 String title = doc.title();
                 Elements links = doc.select("a[href]");
 
-                Elements fresnelContainer = doc.getElementsByClass("ArtistBio__BioSpan-sc-14mck41-0 vDRHu");
+                Elements fresnelContainer = doc.getElementsByClass(ARTIST_BIO);
                 builder.append(fresnelContainer.text());
+                Log.d(TAG, "temp, artistBio = " + builder.toString());
 
 //                    builder.append(title).append("\n");
 
@@ -318,10 +321,12 @@ public class SearchDetailActivity extends AppCompatActivity {
                 builder.append("Error : ").append(e.getMessage()).append("\n");
             }
             runOnUiThread(() -> {
-//                    Log.d(TAG, "temp, artistBio = " + builder.toString());
-                artistBioLabel.setVisibility(View.VISIBLE);
-                artistBio.setVisibility(View.VISIBLE);
-                artistBio.setText(builder.toString());
+                if (!Utils.isNullOrEmpty(builder.toString())) {
+                    // TODO: what to do when there is already a bio from API and it differs from the one on the site
+                    artistBio.setVisibility(View.VISIBLE);
+                    artistBioLabel.setVisibility(View.VISIBLE);
+                    artistBio.setText(builder.toString());
+                }
             });
         }).start();
 
@@ -550,6 +555,10 @@ public class SearchDetailActivity extends AppCompatActivity {
         }
         ImageLinks imageLinksObject = currentArtwork.getLinks();
         setImage(currentArtwork, imageLinksObject);
+
+        // Get the artist link
+        ArtistsLink artistsLink = imageLinksObject.getArtists();
+        Log.d(TAG, "artistsLink is =" + artistsLink);
     }
 
     private void setImage(Artwork currentArtwork, ImageLinks imageLinksObject) {
