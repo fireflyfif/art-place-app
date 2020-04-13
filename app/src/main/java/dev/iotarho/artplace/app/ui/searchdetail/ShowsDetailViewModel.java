@@ -35,29 +35,68 @@
 
 package dev.iotarho.artplace.app.ui.searchdetail;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+
+import dev.iotarho.artplace.app.AppExecutors;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
 
+import static dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity.ARTIST_BIO;
+
 public class ShowsDetailViewModel extends ViewModel {
 
-    private LiveData<ShowContent> mContentLiveData;
+    private LiveData<ShowContent> showContentData;
+    private MutableLiveData<String> artistBiographyData;
 
     public ShowsDetailViewModel() {
     }
 
     public void initSearchLink(String selfLink) {
-        if (mContentLiveData != null) {
+        if (showContentData != null) {
             return;
         }
-        mContentLiveData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+        showContentData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+    }
+
+    public void initBioFromWeb(String webLink) {
+        loadBioFromWeb(webLink);
     }
 
     public LiveData<ShowContent> getResultSelfLink() {
-        return mContentLiveData;
+        return showContentData;
     }
 
+    public LiveData<String> getBioFromWeb() {
+        return artistBiographyData;
+    }
 
+    private MutableLiveData<String> loadBioFromWeb(String webLink) {
+        if (artistBiographyData == null) {
+            artistBiographyData = new MutableLiveData<>("");
+        }
+
+        AppExecutors.getInstance().networkIO().execute(() -> {
+            try {
+                Document doc = Jsoup.connect(webLink).get();
+                String title = doc.title();
+                Elements links = doc.select("a[href]");
+                Elements fresnelContainer = doc.getElementsByClass(ARTIST_BIO);
+                artistBiographyData.postValue(fresnelContainer.text());
+                Log.d("ShowsDetailViewModel", "temp, artistBio = " + fresnelContainer.text());
+            } catch (IOException e) {
+                Log.e("ShowsDetailViewModel", "error when connecting to web link");
+            }
+        });
+        return artistBiographyData;
+    }
 }

@@ -42,6 +42,7 @@ import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.artworks.ArtistsLink;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.model.genes.Genes;
 import dev.iotarho.artplace.app.model.search.Permalink;
 
 public class ImageLinks implements Parcelable {

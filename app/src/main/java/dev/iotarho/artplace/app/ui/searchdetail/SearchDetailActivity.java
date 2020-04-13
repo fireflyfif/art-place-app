@@ -49,7 +49,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,12 +64,6 @@ import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,7 +83,6 @@ import dev.iotarho.artplace.app.model.artworks.CmSize;
 import dev.iotarho.artplace.app.model.artworks.Dimensions;
 import dev.iotarho.artplace.app.model.artworks.InSize;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
-import dev.iotarho.artplace.app.model.search.ImagesObject;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
@@ -100,7 +92,6 @@ import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
-import okhttp3.internal.Util;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -213,12 +204,13 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.artworks_by_artist_rv)
     RecyclerView artworksByArtistRv;
 
-    private ShowsDetailViewModel showsViewModel;
+    private ShowsDetailViewModel showsDetailViewModel;
     private ArtistsDetailViewModel artistViewModel;
     private ArtworksViewModel artworksViewModel;
 
     private int mGeneratedLightColor;
     private String emptyField;
+    private String artistBiography;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -267,6 +259,8 @@ public class SearchDetailActivity extends AppCompatActivity {
         String selfLinkString = Objects.requireNonNull(self.getHref());
         Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
+        showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+
         if (typeString.equals(SHOW)) {
             Log.d(TAG, "temp, card: show, selfLinkString= " + selfLinkString);
             showCardView.setVisibility(View.VISIBLE);
@@ -281,7 +275,7 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (typeString.equals(ARTWORK)) {
             Log.d(TAG, "temp, card: artwork, selfLinkString= " + selfLinkString);
             // Initialize the ViewModel
-            initArtworkViewModel(selfLinkString); // todo: self links for artworks return most of the time "artwork not found" (this was confirmed also on Postman))
+            initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "artwork not found" (this was confirmed also on Postman))
         }
 
         Permalink permalink = linksResult.getPermalink();
@@ -298,38 +292,17 @@ public class SearchDetailActivity extends AppCompatActivity {
 
     // Scrape the Artsy website for additional information
     private void getBioFromReadMoreLink(String readMoreLink) {
-        new Thread(() -> {
-            final StringBuilder builder = new StringBuilder();
-
-            try {
-                Document doc = Jsoup.connect(readMoreLink).get();
-                String title = doc.title();
-                Elements links = doc.select("a[href]");
-
-                Elements fresnelContainer = doc.getElementsByClass(ARTIST_BIO);
-                builder.append(fresnelContainer.text());
-                Log.d(TAG, "temp, artistBio = " + builder.toString());
-
-//                    builder.append(title).append("\n");
-
-                /*for (Element link : links) {
-                    Log.d(TAG, "temp, element is = " + link);
-                    builder.append("\n").append("Link : ").append(link.attr("href"))
-                            .append("\n").append("Text : ").append(link.text());
-                }*/
-            } catch (IOException e) {
-                builder.append("Error : ").append(e.getMessage()).append("\n");
-            }
-            runOnUiThread(() -> {
-                if (!Utils.isNullOrEmpty(builder.toString())) {
-                    // TODO: what to do when there is already a bio from API and it differs from the one on the site
-                    artistBio.setVisibility(View.VISIBLE);
-                    artistBioLabel.setVisibility(View.VISIBLE);
-                    artistBio.setText(builder.toString());
+        showsDetailViewModel.initBioFromWeb(readMoreLink);
+        showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
+                    if (!Utils.isNullOrEmpty(bio) && !Utils.isNullOrEmpty(artistBiography)) {
+                        // TODO: what to do when there is already a bio from API and it differs from the one on the site
+                        Log.d(TAG, "temp, artistBio = " + bio);
+                        artistBio.setVisibility(View.VISIBLE);
+                        artistBioLabel.setVisibility(View.VISIBLE);
+                        artistBio.setText(bio);
+                    }
                 }
-            });
-        }).start();
-
+        );
     }
 
     private void getThumbnail(LinksResult linksResult) {
@@ -381,10 +354,8 @@ public class SearchDetailActivity extends AppCompatActivity {
      * @param selfLink is the link that should be passed as a link to be used as a new call
      */
     private void initShowsContentViewModel(String selfLink) {
-        showsViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
-        showsViewModel.initSearchLink(selfLink);
-
-        showsViewModel.getResultSelfLink().observe(this, showContent -> {
+        showsDetailViewModel.initSearchLink(selfLink);
+        showsDetailViewModel.getResultSelfLink().observe(this, showContent -> {
             if (showContent != null) {
                 setupShowsContentUi(showContent);
             }
@@ -485,7 +456,8 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (!Utils.isNullOrEmpty(currentArtist.getBiography())) {
             artistBio.setVisibility(View.VISIBLE);
             artistBioLabel.setVisibility(View.VISIBLE);
-            artistBio.setText(currentArtist.getBiography());
+            artistBiography = currentArtist.getBiography();
+            artistBio.setText(artistBiography);
         }
 
         ImageLinks imageLinks = currentArtist.getLinks();
@@ -580,7 +552,7 @@ public class SearchDetailActivity extends AppCompatActivity {
                     .into(secondImage);
 
             String squareImage = extractImageLink(getVersionImage(imageVersionList, IMAGE_SQUARE), artworkImgLinkString);
-
+            // TODO: ...
         }
     }
 

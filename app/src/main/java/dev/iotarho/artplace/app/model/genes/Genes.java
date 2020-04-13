@@ -33,12 +33,14 @@
  *
  */
 
-package dev.iotarho.artplace.app.model;
+package dev.iotarho.artplace.app.model.genes;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+
+import dev.iotarho.artplace.app.model.Self;
 
 public class Genes implements Parcelable {
 

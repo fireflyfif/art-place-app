@@ -180,7 +180,6 @@ public class Artwork implements Parcelable {
         return links;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
