@@ -40,7 +40,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Links implements Parcelable {
+public class PageLinks implements Parcelable {
 
     @SerializedName("self")
     private Self self;
@@ -68,23 +68,23 @@ public class Links implements Parcelable {
         dest.writeParcelable(this.next, flags);
     }
 
-    public Links() {
+    public PageLinks() {
     }
 
-    protected Links(Parcel in) {
+    protected PageLinks(Parcel in) {
         this.self = in.readParcelable(Self.class.getClassLoader());
         this.next = in.readParcelable(Next.class.getClassLoader());
     }
 
-    public static final Creator<Links> CREATOR = new Creator<Links>() {
+    public static final Creator<PageLinks> CREATOR = new Creator<PageLinks>() {
         @Override
-        public Links createFromParcel(Parcel source) {
-            return new Links(source);
+        public PageLinks createFromParcel(Parcel source) {
+            return new PageLinks(source);
         }
 
         @Override
-        public Links[] newArray(int size) {
-            return new Links[size];
+        public PageLinks[] newArray(int size) {
+            return new PageLinks[size];
         }
     };
 }

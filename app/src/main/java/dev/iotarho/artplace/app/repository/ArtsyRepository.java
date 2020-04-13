@@ -49,6 +49,7 @@ import dev.iotarho.artplace.app.model.artists.EmbeddedArtists;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.remote.ArtsyApiInterface;
 import dev.iotarho.artplace.app.remote.ArtsyApiManager;
@@ -294,5 +295,35 @@ public class ArtsyRepository {
         });
 
         return searchLiveData;
+    }
+
+    public LiveData<GeneContent> getGenesContent(String selfLink) {
+        return loadGenesContentFromLink(selfLink);
+    }
+
+    private LiveData<GeneContent> loadGenesContentFromLink(String selfLink) {
+        MutableLiveData<GeneContent> genesLiveData = new MutableLiveData<>();
+        getArtsyApi().getDetailContentForGenes(selfLink).enqueue(new Callback<GeneContent>() {
+            @Override
+            public void onResponse(@NonNull Call<GeneContent> call, @NonNull Response<GeneContent> response) {
+                if (response.isSuccessful()) {
+                    GeneContent geneResult = response.body();
+                    if (geneResult != null) {
+                        genesLiveData.setValue(geneResult);
+                    }
+                    Log.d(TAG, "Loaded successfully! " + response.code());
+                } else {
+                    genesLiveData.setValue(null);
+                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GeneContent> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+
+        return genesLiveData;
     }
 }

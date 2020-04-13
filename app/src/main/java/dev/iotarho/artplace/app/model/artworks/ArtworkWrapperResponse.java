@@ -40,7 +40,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 
 // Model class for the response of the Artsy API
 public class ArtworkWrapperResponse implements Parcelable {
@@ -49,7 +49,7 @@ public class ArtworkWrapperResponse implements Parcelable {
     private Integer totalCount;
 
     @SerializedName("_links")
-    private Links links;
+    private PageLinks pageLinks;
 
     @SerializedName("_embedded")
     private EmbeddedArtworks embeddedArtworks;
@@ -58,8 +58,8 @@ public class ArtworkWrapperResponse implements Parcelable {
         return totalCount;
     }
 
-    public Links getLinks() {
-        return links;
+    public PageLinks getPageLinks() {
+        return pageLinks;
     }
 
     public EmbeddedArtworks getEmbeddedArtworks() {
@@ -74,7 +74,7 @@ public class ArtworkWrapperResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.totalCount);
-        dest.writeParcelable(this.links, flags);
+        dest.writeParcelable(this.pageLinks, flags);
         dest.writeParcelable(this.embeddedArtworks, flags);
     }
 
@@ -83,7 +83,7 @@ public class ArtworkWrapperResponse implements Parcelable {
 
     protected ArtworkWrapperResponse(Parcel in) {
         this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.links = in.readParcelable(Links.class.getClassLoader());
+        this.pageLinks = in.readParcelable(PageLinks.class.getClassLoader());
         this.embeddedArtworks = in.readParcelable(EmbeddedArtworks.class.getClassLoader());
     }
 

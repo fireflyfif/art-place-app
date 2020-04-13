@@ -7,39 +7,46 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.ImageLinks;
 
-public class GeneResult implements Parcelable {
+public class GeneContent implements Parcelable {
 
     @SerializedName("id")
     private String id;
+
     @SerializedName("created_at")
     private String createdAt;
+
     @SerializedName("updated_at")
     private String updatedAt;
+
     @SerializedName("name")
     private String name;
+
     @SerializedName("display_name")
     private String displayName;
+
     @SerializedName("description")
     private String description;
+
     @SerializedName("image_versions")
     private List<String> imageVersions = null;
-    @SerializedName("_links")
-    private Links links;
 
-    public final static Parcelable.Creator<GeneResult> CREATOR = new Creator<GeneResult>() {
+    @SerializedName("_links")
+    private ImageLinks links;
+
+    public final static Parcelable.Creator<GeneContent> CREATOR = new Creator<GeneContent>() {
         @SuppressWarnings({"unchecked"})
-        public GeneResult createFromParcel(Parcel in) {
-            return new GeneResult(in);
+        public GeneContent createFromParcel(Parcel in) {
+            return new GeneContent(in);
         }
 
-        public GeneResult[] newArray(int size) {
-            return (new GeneResult[size]);
+        public GeneContent[] newArray(int size) {
+            return (new GeneContent[size]);
         }
     };
 
-    protected GeneResult(Parcel in) {
+    protected GeneContent(Parcel in) {
         this.id = ((String) in.readValue((String.class.getClassLoader())));
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
@@ -47,10 +54,10 @@ public class GeneResult implements Parcelable {
         this.displayName = ((String) in.readValue((String.class.getClassLoader())));
         this.description = ((String) in.readValue((String.class.getClassLoader())));
         in.readList(this.imageVersions, (java.lang.String.class.getClassLoader()));
-        this.links = ((Links) in.readValue((Links.class.getClassLoader())));
+        this.links = ((ImageLinks) in.readValue((ImageLinks.class.getClassLoader())));
     }
 
-    public GeneResult() {
+    public GeneContent() {
     }
 
     public String getId() {
@@ -81,10 +88,11 @@ public class GeneResult implements Parcelable {
         return imageVersions;
     }
 
-    public Links getLinks() {
+    public ImageLinks getLinks() {
         return links;
     }
 
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(createdAt);
@@ -96,6 +104,7 @@ public class GeneResult implements Parcelable {
         dest.writeValue(links);
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }

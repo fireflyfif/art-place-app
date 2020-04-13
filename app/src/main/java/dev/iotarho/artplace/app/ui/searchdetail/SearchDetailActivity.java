@@ -83,10 +83,12 @@ import dev.iotarho.artplace.app.model.artworks.CmSize;
 import dev.iotarho.artplace.app.model.artworks.Dimensions;
 import dev.iotarho.artplace.app.model.artworks.InSize;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
@@ -100,7 +102,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     private static final String SHOW = "show";
     private static final String ARTIST = "artist";
     private static final String ARTWORK = "artwork";
-    public static final String ARTIST_BIO = "ArtistBio__BioSpan-sc-14mck41-0 vDRHu";
+    private static final String GENE = "gene";
     private int mLightMutedColor = 0xFFAAAAAA;
     private static final String IMAGE_LARGE = "large";
     private static final String IMAGE_SQUARE = "square";
@@ -129,6 +131,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     Button readMoreButton;
 
     // Show Card Views
+    @BindView(R.id.show_gene_name)
+    TextView showGeneName;
     @BindView(R.id.show_cardview)
     CardView showCardView;
     @BindView(R.id.show_start_date)
@@ -260,6 +264,8 @@ public class SearchDetailActivity extends AppCompatActivity {
         Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
         showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+        artistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+        artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         if (typeString.equals(SHOW)) {
             Log.d(TAG, "temp, card: show, selfLinkString= " + selfLinkString);
@@ -278,6 +284,10 @@ public class SearchDetailActivity extends AppCompatActivity {
             initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "artwork not found" (this was confirmed also on Postman))
         }
 
+        if (typeString.equals(GENE)) {
+            initGenesContent(selfLinkString);
+        }
+
         Permalink permalink = linksResult.getPermalink();
         String readMoreLink = permalink.getHref() == null ? "" : permalink.getHref();
         Log.d(TAG, "Perma Link: " + readMoreLink);
@@ -290,12 +300,61 @@ public class SearchDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void initGenesContent(String selfLinkString) {
+        showsDetailViewModel.initGenesResultFromLink(selfLinkString);
+        showsDetailViewModel.getGeneResultData().observe(this, this::setupGeneUi);
+    }
+
+    private void setupGeneUi(GeneContent geneResult) {
+        if (geneResult == null) {
+            return;
+        }
+        showCardView.setVisibility(View.VISIBLE);
+        String geneName = geneResult.getDisplayName();
+        String geneDescription = geneResult.getDescription();
+
+        if (!Utils.isNullOrEmpty(geneName)) {
+            showGeneName.setText(geneName);
+            showGeneName.setVisibility(View.VISIBLE);
+        }
+        if (!Utils.isNullOrEmpty(geneDescription)) {
+            showDescription.setText(geneDescription);
+            showDescriptionLabel.setVisibility(View.VISIBLE);
+            showDescription.setVisibility(View.VISIBLE);
+        }
+
+        ImageLinks imageLinksObject = geneResult.getLinks();
+        MainImage mainImageObject = imageLinksObject.getImage();
+        List<String> imageVersionList = geneResult.getImageVersions();
+        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
+            if (s != null) {
+                Log.d(TAG, "temp, largeArtworkLink is " + s);
+                // Set the large image with Picasso
+                Picasso.get()
+                        .load(s)
+                        .placeholder(R.color.color_primary)
+                        .error(R.color.color_error)
+                        .into(secondImage);
+            }
+        });
+
+        ArtworksLink artworksLink = imageLinksObject.getArtworksLink();
+        String artworkLink = artworksLink.getHref(); // this link returns always the same result from the API (very disappointing)
+
+        ArtistsLink artistsLink = imageLinksObject.getArtists();
+        String artistLink = artistsLink.getHref();
+        if (!Utils.isNullOrEmpty(artistLink)) {
+            artistCardView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "temp, href of artists: " + artistLink);
+            initArtistsViewModel(artistLink);
+        }
+    }
+
     // Scrape the Artsy website for additional information
     private void getBioFromReadMoreLink(String readMoreLink) {
         showsDetailViewModel.initBioFromWeb(readMoreLink);
         showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
                     if (!Utils.isNullOrEmpty(bio) && !Utils.isNullOrEmpty(artistBiography)) {
-                        // TODO: what to do when there is already a bio from API and it differs from the one on the site
                         Log.d(TAG, "temp, artistBio = " + bio);
                         artistBio.setVisibility(View.VISIBLE);
                         artistBioLabel.setVisibility(View.VISIBLE);
@@ -355,64 +414,46 @@ public class SearchDetailActivity extends AppCompatActivity {
      */
     private void initShowsContentViewModel(String selfLink) {
         showsDetailViewModel.initSearchLink(selfLink);
-        showsDetailViewModel.getResultSelfLink().observe(this, showContent -> {
-            if (showContent != null) {
-                setupShowsContentUi(showContent);
-            }
-        });
+        showsDetailViewModel.getResultSelfLink().observe(this, this::setupShowsContentUi);
     }
 
     private void setupShowsContentUi(ShowContent showContent) {
-        if (showContent.getPressRelease() != null) {
-            String pressRelease = showContent.getPressRelease();
+        if (showContent == null) {
+            return;
+        }
+
+        String pressRelease = showContent.getPressRelease();
+        if (!Utils.isNullOrEmpty(pressRelease)) {
             showPress.setText(pressRelease);
-
-            if (showContent.getPressRelease().isEmpty()) {
-                showPress.setVisibility(View.GONE);
-                showPressLabel.setVisibility(View.GONE);
-            }
+            showPress.setVisibility(View.VISIBLE);
+            showPressLabel.setVisibility(View.VISIBLE);
         }
 
-        if (showContent.getDescription() != null) {
-            String mDescription = showContent.getDescription();
-            showDescription.setText(mDescription);
-
-            if (showContent.getDescription().isEmpty()) {
-                showDescription.setVisibility(View.GONE);
-                showDescriptionLabel.setVisibility(View.GONE);
-            }
+        String contentDescription = showContent.getDescription();
+        if (!Utils.isNullOrEmpty(contentDescription)) {
+            showDescription.setText(contentDescription);
+            showDescription.setVisibility(View.VISIBLE);
+            showDescriptionLabel.setVisibility(View.VISIBLE);
         }
 
-        if (showContent.getStartAt() != null) {
-            String startDate = showContent.getStartAt();
+        String startDate = showContent.getStartAt();
+        if (!Utils.isNullOrEmpty(startDate)) {
             showStartDate.setText(StringUtils.getDate(startDate));
-
-            if (showContent.getStartAt().isEmpty()) {
-                showStartDate.setVisibility(View.GONE);
-                showStartDateLabel.setVisibility(View.GONE);
-            }
+            showStartDate.setVisibility(View.VISIBLE);
+            showStartDateLabel.setVisibility(View.VISIBLE);
         }
 
-        if (showContent.getEndAt() != null) {
-            String endDate = showContent.getEndAt();
+        String endDate = showContent.getEndAt();
+        if (!Utils.isNullOrEmpty(endDate)) {
             showEndDate.setText(StringUtils.getDate(endDate));
-
-            if (showContent.getEndAt().isEmpty()) {
-                showEndDate.setVisibility(View.GONE);
-                showEndDateLabel.setVisibility(View.GONE);
-            }
+            showEndDate.setVisibility(View.VISIBLE);
+            showEndDateLabel.setVisibility(View.VISIBLE);
         }
     }
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
-        artistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
         artistViewModel.initArtistData(receivedArtistUrlString);
-
-        artistViewModel.getArtistData().observe(this, artists -> {
-            if (artists != null) {
-                setupArtistUi(artists);
-            }
-        });
+        artistViewModel.getArtistData().observe(this, this::setupArtistUi);
     }
 
     private void setupArtistUi(Artist currentArtist) {
@@ -479,8 +520,19 @@ public class SearchDetailActivity extends AppCompatActivity {
         artworksByArtistRv.setAdapter(artworksByArtist);
     }
 
+    private void initArtistsViewModel(String artistLink) {
+        artistViewModel.initArtistDataFromArtwork(artistLink);
+        artistViewModel.getArtistDataFromArtwork().observe(this, this::setupArtistsList);
+    }
+
+    private void setupArtistsList(List<Artist> artistList) {
+        ArtistListAdapter artistListAdapter = new ArtistListAdapter(artistList, null);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
+        artworksByArtistRv.setAdapter(artistListAdapter);
+    }
+
     private void initArtworkViewModel(String artworkLink) {
-        artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
         artworksViewModel.initArtworkData(artworkLink);
         artworksViewModel.getArtworkFromLink().observe(this, this::setupArtworkInfoUi);
     }
@@ -525,46 +577,24 @@ public class SearchDetailActivity extends AppCompatActivity {
             artworkInfoLabel.setVisibility(View.VISIBLE);
             artworkInfoMarkdown.loadMarkdown(addInfo); // load the markdown text
         }
+
         ImageLinks imageLinksObject = currentArtwork.getLinks();
-        setImage(currentArtwork, imageLinksObject);
+        MainImage mainImageObject = imageLinksObject.getImage();
+        List<String> imageVersionList = currentArtwork.getImageVersions();
+        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
+            if (s != null) {
+                Log.d(TAG, "temp, largeArtworkLink is " + s);
+                // Set the large image with Picasso
+                Picasso.get()
+                        .load(s)
+                        .placeholder(R.color.color_primary)
+                        .error(R.color.color_error)
+                        .into(secondImage);
+            }
+        });
 
         // Get the artist link
         ArtistsLink artistsLink = imageLinksObject.getArtists();
         Log.d(TAG, "artistsLink is =" + artistsLink);
-    }
-
-    private void setImage(Artwork currentArtwork, ImageLinks imageLinksObject) {
-        MainImage mainImageObject = imageLinksObject.getImage();
-        if (currentArtwork.getImageVersions() != null) {
-            List<String> imageVersionList = currentArtwork.getImageVersions();
-            // Get the link for the current artwork,
-            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-            String artworkImgLinkString = mainImageObject.getHref();
-            // Replace the {image_version} from the artworkImgLinkString with
-            // the wanted version, e.g. "large"
-            String largeArtworkLink = extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);
-            Log.d(TAG, "temp, largeArtworkLink is " + largeArtworkLink);
-            // Set the large image with Picasso
-            Picasso.get()
-                    .load(largeArtworkLink)
-                    .placeholder(R.color.color_primary)
-                    .error(R.color.color_error)
-                    .into(secondImage);
-
-            String squareImage = extractImageLink(getVersionImage(imageVersionList, IMAGE_SQUARE), artworkImgLinkString);
-            // TODO: ...
-        }
-    }
-
-    private String getVersionImage(List<String> imageVersionList, String version) {
-        if (imageVersionList.contains(version)) {
-            return imageVersionList.get(imageVersionList.indexOf(version));
-        } else {
-            return imageVersionList.get(0);  // Get the first one no matter what is the value
-        }
-    }
-
-    private String extractImageLink(String stringFinal, String stringFull) {
-        return stringFull.replaceAll("\\{.*?\\}", stringFinal);
     }
 }

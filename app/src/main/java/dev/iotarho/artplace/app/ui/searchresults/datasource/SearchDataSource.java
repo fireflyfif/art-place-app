@@ -43,7 +43,7 @@ import androidx.paging.PageKeyedDataSource;
 
 import java.util.List;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 import dev.iotarho.artplace.app.model.Next;
 import dev.iotarho.artplace.app.model.search.EmbeddedResults;
 import dev.iotarho.artplace.app.model.search.Result;
@@ -165,9 +165,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     }
 
     private String getNextPage(SearchWrapperResponse searchResponse) {
-        Links links = searchResponse.getLinks();
-        if (links != null) {
-            Next next = links.getNext();
+        PageLinks pageLinks = searchResponse.getPageLinks();
+        if (pageLinks != null) {
+            Next next = pageLinks.getNext();
             if (next != null) {
                 return next.getHref();
             }

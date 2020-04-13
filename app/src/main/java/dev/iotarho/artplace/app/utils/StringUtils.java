@@ -47,6 +47,7 @@ public class StringUtils {
 
     private static final String TAG = StringUtils.class.getSimpleName();
     private static final String NO_IMAGE = "/assets/shared/missing_image.png";
+    private static final String REGEX = "\\{.*?\\}";
 
     public static String getArtistNameFromSlug(Artwork artwork) {
         String artistNameFromSlug;
@@ -114,5 +115,9 @@ public class StringUtils {
             return "";
         }
         return image;
+    }
+
+    public static String extractImageLink(String stringFinal, String stringFull) {
+        return stringFull.replaceAll(REGEX, stringFinal);
     }
 }

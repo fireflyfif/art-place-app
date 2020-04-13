@@ -39,6 +39,7 @@ import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artists.ArtistWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
 import dev.iotarho.artplace.app.model.search.SearchWrapperResponse;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import retrofit2.Call;
@@ -117,4 +118,7 @@ public interface ArtsyApiInterface {
 
     @GET
     Call<ShowContent> getDetailContentFromSearchLink(@Url String selfLink);
+
+    @GET
+    Call<GeneContent> getDetailContentForGenes(@Url String selfLink);
 }

@@ -44,7 +44,7 @@ import androidx.paging.PageKeyedDataSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 import dev.iotarho.artplace.app.model.Next;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
@@ -129,9 +129,9 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
     }
 
     private String getNextPage(ArtworkWrapperResponse artworkWrapperResponse) {
-        Links links = artworkWrapperResponse.getLinks();
-        if (links != null) {
-            Next next = links.getNext();
+        PageLinks pageLinks = artworkWrapperResponse.getPageLinks();
+        if (pageLinks != null) {
+            Next next = pageLinks.getNext();
             if (next != null) {
                 return next.getHref();
             }

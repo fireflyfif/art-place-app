@@ -35,10 +35,9 @@
 
 package dev.iotarho.artplace.app.model.search;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 
 public class SearchWrapperResponse {
 
@@ -52,7 +51,7 @@ public class SearchWrapperResponse {
     private String q;
 
     @SerializedName("_links")
-    private Links links;
+    private PageLinks pageLinks;
 
     @SerializedName("_embedded")
     private EmbeddedResults embedded;
@@ -81,12 +80,12 @@ public class SearchWrapperResponse {
         this.q = q;
     }
 
-    public Links getLinks() {
-        return links;
+    public PageLinks getPageLinks() {
+        return pageLinks;
     }
 
-    public void setLinks(Links links) {
-        this.links = links;
+    public void setPageLinks(PageLinks pageLinks) {
+        this.pageLinks = pageLinks;
     }
 
     public EmbeddedResults getEmbedded() {

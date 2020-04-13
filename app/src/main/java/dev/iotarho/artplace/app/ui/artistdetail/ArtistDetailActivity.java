@@ -126,7 +126,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
                     if (artists != null) {
                         artistCard.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < artists.size(); i++) {
+                        for (int i = 0; i < artists.size(); i++) { // TODO: Don't loop here!
                             Artist artistCurrent = artists.get(i);
                             setupUi(artistCurrent);
                         }

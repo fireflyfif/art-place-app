@@ -37,6 +37,7 @@ package dev.iotarho.artplace.app.ui.searchdetail;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -46,17 +47,27 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.List;
 
 import dev.iotarho.artplace.app.AppExecutors;
+import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
+import dev.iotarho.artplace.app.utils.StringUtils;
 
-import static dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity.ARTIST_BIO;
 
 public class ShowsDetailViewModel extends ViewModel {
 
+    public static final String ARTIST_BIO = "ArtistBio__BioSpan-sc-14mck41-0 vDRHu";
+    private static final String IMAGE_LARGE = "large";
+    private static final String IMAGE_SQUARE = "square";
+    private static final String IMAGE_LARGER = "larger";
+
     private LiveData<ShowContent> showContentData;
+    private LiveData<GeneContent> geneResultData;
     private MutableLiveData<String> artistBiographyData;
+    private MutableLiveData<String> artworkImageData;
 
     public ShowsDetailViewModel() {
     }
@@ -66,6 +77,10 @@ public class ShowsDetailViewModel extends ViewModel {
             return;
         }
         showContentData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+    }
+
+    public void initGenesResultFromLink(String selfLink) {
+        geneResultData = ArtsyRepository.getInstance().getGenesContent(selfLink);
     }
 
     public void initBioFromWeb(String webLink) {
@@ -80,6 +95,13 @@ public class ShowsDetailViewModel extends ViewModel {
         return artistBiographyData;
     }
 
+    public LiveData<GeneContent> getGeneResultData() {
+        if (geneResultData == null) {
+
+        }
+        return geneResultData;
+    }
+
     private MutableLiveData<String> loadBioFromWeb(String webLink) {
         if (artistBiographyData == null) {
             artistBiographyData = new MutableLiveData<>("");
@@ -91,6 +113,7 @@ public class ShowsDetailViewModel extends ViewModel {
                 String title = doc.title();
                 Elements links = doc.select("a[href]");
                 Elements fresnelContainer = doc.getElementsByClass(ARTIST_BIO);
+                // use postValue() instead of the setValue() for posting on a background thread
                 artistBiographyData.postValue(fresnelContainer.text());
                 Log.d("ShowsDetailViewModel", "temp, artistBio = " + fresnelContainer.text());
             } catch (IOException e) {
@@ -98,5 +121,27 @@ public class ShowsDetailViewModel extends ViewModel {
             }
         });
         return artistBiographyData;
+    }
+
+    public MutableLiveData<String> getArtworkLargeImage(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {
+        if (artworkImageData == null) {
+            artworkImageData = new MutableLiveData<>("");
+        }
+        // Get the link for the current artwork,
+        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        String artworkImgLinkString = mainImageObject.getHref();
+        // Replace the {image_version} from the artworkImgLinkString with
+        // the wanted version, e.g. "large"
+        String value = StringUtils.extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);
+        artworkImageData.setValue(value);
+        return artworkImageData;
+    }
+
+    private String getVersionImage(List<String> imageVersionList, String version) {
+        if (imageVersionList.contains(version)) {
+            return imageVersionList.get(imageVersionList.indexOf(version));
+        } else {
+            return imageVersionList.get(0);  // Get the first one no matter what is the value
+        }
     }
 }

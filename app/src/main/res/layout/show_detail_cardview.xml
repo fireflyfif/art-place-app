@@ -83,6 +83,26 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/show_gene_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:fontFamily="@font/work_sans_medium"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/padding_10dp"
+                android:textColor="@color/color_surface"
+                android:textIsSelectable="true"
+                android:textSize="22sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Renaissance Art"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/show_start_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -92,8 +112,10 @@
                 android:fontFamily="@font/work_sans_light"
                 android:text="@string/start_at"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/show_gene_name"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/show_start_date"
@@ -104,10 +126,12 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/show_start_label"
                 app:layout_constraintTop_toBottomOf="@+id/show_start_label"
-                tools:text="2017-04-16" />
+                tools:text="2017-04-16"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/show_end_label"
@@ -121,9 +145,11 @@
                 android:fontFamily="@font/work_sans_light"
                 android:text="@string/end_at"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_start_date" />
+                app:layout_constraintTop_toBottomOf="@+id/show_start_date"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/show_end_date"
@@ -134,10 +160,12 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/show_end_label"
                 app:layout_constraintTop_toBottomOf="@+id/show_end_label"
-                tools:text="2016-11-19" />
+                tools:text="2016-11-19"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/show_description_label"
@@ -150,6 +178,7 @@
                 android:layout_marginRight="24dp"
                 android:fontFamily="@font/work_sans_light"
                 android:text="@string/description"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/show_end_date"
@@ -165,6 +194,7 @@
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
                 android:paddingBottom="24dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/show_description_label"
                 app:layout_constraintTop_toBottomOf="@+id/show_description_label"
@@ -181,9 +211,11 @@
                 android:layout_marginRight="24dp"
                 android:fontFamily="@font/work_sans_light"
                 android:text="@string/press"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_description" />
+                app:layout_constraintTop_toBottomOf="@+id/show_description"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/show_press_release"
@@ -196,13 +228,18 @@
                 android:fontFamily="@font/work_sans"
                 android:paddingBottom="24dp"
                 android:textIsSelectable="true"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/show_press_label"
                 app:layout_constraintTop_toBottomOf="@+id/show_press_label"
-                tools:text="Content Press Release Content Press Release Content Press Release Content Press Release" />
+                tools:text="Content Press Release Content Press Release Content Press Release Content Press Release"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--        <include layout="@layout/artworks_recycler_view" />-->
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
