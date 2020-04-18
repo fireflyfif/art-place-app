@@ -50,7 +50,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -72,7 +71,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Objects;
 
-import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
@@ -97,6 +95,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.utils.Utils;
+import io.noties.markwon.Markwon;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener {
@@ -146,7 +145,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     @BindView(R.id.blurry_image)
     SimpleDraweeView blurryImage;
     @BindView(R.id.artwork_info_markdown)
-    MarkdownView artworkInfoMarkdown;
+    TextView artworkInfoMarkdown;
     @BindView(R.id.info_label)
     TextView artworkInfoLabel;
 
@@ -308,7 +307,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         if (!Utils.isNullOrEmpty(addInfo)) {
             artworkInfoMarkdown.setVisibility(View.VISIBLE);
             artworkInfoLabel.setVisibility(View.VISIBLE);
-            artworkInfoMarkdown.loadMarkdown(addInfo); // load the markdown text
+            final Markwon markwon = Markwon.create(this);
+            markwon.setMarkdown(artworkInfoMarkdown, addInfo);
         }
 
         ImageLinks imageLinksObject = getImageLinks(currentArtwork);

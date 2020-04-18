@@ -67,7 +67,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Objects;
 
-import br.tiagohm.markdownview.MarkdownView;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,6 +93,7 @@ import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
+import io.noties.markwon.Markwon;
 
 public class SearchDetailActivity extends AppCompatActivity {
 
@@ -198,7 +198,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.artwork_dimens_in)
     TextView dimensIn;
     @BindView(R.id.artwork_info_markdown)
-    MarkdownView artworkInfoMarkdown;
+    TextView artworkInfoMarkdown;
     @BindView(R.id.info_label)
     TextView artworkInfoLabel;
 
@@ -260,7 +260,10 @@ public class SearchDetailActivity extends AppCompatActivity {
         getThumbnail(linksResult);
 
         Self self = linksResult.getSelf();
-        String selfLinkString = Objects.requireNonNull(self.getHref());
+        if (self == null || Utils.isNullOrEmpty(self.getHref())) {
+           return;
+        }
+        String selfLinkString = self.getHref();
         Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
         showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
@@ -354,7 +357,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     private void getBioFromReadMoreLink(String readMoreLink) {
         showsDetailViewModel.initBioFromWeb(readMoreLink);
         showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
-                    if (!Utils.isNullOrEmpty(bio) && !Utils.isNullOrEmpty(artistBiography)) {
+                    if (!Utils.isNullOrEmpty(bio) && Utils.isNullOrEmpty(artistBiography)) {
                         Log.d(TAG, "temp, artistBio = " + bio);
                         artistBio.setVisibility(View.VISIBLE);
                         artistBioLabel.setVisibility(View.VISIBLE);
@@ -575,7 +578,8 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (!Utils.isNullOrEmpty(addInfo)) {
             artworkInfoMarkdown.setVisibility(View.VISIBLE);
             artworkInfoLabel.setVisibility(View.VISIBLE);
-            artworkInfoMarkdown.loadMarkdown(addInfo); // load the markdown text
+            final Markwon markwon = Markwon.create(this);
+            markwon.setMarkdown(artworkInfoMarkdown, addInfo);
         }
 
         ImageLinks imageLinksObject = currentArtwork.getLinks();

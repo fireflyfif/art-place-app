@@ -278,11 +278,13 @@
                 android:text="@string/information_label"
                 android:textColor="?colorControlNormal"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/artwork_dimens_cm" />
+                app:layout_constraintTop_toBottomOf="@+id/artwork_dimens_cm"
+                tools:visibility="visible" />
 
-            <br.tiagohm.markdownview.MarkdownView
+            <TextView
                 android:id="@+id/artwork_info_markdown"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -292,7 +294,6 @@
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
                 android:visibility="gone"
-                app:escapeHtml="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/info_label"

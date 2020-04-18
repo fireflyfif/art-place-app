@@ -106,13 +106,13 @@ dependencies {
     // Bottom Navigation Library Dependency
     implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
 
-    // Library for formatting Markdown text
-    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
-
     // Photoview for zooming
     implementation 'com.commit451:PhotoView:1.2.4'
 
     implementation 'org.jsoup:jsoup:1.11.2'
+
+    // Library for formatting Markdown text
+    implementation "io.noties.markwon:core:4.3.1"
 
     // Test dependencies
     testImplementation 'junit:junit:4.13'
