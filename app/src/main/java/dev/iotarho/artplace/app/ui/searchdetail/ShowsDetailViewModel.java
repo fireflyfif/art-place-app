@@ -64,18 +64,15 @@ public class ShowsDetailViewModel extends ViewModel {
     private static final String IMAGE_SQUARE = "square";
     private static final String IMAGE_LARGER = "larger";
 
-    private LiveData<ShowContent> showContentData;
-    private LiveData<GeneContent> geneResultData;
-    private MutableLiveData<String> artistBiographyData;
-    private MutableLiveData<String> artworkImageData;
+    private LiveData<ShowContent> showContentData = new MutableLiveData<>();
+    private LiveData<GeneContent> geneResultData = new MutableLiveData<>();
+    private MutableLiveData<String> artistBiographyData = new MutableLiveData<>();
+    private MutableLiveData<String> artworkImageData = new MutableLiveData<>();
 
     public ShowsDetailViewModel() {
     }
 
     public void initSearchLink(String selfLink) {
-        if (showContentData != null) {
-            return;
-        }
         showContentData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
     }
 
@@ -96,17 +93,10 @@ public class ShowsDetailViewModel extends ViewModel {
     }
 
     public LiveData<GeneContent> getGeneResultData() {
-        if (geneResultData == null) {
-
-        }
         return geneResultData;
     }
 
     private MutableLiveData<String> loadBioFromWeb(String webLink) {
-        if (artistBiographyData == null) {
-            artistBiographyData = new MutableLiveData<>("");
-        }
-
         AppExecutors.getInstance().networkIO().execute(() -> {
             try {
                 Document doc = Jsoup.connect(webLink).get();
@@ -124,9 +114,6 @@ public class ShowsDetailViewModel extends ViewModel {
     }
 
     public MutableLiveData<String> getArtworkLargeImage(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {
-        if (artworkImageData == null) {
-            artworkImageData = new MutableLiveData<>("");
-        }
         // Get the link for the current artwork,
         // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
         String artworkImgLinkString = mainImageObject.getHref();

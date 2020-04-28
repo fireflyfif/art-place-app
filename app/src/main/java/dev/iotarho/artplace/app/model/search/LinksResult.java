@@ -42,6 +42,7 @@ import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
+import dev.iotarho.artplace.app.model.artworks.MainImage;
 
 public class LinksResult implements Parcelable {
 
@@ -56,6 +57,9 @@ public class LinksResult implements Parcelable {
 
     @SerializedName("images")
     private ImagesObject images; // TODO: This needs to be moved from here
+
+    @SerializedName("image")
+    private MainImage image;
 
     public Self getSelf() {
         return self;
@@ -84,6 +88,7 @@ public class LinksResult implements Parcelable {
         dest.writeParcelable(this.permalink, flags);
         dest.writeParcelable(this.thumbnail, flags);
         dest.writeParcelable(this.images, flags);
+        dest.writeParcelable(this.image, flags);
     }
 
     public LinksResult() {
@@ -94,6 +99,7 @@ public class LinksResult implements Parcelable {
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
         this.images = in.readParcelable(ImagesObject.class.getClassLoader());
+        this.image = in.readParcelable(MainImage.class.getClassLoader());
     }
 
     public static final Creator<LinksResult> CREATOR = new Creator<LinksResult>() {
@@ -112,7 +118,7 @@ public class LinksResult implements Parcelable {
         return images;
     }
 
-    public void setImages(ImagesObject images) {
-        this.images = images;
+    public MainImage getImage() {
+        return image;
     }
 }
