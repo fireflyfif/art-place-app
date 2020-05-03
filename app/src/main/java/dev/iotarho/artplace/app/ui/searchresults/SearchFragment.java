@@ -46,7 +46,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -163,7 +162,7 @@ public class SearchFragment extends Fragment implements
         mViewModelFactory = Injection.provideSearchViewModelFactory(queryString, searchTypeString);
 
         // Initialize the ViewModel
-        mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
+        mViewModel = new ViewModelProvider(getViewModelStore(), mViewModelFactory).get(SearchFragmentViewModel.class);
 
         // Get the search word from the intent
         Bundle appData = getArguments(); //getIntent().getBundleExtra(SearchManager.APP_DATA);
@@ -198,19 +197,19 @@ public class SearchFragment extends Fragment implements
     }
 
     private void setupUi() {
-        mViewModel.getSearchResultsLiveData().observe(requireActivity(), results -> {
+        mViewModel.getSearchResultsLiveData().observe(getViewLifecycleOwner(), results -> {
             if (results != null) {
                 mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
             }
         });
 
-        mViewModel.getNetworkState().observe(requireActivity(), networkState -> {
+        mViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> {
             if (networkState != null) {
                 mSearchAdapter.setNetworkState(networkState);
             }
         });
 
-        mViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
+        mViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -252,13 +251,8 @@ public class SearchFragment extends Fragment implements
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SearchFragmentViewModel.class);
-
         Log.d(TAG, "requestNewCall: queryWord: " + queryWord + " searchType: " + searchType);
-        mViewModel.refreshSearchLiveData(queryWord, searchType)
-                .observe(this, results -> {
-                    mSearchAdapter.submitList(results);
-                });
+        mViewModel.refreshSearchLiveData(queryWord, searchType).observe(getViewLifecycleOwner(), results -> mSearchAdapter.submitList(results));
     }
 
     @Override
@@ -383,8 +377,9 @@ public class SearchFragment extends Fragment implements
             item.setChecked(true);
             isMenuItemChecked = true;
             searchTypeString = searchType;
-            requestNewCall(queryString, searchType); // TODO: old value of the queryString
+            queryString = prefUtils.getSearchQuery();
             Log.d(TAG, "setItemState, queryString: " + queryString);
+            requestNewCall(queryString, searchType);
         }
     }
 
