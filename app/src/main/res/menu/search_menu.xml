@@ -47,6 +47,7 @@
         tools:targetApi="o" />
 
     <group
+        android:id="@+id/search_type_group"
         android:checkableBehavior="single"
         android:icon="@drawable/ic_filter_list_black_24dp"
         android:orderInCategory="200"

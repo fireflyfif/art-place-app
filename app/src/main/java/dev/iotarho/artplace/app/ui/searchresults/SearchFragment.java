@@ -46,6 +46,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -237,7 +238,7 @@ public class SearchFragment extends Fragment implements
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
                     // TODO: Show an empty image
-                    Snackbar.make(coordinatorLayout,"No results, sorry",
+                    Snackbar.make(coordinatorLayout, "No results, sorry",
                             Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -263,11 +264,31 @@ public class SearchFragment extends Fragment implements
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (isMenuItemChecked) {
-            menu.findItem(R.id.action_search).setChecked(true);
-        } else {
-            menu.findItem(R.id.action_search).setChecked(false);
+        int index = 0;
+
+        if (!isMenuItemChecked) {
+            return;
         }
+
+      /*  MenuItem item = menu.getItem(R.id.search_type_group);
+//        MenuItem item = menu.findItem(id);
+        switch (item.getItemId()) {
+            case R.id.action_type_artist:
+                checkStateOfItem(menu, R.id.action_type_artist);
+                break;
+            case R.id.action_type_artwork:
+                checkStateOfItem(menu, R.id.action_type_artwork);
+                break;
+            case R.id.action_type_gene:
+                checkStateOfItem(menu, R.id.action_type_gene);
+                break;
+            case R.id.action_type_show:
+                checkStateOfItem(menu, R.id.action_type_show);
+                break;
+            default:
+                checkStateOfItem(menu, R.id.action_type_none);
+                break;
+        }*/
     }
 
     @Override
@@ -325,63 +346,45 @@ public class SearchFragment extends Fragment implements
             case R.id.action_search:
                 return true;
 
-            /*case R.id.action_type_article:
-                item.setChecked(true);
-                // Set the type to article
-                mSearchType = "article";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
-                return true;*/
-
             case R.id.action_type_artist:
-                // TODO: Still doesn't work ????
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                    isMenuItemChecked = false;
-                } else {
-                    item.setChecked(true);
-                    isMenuItemChecked = true;
-                    searchTypeString = "artist"; // Set the type to artist
-                    requestNewCall(queryString, searchTypeString);
-                }
-
+                setItemState(item, "artist");
                 Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_artwork:
-                item.setChecked(isMenuItemChecked);
-                searchTypeString = "artwork";  // Set the type to artwork
-                requestNewCall(queryString, searchTypeString);
-
+                setItemState(item, "artwork");
                 Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_gene:
-                item.setChecked(isMenuItemChecked);
-                searchTypeString = "gene"; // Set the type to gene
-                requestNewCall(queryString, searchTypeString);
-
+                setItemState(item, "gene");
                 Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_show:
-                item.setChecked(isMenuItemChecked);
-                searchTypeString = "show";  // Set the type to show
-                requestNewCall(queryString, searchTypeString);
-
+                setItemState(item, "show");
                 Log.d(TAG, "Type word: " + searchTypeString);
                 return true;
 
             case R.id.action_type_none:
-                item.setChecked(isMenuItemChecked);
-                requestNewCall(queryString, null);
-
+                setItemState(item, null);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setItemState(MenuItem item, String searchType) {
+        if (item.isChecked()) {
+            item.setChecked(false);
+            isMenuItemChecked = false;
+        } else {
+            item.setChecked(true);
+            isMenuItemChecked = true;
+            searchTypeString = searchType;
+            requestNewCall(queryString, searchType); // TODO: old value of the queryString
+            Log.d(TAG, "setItemState, queryString: " + queryString);
         }
     }
 
