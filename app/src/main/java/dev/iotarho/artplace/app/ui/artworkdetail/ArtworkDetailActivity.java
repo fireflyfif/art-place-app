@@ -580,7 +580,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_LONG);
         View view = snack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        tv.setTextColor(getResources().getColor(R.color.color_text_contrast));
         view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
         snack.show();
     }
@@ -596,7 +596,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_LONG);
         View view = snack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextColor(getResources().getColor(R.color.color_on_background));
+        tv.setTextColor(getResources().getColor(R.color.color_text_contrast));
         view.setBackgroundColor(getResources().getColor(R.color.color_snackbar_bg));
         snack.show();
     }

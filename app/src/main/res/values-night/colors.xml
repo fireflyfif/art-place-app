@@ -45,10 +45,12 @@
 
     <color name="color_red">#FE4A49</color>
 
+    <color name="color_text_contrast">#ffffff</color>
     <color name="color_text_white">#ffffff</color>
     <color name="color_snackbar_bg">#484848</color>
     <color name="color_bg_transparent_25">#65000000</color>
     <color name="color_bg_transparent_90">#D9000000</color>
+    <color name="color_on_toolbar">#353535</color>
 
     <color name="color_background">#000000</color>
     <color name="color_surface">#292929</color>
@@ -56,8 +58,8 @@
 
     <color name="color_on_primary">#000000</color>
     <color name="color_on_secondary">#000000</color>
-    <color name="color_on_background">#ffffff</color>
-    <color name="color_on_surface">#383838</color>
+    <color name="color_on_background">#000000</color>
+    <color name="color_on_surface">#1E1E1E</color>
     <color name="color_on_error">#000000</color>
 
 </resources>

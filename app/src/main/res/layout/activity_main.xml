@@ -37,6 +37,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal">
@@ -45,6 +46,7 @@
         android:id="@+id/appbar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?colorOnBackground"
         android:theme="@style/Theme.AppCompat.DayNight">
 
         <com.google.android.material.appbar.MaterialToolbar
