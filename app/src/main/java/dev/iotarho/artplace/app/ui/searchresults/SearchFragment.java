@@ -99,10 +99,10 @@ public class SearchFragment extends Fragment implements
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private SearchFragmentViewModel mViewModel;
+    private SearchFragmentViewModelFactory searchFragmentViewModelFactory;
+    private SearchFragmentViewModel searchFragmentViewModel;
     private SearchListAdapter mSearchAdapter;
     private String queryString;
-    private SearchFragmentViewModelFactory mViewModelFactory;
     private String searchTypeString;
     private boolean isMenuItemChecked;
 
@@ -159,10 +159,10 @@ public class SearchFragment extends Fragment implements
 
         queryString = prefUtils.getSearchQuery();
         Log.d(TAG, "queryString: " + queryString);
-        mViewModelFactory = Injection.provideSearchViewModelFactory(queryString, searchTypeString);
+        searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
 
         // Initialize the ViewModel
-        mViewModel = new ViewModelProvider(getViewModelStore(), mViewModelFactory).get(SearchFragmentViewModel.class);
+        searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
 
         // Get the search word from the intent
         Bundle appData = getArguments(); //getIntent().getBundleExtra(SearchManager.APP_DATA);
@@ -170,9 +170,6 @@ public class SearchFragment extends Fragment implements
             queryString = appData.getString(SEARCH_WORD_EXTRA);
             Log.d(TAG, "onCreateView, queryString: " + queryString);
         }
-
-        // Set the UI
-        setupUi();
 
         return rootView;
     }
@@ -182,6 +179,23 @@ public class SearchFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
 
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        setupUi(); // Set the UI onViewCreated to ensure that the view is created
+    }
+
+    private void setupUi() {
+        // TODO: Should I set the value of the query here too?
+        searchFragmentViewModel.getQueryLiveData().observe(getViewLifecycleOwner(), query -> {
+            Log.d(TAG, "temp, query is = " + query);
+        });
+        searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
+            mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
+            observeNetworkState();
+            observeLoadingState();
+        });
+
+        // Setup the RecyclerView first
+        setupRecyclerView();
     }
 
     private void setupRecyclerView() {
@@ -196,20 +210,8 @@ public class SearchFragment extends Fragment implements
         searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    private void setupUi() {
-        mViewModel.getSearchResultsLiveData().observe(getViewLifecycleOwner(), results -> {
-            if (results != null) {
-                mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
-            }
-        });
-
-        mViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> {
-            if (networkState != null) {
-                mSearchAdapter.setNetworkState(networkState);
-            }
-        });
-
-        mViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
+    private void observeLoadingState() {
+        searchFragmentViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -242,9 +244,14 @@ public class SearchFragment extends Fragment implements
                 }
             }
         });
+    }
 
-        // Setup the RecyclerView first
-        setupRecyclerView();
+    private void observeNetworkState() {
+        searchFragmentViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> {
+            if (networkState != null) {
+                mSearchAdapter.setNetworkState(networkState);
+            }
+        });
     }
 
     private synchronized void requestNewCall(String queryWord, String searchType) {
@@ -252,7 +259,8 @@ public class SearchFragment extends Fragment implements
         setupRecyclerView();
 
         Log.d(TAG, "requestNewCall: queryWord: " + queryWord + " searchType: " + searchType);
-        mViewModel.refreshSearchLiveData(queryWord, searchType).observe(getViewLifecycleOwner(), results -> mSearchAdapter.submitList(results));
+        searchFragmentViewModel.getPagedList()
+                .observe(getViewLifecycleOwner(), results -> mSearchAdapter.submitList(results));
     }
 
     @Override
@@ -308,21 +316,23 @@ public class SearchFragment extends Fragment implements
             Log.d(TAG, "queryString: " + queryString);
             searchView.onActionViewExpanded();
             searchView.setQuery(queryString, true);
+            searchFragmentViewModel.setQuery(queryString);
         }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit, query: " + query);
+                searchFragmentViewModel.setQuery(query); // Set the new value to the mutable data TODO: Do I need this?
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "onQueryTextChange, newText: " + newText);
-                if (newText.length() > 3) {
-                    // Save the search query into SharedPreference
-                    prefUtils.saveSearchQuery(newText);
+                if (newText.length() > 2) {
+                    searchFragmentViewModel.setQuery(newText); // Set the new value to the mutable data
+                    prefUtils.saveSearchQuery(newText); // Save the search query into SharedPreference
                     requestNewCall(newText, searchTypeString);
                 }
                 return false;
@@ -379,6 +389,7 @@ public class SearchFragment extends Fragment implements
             searchTypeString = searchType;
             queryString = prefUtils.getSearchQuery();
             Log.d(TAG, "setItemState, queryString: " + queryString);
+            searchFragmentViewModel.setType(searchType);
             requestNewCall(queryString, searchType);
         }
     }

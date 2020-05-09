@@ -39,10 +39,13 @@ import android.util.Log;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
+
+import java.util.Locale;
 
 import dev.iotarho.artplace.app.AppExecutors;
 import dev.iotarho.artplace.app.model.search.Result;
@@ -59,65 +62,102 @@ public class SearchFragmentViewModel extends ViewModel {
     private static final int INITIAL_SIZE_HINT = 10;
     private static final int PREFETCH_DISTANCE_HINT = 10;
 
-    private SearchDataSourceFactory mSearchDataSourceFactory;
+    private LiveData<NetworkState> networkLiveState;
+    private LiveData<NetworkState> initialLiveLoadingState;
+    private LiveData<PagedList<Result>> resultLivePagedList;
+    private MutableLiveData<String> queryLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> typeLiveData = new MutableLiveData<>();
+    private PagedList.Config pagedListConfig;
 
-    private LiveData<NetworkState> mNetworkState;
-    private LiveData<NetworkState> mInitialLoading;
-
-    private LiveData<PagedList<Result>> mResultPagedList;
-    private String mQueryWord;
-    private String mTypeWord;
-    private ArtsyRepository mRepo; // todo: remove
+    private ArtsyRepository repo;
 
 
-    public SearchFragmentViewModel(String queryWord, String typeWord) {
-        mQueryWord = queryWord;
-        mTypeWord = typeWord;
-        mRepo = ArtsyRepository.getInstance();
+    public SearchFragmentViewModel(ArtsyRepository artsyRepository) {
+        repo = artsyRepository;
 
         init();
     }
 
     private void init() {
-        // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory(mRepo, mQueryWord, mTypeWord);
+//        getPagedList();
+    }
 
-        // Initialize the network state liveData
-        mNetworkState = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
-
-        // Initialize the Loading state liveData
-        mInitialLoading = Transformations.switchMap(mSearchDataSourceFactory.getSearchDataSourceMutableLiveData(),
-                (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
-
+    public LiveData<PagedList<Result>> getPagedList() {
         // Configure the PagedList.Config
-        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
-                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
-                .setPageSize(PAGE_SIZE)
-                .build();
+        pagedListConfig = new PagedList.Config.Builder()
+                 .setEnablePlaceholders(false)
+                 .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
+                 .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
+                 .setPageSize(PAGE_SIZE)
+                 .build();
 
-        mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
-                .setFetchExecutor(AppExecutors.getInstance().networkIO())
-                .build();
+        resultLivePagedList = Transformations.switchMap(queryLiveData, input -> {
+            // Get an instance of the DataSourceFactory class
+            SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input);
+            // Initialize the network state liveData
+            networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
+                    (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
+            // Initialize the Loading state liveData
+            initialLiveLoadingState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
+                    (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
+            resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
+                    .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                    .build();
+            return resultLivePagedList;
+        });
+
+               /* resultLivePagedList = Transformations.switchMap(queryLiveData, typeLiveData, input -> {
+                    // Get an instance of the DataSourceFactory class
+                    SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input);
+                    // Initialize the network state liveData
+                    networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
+                            (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
+                    // Initialize the Loading state liveData
+                    initialLiveLoadingState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
+                            (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
+                    resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
+                            .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                            .build();
+                    return resultLivePagedList;
+                });*/
+        return resultLivePagedList;
     }
 
     public LiveData<NetworkState> getNetworkState() {
-        return mNetworkState;
+        return networkLiveState;
     }
 
     public LiveData<NetworkState> getInitialLoading() {
-        return mInitialLoading;
+        return initialLiveLoadingState;
     }
 
-    public LiveData<PagedList<Result>> getSearchResultsLiveData() {
-        return mResultPagedList;
+   /* public LiveData<PagedList<Result>> getSearchResultsLiveData() {
+        return resultLivePagedList;
+    }*/
+
+    public LiveData<String> getQueryLiveData() {
+        return queryLiveData;
     }
 
-    public LiveData<PagedList<Result>> refreshSearchLiveData(String queryWord, String typeWord) {
+    public void setQuery(String originalInput) {
+        String input = originalInput.toLowerCase(Locale.getDefault()).trim();
+        if (input.equals(queryLiveData.getValue())) {
+            return;
+        }
+        queryLiveData.setValue(input);
+    }
+
+    public void setType(String typeInput) {
+        String input = typeInput.toLowerCase(Locale.getDefault()).trim();
+        if (input.equals(typeLiveData.getValue())) {
+            return;
+        }
+        typeLiveData.setValue(input);
+    }
+
+    /*public LiveData<PagedList<Result>> refreshSearchLiveData(String queryWord, String typeWord) {
         // Get an instance of the DataSourceFactory class
-        mSearchDataSourceFactory = new SearchDataSourceFactory(mRepo, queryWord, typeWord);
+//        searchDataSourceFactory = new SearchDataSourceFactory(repo, queryWord, typeWord);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
@@ -129,9 +169,9 @@ public class SearchFragmentViewModel extends ViewModel {
 
         Log.d(TAG, "SearchFragmentViewModel: PagedListConfig: " + pagedListConfig);
 
-        mResultPagedList = new LivePagedListBuilder<>(mSearchDataSourceFactory, pagedListConfig)
+        resultLivePagedList = new LivePagedListBuilder<>(searchDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
-        return mResultPagedList;
-    }
+        return resultLivePagedList;
+    }*/
 }

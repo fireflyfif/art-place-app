@@ -68,6 +68,7 @@ public class ArtsyRepository {
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
     private static volatile ArtsyRepository INSTANCE;
+    private static final Object mutex = new Object();
 
     private TokenManager mTokenManager;
     private PreferenceUtils mPreferenceUtils;
@@ -82,16 +83,21 @@ public class ArtsyRepository {
         mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static ArtsyRepository getInstance() {
-        // Double check locking pattern
+    public synchronized static void createInstance() {
         if (INSTANCE == null) {
-
             // if there is no instance available, create a new one
             synchronized (ArtsyRepository.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new ArtsyRepository();
                 }
             }
+        }
+    }
+
+    public static ArtsyRepository getInstance() {
+        // Double check locking pattern
+        if (INSTANCE == null) {
+            throw new IllegalStateException("Artsy repository instance not initialized");
         }
         return INSTANCE;
     }

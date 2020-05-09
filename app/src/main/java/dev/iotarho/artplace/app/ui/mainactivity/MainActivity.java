@@ -94,15 +94,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = this.getWindow();
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow();
-            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }*/
-// finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // clear FLAG_TRANSLUCENT_STATUS flag:
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.color_on_background));
         }
@@ -141,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             // Set the title on the toolbar according to
             // the position of the clicked Fragment
             setToolbarTitle(position);
-
             return true;
         });
     }

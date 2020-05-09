@@ -38,35 +38,35 @@ package dev.iotarho.artplace.app.ui.searchresults.datasource;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
 
+
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
 
 public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 
-    private MutableLiveData<SearchDataSource> mSearchDataSourceMutableLiveData;
-    private SearchDataSource mSearchDataSource;
-    private String mArtQuery;
-    private String mTypeString;
-    private ArtsyRepository mRepository;
+    private MutableLiveData<SearchDataSource> searchDataSourceMutableLiveData;
+    private SearchDataSource searchDataSource;
+    private String searchKey;
+    private String typeKey;
+    private ArtsyRepository repository;
 
-    public SearchDataSourceFactory(ArtsyRepository repository, String queryWord, String typeWord) {
-        mArtQuery = queryWord;
-        mTypeString = typeWord;
-        mRepository = repository;
+    public SearchDataSourceFactory(ArtsyRepository repository, String searchKey) {
+        this.repository = repository;
+        this.searchKey = searchKey;
+//        this.typeKey = typeKey;
 
-        mSearchDataSourceMutableLiveData = new MutableLiveData<>();
+        searchDataSourceMutableLiveData = new MutableLiveData<>();
     }
-
 
     @Override
     public DataSource<Long, Result> create() {
-        mSearchDataSource = new SearchDataSource(mRepository, mArtQuery, mTypeString);
-        mSearchDataSourceMutableLiveData.postValue(mSearchDataSource);
+        searchDataSource = new SearchDataSource(repository, searchKey, typeKey);
+        searchDataSourceMutableLiveData.postValue(searchDataSource);
 
-        return mSearchDataSource;
+        return searchDataSource;
     }
 
     public MutableLiveData<SearchDataSource> getSearchDataSourceMutableLiveData() {
-        return mSearchDataSourceMutableLiveData;
+        return searchDataSourceMutableLiveData;
     }
 }

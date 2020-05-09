@@ -3,8 +3,10 @@ package dev.iotarho.artplace.app.ui.searchresults.datasource;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.search.ImagesObject;
 import dev.iotarho.artplace.app.model.search.LinksResult;
@@ -43,10 +45,23 @@ public class SearchResultsLogic {
                 filteredList.add(result);
                 Log.d("SearchResultsLogic", "Adding result: " + result.getTitle());
             } else {
+                // just don't add it to the list
                 Log.d("SearchResultsLogic", "Removing result without image: " + result.getTitle());
             }
+
+
         }
         resultList.addAll(filteredList);
         return filteredList;
     }
+
+    private static Comparator<Result> resultComparator = (o1, o2) -> {
+        if (o1.getTitle().equals(o2.getTitle())) {
+            return 0;
+        }
+        if (o1.getDescription().contains(o2.getDescription())) {
+            return 0;
+        }
+        return 1;
+    };
 }

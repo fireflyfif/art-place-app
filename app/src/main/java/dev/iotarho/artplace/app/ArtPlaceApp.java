@@ -41,6 +41,7 @@ import android.content.Context;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import dev.iotarho.artplace.app.repository.ArtsyRepository;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
 
 // Singleton class that extends the Application.
@@ -60,6 +61,7 @@ public class ArtPlaceApp extends Application {
         sInstance = this;
         FirebaseAnalytics.getInstance(getApplicationContext());
         PreferenceUtils.createInstance(getApplicationContext());
+        ArtsyRepository.createInstance();
 
         AndroidThreeTen.init(this);
     }
