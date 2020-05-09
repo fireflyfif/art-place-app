@@ -207,9 +207,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Setup the RecyclerView
         setRecyclerView();
 
-        // Initialize the ViewModel
-        mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
-
         mViewModel.refreshArtworkLiveData().observe(requireActivity(), artworks -> {
             if (artworks != null) {
                 mPagedListAdapter.submitList(null);

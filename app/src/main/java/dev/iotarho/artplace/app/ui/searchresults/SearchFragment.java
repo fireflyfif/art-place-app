@@ -189,6 +189,7 @@ public class SearchFragment extends Fragment implements
             Log.d(TAG, "temp, query is = " + query);
         });
         searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
+            Log.d(TAG, "temp, getPagedList() is = " + results.size());
             mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
             observeNetworkState();
             observeLoadingState();
