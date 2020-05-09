@@ -65,11 +65,18 @@ public class SearchFragmentViewModel extends ViewModel {
     private LiveData<NetworkState> networkLiveState;
     private LiveData<NetworkState> initialLiveLoadingState;
     private LiveData<PagedList<Result>> resultLivePagedList;
+
     private MutableLiveData<String> queryLiveData = new MutableLiveData<>();
     private MutableLiveData<String> typeLiveData = new MutableLiveData<>();
+
+    private SearchResultLiveData searchResultLiveData = new SearchResultLiveData(queryLiveData, typeLiveData);
+
+    private String type;
+
     private PagedList.Config pagedListConfig;
 
     private ArtsyRepository repo;
+    private String input;
 
 
     public SearchFragmentViewModel(ArtsyRepository artsyRepository) {
@@ -87,9 +94,9 @@ public class SearchFragmentViewModel extends ViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        resultLivePagedList = Transformations.switchMap(queryLiveData, input -> {
+        resultLivePagedList = Transformations.switchMap(searchResultLiveData, input -> {
             // Get an instance of the DataSourceFactory class
-            SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input);
+            SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input.first, input.second);
             // Initialize the network state liveData
             networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
                     (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
@@ -128,6 +135,9 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void setType(String typeInput) {
+        if (typeInput == null) {
+            return;
+        }
         String input = typeInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(typeLiveData.getValue())) {
             return;

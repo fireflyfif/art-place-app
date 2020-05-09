@@ -57,52 +57,52 @@ import retrofit2.Response;
 public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     private static final String LOG_TAG = SearchDataSource.class.getSimpleName();
-    private ArtsyRepository mRepository;
+    private ArtsyRepository repository;
 
-    private final MutableLiveData<NetworkState> mNetworkState;
-    private final MutableLiveData<NetworkState> mInitialLoading;
+    private final MutableLiveData<NetworkState> networkState;
+    private final MutableLiveData<NetworkState> initialLoading;
 
-    private String mQueryString;
-    private String mTypeString;
-    private String mNextUrl;
+    private String queryString;
+    private String typeString;
+    private String nextUrl;
 
 
     public SearchDataSource(ArtsyRepository repository, String queryWord, String typeWord) {
-        mQueryString = queryWord;
-        mTypeString = typeWord;
-        mRepository = repository;
+        queryString = queryWord;
+        typeString = typeWord;
+        this.repository = repository;
 
-        mNetworkState = new MutableLiveData<>();
-        mInitialLoading = new MutableLiveData<>();
+        networkState = new MutableLiveData<>();
+        initialLoading = new MutableLiveData<>();
     }
 
     public MutableLiveData getNetworkState() {
-        return mNetworkState;
+        return networkState;
     }
 
     public MutableLiveData getLoadingState() {
-        return mInitialLoading;
+        return initialLoading;
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Result> callback) {
         // Update NetworkState
-        mInitialLoading.postValue(NetworkState.LOADING);
-        mNetworkState.postValue(NetworkState.LOADING);
+        initialLoading.postValue(NetworkState.LOADING);
+        networkState.postValue(NetworkState.LOADING);
 
-        Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString + "\ntype word:" + mTypeString);
+        Log.d(LOG_TAG, "search loadInitial: query word: " + queryString + "\ntype word:" + typeString);
 
-        mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        repository.getArtsyApi().getSearchResults(queryString, params.requestedLoadSize, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
                     SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
+                        networkState.postValue(NetworkState.LOADED);
+                        initialLoading.postValue(NetworkState.LOADED);
 
                         // Get the next link for paging the results
-                        mNextUrl = getNextPage(searchResponse);
+                        nextUrl = getNextPage(searchResponse);
 
                         String receivedQuery = searchResponse.getQ();
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
@@ -113,9 +113,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
 
                         if (totalCount != 0) {
-                            mNextUrl = getNextPage(searchResponse);
+                            nextUrl = getNextPage(searchResponse);
                         } else {
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
 
                         List<Result> resultList = embeddedResults.getResults();
@@ -123,8 +123,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         // The response code is 200, but because of a typo, the API returns an empty list
                         if (resultList.size() == 0) {
                             // TODO: Show a message there is no data for this query
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                         }
 
                         List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
@@ -139,16 +139,16 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         case 400:
                             //TODO: Make display the following error message:
                             // "Invalid type article,artist,artwork,city,fair,feature,gene,show,profile,sale,tag,page"
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
 
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                         case 404:
                             // TODO: Not found results
 //                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                     }
 
@@ -158,7 +158,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
@@ -171,7 +171,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
             if (next != null) {
                 return next.getHref();
             }
-            Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
+            Log.d(LOG_TAG, "loadInitial: Next page link: " + nextUrl);
         }
         return null;
     }
@@ -186,8 +186,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         Log.i(LOG_TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
 
         // Set Network State to Loading
-        mNetworkState.postValue(NetworkState.LOADING);
-        mRepository.getArtsyApi().getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        networkState.postValue(NetworkState.LOADING);
+        repository.getArtsyApi().getNextLinkForSearch(nextUrl, params.requestedLoadSize, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
@@ -199,9 +199,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
 
                         if (totalCount != 0) {
-                            mNextUrl = getNextPage(searchResponse);
+                            nextUrl = getNextPage(searchResponse);
                         } else {
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
 
                         String receivedQuery = searchResponse.getQ();
@@ -226,16 +226,16 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             Log.d(LOG_TAG, "List of Search Result loadAfter : " + filteredList.size());
                         }
 
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
+                        networkState.postValue(NetworkState.LOADED);
+                        initialLoading.postValue(NetworkState.LOADED);
                     }
 
                     Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
 
                 } else {
 
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
 
                     Log.d(LOG_TAG, "Response code from initial load: " + response.code());
                 }
@@ -243,7 +243,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });

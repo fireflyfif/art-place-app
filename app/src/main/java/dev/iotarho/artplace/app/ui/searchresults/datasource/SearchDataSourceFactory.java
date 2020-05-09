@@ -45,22 +45,21 @@ import dev.iotarho.artplace.app.repository.ArtsyRepository;
 public class SearchDataSourceFactory extends DataSource.Factory<Long, Result> {
 
     private MutableLiveData<SearchDataSource> searchDataSourceMutableLiveData;
-    private SearchDataSource searchDataSource;
     private String searchKey;
     private String typeKey;
     private ArtsyRepository repository;
 
-    public SearchDataSourceFactory(ArtsyRepository repository, String searchKey) {
+    public SearchDataSourceFactory(ArtsyRepository repository, String searchKey, String typeKey) {
         this.repository = repository;
         this.searchKey = searchKey;
-//        this.typeKey = typeKey;
+        this.typeKey = typeKey;
 
         searchDataSourceMutableLiveData = new MutableLiveData<>();
     }
 
     @Override
     public DataSource<Long, Result> create() {
-        searchDataSource = new SearchDataSource(repository, searchKey, typeKey);
+        SearchDataSource searchDataSource = new SearchDataSource(repository, searchKey, typeKey);
         searchDataSourceMutableLiveData.postValue(searchDataSource);
 
         return searchDataSource;

@@ -89,6 +89,10 @@ public class SearchFragment extends Fragment implements
     private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
     private static final String ITEM_CHECKED_SAVE_STATE = "search_type";
     private static final String RESULT_PARCEL_KEY = "results_key";
+    private static final String ARTIST_TYPE = "artist";
+    private static final String ARTWORK_TYPE = "artwork";
+    private static final String GENE_TYPE = "gene";
+    private static final String SHOW_TYPE = "show";
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -99,7 +103,6 @@ public class SearchFragment extends Fragment implements
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private SearchFragmentViewModelFactory searchFragmentViewModelFactory;
     private SearchFragmentViewModel searchFragmentViewModel;
     private SearchListAdapter mSearchAdapter;
     private String queryString;
@@ -154,12 +157,11 @@ public class SearchFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
-
         ButterKnife.bind(this, rootView);
 
         queryString = prefUtils.getSearchQuery();
         Log.d(TAG, "queryString: " + queryString);
-        searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
+        SearchFragmentViewModelFactory searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
 
         // Initialize the ViewModel
         searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
@@ -189,7 +191,6 @@ public class SearchFragment extends Fragment implements
             Log.d(TAG, "temp, query is = " + query);
         });
         searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
-            Log.d(TAG, "temp, getPagedList() is = " + results.size());
             mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
             observeNetworkState();
             observeLoadingState();
@@ -201,7 +202,6 @@ public class SearchFragment extends Fragment implements
 
     private void setupRecyclerView() {
         int columnCount = getResources().getInteger(R.integer.list_column_count);
-
         StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
@@ -220,8 +220,7 @@ public class SearchFragment extends Fragment implements
                         && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
-                    Snackbar.make(coordinatorLayout, "Please search for another word.",
-                            Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinatorLayout, "Please search for another word.", Snackbar.LENGTH_LONG).show();
                 }
 
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
@@ -232,16 +231,14 @@ public class SearchFragment extends Fragment implements
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                            Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection, Snackbar.LENGTH_LONG).show();
                 }
 
                 if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
                     // TODO: Show an empty image
-                    Snackbar.make(coordinatorLayout, "No results, sorry",
-                            Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinatorLayout, "No results, sorry", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -352,23 +349,19 @@ public class SearchFragment extends Fragment implements
                 return true;
 
             case R.id.action_type_artist:
-                setItemState(item, "artist");
-                Log.d(TAG, "Type word: " + searchTypeString);
+                setItemState(item, ARTIST_TYPE);
                 return true;
 
             case R.id.action_type_artwork:
-                setItemState(item, "artwork");
-                Log.d(TAG, "Type word: " + searchTypeString);
+                setItemState(item, ARTWORK_TYPE);
                 return true;
 
             case R.id.action_type_gene:
-                setItemState(item, "gene");
-                Log.d(TAG, "Type word: " + searchTypeString);
+                setItemState(item, GENE_TYPE);
                 return true;
 
             case R.id.action_type_show:
-                setItemState(item, "show");
-                Log.d(TAG, "Type word: " + searchTypeString);
+                setItemState(item, SHOW_TYPE);
                 return true;
 
             case R.id.action_type_none:
@@ -388,6 +381,7 @@ public class SearchFragment extends Fragment implements
             item.setChecked(true);
             isMenuItemChecked = true;
             searchTypeString = searchType;
+            Log.d(TAG, "Type word: " + searchTypeString);
             queryString = prefUtils.getSearchQuery();
             Log.d(TAG, "setItemState, queryString: " + queryString);
             searchFragmentViewModel.setType(searchType);
