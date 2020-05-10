@@ -216,8 +216,7 @@ public class SearchFragment extends Fragment implements
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
 
-                if (networkState.getStatus() == NetworkState.Status.SUCCESS
-                        && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                if (networkState.getStatus() == NetworkState.Status.SUCCESS && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
                     Log.d(TAG, "Network Status: " + networkState.getStatus());
                     progressBar.setVisibility(View.INVISIBLE);
                     Snackbar.make(coordinatorLayout, "Please search for another word.", Snackbar.LENGTH_LONG).show();
@@ -252,11 +251,11 @@ public class SearchFragment extends Fragment implements
         });
     }
 
-    private synchronized void requestNewCall(String queryWord, String searchType) {
+    private synchronized void requestNewCall() {
         // Setup the RecyclerView first
         setupRecyclerView();
 
-        Log.d(TAG, "requestNewCall: queryWord: " + queryWord + " searchType: " + searchType);
+        Log.d(TAG, "temp, requestNewCall: queryWord called");
         searchFragmentViewModel.getPagedList()
                 .observe(getViewLifecycleOwner(), results -> mSearchAdapter.submitList(results));
     }
@@ -331,7 +330,7 @@ public class SearchFragment extends Fragment implements
                 if (newText.length() > 2) {
                     searchFragmentViewModel.setQuery(newText); // Set the new value to the mutable data
                     prefUtils.saveSearchQuery(newText); // Save the search query into SharedPreference
-                    requestNewCall(newText, searchTypeString);
+                    requestNewCall();
                 }
                 return false;
             }
@@ -381,11 +380,9 @@ public class SearchFragment extends Fragment implements
             item.setChecked(true);
             isMenuItemChecked = true;
             searchTypeString = searchType;
-            Log.d(TAG, "Type word: " + searchTypeString);
             queryString = prefUtils.getSearchQuery();
-            Log.d(TAG, "setItemState, queryString: " + queryString);
             searchFragmentViewModel.setType(searchType);
-            requestNewCall(queryString, searchType);
+            requestNewCall();
         }
     }
 
@@ -401,7 +398,7 @@ public class SearchFragment extends Fragment implements
 
     @Override
     public void onRefresh() {
-        requestNewCall(prefUtils.getSearchQuery(), searchTypeString);
+        requestNewCall();
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -415,6 +412,6 @@ public class SearchFragment extends Fragment implements
     @Override
     public void showSnackMessage(String resultMessage) {
         Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
-        requestNewCall(queryString, searchTypeString);
+        requestNewCall();
     }
 }

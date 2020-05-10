@@ -66,7 +66,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindDimen;
 import butterknife.BindView;
@@ -226,12 +225,11 @@ public class SearchDetailActivity extends AppCompatActivity {
                 PorterDuff.Mode.SRC_ATOP);
 
         setSupportActionBar(toolbar);
-        if ((toolbar.getNavigationIcon()) != null) {
-            toolbar.getNavigationIcon().setColorFilter(colorFilter);
-        }
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if ((toolbar.getNavigationIcon()) != null) {
+            toolbar.getNavigationIcon().setColorFilter(colorFilter);
         }
 
         showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
@@ -261,7 +259,6 @@ public class SearchDetailActivity extends AppCompatActivity {
         setCollapsingToolbar(titleString);
         contentTitle.setText(titleString);
         contentType.setText(typeString);
-        Log.d(TAG, "Title: " + titleString + "\nType: " + typeString + "\nDescription: " + descriptionString);
 
         if (results.getLinks() == null) {
             return;
@@ -415,7 +412,7 @@ public class SearchDetailActivity extends AppCompatActivity {
                 new int[]{android.R.attr.state_enabled}, // enabled
         };
         int[] colors = new int[]{
-                getResources().getColor(R.color.color_on_background),
+                getResources().getColor(R.color.color_text_contrast),
         };
 
         collapsingToolbarLayout.setTitle(titleString);

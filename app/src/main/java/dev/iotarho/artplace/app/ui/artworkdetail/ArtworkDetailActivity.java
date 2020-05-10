@@ -220,10 +220,14 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         // source: https://stackoverflow.com/a/26837072/8132331
         PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(getResources().getColor(R.color.color_primary),
                 PorterDuff.Mode.SRC_ATOP);
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            Objects.requireNonNull(toolbar.getNavigationIcon()).setColorFilter(colorFilter);
+        }
+
+        if ((toolbar.getNavigationIcon()) != null) {
+            toolbar.getNavigationIcon().setColorFilter(colorFilter);
         }
 
         if (savedInstanceState != null) {

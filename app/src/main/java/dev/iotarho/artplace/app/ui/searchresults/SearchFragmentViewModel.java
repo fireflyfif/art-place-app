@@ -68,20 +68,14 @@ public class SearchFragmentViewModel extends ViewModel {
 
     private MutableLiveData<String> queryLiveData = new MutableLiveData<>();
     private MutableLiveData<String> typeLiveData = new MutableLiveData<>();
-
     private SearchResultLiveData searchResultLiveData = new SearchResultLiveData(queryLiveData, typeLiveData);
 
-    private String type;
-
     private PagedList.Config pagedListConfig;
-
     private ArtsyRepository repo;
-    private String input;
 
 
     public SearchFragmentViewModel(ArtsyRepository artsyRepository) {
         repo = artsyRepository;
-
         init();
     }
 
