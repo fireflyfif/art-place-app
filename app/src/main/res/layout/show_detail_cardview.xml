@@ -121,7 +121,7 @@
                 android:id="@+id/show_start_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
@@ -155,7 +155,7 @@
                 android:id="@+id/show_end_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
@@ -188,11 +188,12 @@
                 android:id="@+id/show_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
+                android:lineSpacingExtra="6dp"
                 android:paddingBottom="24dp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -221,11 +222,12 @@
                 android:id="@+id/show_press_release"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/work_sans"
+                android:lineSpacingExtra="6dp"
                 android:paddingBottom="24dp"
                 android:textIsSelectable="true"
                 android:visibility="gone"
@@ -237,8 +239,6 @@
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-<!--        <include layout="@layout/artworks_recycler_view" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
