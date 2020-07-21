@@ -86,7 +86,7 @@ public class ArtsyRepository {
     public synchronized static void createInstance() {
         if (INSTANCE == null) {
             // if there is no instance available, create a new one
-            synchronized (ArtsyRepository.class) {
+            synchronized (mutex) {
                 if (INSTANCE == null) {
                     INSTANCE = new ArtsyRepository();
                 }
@@ -127,10 +127,10 @@ public class ArtsyRepository {
                     if (artwork != null) {
                         artworkMutableData.setValue(artwork);
                     }
-                    Log.d(TAG, "Artwork loaded successfully! " + response.code());
+                    Log.d(TAG, "Artwork loaded successfully! " + response.message());
                 } else {
                     artworkMutableData.setValue(null);
-                    Log.w(TAG, "Artwork load failed! " + response.code());
+                    Log.w(TAG, "Artwork load failed! " + response.message());
                 }
             }
 
@@ -160,10 +160,10 @@ public class ArtsyRepository {
                         List<Artwork> similarArtList = embeddedArtworks.getArtworks();
                         similarArtData.setValue(similarArtList);
                     }
-                    Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
+                    Log.d(TAG, "Similar artworks loaded successfully! " + response.message());
                 } else {
                     similarArtData.setValue(null);
-                    Log.w(TAG, "Similar artworks load failed! " + response.code());
+                    Log.w(TAG, "Similar artworks load failed! " + response.message());
                 }
             }
 
@@ -194,10 +194,10 @@ public class ArtsyRepository {
                             artistLiveData.setValue(artistList);
                         }
                     }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
+                    Log.d(TAG, "Loaded successfully! " + response.message());
                 } else {
                     artistLiveData.setValue(null);
-                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
                 }
             }
 
@@ -257,10 +257,10 @@ public class ArtsyRepository {
                     if (artistData != null) {
                         artistLiveData.setValue(artistData);
                     }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
+                    Log.d(TAG, "Loaded successfully! " + response.message());
                 } else {
                     artistLiveData.setValue(null);
-                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
                 }
             }
 
@@ -287,10 +287,10 @@ public class ArtsyRepository {
                     if (showContent != null) {
                         searchLiveData.setValue(showContent);
                     }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
+                    Log.d(TAG, "Loaded successfully! " + response.message());
                 } else {
                     searchLiveData.setValue(null);
-                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
                 }
             }
 
@@ -317,10 +317,10 @@ public class ArtsyRepository {
                     if (geneResult != null) {
                         genesLiveData.setValue(geneResult);
                     }
-                    Log.d(TAG, "Loaded successfully! " + response.code());
+                    Log.d(TAG, "Loaded successfully! " + response.message());
                 } else {
                     genesLiveData.setValue(null);
-                    Log.w(TAG, "Loaded NOT successfully! " + response.code());
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
                 }
             }
 

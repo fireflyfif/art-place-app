@@ -36,7 +36,6 @@
 package dev.iotarho.artplace.app;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -51,7 +50,6 @@ public class ArtPlaceApp extends Application {
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
     private static volatile ArtPlaceApp sInstance;
-    private static PreferenceUtils sPrefsUtils;
 
 
     @Override
@@ -80,20 +78,4 @@ public class ArtPlaceApp extends Application {
 
         return sInstance;
     }
-
-    /**
-     * Helper method that gets the context of the application
-     */
-    private static ArtPlaceApp get(Context context) {
-        return (ArtPlaceApp) context.getApplicationContext();
-    }
-
-    /**
-     * Method that is used for initializing  the ViewModel,
-     * because the ViewModel class has a parameter of ArtPlaceApp
-     */
-    public static ArtPlaceApp create(Context context) {
-        return ArtPlaceApp.get(context);
-    }
-
 }

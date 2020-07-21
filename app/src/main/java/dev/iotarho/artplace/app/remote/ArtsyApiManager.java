@@ -37,38 +37,21 @@ package dev.iotarho.artplace.app.remote;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.IOException;
-
-import dev.iotarho.artplace.app.model.CustomArtsyDeserializer;
-import dev.iotarho.artplace.app.model.artists.CustomArtistsDeserializer;
-import dev.iotarho.artplace.app.model.artists.EmbeddedArtists;
-import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
-import dev.iotarho.artplace.app.model.artworks.CustomArtworksDeserializer;
-import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
 import dev.iotarho.artplace.app.remote.authentication.TokenAuthenticator;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.TokenManager;
 import dev.iotarho.artplace.app.utils.Utils;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.internal.Util;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// TODO: Fix this class! It's too messy now!
+
 public class ArtsyApiManager {
 
     private final static OkHttpClient sClient = buildClient();
     private final static Retrofit sRetrofit = buildRetrofit(sClient);
-    private PreferenceUtils mPreferenceUtils;
 
     private static final String TAG = ArtsyApiManager.class.getSimpleName();
 
@@ -82,6 +65,7 @@ public class ArtsyApiManager {
     /**
      * First Retrofit object
      * TODO: Figure out if I can use only one object
+     *
      * @return
      */
     private static Retrofit buildRetrofit(OkHttpClient client) {
@@ -94,6 +78,7 @@ public class ArtsyApiManager {
 
     /**
      * Create service for fetching the token
+     *
      * @param service
      * @param <T>
      * @return
@@ -146,33 +131,4 @@ public class ArtsyApiManager {
 
         return newRetrofit.create(service);
     }
-
-    /**
-     * Second Retrofit object
-     * @param newClient
-     * @return
-     *//*
-    @NonNull
-    private static Retrofit getRetrofit(OkHttpClient newClient) {
-        return new Retrofit.Builder()
-                .baseUrl(Utils.BASE_ARTSY_URL)
-                .client(newClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }*/
-
-    /*
-    Register the TypeAdapter here for deserializing the model
-     */
-    private static Gson makeGson() {
-
-        // Register two different TypeAdapters!
-        // resource: https://stackoverflow.com/a/33459073/8132331
-        return new GsonBuilder()
-                .registerTypeAdapter(ArtworkWrapperResponse.class, new CustomArtsyDeserializer())
-                .registerTypeAdapter(EmbeddedArtworks.class, new CustomArtworksDeserializer())
-                .registerTypeAdapter(EmbeddedArtists.class, new CustomArtistsDeserializer())
-                .create();
-    }
-
 }
