@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
-import dev.iotarho.artplace.app.model.token.TypeToken;
-
 public class PreferenceUtils {
 
     private static final String PREFS_KEY_TOKEN = "prefs_token_key";

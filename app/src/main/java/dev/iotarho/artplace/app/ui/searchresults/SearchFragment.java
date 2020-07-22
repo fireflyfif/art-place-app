@@ -76,6 +76,14 @@ import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
 import dev.iotarho.artplace.app.utils.Utils;
 
 import static dev.iotarho.artplace.app.ui.mainactivity.MainActivity.SEARCH_WORD_EXTRA;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTIST_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTWORK_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ITEM_CHECKED_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.RESULT_PARCEL_KEY;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SEARCH_QUERY_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SEARCH_TYPE_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
 public class SearchFragment extends Fragment implements
         OnResultClickListener,
@@ -84,15 +92,6 @@ public class SearchFragment extends Fragment implements
         OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
-
-    private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
-    private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
-    private static final String ITEM_CHECKED_SAVE_STATE = "search_type";
-    private static final String RESULT_PARCEL_KEY = "results_key";
-    private static final String ARTIST_TYPE = "artist";
-    private static final String ARTWORK_TYPE = "artwork";
-    private static final String GENE_TYPE = "gene";
-    private static final String SHOW_TYPE = "show";
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -104,7 +103,7 @@ public class SearchFragment extends Fragment implements
     SwipeRefreshLayout swipeRefreshLayout;
 
     private SearchFragmentViewModel searchFragmentViewModel;
-    private SearchListAdapter mSearchAdapter;
+    private SearchListAdapter searchListAdapter;
     private String queryString;
     private String searchTypeString;
     private boolean isMenuItemChecked;
@@ -131,13 +130,13 @@ public class SearchFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Add a menu to the current Fragment
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true); // Add a menu to the current Fragment
 
         if (savedInstanceState != null) {
             queryString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
             searchTypeString = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
             isMenuItemChecked = savedInstanceState.getBoolean(ITEM_CHECKED_SAVE_STATE);
+            Log.d(TAG, "savedInstanceState, queryString: " + queryString + " searchTypeString: " + searchTypeString);
         }
 
         prefUtils = PreferenceUtils.getInstance();
@@ -160,7 +159,7 @@ public class SearchFragment extends Fragment implements
         ButterKnife.bind(this, rootView);
 
         queryString = prefUtils.getSearchQuery();
-        Log.d(TAG, "queryString: " + queryString);
+        Log.d(TAG, "queryString from prefs: " + queryString);
         SearchFragmentViewModelFactory searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
 
         // Initialize the ViewModel
@@ -186,12 +185,8 @@ public class SearchFragment extends Fragment implements
     }
 
     private void setupUi() {
-        // TODO: Should I set the value of the query here too?
-        searchFragmentViewModel.getQueryLiveData().observe(getViewLifecycleOwner(), query -> {
-            Log.d(TAG, "temp, query is = " + query);
-        });
         searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
-            mSearchAdapter.submitList(results); // submit the list to the PagedListAdapter
+            searchListAdapter.submitList(results); // submit the list to the PagedListAdapter
             observeNetworkState();
             observeLoadingState();
         });
@@ -206,39 +201,36 @@ public class SearchFragment extends Fragment implements
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
         searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
-        mSearchAdapter = new SearchListAdapter(this, this);
+        searchListAdapter = new SearchListAdapter(this, this);
         // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(mSearchAdapter);
+        searchResultsRv.setAdapter(searchListAdapter);
     }
 
     private void observeLoadingState() {
         searchFragmentViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
-            if (networkState != null) {
-                progressBar.setVisibility(View.VISIBLE);
-
-                if (networkState.getStatus() == NetworkState.Status.SUCCESS && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Snackbar.make(coordinatorLayout, "Please search for another word.", Snackbar.LENGTH_LONG).show();
-                }
-
-                if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-
-                if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.INVISIBLE);
+            if (networkState == null) {
+                return;
+            }
+            progressBar.setVisibility(View.VISIBLE);
+            switch (networkState.getStatus()) {
+                case SUCCESS:
+                    progressBar.setVisibility(View.GONE);
+                    if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                        Snackbar.make(coordinatorLayout, "Please search for another word.", Snackbar.LENGTH_LONG).show();
+                    }
+                    break;
+                case FAILED:
+                    progressBar.setVisibility(View.GONE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection, Snackbar.LENGTH_LONG).show();
-                }
-
-                if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.INVISIBLE);
+                    break;
+                case NO_RESULT:
+                    progressBar.setVisibility(View.GONE);
                     // TODO: Show an empty image
                     Snackbar.make(coordinatorLayout, "No results, sorry", Snackbar.LENGTH_LONG).show();
-                }
+                    break;
+                default:
+                    progressBar.setVisibility(View.GONE);
+                    break;
             }
         });
     }
@@ -246,7 +238,7 @@ public class SearchFragment extends Fragment implements
     private void observeNetworkState() {
         searchFragmentViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> {
             if (networkState != null) {
-                mSearchAdapter.setNetworkState(networkState);
+                searchListAdapter.setNetworkState(networkState);
             }
         });
     }
@@ -254,40 +246,7 @@ public class SearchFragment extends Fragment implements
     private synchronized void requestNewCall() {
         // Setup the RecyclerView first
         setupRecyclerView();
-
-        Log.d(TAG, "temp, requestNewCall: queryWord called");
-        searchFragmentViewModel.getPagedList()
-                .observe(getViewLifecycleOwner(), results -> mSearchAdapter.submitList(results));
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        int index = 0;
-
-        if (!isMenuItemChecked) {
-            return;
-        }
-
-      /*  MenuItem item = menu.getItem(R.id.search_type_group);
-//        MenuItem item = menu.findItem(id);
-        switch (item.getItemId()) {
-            case R.id.action_type_artist:
-                checkStateOfItem(menu, R.id.action_type_artist);
-                break;
-            case R.id.action_type_artwork:
-                checkStateOfItem(menu, R.id.action_type_artwork);
-                break;
-            case R.id.action_type_gene:
-                checkStateOfItem(menu, R.id.action_type_gene);
-                break;
-            case R.id.action_type_show:
-                checkStateOfItem(menu, R.id.action_type_show);
-                break;
-            default:
-                checkStateOfItem(menu, R.id.action_type_none);
-                break;
-        }*/
+        searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> searchListAdapter.submitList(results));
     }
 
     @Override
@@ -297,12 +256,11 @@ public class SearchFragment extends Fragment implements
         inflater.inflate(R.menu.search_menu, menu);
 
         queryString = prefUtils.getSearchQuery();
-        Log.d(TAG, "onCreateOptionsMenu: Query word " + queryString);
 
         // Set the SearchView
         SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget, expand it by default
 
         if (searchManager == null) {
             return;
@@ -310,7 +268,6 @@ public class SearchFragment extends Fragment implements
         searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
         searchView.setSubmitButtonEnabled(false);
         if (!Utils.isNullOrEmpty(queryString)) {
-            Log.d(TAG, "queryString: " + queryString);
             searchView.onActionViewExpanded();
             searchView.setQuery(queryString, true);
             searchFragmentViewModel.setQuery(queryString);
@@ -319,18 +276,15 @@ public class SearchFragment extends Fragment implements
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "onQueryTextSubmit, query: " + query);
-                searchFragmentViewModel.setQuery(query); // Set the new value to the mutable data TODO: Do I need this?
+                searchFragmentViewModel.setQuery(query); // Set the new value to the mutable data
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "onQueryTextChange, newText: " + newText);
                 if (newText.length() > 2) {
                     searchFragmentViewModel.setQuery(newText); // Set the new value to the mutable data
                     prefUtils.saveSearchQuery(newText); // Save the search query into SharedPreference
-                    requestNewCall();
                 }
                 return false;
             }
@@ -382,7 +336,6 @@ public class SearchFragment extends Fragment implements
             searchTypeString = searchType;
             queryString = prefUtils.getSearchQuery();
             searchFragmentViewModel.setType(searchType);
-            requestNewCall();
         }
     }
 

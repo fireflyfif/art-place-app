@@ -1,6 +1,5 @@
 package dev.iotarho.artplace.app.ui.searchresults.adapter;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,23 +31,22 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
     TextView searchType;
 
     private Result currentResult;
-    private OnResultClickListener mClickHandler;
+    private OnResultClickListener clickHandler;
 
     public SearchResultViewHolder(View itemView, OnResultClickListener callback) {
         super(itemView);
 
         ButterKnife.bind(this, itemView);
         itemView.setOnClickListener(this);
-        mClickHandler = callback;
+        clickHandler = callback;
     }
 
-    public void bindTo(Result result, int position) {
+    public void bindTo(Result result) {
         currentResult = result;
 
         LinksResult linksResult = result.getLinks();
         Thumbnail thumbnail = linksResult.getThumbnail();
         String thumbnailPathString = thumbnail.getHref();
-        Log.d(TAG, "Current thumbnail string: " + thumbnailPathString);
 
         Picasso.get()
                 .load(thumbnailPathString)
@@ -58,7 +56,6 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
 
         String titleString = result.getTitle();
         searchTitle.setText(titleString);
-        Log.d(TAG, "Current search title: " + titleString);
 
         String typeString = result.getType();
         searchType.setText(typeString);
@@ -66,6 +63,6 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder implements V
 
     @Override
     public void onClick(View v) {
-        mClickHandler.onResultClick(currentResult);
+        clickHandler.onResultClick(currentResult);
     }
 }

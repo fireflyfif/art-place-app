@@ -16,7 +16,7 @@ import dev.iotarho.artplace.app.utils.NetworkState;
 
 public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    private OnRefreshListener mRefreshHandler;
+    private OnRefreshListener refreshHandler;
 
     @BindView(R.id.network_state_layout)
     LinearLayout networkLayout;
@@ -29,7 +29,7 @@ public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implemen
 
     public NetworkStateItemViewHolder(View itemView, OnRefreshListener refreshListener) {
         super(itemView);
-        mRefreshHandler = refreshListener;
+        refreshHandler = refreshListener;
         ButterKnife.bind(this, itemView);
     }
 
@@ -66,6 +66,6 @@ public class NetworkStateItemViewHolder extends RecyclerView.ViewHolder implemen
 
     @Override
     public void onClick(View v) {
-        mRefreshHandler.onRefreshConnection();
+        refreshHandler.onRefreshConnection();
     }
 }

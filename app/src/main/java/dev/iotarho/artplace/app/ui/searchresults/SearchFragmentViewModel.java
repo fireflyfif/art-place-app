@@ -35,9 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.searchresults;
 
-import android.util.Log;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -55,8 +52,6 @@ import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchDataSourceFact
 import dev.iotarho.artplace.app.utils.NetworkState;
 
 public class SearchFragmentViewModel extends ViewModel {
-
-    private static final String TAG = SearchFragmentViewModel.class.getSimpleName();
 
     private static final int PAGE_SIZE = 10;
     private static final int INITIAL_SIZE_HINT = 10;
@@ -92,11 +87,9 @@ public class SearchFragmentViewModel extends ViewModel {
             // Get an instance of the DataSourceFactory class
             SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input.first, input.second);
             // Initialize the network state liveData
-            networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
-                    (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getNetworkState);
+            networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getNetworkState);
             // Initialize the Loading state liveData
-            initialLiveLoadingState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(),
-                    (Function<SearchDataSource, LiveData<NetworkState>>) SearchDataSource::getLoadingState);
+            initialLiveLoadingState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getLoadingState);
             resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
                     .setFetchExecutor(AppExecutors.getInstance().networkIO())
                     .build();
@@ -114,10 +107,6 @@ public class SearchFragmentViewModel extends ViewModel {
 
     public LiveData<NetworkState> getInitialLoading() {
         return initialLiveLoadingState;
-    }
-
-    public LiveData<String> getQueryLiveData() {
-        return queryLiveData;
     }
 
     public void setQuery(String originalInput) {

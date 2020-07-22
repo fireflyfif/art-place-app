@@ -51,6 +51,7 @@ import dev.iotarho.artplace.app.ui.artworks.ArtworksFragment;
  * Note: It's not ideal in this case, because it's being destroyed with the Lifecylce of the Activity,
  * but it demonstrate a use case of AsyncTask that is needed for passing the Rubrics fro Capstone Stage 2
  */
+// TODO: Remove the deprecated AsyncTask
 public class RetrieveNetworkConnectivity extends AsyncTask<String, Void, String> {
 
     private static final String TAG = RetrieveNetworkConnectivity.class.getSimpleName();

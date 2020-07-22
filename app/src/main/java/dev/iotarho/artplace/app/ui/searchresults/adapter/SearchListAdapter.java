@@ -35,6 +35,7 @@
 
 package dev.iotarho.artplace.app.ui.searchresults.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,16 +61,17 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
 
-    private NetworkState mNetworkState;
-    private OnRefreshListener mRefreshHandler;
-    private OnResultClickListener mClickHandler;
+    private NetworkState networkState;
+    private OnRefreshListener refreshHandler;
+    private OnResultClickListener clickHandler;
 
     private List<Result> resultList;
+    private int currentPosition;
 
     public SearchListAdapter(OnResultClickListener clickHandler, OnRefreshListener refreshListener) {
         super(Result.DIFF_CALLBACK);
-        mClickHandler = clickHandler;
-        mRefreshHandler = refreshListener;
+        this.clickHandler = clickHandler;
+        refreshHandler = refreshListener;
         resultList = new ArrayList<>();
     }
 
@@ -80,31 +82,37 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
         if (viewType == TYPE_PROGRESS) {
             View view = layoutInflater.inflate(R.layout.network_state_item, parent, false);
-            return new NetworkStateItemViewHolder(view, mRefreshHandler);
+            return new NetworkStateItemViewHolder(view, refreshHandler);
         } else {
             View view = layoutInflater.inflate(R.layout.search_result_item, parent, false);
-            return new SearchResultViewHolder(view, mClickHandler);
+            return new SearchResultViewHolder(view, clickHandler);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SearchResultViewHolder) {
-            if (getItem(position) != null) {
-                Result resultItem = resultList.get(position);
-                ((SearchResultViewHolder) holder).bindTo(resultItem, position);
+            currentPosition = position;
+            Log.d("SearchListAdapter", "onBindViewHolder, currentPosition: "+ currentPosition);
+            if (getItem(currentPosition) != null) {
+                Result resultItem = resultList.get(currentPosition);
+                ((SearchResultViewHolder) holder).bindTo(resultItem);
             }
         } else {
-            ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
+            ((NetworkStateItemViewHolder) holder).bindView(networkState);
         }
     }
 
     private boolean hasExtraRow() {
-        return mNetworkState != null && mNetworkState != NetworkState.LOADED;
+        return networkState != null && networkState != NetworkState.LOADED;
     }
 
     @Override
     public int getItemViewType(int position) {
+        currentPosition = position;
+        Log.d("SearchListAdapter", "getItemViewType, currentPosition: "+ currentPosition);
+
+
         if (hasExtraRow() && position == getItemCount() - 1) {
             return TYPE_PROGRESS;
         } else {
@@ -126,11 +134,11 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     }
 
     public void setNetworkState(NetworkState newNetworkState) {
-        NetworkState previousState = mNetworkState;
+        NetworkState previousState = networkState;
         boolean previousExtraRow = hasExtraRow();
-        mNetworkState = newNetworkState;
+        networkState = newNetworkState;
         boolean newExtraRow = hasExtraRow();
-
+        Log.d("SearchListAdapter", "setNetworkState 1, currentPosition: "+ currentPosition);
         if (previousExtraRow != newExtraRow) {
             if (previousExtraRow) {
                 notifyItemRemoved(getItemCount());
@@ -138,7 +146,12 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                 notifyItemInserted(getItemCount());
             }
         } else if (newExtraRow && previousState != newNetworkState) {
-            notifyItemChanged(getItemCount() - 1);
+            Log.d("SearchListAdapter", "setNetworkState 2, currentPosition: "+ currentPosition);
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                Log.d("SearchListAdapter", "setNetworkState 3, currentPosition: "+ currentPosition);
+                // only if the position is not -1, notify the item has changed
+                notifyItemChanged(getItemCount() - 1);
+            }
         }
     }
 }
