@@ -3,7 +3,7 @@
     <string name="error_msg">No Internet connection.  \nPlease try again.</string>
     <string name="artist_name">Artist</string>
     <string name="favorites">Favorites</string>
-    <string name="empty_msg">No favorite items found. \nAdd your favorite artworks!</string>
+    <string name="empty_msg">No favorite \nitems added yet.</string>
     <string name="delete_all">Delete All</string>
     <string name="favorites_title">Favorites</string>
     <string name="appwidget_text">No favorite artworks saved. \nFind yours by clicking on: </string>
@@ -63,4 +63,5 @@
     <string name="menu_search_artworks">Search Artworks</string>
     <string name="menu_title_dark">Go dark</string>
     <string name="menu_title_light">Go light</string>
+    <string name="empty_text_search_result">Oops, \nno results found.</string>
 </resources>

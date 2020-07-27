@@ -102,6 +102,8 @@ public class SearchFragment extends Fragment implements
     ProgressBar progressBar;
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.empty_screen)
+    View emptyScreen;
 
     private SearchFragmentViewModel searchFragmentViewModel;
     private SearchListAdapter searchListAdapter;
@@ -198,7 +200,7 @@ public class SearchFragment extends Fragment implements
 
     private void setupRecyclerView() {
         int columnCount = getResources().getInteger(R.integer.list_column_count);
-        // using the StaggeredGridLayoutManager crashes when there is an empty list with the following crash:
+        // Unable to use StaggeredGridLayoutManager because of a known bug:
         // https://gist.github.com/fireflyfif/401e669697cb2736ff7b3ffe7dfcb76e
         StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
@@ -220,21 +222,23 @@ public class SearchFragment extends Fragment implements
             switch (networkState.getStatus()) {
                 case SUCCESS:
                     progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.GONE);
                     if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                        Snackbar.make(coordinatorLayout, "Please search for another word.", Snackbar.LENGTH_LONG).show();
+                        emptyScreen.setVisibility(View.VISIBLE); // Show an empty image
                     }
                     break;
                 case FAILED:
                     progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.GONE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection, Snackbar.LENGTH_LONG).show();
                     break;
                 case NO_RESULT:
                     progressBar.setVisibility(View.GONE);
-                    // TODO: Show an empty image
-                    Snackbar.make(coordinatorLayout, "No results, sorry", Snackbar.LENGTH_LONG).show();
+                    emptyScreen.setVisibility(View.VISIBLE); // Show an empty image
                     break;
                 default:
                     progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.GONE);
                     break;
             }
         });

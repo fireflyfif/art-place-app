@@ -90,6 +90,7 @@ public class SearchFragmentViewModel extends ViewModel {
             networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getNetworkState);
             // Initialize the Loading state liveData
             initialLiveLoadingState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getLoadingState);
+
             resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
                     .setFetchExecutor(AppExecutors.getInstance().networkIO())
                     .build();

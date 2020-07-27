@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_32dp"
+        android:layout_marginBottom="100dp"
         android:padding="@dimen/padding_10dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

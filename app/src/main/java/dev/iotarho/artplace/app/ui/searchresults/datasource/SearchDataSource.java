@@ -96,9 +96,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                 if (response.isSuccessful()) {
                     SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
-                        networkState.postValue(NetworkState.LOADED);
-                        initialLoading.postValue(NetworkState.LOADED);
-
                         // Get the next link for paging the results
                         nextUrl = getNextPage(searchResponse);
 
@@ -108,8 +105,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
 
                         int totalCount = searchResponse.getTotalCount();
-                        Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
-
                         if (totalCount != 0) {
                             nextUrl = getNextPage(searchResponse);
                         } else {
@@ -117,17 +112,16 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         }
 
                         List<Result> resultList = embeddedResults.getResults();
-                        Log.d(LOG_TAG, "List of results: " + resultList.size());
                         // The response code is 200, but because of a typo, the API returns an empty list
                         if (resultList.size() == 0) {
-                            // TODO: Show a message there is no data for this query
                             initialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                             networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                         } else {
                             List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
-                            Log.d(LOG_TAG, "List of results after filtering: " + filteredList.size());
-
                             callback.onResult(filteredList, null, 2L);
+
+                            networkState.postValue(NetworkState.LOADED);
+                            initialLoading.postValue(NetworkState.LOADED);
                         }
                     }
                 } else {
@@ -141,7 +135,6 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                             networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                         case 404:
-                            // TODO: Not found results
                             initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                             networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;

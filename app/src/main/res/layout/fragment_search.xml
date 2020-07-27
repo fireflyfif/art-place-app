@@ -39,6 +39,8 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:gravity="center_horizontal">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -63,6 +65,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
         android:padding="@dimen/padding_10dp" />
+
+    <FrameLayout
+        android:id="@+id/empty_screen"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginBottom="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_blue_dot_big" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:textSize="16sp"
+            android:fontFamily="@font/work_sans_medium"
+            android:textColor="@color/color_error"
+            android:text="@string/empty_text_search_result" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
