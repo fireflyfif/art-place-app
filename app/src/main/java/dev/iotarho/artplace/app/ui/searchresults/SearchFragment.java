@@ -54,6 +54,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -197,10 +198,14 @@ public class SearchFragment extends Fragment implements
 
     private void setupRecyclerView() {
         int columnCount = getResources().getInteger(R.integer.list_column_count);
+        // using the StaggeredGridLayoutManager crashes when there is an empty list with the following crash:
+        // https://gist.github.com/fireflyfif/401e669697cb2736ff7b3ffe7dfcb76e
         StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
-        searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columnCount);
+
+        searchResultsRv.setLayoutManager(gridLayoutManager);
         searchListAdapter = new SearchListAdapter(this, this);
         // Set the Adapter on the RecyclerView
         searchResultsRv.setAdapter(searchListAdapter);

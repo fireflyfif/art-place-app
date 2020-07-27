@@ -35,7 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.searchresults.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,15 +45,13 @@ import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
+
 
 public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.ViewHolder> {
 
@@ -65,14 +62,10 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     private OnRefreshListener refreshHandler;
     private OnResultClickListener clickHandler;
 
-    private List<Result> resultList;
-    private int currentPosition;
-
     public SearchListAdapter(OnResultClickListener clickHandler, OnRefreshListener refreshListener) {
         super(Result.DIFF_CALLBACK);
         this.clickHandler = clickHandler;
         refreshHandler = refreshListener;
-        resultList = new ArrayList<>();
     }
 
     @NonNull
@@ -92,11 +85,8 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SearchResultViewHolder) {
-            currentPosition = position;
-            Log.d("SearchListAdapter", "onBindViewHolder, currentPosition: "+ currentPosition);
-            if (getItem(currentPosition) != null) {
-                Result resultItem = resultList.get(currentPosition);
-                ((SearchResultViewHolder) holder).bindTo(resultItem);
+            if (getItem(position) != null) {
+                ((SearchResultViewHolder) holder).bindTo(getItem(position));
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(networkState);
@@ -109,10 +99,6 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
 
     @Override
     public int getItemViewType(int position) {
-        currentPosition = position;
-        Log.d("SearchListAdapter", "getItemViewType, currentPosition: "+ currentPosition);
-
-
         if (hasExtraRow() && position == getItemCount() - 1) {
             return TYPE_PROGRESS;
         } else {
@@ -121,15 +107,8 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     }
 
     @Override
-    public int getItemCount() {
-        return resultList != null ? resultList.size() : 0;
-    }
-
-    @Override
     public void onCurrentListChanged(@Nullable PagedList<Result> previousList, @Nullable PagedList<Result> currentList) {
         super.onCurrentListChanged(previousList, currentList);
-
-        resultList = currentList;
         notifyDataSetChanged();
     }
 
@@ -138,7 +117,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
         boolean previousExtraRow = hasExtraRow();
         networkState = newNetworkState;
         boolean newExtraRow = hasExtraRow();
-        Log.d("SearchListAdapter", "setNetworkState 1, currentPosition: "+ currentPosition);
+
         if (previousExtraRow != newExtraRow) {
             if (previousExtraRow) {
                 notifyItemRemoved(getItemCount());
@@ -146,12 +125,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
                 notifyItemInserted(getItemCount());
             }
         } else if (newExtraRow && previousState != newNetworkState) {
-            Log.d("SearchListAdapter", "setNetworkState 2, currentPosition: "+ currentPosition);
-            if (currentPosition != RecyclerView.NO_POSITION) {
-                Log.d("SearchListAdapter", "setNetworkState 3, currentPosition: "+ currentPosition);
-                // only if the position is not -1, notify the item has changed
-                notifyItemChanged(getItemCount() - 1);
-            }
+            notifyItemChanged(getItemCount() - 1);
         }
     }
 }
