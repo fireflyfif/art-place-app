@@ -59,7 +59,7 @@ import dev.iotarho.artplace.app.utils.StringUtils;
 
 public class ShowsDetailViewModel extends ViewModel {
 
-    public static final String ARTIST_BIO = "ArtistBio__BioSpan-sc-14mck41-0 vDRHu";
+    public static final String ARTIST_BIO_CSS_QUERY = "span[class^=\"ArtistBio\"]";
     private static final String IMAGE_LARGE = "large";
     private static final String IMAGE_SQUARE = "square";
     private static final String IMAGE_LARGER = "larger";
@@ -102,10 +102,10 @@ public class ShowsDetailViewModel extends ViewModel {
                 Document doc = Jsoup.connect(webLink).get();
                 String title = doc.title();
                 Elements links = doc.select("a[href]");
-                Elements fresnelContainer = doc.getElementsByClass(ARTIST_BIO);
+                Elements bioText = doc.select(ARTIST_BIO_CSS_QUERY);
+                Log.d("ShowsDetailViewModel", "temp, bioText= " + bioText);
                 // use postValue() instead of the setValue() for posting on a background thread
-                artistBiographyData.postValue(fresnelContainer.text());
-                Log.d("ShowsDetailViewModel", "temp, artistBio = " + fresnelContainer.text());
+                artistBiographyData.postValue(bioText.text());
             } catch (IOException e) {
                 Log.e("ShowsDetailViewModel", "error when connecting to web link");
             }

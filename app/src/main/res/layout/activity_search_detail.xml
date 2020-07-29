@@ -73,6 +73,12 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/bg_protect_height"
+                    android:background="@drawable/photo_background_protection"
+                    android:fitsSystemWindows="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bg_protect_height"
                     android:layout_gravity="bottom"
                     android:background="@drawable/photo_bg_protection_reverse"
                     android:fitsSystemWindows="true" />

@@ -66,6 +66,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -94,6 +95,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
@@ -171,7 +173,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
     @BindView(R.id.artist_bio)
-    TextView artistBio;
+    ExpandableTextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
 
@@ -200,8 +202,10 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     private String date;
     private String museum;
     private String largeArtworkLink;
+    private String artistBiography;
 
     private ArtistsDetailViewModel mArtistViewModel;
+    private ShowsDetailViewModel showsDetailViewModel;
     private boolean mIsFavorite;
 
     // Variables for Fresco Library
@@ -236,6 +240,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
         // Initialize the ViewModel
         mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+        showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
@@ -329,6 +334,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         // Get the Permalink for sharing it outside the app
         Permalink permalinkForShare = imageLinksObject.getPermalink();
         permaLink = permalinkForShare.getHref();
+        Log.d(TAG, "temp, permaLink: " + permaLink);
+        getBioFromReadMoreLink(permaLink);
 
         SimilarArtworksLink similarArtworksLinkObject = imageLinksObject.getSimilarArtworks();
         String similarArtworksLink = similarArtworksLinkObject.getHref();
@@ -491,8 +498,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                 .replaceAll("\\{.*?\\}", versionString);
 
         if (currentArtist.getBiography() != null) {
-            String artistBioString = currentArtist.getBiography();
-            artistBio.setText(artistBioString);
+            artistBiography = currentArtist.getBiography();
+            artistBio.setText(artistBiography);
 
             if (currentArtist.getBiography().isEmpty()) {
                 artistBio.setVisibility(View.GONE);
@@ -632,6 +639,19 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     @Override
     public void onRefreshConnection() {
         // TODO: implement how to behave on refresh
+    }
+
+    // Scrape the Artsy website for additional information
+    private void getBioFromReadMoreLink(String readMoreLink) {
+        showsDetailViewModel.initBioFromWeb(readMoreLink);
+        showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
+                    if (!Utils.isNullOrEmpty(bio) && Utils.isNullOrEmpty(artistBiography)) {
+                        artistBio.setText(bio);
+                        artistBio.setVisibility(View.VISIBLE);
+                        artistBioLabel.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
     }
 }
 

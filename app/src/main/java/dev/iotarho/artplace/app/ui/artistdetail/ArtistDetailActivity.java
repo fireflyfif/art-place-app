@@ -35,8 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.artistdetail;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,10 +45,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -61,7 +61,7 @@ import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
-import dev.iotarho.artplace.app.utils.TokenManager;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.Utils;
 
 public class ArtistDetailActivity extends AppCompatActivity {
@@ -92,11 +92,13 @@ public class ArtistDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
     @BindView(R.id.artist_bio)
-    TextView artistBio;
+    ExpandableTextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
 
+    private String artistBiography;
     private ArtistsDetailViewModel mArtistViewModel;
+    private ShowsDetailViewModel showsDetailViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +122,9 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
-                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
+                mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+                showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+
                 mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
                 mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
@@ -212,8 +216,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 .into(artistImage);
 
         if (currentArtist.getBiography() != null) {
-            String artistBioString = currentArtist.getBiography();
-            artistBio.setText(artistBioString);
+            artistBiography = currentArtist.getBiography();
+            artistBio.setText(artistBiography);
 
             if (currentArtist.getBiography().isEmpty()) {
                 artistBio.setVisibility(View.GONE);
@@ -223,6 +227,19 @@ public class ArtistDetailActivity extends AppCompatActivity {
             artistBio.setVisibility(View.GONE);
             artistBioLabel.setVisibility(View.GONE);
         }
+    }
 
+    // Scrape the Artsy website for additional information
+    // TODO: Find out if we can get the Permalink here
+    private void getBioFromReadMoreLink(String readMoreLink) {
+        showsDetailViewModel.initBioFromWeb(readMoreLink);
+        showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
+                    if (!Utils.isNullOrEmpty(bio) && Utils.isNullOrEmpty(artistBiography)) {
+                        artistBio.setText(bio);
+                        artistBio.setVisibility(View.VISIBLE);
+                        artistBioLabel.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
     }
 }

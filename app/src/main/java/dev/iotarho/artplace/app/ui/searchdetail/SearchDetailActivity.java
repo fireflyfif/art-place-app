@@ -36,7 +36,6 @@
 package dev.iotarho.artplace.app.ui.searchdetail;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -60,8 +59,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ablanco.zoomy.Zoomy;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -118,6 +119,8 @@ public class SearchDetailActivity extends AppCompatActivity {
     TextView contentDescription;
     @BindView(R.id.toolbar_detail)
     Toolbar toolbar;
+    @BindView(R.id.appbar)
+    AppBarLayout appBarLayout;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.artwork_title_layout)
@@ -171,7 +174,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_nationality_label)
     TextView artistNationalityLabel;
     @BindView(R.id.artist_bio)
-    TextView artistBio;
+    ExpandableTextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
 
@@ -214,6 +217,7 @@ public class SearchDetailActivity extends AppCompatActivity {
     private int mGeneratedLightColor;
     private String emptyField;
     private String artistBiography;
+    private PorterDuffColorFilter colorFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -221,15 +225,9 @@ public class SearchDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_detail);
         ButterKnife.bind(this);
 
-        PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(getResources().getColor(R.color.color_primary),
-                PorterDuff.Mode.SRC_ATOP);
-
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        if ((toolbar.getNavigationIcon()) != null) {
-            toolbar.getNavigationIcon().setColorFilter(colorFilter);
         }
 
         showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
@@ -368,10 +366,9 @@ public class SearchDetailActivity extends AppCompatActivity {
         showsDetailViewModel.initBioFromWeb(readMoreLink);
         showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
                     if (!Utils.isNullOrEmpty(bio) && Utils.isNullOrEmpty(artistBiography)) {
-                        Log.d(TAG, "temp, artistBio = " + bio);
+                        artistBio.setText(bio);
                         artistBio.setVisibility(View.VISIBLE);
                         artistBioLabel.setVisibility(View.VISIBLE);
-                        artistBio.setText(bio);
                     }
                 }
         );
@@ -397,8 +394,14 @@ public class SearchDetailActivity extends AppCompatActivity {
                         Palette palette = Palette.from(bitmap).generate();
                         mGeneratedLightColor = palette.getLightVibrantColor(mLightMutedColor);
                         cardView.setCardBackgroundColor(mGeneratedLightColor);
+                        // set the color of the back button
+                        colorFilter = new PorterDuffColorFilter(mGeneratedLightColor, PorterDuff.Mode.SRC_ATOP);
+                        if ((toolbar.getNavigationIcon()) != null) {
+                            toolbar.getNavigationIcon().setColorFilter(colorFilter);
+                        }
                         int darkMutedColor = palette.getDarkMutedColor(mLightMutedColor);
-                        contentTitle.setTextColor(darkMutedColor);
+//                        contentTitle.setTextColor(darkMutedColor);
+                        contentTitle.setTextColor(getResources().getColor(R.color.color_background));
                     }
 
                     @Override
@@ -408,17 +411,25 @@ public class SearchDetailActivity extends AppCompatActivity {
     }
 
     private void setCollapsingToolbar(String titleString) {
-        int[][] states = new int[][]{
-                new int[]{android.R.attr.state_enabled}, // enabled
-        };
-        int[] colors = new int[]{
-                getResources().getColor(R.color.color_text_contrast),
-        };
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = true;
+            int scrollRange = -1;
 
-        collapsingToolbarLayout.setTitle(titleString);
-        collapsingToolbarLayout.setExpandedTitleTextColor(new ColorStateList(states, colors));
-        collapsingToolbarLayout.setExpandedTitleMarginBottom(bottomMargin);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.color_primary));
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(titleString);
+                    collapsingToolbarLayout.setCollapsedTitleTextColor(mGeneratedLightColor);
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
+                    isShow = false;
+                }
+            }
+        });
     }
 
     /**
@@ -496,7 +507,6 @@ public class SearchDetailActivity extends AppCompatActivity {
             Log.d(TAG, "Artist is null");
             return;
         }
-        // Meet necessary criteria for showing up artist card
         String artistNameString = currentArtist.getName();
         String hometown = currentArtist.getHometown();
         String birthday = currentArtist.getBirthday();
@@ -505,40 +515,33 @@ public class SearchDetailActivity extends AppCompatActivity {
         String nationality = currentArtist.getNationality();
         artistBiography = currentArtist.getBiography();
 
-        if (Utils.isNullOrEmpty(hometown) && Utils.isNullOrEmpty(location) && Utils.isNullOrEmpty(nationality) &&
-                Utils.isNullOrEmpty(birthday) || Utils.isNullOrEmpty(artistDeathString)) {
-            Log.d(TAG, "temp, not enough artist info to show details");
+        // Meet necessary criteria for showing up artist card
+        if (SearchDetailLogic.isArtistInfoInsufficient(hometown, location, nationality, birthday, artistDeathString)) {
+            Log.w(TAG, "Not enough artist info to show details.");
             return;
         }
+
         artistCardView.setVisibility(View.VISIBLE);
         emptyField = getString(R.string.not_applicable);
 
         // Name
         artistName.setText(Utils.isNullOrEmpty(artistNameString) ? emptyField : artistNameString);
         // Home town
-        if (!Utils.isNullOrEmpty(hometown)) {
-            artistHomeTown.setVisibility(View.VISIBLE);
-            hometownLabel.setVisibility(View.VISIBLE);
-            artistHomeTown.setText(hometown);
-        }
+        artistHomeTown.setVisibility(View.VISIBLE);
+        hometownLabel.setVisibility(View.VISIBLE);
+        artistHomeTown.setText(hometown);
         // Birth and dead date
-        if (!Utils.isNullOrEmpty(birthday) || !Utils.isNullOrEmpty(artistDeathString)) {
-            String lifespanConcatString = birthday + " - " + artistDeathString;
-            artistLifespan.setText(lifespanConcatString);
-            artistDivider.setVisibility(View.VISIBLE);
-        }
+        String lifespanConcatString = birthday + " - " + artistDeathString;
+        artistLifespan.setText(lifespanConcatString);
+        artistDivider.setVisibility(View.VISIBLE);
         // Location
-        if (!Utils.isNullOrEmpty(location)) {
-            artistLocation.setText(location);
-            artistLocation.setVisibility(View.VISIBLE);
-            locationLabel.setVisibility(View.VISIBLE);
-        }
+        artistLocation.setText(location);
+        artistLocation.setVisibility(View.VISIBLE);
+        locationLabel.setVisibility(View.VISIBLE);
         // Nationality
-        if (!Utils.isNullOrEmpty(nationality)) {
-            artistNationality.setText(nationality);
-            artistNationality.setVisibility(View.VISIBLE);
-            artistNationalityLabel.setVisibility(View.VISIBLE);
-        }
+        artistNationality.setText(nationality);
+        artistNationality.setVisibility(View.VISIBLE);
+        artistNationalityLabel.setVisibility(View.VISIBLE);
         // Biography
         if (!Utils.isNullOrEmpty(artistBiography)) {
             artistBio.setText(artistBiography);
