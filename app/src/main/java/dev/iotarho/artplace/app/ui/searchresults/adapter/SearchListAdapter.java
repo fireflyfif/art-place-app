@@ -45,6 +45,8 @@ import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Objects;
+
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
@@ -85,9 +87,7 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SearchResultViewHolder) {
-            if (getItem(position) != null) {
-                ((SearchResultViewHolder) holder).bindTo(getItem(position));
-            }
+            ((SearchResultViewHolder) holder).bindTo(Objects.requireNonNull(getItem(position)));
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(networkState);
         }
@@ -113,9 +113,9 @@ public class SearchListAdapter extends PagedListAdapter<Result, RecyclerView.Vie
     }
 
     public void setNetworkState(NetworkState newNetworkState) {
-        NetworkState previousState = networkState;
+        NetworkState previousState = this.networkState;
         boolean previousExtraRow = hasExtraRow();
-        networkState = newNetworkState;
+        this.networkState = newNetworkState;
         boolean newExtraRow = hasExtraRow();
 
         if (previousExtraRow != newExtraRow) {

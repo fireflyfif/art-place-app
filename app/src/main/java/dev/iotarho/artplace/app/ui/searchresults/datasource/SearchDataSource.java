@@ -108,7 +108,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         if (totalCount != 0) {
                             nextUrl = getNextPage(searchResponse);
                         } else {
-                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            Log.d(LOG_TAG, "totalCount is: " + totalCount);
+//                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED)); // TODO: ?
                         }
 
                         List<Result> resultList = embeddedResults.getResults();
@@ -125,16 +126,19 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         }
                     }
                 } else {
+                    Log.e(LOG_TAG, "loadInitial: response is not successful, code is: " + response.code());
                     switch (response.code()) {
                         case 400:
                             //TODO: Make display the following error message:
                             // "Invalid type article,artist,artwork,city,fair,feature,gene,show,profile,sale,tag,page"
                             networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
 
+                            Log.e(LOG_TAG, "response code is 400");
                             initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                             networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                         case 404:
+                            Log.e(LOG_TAG, "response code is 404");
                             initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                             networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
@@ -144,7 +148,9 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+//                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                initialLoading.postValue(NetworkState.LOADED);
+                networkState.postValue(NetworkState.LOADED);
                 Log.e(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
@@ -183,7 +189,8 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
                         if (totalCount != 0) {
                             nextUrl = getNextPage(searchResponse);
                         } else {
-                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            Log.d(LOG_TAG, "totalCount is: " + totalCount);
+//                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                         }
 
                         if (embeddedResults.getResults() != null) {
@@ -202,14 +209,14 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                             callback.onResult(filteredList, nextKey);
 
+                            networkState.postValue(NetworkState.LOADED);
+                            initialLoading.postValue(NetworkState.LOADED);
+
                             Log.d(LOG_TAG, "List of Search Result loadAfter : " + filteredList.size());
                         }
-
-                        networkState.postValue(NetworkState.LOADED);
-                        initialLoading.postValue(NetworkState.LOADED);
                     }
-
                 } else {
+                    Log.e(LOG_TAG, "loadAfter: response is not successful, code is: " + response.code());
                     initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                     networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 }
@@ -217,8 +224,10 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
+//                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                initialLoading.postValue(NetworkState.LOADED);
+                networkState.postValue(NetworkState.LOADED);
+                Log.d(LOG_TAG, "Response code from loadAfter, onFailure: " + t.getMessage());
             }
         });
     }

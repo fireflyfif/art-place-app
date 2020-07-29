@@ -34,12 +34,15 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/network_state_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="@dimen/padding_16dp">
+    android:padding="@dimen/padding_16dp"
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <TextView
         android:id="@+id/network_state_error_msg"

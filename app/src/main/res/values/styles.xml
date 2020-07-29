@@ -56,8 +56,8 @@
     <!-- source: http://www.zoftino.com/android-progressbar-and-custom-progressbar-examples -->
     <style name="MyProgressBarRectangle" parent="@style/Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateDrawable">@drawable/progressbar_circles</item>
-        <item name="android:minHeight">80dp</item>
-        <item name="android:minWidth">200dp</item>
+        <item name="android:minHeight">100dp</item>
+        <item name="android:minWidth">100dp</item>
     </style>
 
     <!--Bottom Sheets-->
