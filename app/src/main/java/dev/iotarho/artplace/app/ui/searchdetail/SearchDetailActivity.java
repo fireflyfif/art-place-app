@@ -47,6 +47,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -57,6 +58,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ablanco.zoomy.Zoomy;
 import com.google.android.material.appbar.AppBarLayout;
@@ -72,6 +75,8 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
+import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.Self;
@@ -92,11 +97,16 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
+import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModel;
+import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModelFactory;
+import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
+import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 
-public class SearchDetailActivity extends AppCompatActivity {
+
+public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnRefreshListener {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
@@ -204,6 +214,18 @@ public class SearchDetailActivity extends AppCompatActivity {
     @BindView(R.id.info_label)
     TextView artworkInfoLabel;
 
+    // Search List Views
+    @BindView(R.id.search_cardview)
+    CardView searchContentCardView;
+    @BindView(R.id.search_rv)
+    RecyclerView searchResultsRv;
+//    @BindView(R.id.progress_bar_search)
+//    ProgressBar progressBar;
+//    @BindView(R.id.refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.empty_screen)
+//    View emptyScreen;
+
     @BindDimen(R.dimen.margin_42dp)
     int bottomMargin;
 
@@ -213,11 +235,14 @@ public class SearchDetailActivity extends AppCompatActivity {
     private ShowsDetailViewModel showsDetailViewModel;
     private ArtistsDetailViewModel artistViewModel;
     private ArtworksViewModel artworksViewModel;
+    private SearchFragmentViewModel searchFragmentViewModel;
 
     private int mGeneratedLightColor;
     private String emptyField;
     private String artistBiography;
     private PorterDuffColorFilter colorFilter;
+    private String titleString;
+    private SearchListAdapter searchListAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -239,14 +264,14 @@ public class SearchDetailActivity extends AppCompatActivity {
                 Bundle receivedBundle = getIntent().getExtras();
                 Result result = receivedBundle.getParcelable(RESULT_PARCEL_KEY);
                 if (result != null) {
-                    setupSearchUi(result);
+                    setupOverviewUi(result);
                 }
             }
         }
     }
 
-    private void setupSearchUi(Result results) {
-        String titleString = results.getTitle();
+    private void setupOverviewUi(Result results) {
+        titleString = results.getTitle();
         String typeString = results.getType();
         String descriptionString = results.getDescription();
         contentDescription.setText(descriptionString != null ? descriptionString : "");
@@ -255,6 +280,7 @@ public class SearchDetailActivity extends AppCompatActivity {
             contentDescription.setVisibility(View.GONE);
         }
         setCollapsingToolbar(titleString);
+        contentTitle.setTextColor(getResources().getColor(R.color.color_background));
         contentTitle.setText(titleString);
         contentType.setText(typeString);
 
@@ -285,7 +311,12 @@ public class SearchDetailActivity extends AppCompatActivity {
         if (typeString.equals(ARTWORK)) {
             Log.d(TAG, "temp, card: artwork, selfLinkString= " + selfLinkString);
             // Initialize the ViewModel
-            initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "artwork not found" (this was confirmed also on Postman))
+            initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "Artwork Not Found" (this was confirmed also on Postman))
+            // get the artist name from the titleString
+            String artistNameFromTitle = titleString.substring(0, titleString.indexOf(","));
+            makeNewSearchFroArtist(artistNameFromTitle);
+            String remainder = titleString.substring(titleString.indexOf(",") + 1);
+            Log.d(TAG, "temp, artistNameFromTitle= " + artistNameFromTitle + " remainder= " + remainder);
         }
 
         if (typeString.equals(GENE)) {
@@ -302,6 +333,33 @@ public class SearchDetailActivity extends AppCompatActivity {
             openUrlIntent.setData(Uri.parse(readMoreLink));
             startActivity(openUrlIntent);
         });
+    }
+
+    private void makeNewSearchFroArtist(String artistNameFromTitle) {
+        //make a new call to search only for this string + "artist" type
+        SearchFragmentViewModelFactory searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
+        searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
+        searchFragmentViewModel.setQuery(artistNameFromTitle);
+        searchFragmentViewModel.setType("artist");
+        searchListAdapter = new SearchListAdapter(this, this);
+        searchFragmentViewModel.getPagedList().observe(this, results -> {
+            searchListAdapter.submitList(results); // submit the list to the PagedListAdapter
+//            observeNetworkState();
+//            observeLoadingState();
+        });
+        searchContentCardView.setVisibility(View.VISIBLE);
+        // Setup the RecyclerView first
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columnCount);
+
+        searchResultsRv.setLayoutManager(gridLayoutManager);
+
+        // Set the Adapter on the RecyclerView
+        searchResultsRv.setAdapter(searchListAdapter);
     }
 
     private void initGenesContent(String selfLinkString) {
@@ -399,9 +457,6 @@ public class SearchDetailActivity extends AppCompatActivity {
                         if ((toolbar.getNavigationIcon()) != null) {
                             toolbar.getNavigationIcon().setColorFilter(colorFilter);
                         }
-                        int darkMutedColor = palette.getDarkMutedColor(mLightMutedColor);
-//                        contentTitle.setTextColor(darkMutedColor);
-                        contentTitle.setTextColor(getResources().getColor(R.color.color_background));
                     }
 
                     @Override
@@ -515,6 +570,11 @@ public class SearchDetailActivity extends AppCompatActivity {
         String nationality = currentArtist.getNationality();
         artistBiography = currentArtist.getBiography();
 
+        ImageLinks imageLinksObject = currentArtist.getLinks();
+        // Get the list of image versions first
+        List<String> imageVersionList = currentArtist.getImageVersions();
+        displaySecondImage(imageLinksObject, imageVersionList);
+
         // Meet necessary criteria for showing up artist card
         if (SearchDetailLogic.isArtistInfoInsufficient(hometown, location, nationality, birthday, artistDeathString)) {
             Log.w(TAG, "Not enough artist info to show details.");
@@ -567,32 +627,10 @@ public class SearchDetailActivity extends AppCompatActivity {
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
 
-        for (Artwork currentArtwork : artworksList) {
+        /*for (Artwork currentArtwork : artworksList) {
             displaySecondImage(currentArtwork);
             break;
-        }
-    }
-
-    private void displaySecondImage(Artwork currentArtwork) {
-        ImageLinks imageLinksObject = currentArtwork.getLinks();
-        MainImage mainImageObject = imageLinksObject.getImage();
-        List<String> imageVersionList = currentArtwork.getImageVersions();
-        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
-            if (s != null) {
-                // Set the large image with Picasso
-                Picasso.get()
-                        .load(s)
-                        .placeholder(R.color.color_primary)
-                        .error(R.color.color_error)
-                        .into(secondImage);
-
-                Zoomy.Builder builder = new Zoomy.Builder(this)
-                        .target(secondImage)
-                        .enableImmersiveMode(false)
-                        .animateZooming(false);
-                builder.register();
-            }
-        });
+        }*/
     }
 
     private void initArtistsViewModel(String artistLink) {
@@ -617,6 +655,7 @@ public class SearchDetailActivity extends AppCompatActivity {
             Log.d(TAG, "temp, Artwork is null");
             return;
         }
+        // TODO: get the artist name from the titleString
         emptyField = getString(R.string.not_applicable);
         artworkCardView.setVisibility(View.VISIBLE);
 
@@ -654,11 +693,42 @@ public class SearchDetailActivity extends AppCompatActivity {
             markwon.setMarkdown(artworkInfoMarkdown, addInfo);
         }
 
-        displaySecondImage(currentArtwork);
-
         ImageLinks imageLinksObject = currentArtwork.getLinks();
+        List<String> imageVersionList = currentArtwork.getImageVersions();
+        displaySecondImage(imageLinksObject, imageVersionList);
+
         // Get the artist link
         ArtistsLink artistsLink = imageLinksObject.getArtists();
         Log.d(TAG, "artistsLink is =" + artistsLink);
+    }
+
+    private void displaySecondImage(ImageLinks imageLinksObject, List<String> imageVersionList) {
+        MainImage mainImageObject = imageLinksObject.getImage();
+        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
+            if (s != null) {
+                // Set the large image with Picasso
+                Picasso.get()
+                        .load(s)
+                        .placeholder(R.color.color_primary)
+                        .error(R.color.color_error)
+                        .into(secondImage);
+
+                Zoomy.Builder builder = new Zoomy.Builder(this)
+                        .target(secondImage)
+                        .enableImmersiveMode(false)
+                        .animateZooming(false);
+                builder.register();
+            }
+        });
+    }
+
+    @Override
+    public void onResultClick(Result result) {
+
+    }
+
+    @Override
+    public void onRefreshConnection() {
+
     }
 }

@@ -162,28 +162,28 @@
                         android:scaleType="fitCenter"
                         tools:src="@drawable/pop_art_placeholder" />
 
-                    <Button
-                        android:id="@+id/read_more_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="?colorOnSurface"
-                        android:textColor="?colorControlNormal"
-                        android:fontFamily="@font/work_sans"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="24dp"
-                        android:gravity="center"
-                        android:text="@string/read_more_button" />
-
                     <TextView
                         android:id="@+id/content_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_8dp"
                         android:fontFamily="@font/work_sans"
+                        android:gravity="center"
                         android:paddingBottom="@dimen/padding_8dp"
-                        android:textAllCaps="false"
                         android:textColor="?colorControlNormal"
                         tools:text="Description here" />
+
+                    <Button
+                        android:id="@+id/read_more_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="24dp"
+                        android:backgroundTint="?colorOnSurface"
+                        android:fontFamily="@font/work_sans"
+                        android:gravity="center"
+                        android:text="@string/read_more_button"
+                        android:textColor="?colorControlNormal" />
 
                 </LinearLayout>
 
@@ -194,6 +194,35 @@
             <include layout="@layout/show_detail_cardview" />
 
             <include layout="@layout/artist_detail_cardview" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/search_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_horizontal_cardview"
+                android:layout_marginLeft="@dimen/margin_horizontal_cardview"
+                android:layout_marginEnd="@dimen/margin_horizontal_cardview"
+                android:layout_marginRight="@dimen/margin_horizontal_cardview"
+                android:layout_marginBottom="30dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="?colorOnSurface"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="6dp"
+                app:cardPreventCornerOverlap="true"
+                tools:visibility="visible">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/search_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:spanCount="@integer/list_column_count"
+                    tools:listitem="@layout/search_result_item" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- <include layout="@layout/fragment_search" />-->
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

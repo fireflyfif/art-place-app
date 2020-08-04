@@ -114,7 +114,7 @@ public interface ArtsyApiInterface {
     Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("size") int itemSize, @Query("type") String type);
 
     @GET
-    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("size") int itemSize, @Query("type") String type);
+    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("type") String type);
 
     @GET
     Call<ShowContent> getDetailContentFromSearchLink(@Url String selfLink);

@@ -35,6 +35,8 @@
 
 package dev.iotarho.artplace.app.ui.searchresults;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -111,14 +113,17 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void setQuery(String originalInput) {
+        Log.d("TAG", "setQuery: " + originalInput);
         String input = originalInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(queryLiveData.getValue())) {
             return;
         }
+        Log.d("TAG", "temp, setQuery to a new one: " + input);
         queryLiveData.setValue(input);
     }
 
     public void setType(String typeInput) {
+        Log.d("TAG", "temp, setType: " + typeInput);
         if (typeInput == null) {
             return;
         }
@@ -126,6 +131,8 @@ public class SearchFragmentViewModel extends ViewModel {
         if (input.equals(typeLiveData.getValue())) {
             return;
         }
+
+        Log.d("TAG", "temp, setType to a new one: " + input);
         typeLiveData.setValue(input);
     }
 }

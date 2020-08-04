@@ -70,7 +70,6 @@ import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,6 +95,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
+import dev.iotarho.artplace.app.utils.ArtistDetailsUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
@@ -110,9 +110,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
     private static final int NON_FAV_TAG = 1;
-    private static final String IMAGE_LARGE = "large";
-    private static final String IMAGE_SQUARE = "square";
-    private static final String IMAGE_LARGER = "larger";
 
     @BindView(R.id.coordinator_artwork)
     CoordinatorLayout coordinatorLayout;
@@ -348,32 +345,19 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         Thumbnail thumbnail = imageLinksObject.getThumbnail();
         artworkThumbnail = thumbnail.getHref();
 
-        MainImage mainImageObject = imageLinksObject.getImage();
-        if (currentArtwork.getImageVersions() != null) {
-            List<String> imageVersionList = currentArtwork.getImageVersions();
-            // Get the link for the current artwork,
-            // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-            String artworkImgLinkString = mainImageObject.getHref();
-            // Replace the {image_version} from the artworkImgLinkString with
-            // the wanted version, e.g. "large"
-            largeArtworkLink = extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);
-            // Set the large image with Picasso
-            Picasso.get()
-                    .load(Uri.parse(largeArtworkLink))
-                    .placeholder(R.color.color_on_surface)
-                    .error(R.color.color_error)
-                    .into(artworkImage);
+        largeArtworkLink = ArtistDetailsUtils.getLargeImageUrl(currentArtwork, imageLinksObject);
+        // Set the large image with Picasso
+        Picasso.get()
+                .load(Uri.parse(largeArtworkLink))
+                .placeholder(R.color.color_on_surface)
+                .error(R.color.color_error)
+                .into(artworkImage);
 
-            String squareImage = extractImageLink(getVersionImage(imageVersionList, IMAGE_SQUARE), artworkImgLinkString);
-            makeImageBlurry(squareImage);
-            // Set a click listener on the image
-            openArtworkFullScreen();
-        }
+        String squareImage = ArtistDetailsUtils.getSquareImageUrl(currentArtwork, imageLinksObject);
+        makeImageBlurry(squareImage);
+        // Set a click listener on the image
+        openArtworkFullScreen();
         return imageLinksObject;
-    }
-
-    private String extractImageLink(String stringFinal, String stringFull) {
-        return stringFull.replaceAll("\\{.*?\\}", stringFinal);
     }
 
     private void openArtworkFullScreen() {
@@ -385,19 +369,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         });
     }
 
-    private String getVersionImage(List<String> imageVersionList, String version) {
-        if (imageVersionList.contains(version)) {
-            return imageVersionList.get(imageVersionList.indexOf(version));
-        } else {
-            return imageVersionList.get(0);  // Get the first one no matter what is the value
-        }
-    }
-
     /**
      * Make the image blurry with the help of SimpleDraweeView View
      * Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-     * <p>
-     * currently not in use
      */
     private void makeImageBlurry(String linkString) {
         // Initialize Blur Post Processor
@@ -482,10 +456,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
         // Get the list of image versions first
         List<String> imageVersionList = currentArtist.getImageVersions();
-        String versionString;
         // Get the first entry from this list, which corresponds to "large"
         String largeVersion = "large";
-        versionString = getVersionImage(imageVersionList, largeVersion);
+        String versionString = ArtistDetailsUtils.getVersionImage(imageVersionList, largeVersion);
 
         ImageLinks imageLinksObject = currentArtist.getLinks();
         MainImage mainImageObject = imageLinksObject.getImage();
@@ -496,6 +469,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         // the wanted version, e.g. "large"
         String newArtistLinkString = artistImgLinkString
                 .replaceAll("\\{.*?\\}", versionString);
+        // TODO: We are not doing anything with this image link
+        Log.d(TAG, "temp, newArtistLinkString: " + newArtistLinkString);
 
         if (currentArtist.getBiography() != null) {
             artistBiography = currentArtist.getBiography();

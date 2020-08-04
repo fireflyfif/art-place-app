@@ -176,14 +176,13 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
         // Set Network State to Loading
         networkState.postValue(NetworkState.LOADING);
-        repository.getArtsyApi().getNextLinkForSearch(nextUrl, params.requestedLoadSize, typeString).enqueue(new Callback<SearchWrapperResponse>() {
+        repository.getArtsyApi().getNextLinkForSearch(nextUrl, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
                     SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
-
                         int totalCount = searchResponse.getTotalCount();
 
                         if (totalCount != 0) {
@@ -195,13 +194,11 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
                         if (embeddedResults.getResults() != null) {
                             long nextKey;
-
                             if (params.key == embeddedResults.getResults().size()) {
                                 nextKey = 0;
                             } else {
                                 nextKey = params.key + 100;
                             }
-
                             Log.d(LOG_TAG, "Next key : " + nextKey);
 
                             List<Result> resultList = embeddedResults.getResults();
