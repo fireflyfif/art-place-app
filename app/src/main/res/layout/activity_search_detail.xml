@@ -51,7 +51,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="250dp"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="start"
             app:contentScrim="?colorOnSurface"
@@ -66,9 +66,10 @@
                 <ImageView
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="250dp"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/pop_art_placeholder" />
+                    tools:src="@drawable/pop_art_placeholder"
+                    android:contentDescription="TODO" />
 
                 <View
                     android:layout_width="match_parent"
@@ -139,8 +140,8 @@
                         android:fontFamily="@font/work_sans_medium"
                         android:gravity="center_horizontal"
                         android:textColor="?colorControlNormal"
-                        android:textSize="22sp"
-                        tools:text="Andy Warhol, $ (1981)" />
+                        android:textSize="26sp"
+                        tools:text="Andy Warhol, (1981)" />
 
                     <TextView
                         android:id="@+id/content_type"
@@ -160,6 +161,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:scaleType="fitCenter"
+                        android:contentDescription="TODO"
                         tools:src="@drawable/pop_art_placeholder" />
 
                     <TextView
@@ -173,17 +175,16 @@
                         android:textColor="?colorControlNormal"
                         tools:text="Description here" />
 
-                    <Button
-                        android:id="@+id/read_more_button"
+                    <TextView
+                        android:id="@+id/read_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         android:layout_marginBottom="24dp"
-                        android:backgroundTint="?colorOnSurface"
                         android:fontFamily="@font/work_sans"
                         android:gravity="center"
                         android:text="@string/read_more_button"
-                        android:textColor="?colorControlNormal" />
+                        android:textColor="?colorControlActivated" />
 
                 </LinearLayout>
 

@@ -137,8 +137,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     LinearLayout bgLayout;
     @BindView(R.id.card_view_content)
     CardView cardView;
-    @BindView(R.id.read_more_button)
-    Button readMoreButton;
+    @BindView(R.id.read_more)
+    TextView readMoreButton;
 
     // Show Card Views
     @BindView(R.id.show_gene_name)
@@ -255,7 +255,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+        ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
+        showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
         artistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
         artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
@@ -280,7 +281,6 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             contentDescription.setVisibility(View.GONE);
         }
         setCollapsingToolbar(titleString);
-        contentTitle.setTextColor(getResources().getColor(R.color.color_background));
         contentTitle.setText(titleString);
         contentType.setText(typeString);
 
@@ -320,6 +320,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         }
 
         if (typeString.equals(GENE)) {
+            contentType.setText(R.string.genre_type);
             initGenesContent(selfLinkString);
         }
 

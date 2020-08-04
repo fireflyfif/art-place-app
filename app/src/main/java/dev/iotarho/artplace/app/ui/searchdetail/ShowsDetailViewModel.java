@@ -68,16 +68,18 @@ public class ShowsDetailViewModel extends ViewModel {
     private LiveData<GeneContent> geneResultData = new MutableLiveData<>();
     private MutableLiveData<String> artistBiographyData = new MutableLiveData<>();
     private MutableLiveData<String> artworkImageData = new MutableLiveData<>();
+    private ArtsyRepository artsyRepository;
 
-    public ShowsDetailViewModel() {
+    public ShowsDetailViewModel(ArtsyRepository artsyRepository) {
+        this.artsyRepository = artsyRepository;
     }
 
     public void initSearchLink(String selfLink) {
-        showContentData = ArtsyRepository.getInstance().getSearchContentLink(selfLink);
+        showContentData = artsyRepository.getSearchContentLink(selfLink);
     }
 
     public void initGenesResultFromLink(String selfLink) {
-        geneResultData = ArtsyRepository.getInstance().getGenesContent(selfLink);
+        geneResultData = artsyRepository.getGenesContent(selfLink);
     }
 
     public void initBioFromWeb(String webLink) {
@@ -96,7 +98,7 @@ public class ShowsDetailViewModel extends ViewModel {
         return geneResultData;
     }
 
-    private MutableLiveData<String> loadBioFromWeb(String webLink) {
+    private void loadBioFromWeb(String webLink) {
         AppExecutors.getInstance().networkIO().execute(() -> {
             try {
                 Document doc = Jsoup.connect(webLink).get();
@@ -110,7 +112,6 @@ public class ShowsDetailViewModel extends ViewModel {
                 Log.e("ShowsDetailViewModel", "error when connecting to web link");
             }
         });
-        return artistBiographyData;
     }
 
     public MutableLiveData<String> getArtworkLargeImage(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {

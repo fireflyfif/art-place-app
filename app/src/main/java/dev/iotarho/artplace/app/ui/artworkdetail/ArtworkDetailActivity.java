@@ -94,8 +94,10 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.ArtistDetailsUtils;
+import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
@@ -237,7 +239,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
         // Initialize the ViewModel
         mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
-        showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+        ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
+        showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();

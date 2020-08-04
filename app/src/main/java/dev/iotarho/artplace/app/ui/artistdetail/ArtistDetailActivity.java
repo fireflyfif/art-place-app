@@ -61,7 +61,9 @@ import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
+import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
 
 public class ArtistDetailActivity extends AppCompatActivity {
@@ -123,7 +125,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
                 mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
-                showsDetailViewModel = new ViewModelProvider(this).get(ShowsDetailViewModel.class);
+                ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
+                showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
 
                 mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
 
