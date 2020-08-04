@@ -67,9 +67,9 @@
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
+                    android:contentDescription="TODO"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/pop_art_placeholder"
-                    android:contentDescription="TODO" />
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <View
                     android:layout_width="match_parent"
@@ -160,8 +160,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:scaleType="fitCenter"
                         android:contentDescription="TODO"
+                        android:scaleType="fitCenter"
                         tools:src="@drawable/pop_art_placeholder" />
 
                     <TextView
@@ -196,34 +196,7 @@
 
             <include layout="@layout/artist_detail_cardview" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/search_cardview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_horizontal_cardview"
-                android:layout_marginLeft="@dimen/margin_horizontal_cardview"
-                android:layout_marginEnd="@dimen/margin_horizontal_cardview"
-                android:layout_marginRight="@dimen/margin_horizontal_cardview"
-                android:layout_marginBottom="30dp"
-                android:visibility="gone"
-                app:cardBackgroundColor="?colorOnSurface"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="6dp"
-                app:cardPreventCornerOverlap="true"
-                tools:visibility="visible">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:spanCount="@integer/list_column_count"
-                    tools:listitem="@layout/search_result_item" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- <include layout="@layout/fragment_search" />-->
+            <include layout="@layout/similar_artworks_cardview" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

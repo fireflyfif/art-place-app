@@ -50,6 +50,9 @@ import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
 import dev.iotarho.artplace.app.model.genes.GeneContent;
+import dev.iotarho.artplace.app.model.search.EmbeddedResults;
+import dev.iotarho.artplace.app.model.search.Result;
+import dev.iotarho.artplace.app.model.search.SearchWrapperResponse;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.remote.ArtsyApiInterface;
 import dev.iotarho.artplace.app.remote.ArtsyApiManager;
@@ -61,6 +64,7 @@ import retrofit2.Response;
 
 // Singleton pattern for the Repository class,
 // best explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
+// TODO: Split this class into several services for different calls
 public class ArtsyRepository {
 
     private static final String TAG = ArtsyRepository.class.getSimpleName();
@@ -326,10 +330,39 @@ public class ArtsyRepository {
 
             @Override
             public void onFailure(@NonNull Call<GeneContent> call, @NonNull Throwable t) {
-                Log.e(TAG, "OnFailure! " + t.getMessage());
+                Log.e(TAG, "Failed to get search results. " + t.getMessage());
             }
         });
 
         return genesLiveData;
+    }
+
+    public LiveData<List<Result>> getNewSearchResults(String queryString, String typeString) {
+        return makeNewSearch(queryString, typeString);
+    }
+
+    private LiveData<List<Result>> makeNewSearch(String queryString, String typeString) {
+        MutableLiveData<List<Result>> searchLiveData = new MutableLiveData<>();
+        getArtsyApi().getSearchResults(queryString, 10, typeString).enqueue(new Callback<SearchWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    SearchWrapperResponse searchResponse = response.body();
+                    if (searchResponse != null) {
+                        EmbeddedResults embeddedResults = searchResponse.getEmbedded();
+                        List<Result> resultList = embeddedResults.getResults();
+                        searchLiveData.postValue(resultList);
+                    } else {
+                        Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "Failed to get search results. " + t.getMessage());
+            }
+        });
+        return searchLiveData;
     }
 }

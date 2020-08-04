@@ -63,8 +63,7 @@ public class ArtsyApiManager {
     }
 
     /**
-     * First Retrofit object
-     * TODO: Figure out if I can use only one object
+     * Retrofit Builder object
      *
      * @return
      */
@@ -89,36 +88,32 @@ public class ArtsyApiManager {
 
     // Provide the Retrofit call
     public static <T> T createApiCall(Class<T> service, final TokenManager tokenManager, final PreferenceUtils preferenceUtils) {
-
         // For logging the url that is being made
         HttpLoggingInterceptor logsInterceptor = new HttpLoggingInterceptor();
         logsInterceptor.level(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient newClient = new OkHttpClient.Builder()
-                .addInterceptor(chain -> {
-                    Request newRequest;
+        OkHttpClient newClient = new OkHttpClient.Builder().addInterceptor(chain -> {
+            // The token needs to be saved first before it can be fetched from shared prefs
+            String tokenString = preferenceUtils.getToken();
+            // If there si no token saved in shared preferences, that means the app is
+            // launched for the first time and we need to fetch the token
+            if (Utils.isNullOrEmpty(tokenString)) {
+                Log.d(TAG, "Token in intercept is null or empty");
+                // The token should be fetch here only the first time, after that the
+                // Authenticator will handle refreshing it
+                tokenString = tokenManager.fetchTokenFirstTime();
+                Log.d(TAG, "Token fetched for the first time: " + tokenString);
+            }
 
-                    // The token needs to be saved first before it can be fetched from shared prefs
-                    String tokenString = preferenceUtils.getToken();
-                    // If there si no token saved in shared preferences, that means the app is
-                    // launched for the first time and we need to fetch the token
-                    if (Utils.isNullOrEmpty(tokenString)) {
-                        Log.d(TAG, "Token in intercept is null or empty");
-                        // The token should be fetch here only the first time, after that the
-                        // Authenticator will handle refreshing it
-                        tokenString = tokenManager.fetchTokenFirstTime();
-                        Log.d(TAG, "Token fetched for the first time: " + tokenString);
-                    }
+            Request newRequest = chain
+                    .request()
+                    .newBuilder()
+                    .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
+                    .build();
+            Log.d(TAG, "Token in intercept is: " + tokenString);
 
-                    newRequest = chain
-                            .request()
-                            .newBuilder()
-                            .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
-                            .build();
-                    Log.d(TAG, "Token in intercept is: " + tokenString);
-
-                    return chain.proceed(newRequest);
-                })
+            return chain.proceed(newRequest);
+        })
                 // Add the authenticator where the refreshed token is being fetched
                 .authenticator(TokenAuthenticator.getInstance())
                 .addInterceptor(logsInterceptor)

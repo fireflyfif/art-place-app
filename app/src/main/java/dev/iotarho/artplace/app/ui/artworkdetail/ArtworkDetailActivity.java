@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -91,6 +92,7 @@ import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
@@ -177,6 +179,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     TextView artistBioLabel;
 
     // Similar Artworks Views
+    @BindView(R.id.similar_artworks_cardview)
+    CardView similarArtworksCardView;
     @BindView(R.id.similar_artworks_rv)
     RecyclerView similarArtworksRv;
 
@@ -237,8 +241,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
             mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
         }
 
-        // Initialize the ViewModel
-        mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+        // Initialize the ViewModels
+        ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
+        mArtistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
         ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
         showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
 
@@ -510,6 +515,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
+        similarArtworksCardView.setVisibility(View.VISIBLE);
         SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(artworkList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);

@@ -44,10 +44,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -57,9 +55,8 @@ import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ablanco.zoomy.Zoomy;
 import com.google.android.material.appbar.AppBarLayout;
@@ -93,13 +90,11 @@ import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
-import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModel;
-import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModelFactory;
-import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
@@ -215,16 +210,12 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     TextView artworkInfoLabel;
 
     // Search List Views
-    @BindView(R.id.search_cardview)
+    @BindView(R.id.similar_artworks_cardview)
     CardView searchContentCardView;
-    @BindView(R.id.search_rv)
+    @BindView(R.id.similar_artworks_label)
+    TextView cardLabel;
+    @BindView(R.id.similar_artworks_rv)
     RecyclerView searchResultsRv;
-//    @BindView(R.id.progress_bar_search)
-//    ProgressBar progressBar;
-//    @BindView(R.id.refresh_layout)
-//    SwipeRefreshLayout swipeRefreshLayout;
-//    @BindView(R.id.empty_screen)
-//    View emptyScreen;
 
     @BindDimen(R.dimen.margin_42dp)
     int bottomMargin;
@@ -235,14 +226,12 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     private ShowsDetailViewModel showsDetailViewModel;
     private ArtistsDetailViewModel artistViewModel;
     private ArtworksViewModel artworksViewModel;
-    private SearchFragmentViewModel searchFragmentViewModel;
 
     private int mGeneratedLightColor;
     private String emptyField;
     private String artistBiography;
     private PorterDuffColorFilter colorFilter;
     private String titleString;
-    private SearchListAdapter searchListAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -257,7 +246,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
         ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
         showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
-        artistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+        ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
+        artistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
         artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         if (getIntent().getExtras() != null) {
@@ -338,29 +328,19 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
     private void makeNewSearchFroArtist(String artistNameFromTitle) {
         //make a new call to search only for this string + "artist" type
-        SearchFragmentViewModelFactory searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
-        searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
-        searchFragmentViewModel.setQuery(artistNameFromTitle);
-        searchFragmentViewModel.setType("artist");
-        searchListAdapter = new SearchListAdapter(this, this);
-        searchFragmentViewModel.getPagedList().observe(this, results -> {
-            searchListAdapter.submitList(results); // submit the list to the PagedListAdapter
-//            observeNetworkState();
-//            observeLoadingState();
-        });
+        artistViewModel.initSearchArtists(artistNameFromTitle, "artist");
+        artistViewModel.getSearchArtistsList().observe(this, this::setupSearchArtistList);
+        cardLabel.setText("Search results");
         searchContentCardView.setVisibility(View.VISIBLE);
-        // Setup the RecyclerView first
-        setupRecyclerView();
     }
 
-    private void setupRecyclerView() {
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columnCount);
-
-        searchResultsRv.setLayoutManager(gridLayoutManager);
-
+    private void setupSearchArtistList(List<Result> artistSearch) {
+        SearchArtistListAdapter searchArtistListAdapter = new SearchArtistListAdapter(artistSearch);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
+        searchResultsRv.setLayoutManager(layoutManager);
         // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(searchListAdapter);
+        searchResultsRv.setAdapter(searchArtistListAdapter);
     }
 
     private void initGenesContent(String selfLinkString) {
@@ -627,11 +607,6 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
-
-        /*for (Artwork currentArtwork : artworksList) {
-            displaySecondImage(currentArtwork);
-            break;
-        }*/
     }
 
     private void initArtistsViewModel(String artistLink) {

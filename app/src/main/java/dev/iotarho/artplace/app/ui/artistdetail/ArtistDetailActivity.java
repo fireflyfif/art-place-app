@@ -124,7 +124,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(receivedArtworkTitle);
 
-                mArtistViewModel = new ViewModelProvider(this).get(ArtistsDetailViewModel.class);
+                ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
+                mArtistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
                 ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
                 showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
 
