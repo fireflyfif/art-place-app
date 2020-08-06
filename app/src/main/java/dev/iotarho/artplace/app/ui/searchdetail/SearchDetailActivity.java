@@ -100,15 +100,16 @@ import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTIST_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTWORK_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
+
 
 public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnRefreshListener {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
-    private static final String SHOW = "show";
-    private static final String ARTIST = "artist";
-    private static final String ARTWORK = "artwork";
-    private static final String GENE = "gene";
     private int mLightMutedColor = 0xFFAAAAAA;
 
     // Search Detail main Views
@@ -287,18 +288,18 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         String selfLinkString = self.getHref();
         Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
-        if (typeString.equals(SHOW)) {
+        if (typeString.equals(SHOW_TYPE)) {
             Log.d(TAG, "temp, card: show, selfLinkString= " + selfLinkString);
             showCardView.setVisibility(View.VISIBLE);
             initShowsContentViewModel(selfLinkString);
         }
 
-        if (typeString.equals(ARTIST)) {
+        if (typeString.equals(ARTIST_TYPE)) {
             Log.d(TAG, "temp, card: artist, selfLinkString= " + selfLinkString);
             initArtistContentViewModel(selfLinkString);
         }
 
-        if (typeString.equals(ARTWORK)) {
+        if (typeString.equals(ARTWORK_TYPE)) {
             Log.d(TAG, "temp, card: artwork, selfLinkString= " + selfLinkString);
             // Initialize the ViewModel
             initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "Artwork Not Found" (this was confirmed also on Postman))
@@ -309,7 +310,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             Log.d(TAG, "temp, artistNameFromTitle= " + artistNameFromTitle + " remainder= " + remainder);
         }
 
-        if (typeString.equals(GENE)) {
+        if (typeString.equals(GENE_TYPE)) {
             contentType.setText(R.string.genre_type);
             initGenesContent(selfLinkString);
         }
@@ -330,7 +331,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         //make a new call to search only for this string + "artist" type
         artistViewModel.initSearchArtists(artistNameFromTitle, "artist");
         artistViewModel.getSearchArtistsList().observe(this, this::setupSearchArtistList);
-        cardLabel.setText("Search results");
+        cardLabel.setText(getString(R.string.search_results_title, artistNameFromTitle));
         searchContentCardView.setVisibility(View.VISIBLE);
     }
 
@@ -511,10 +512,12 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             showEndDateLabel.setVisibility(View.VISIBLE);
         }
 
-        // TODO: This is repeated for the second time
+        // TODO: Try to not repeate this code
         LinksResult linksResult = showContent.getLinks();
         MainImage mainImageObject = linksResult.getImage();
         List<String> imageVersionList = showContent.getImageVersions();
+//        displaySecondImage();
+
         showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
             if (s != null) {
                 // Set the large image with Picasso
@@ -628,10 +631,9 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
     private void setupArtworkInfoUi(Artwork currentArtwork) {
         if (currentArtwork == null) {
-            Log.d(TAG, "temp, Artwork is null");
+            Log.e(TAG, "Artwork is null");
             return;
         }
-        // TODO: get the artist name from the titleString
         emptyField = getString(R.string.not_applicable);
         artworkCardView.setVisibility(View.VISIBLE);
 

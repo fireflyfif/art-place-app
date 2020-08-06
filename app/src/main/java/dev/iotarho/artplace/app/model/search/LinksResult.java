@@ -55,11 +55,8 @@ public class LinksResult implements Parcelable {
     @SerializedName("thumbnail")
     private Thumbnail thumbnail;
 
-    @SerializedName("images")
-    private ImagesObject images; // TODO: This needs to be moved from here
-
     @SerializedName("image")
-    private MainImage image;
+    private MainImage image; // TODO: Check if there is ever such image
 
     public Self getSelf() {
         return self;
@@ -87,7 +84,6 @@ public class LinksResult implements Parcelable {
         dest.writeParcelable(this.self, flags);
         dest.writeParcelable(this.permalink, flags);
         dest.writeParcelable(this.thumbnail, flags);
-        dest.writeParcelable(this.images, flags);
         dest.writeParcelable(this.image, flags);
     }
 
@@ -98,7 +94,6 @@ public class LinksResult implements Parcelable {
         this.self = in.readParcelable(Self.class.getClassLoader());
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
-        this.images = in.readParcelable(ImagesObject.class.getClassLoader());
         this.image = in.readParcelable(MainImage.class.getClassLoader());
     }
 
@@ -113,10 +108,6 @@ public class LinksResult implements Parcelable {
             return new LinksResult[size];
         }
     };
-
-    public ImagesObject getImages() {
-        return images;
-    }
 
     public MainImage getImage() {
         return image;

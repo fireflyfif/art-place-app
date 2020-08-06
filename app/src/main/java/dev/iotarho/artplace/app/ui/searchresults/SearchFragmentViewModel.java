@@ -37,8 +37,10 @@ package dev.iotarho.artplace.app.ui.searchresults;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
@@ -88,6 +90,7 @@ public class SearchFragmentViewModel extends ViewModel {
         resultLivePagedList = Transformations.switchMap(searchResultLiveData, input -> {
             // Get an instance of the DataSourceFactory class
             SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input.first, input.second);
+            Log.d("SearchFragmentViewModel", "temp, input.first = " + input.first + " input.second = " + input.second);
             // Initialize the network state liveData
             networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getNetworkState);
             // Initialize the Loading state liveData
@@ -112,24 +115,32 @@ public class SearchFragmentViewModel extends ViewModel {
         return initialLiveLoadingState;
     }
 
+    public MutableLiveData<String> getQueryLiveData() {
+        return queryLiveData;
+    }
+
+    public MutableLiveData<String> getTypeLiveData() {
+        return typeLiveData;
+    }
+
     public void setQuery(String originalInput) {
-        Log.d("TAG", "setQuery: " + originalInput);
         String input = originalInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(queryLiveData.getValue())) {
-            return;
+            Log.d("TAG", "temp, setQuery is the same as input: " + originalInput);
+//            return;
         }
         Log.d("TAG", "temp, setQuery to a new one: " + input);
         queryLiveData.setValue(input);
     }
 
     public void setType(String typeInput) {
-        Log.d("TAG", "temp, setType: " + typeInput);
         if (typeInput == null) {
             return;
         }
         String input = typeInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(typeLiveData.getValue())) {
-            return;
+            Log.d("TAG", "temp, setType is the same as input: " + typeInput);
+//            return;
         }
 
         Log.d("TAG", "temp, setType to a new one: " + input);

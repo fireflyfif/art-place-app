@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
-import dev.iotarho.artplace.app.model.search.ImagesObject;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
+
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTIST_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTWORK_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
 public class SearchResultsLogic {
 
@@ -22,6 +25,7 @@ public class SearchResultsLogic {
             if (result.getLinks() == null) {
                 return null;
             }
+
             LinksResult linksResult = result.getLinks();
             Thumbnail thumbnail = linksResult.getThumbnail();
             String thumbnailLink = "";
@@ -31,28 +35,25 @@ public class SearchResultsLogic {
                 Log.d("SearchResultsLogic", "temp, Thumbnail is null, title: " + result.getTitle());
             }
 
-            String imageLink = "";
-            ImagesObject images = linksResult.getImages();
-            if (images != null) {
-                imageLink = StringUtils.getImageUrl(images.getHref());
-                Log.d("SearchResultsLogic", "temp, ImageLink is: " + imageLink);
-            }
-
             boolean isImageMissing = Utils.isNullOrEmpty(thumbnailLink);
-            boolean isOtherImagesMissing = Utils.isNullOrEmpty(imageLink);
 
-            if (!isImageMissing || !isOtherImagesMissing) {
+            if (!isImageMissing && isKnownType(result)) {
                 filteredList.add(result);
                 Log.d("SearchResultsLogic", "Adding result: " + result.getTitle());
             } else {
                 // just don't add it to the list
                 Log.d("SearchResultsLogic", "Removing result without image: " + result.getTitle());
             }
-
-
         }
         resultList.addAll(filteredList);
         return filteredList;
+    }
+
+    private static boolean isKnownType(Result result) {
+        return ((result.getType().equals(SHOW_TYPE)) ||
+                (result.getType().equals(ARTIST_TYPE)) ||
+                (result.getType().equals(ARTWORK_TYPE)) ||
+                (result.getType().equals(GENE_TYPE)));
     }
 
     private static Comparator<Result> resultComparator = (o1, o2) -> {
