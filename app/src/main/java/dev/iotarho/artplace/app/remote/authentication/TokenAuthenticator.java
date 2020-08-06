@@ -51,6 +51,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
 
+import static dev.iotarho.artplace.app.utils.Constants.General.HEADER_TOKEN_KEY;
+
 // This class should be called when the token expires
 // source: https://square.github.io/okhttp/recipes/
 public class TokenAuthenticator implements Authenticator {
@@ -76,7 +78,7 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, @NonNull Response response) throws IOException {
         // Get token used in request
-        String token = response.header(Utils.HEADER_TOKEN_KEY);
+        String token = response.header(HEADER_TOKEN_KEY);
         Log.d(TAG, "token from the header: " + token); // null
 
         // Get the currently stored token
@@ -120,7 +122,7 @@ public class TokenAuthenticator implements Authenticator {
         return response
                 .request()
                 .newBuilder()
-                .header(Utils.HEADER_TOKEN_KEY, savedToken)
+                .header(HEADER_TOKEN_KEY, savedToken)
                 .build();
     }
 }

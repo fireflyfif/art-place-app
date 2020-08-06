@@ -35,12 +35,8 @@
 
 package dev.iotarho.artplace.app.ui.searchresults;
 
-import android.util.Log;
-
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
@@ -55,11 +51,11 @@ import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchDataSource;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchDataSourceFactory;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
-public class SearchFragmentViewModel extends ViewModel {
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.INITIAL_SIZE_HINT;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.PAGE_SIZE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.PREFETCH_DISTANCE_HINT;
 
-    private static final int PAGE_SIZE = 10;
-    private static final int INITIAL_SIZE_HINT = 10;
-    private static final int PREFETCH_DISTANCE_HINT = 10;
+public class SearchFragmentViewModel extends ViewModel {
 
     private LiveData<NetworkState> networkLiveState;
     private LiveData<NetworkState> initialLiveLoadingState;
@@ -71,6 +67,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
     private PagedList.Config pagedListConfig;
     private ArtsyRepository repo;
+    private  SearchDataSourceFactory dataSourceFactory;
 
 
     public SearchFragmentViewModel(ArtsyRepository artsyRepository) {
@@ -89,8 +86,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
         resultLivePagedList = Transformations.switchMap(searchResultLiveData, input -> {
             // Get an instance of the DataSourceFactory class
-            SearchDataSourceFactory dataSourceFactory = new SearchDataSourceFactory(repo, input.first, input.second);
-            Log.d("SearchFragmentViewModel", "temp, input.first = " + input.first + " input.second = " + input.second);
+            dataSourceFactory = new SearchDataSourceFactory(repo, input.first, input.second);
             // Initialize the network state liveData
             networkLiveState = Transformations.switchMap(dataSourceFactory.getSearchDataSourceMutableLiveData(), SearchDataSource::getNetworkState);
             // Initialize the Loading state liveData
@@ -126,10 +122,8 @@ public class SearchFragmentViewModel extends ViewModel {
     public void setQuery(String originalInput) {
         String input = originalInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(queryLiveData.getValue())) {
-            Log.d("TAG", "temp, setQuery is the same as input: " + originalInput);
-//            return;
+            return;
         }
-        Log.d("TAG", "temp, setQuery to a new one: " + input);
         queryLiveData.setValue(input);
     }
 
@@ -139,11 +133,24 @@ public class SearchFragmentViewModel extends ViewModel {
         }
         String input = typeInput.toLowerCase(Locale.getDefault()).trim();
         if (input.equals(typeLiveData.getValue())) {
-            Log.d("TAG", "temp, setType is the same as input: " + typeInput);
-//            return;
+            return;
         }
 
-        Log.d("TAG", "temp, setType to a new one: " + input);
         typeLiveData.setValue(input);
+    }
+
+    /**
+     * Method used for requesting a new network call with the updated query
+     * <p>
+     * Note: This method might not be ideal, but it triggers a new call to get new data
+     *
+     * @return fresh new list of search result
+     */
+    public LiveData<PagedList<Result>> refreshSearchLiveData() {
+        resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
+                .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                .build();
+
+        return resultLivePagedList;
     }
 }

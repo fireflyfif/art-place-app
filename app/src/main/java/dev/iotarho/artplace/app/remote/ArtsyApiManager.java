@@ -47,6 +47,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static dev.iotarho.artplace.app.utils.Constants.General.BASE_ARTSY_URL;
+import static dev.iotarho.artplace.app.utils.Constants.General.HEADER_TOKEN_KEY;
+
 
 public class ArtsyApiManager {
 
@@ -69,7 +72,7 @@ public class ArtsyApiManager {
      */
     private static Retrofit buildRetrofit(OkHttpClient client) {
         return new Retrofit.Builder()
-                .baseUrl(Utils.BASE_ARTSY_URL)
+                .baseUrl(BASE_ARTSY_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -108,7 +111,7 @@ public class ArtsyApiManager {
             Request newRequest = chain
                     .request()
                     .newBuilder()
-                    .addHeader(Utils.HEADER_TOKEN_KEY, tokenString)
+                    .addHeader(HEADER_TOKEN_KEY, tokenString)
                     .build();
             Log.d(TAG, "Token in intercept is: " + tokenString);
 

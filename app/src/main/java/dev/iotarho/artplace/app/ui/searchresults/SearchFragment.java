@@ -168,9 +168,6 @@ public class SearchFragment extends Fragment implements
         // Initialize the ViewModel
         searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-
-        setupUi(); // Set the UI onViewCreated to ensure that the view is created
         // Get the search word from the intent
         Bundle appData = getArguments(); //getIntent().getBundleExtra(SearchManager.APP_DATA);
         if (appData != null) {
@@ -181,14 +178,14 @@ public class SearchFragment extends Fragment implements
         return rootView;
     }
 
-    /*@Override
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
         setupUi(); // Set the UI onViewCreated to ensure that the view is created
-    }*/
+    }
 
     private void setupUi() {
         searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
@@ -200,6 +197,7 @@ public class SearchFragment extends Fragment implements
 
         searchFragmentViewModel.getQueryLiveData().observe(getViewLifecycleOwner(), query -> {
             Log.d(TAG, "temp, query: " + query);
+            queryString = query;
         });
 
         searchFragmentViewModel.getTypeLiveData().observe(getViewLifecycleOwner(), type -> {
@@ -265,14 +263,14 @@ public class SearchFragment extends Fragment implements
     }
 
     private synchronized void requestNewCall() {
-        // Setup the RecyclerView first
-        setupRecyclerView();
-        searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
+        searchFragmentViewModel.refreshSearchLiveData().observe(getViewLifecycleOwner(), results -> {
             Log.d(TAG, "temp, requestNewCall, results: " + results);
             searchListAdapter.submitList(results);
             observeNetworkState();
             observeLoadingState();
         });
+        // Setup the RecyclerView first
+        setupRecyclerView();
     }
 
     @Override
@@ -303,6 +301,7 @@ public class SearchFragment extends Fragment implements
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchFragmentViewModel.setQuery(query); // Set the new value to the mutable data
+                requestNewCall();
                 return false;
             }
 
@@ -311,6 +310,7 @@ public class SearchFragment extends Fragment implements
                 if (newText.length() > 2) {
                     searchFragmentViewModel.setQuery(newText); // Set the new value to the mutable data
                     prefUtils.saveSearchQuery(newText); // Save the search query into SharedPreference
+                    requestNewCall();
                 }
                 return false;
             }
@@ -362,6 +362,7 @@ public class SearchFragment extends Fragment implements
             searchTypeString = searchType;
             queryString = prefUtils.getSearchQuery();
             searchFragmentViewModel.setType(searchType);
+            requestNewCall();
         }
     }
 

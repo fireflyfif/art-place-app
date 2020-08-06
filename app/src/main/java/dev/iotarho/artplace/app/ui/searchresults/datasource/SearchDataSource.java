@@ -90,6 +90,7 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
         initialLoading.postValue(NetworkState.LOADING);
         networkState.postValue(NetworkState.LOADING);
 
+        Log.d(LOG_TAG, "temp, queryString: " + queryString);
         repository.getArtsyApi().getSearchResults(queryString, params.requestedLoadSize, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {

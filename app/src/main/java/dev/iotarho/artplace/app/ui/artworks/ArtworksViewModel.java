@@ -49,9 +49,9 @@ import dev.iotarho.artplace.app.ui.artworks.datasource.ArtworkDataSource;
 import dev.iotarho.artplace.app.ui.artworks.datasource.ArtworkDataSourceFactory;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
-import static dev.iotarho.artplace.app.utils.Utils.INITIAL_SIZE_HINT;
-import static dev.iotarho.artplace.app.utils.Utils.PAGE_SIZE;
-import static dev.iotarho.artplace.app.utils.Utils.PREFETCH_DISTANCE_HINT;
+import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.INITIAL_SIZE_HINT;
+import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.PAGE_SIZE;
+import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.PREFETCH_DISTANCE_HINT;
 
 public class ArtworksViewModel extends ViewModel {
 
