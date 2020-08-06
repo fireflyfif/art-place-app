@@ -40,9 +40,12 @@
     <!-- Menu items -->
     <string name="search">Search</string>
     <string name="search_hint">Search artist or genre</string>
-    <string name="action_article">Article</string>
+    <string name="action_random">Random Search</string>
     <string name="action_artist">Artist</string>
     <string name="action_artwork">Artwork</string>
+    <string name="action_genre">Genre</string>
+    <string name="action_show">Show</string>
+    <string name="action_all">All</string>
     <string name="loading_results_message">Loading results&#8230;</string>
     <string name="no_data_found">No data found</string>
     <string name="title_artworks">Artworks</string>

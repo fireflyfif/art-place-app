@@ -50,6 +50,7 @@ import dev.iotarho.artplace.app.repository.ArtsyRepository;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchDataSource;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchDataSourceFactory;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.Utils;
 
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.INITIAL_SIZE_HINT;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.PAGE_SIZE;
@@ -61,13 +62,13 @@ public class SearchFragmentViewModel extends ViewModel {
     private LiveData<NetworkState> initialLiveLoadingState;
     private LiveData<PagedList<Result>> resultLivePagedList;
 
-    private MutableLiveData<String> queryLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> queryLiveData = new MutableLiveData<>(Utils.randomSearch()); // set the default query
     private MutableLiveData<String> typeLiveData = new MutableLiveData<>();
     private SearchResultLiveData searchResultLiveData = new SearchResultLiveData(queryLiveData, typeLiveData);
 
     private PagedList.Config pagedListConfig;
     private ArtsyRepository repo;
-    private  SearchDataSourceFactory dataSourceFactory;
+    private SearchDataSourceFactory dataSourceFactory;
 
 
     public SearchFragmentViewModel(ArtsyRepository artsyRepository) {
@@ -147,6 +148,7 @@ public class SearchFragmentViewModel extends ViewModel {
      * @return fresh new list of search result
      */
     public LiveData<PagedList<Result>> refreshSearchLiveData() {
+        dataSourceFactory = new SearchDataSourceFactory(repo, queryLiveData.getValue(), typeLiveData.getValue());
         resultLivePagedList = new LivePagedListBuilder<>(dataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();

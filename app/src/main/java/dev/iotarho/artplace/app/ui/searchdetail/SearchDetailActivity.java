@@ -304,10 +304,12 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             // Initialize the ViewModel
             initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "Artwork Not Found" (this was confirmed also on Postman))
             // get the artist name from the titleString
-            String artistNameFromTitle = titleString.substring(0, titleString.indexOf(","));
-            makeNewSearchFroArtist(artistNameFromTitle);
-            String remainder = titleString.substring(titleString.indexOf(",") + 1);
-            Log.d(TAG, "temp, artistNameFromTitle= " + artistNameFromTitle + " remainder= " + remainder);
+            if (titleString.contains(",")) {
+                String artistNameFromTitle = titleString.substring(0, titleString.indexOf(","));
+                makeNewSearchFroArtist(artistNameFromTitle);
+                String remainder = titleString.substring(titleString.indexOf(",") + 1);
+                Log.d(TAG, "temp, artistNameFromTitle= " + artistNameFromTitle + " remainder= " + remainder);
+            }
         }
 
         if (typeString.equals(GENE_TYPE)) {

@@ -10,7 +10,6 @@ public class PreferenceUtils {
     private static final String PREFS_KEY_TOKEN = "prefs_token_key";
     private static final String PREFS_KEY_TOKEN_EXPIRY = "prefs_token_expiry_key";
     private static final String PREFS_KEY_APP_THEME = "prefs_key_theme";
-    private static final String PREFERENCE_SEARCH_KEY = "search_prefs";
     private static final String PREFERENCE_SEARCH_WORD = "search_word";
 
     private static volatile PreferenceUtils sInstance;
@@ -63,7 +62,7 @@ public class PreferenceUtils {
     }
 
     public String getSearchQuery() {
-        return mPrefs.getString(PREFERENCE_SEARCH_WORD, "Andy Warhol");
+        return mPrefs.getString(PREFERENCE_SEARCH_WORD, "");
     }
 
     public void saveSearchQuery(String searchQuery) {

@@ -40,24 +40,25 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_24dp"
         android:iconTint="?attr/iconTintColor"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always"
         tools:targetApi="o" />
 
+    <item
+        android:id="@+id/action_random"
+        android:orderInCategory="1"
+        android:title="@string/action_random"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_red_dot" />
+
     <group
         android:id="@+id/search_type_group"
         android:checkableBehavior="single"
         android:icon="@drawable/ic_filter_list_black_24dp"
-        android:orderInCategory="200"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom">
-
-        <!--<item
-            android:id="@+id/action_type_article"
-            android:orderInCategory="1"
-            android:title="@string/action_article"
-            app:showAsAction="never" />-->
 
         <item
             android:id="@+id/action_type_artist"
@@ -74,19 +75,19 @@
         <item
             android:id="@+id/action_type_gene"
             android:orderInCategory="4"
-            android:title="Gene"
+            android:title="@string/action_genre"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_show"
             android:orderInCategory="5"
-            android:title="Show"
+            android:title="@string/action_show"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_type_none"
             android:orderInCategory="6"
-            android:title="All"
+            android:title="@string/action_all"
             app:showAsAction="never" />
 
     </group>
