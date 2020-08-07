@@ -98,19 +98,20 @@ import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
-import dev.iotarho.artplace.app.utils.ArtistDetailsUtils;
+import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
+import dev.iotarho.artplace.app.utils.ImageUtils;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
+
+import static dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity.ARTIST_ARTWORK_URL_KEY;
 
 public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
     private static final String ARTWORK_LARGER_IMAGE_KEY = "artwork_larger_link";
-    private static final String ARTIST_URL_KEY = "artist_url";
-    private static final String ARTWORK_TITLE_KEY = "artwork_title";
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
     private static final int NON_FAV_TAG = 1;
@@ -177,6 +178,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     ExpandableTextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
+    @BindView(R.id.divider_2)
+    View artistDivider;
 
     // Similar Artworks Views
     @BindView(R.id.similar_artworks_cardview)
@@ -353,7 +356,12 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         Thumbnail thumbnail = imageLinksObject.getThumbnail();
         artworkThumbnail = thumbnail.getHref();
 
-        largeArtworkLink = ArtistDetailsUtils.getLargeImageUrl(currentArtwork, imageLinksObject);
+        if (currentArtwork.getImageVersions() == null) {
+            return null;
+        }
+        MainImage mainImageObject = imageLinksObject.getImage();
+        List<String> imageVersionList = currentArtwork.getImageVersions();
+        largeArtworkLink = ImageUtils.getLargeImageUrl(imageVersionList, mainImageObject);
         // Set the large image with Picasso
         Picasso.get()
                 .load(Uri.parse(largeArtworkLink))
@@ -361,7 +369,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                 .error(R.color.color_error)
                 .into(artworkImage);
 
-        String squareImage = ArtistDetailsUtils.getSquareImageUrl(currentArtwork, imageLinksObject);
+        String squareImage = ImageUtils.getSquareImageUrl(currentArtwork, imageLinksObject);
         makeImageBlurry(squareImage);
         // Set a click listener on the image
         openArtworkFullScreen();
@@ -410,7 +418,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
             if (artists != null && artists.size() != 0) {
                 artistLabel.setVisibility(View.VISIBLE);
-                artistCard.setVisibility(View.VISIBLE);
                 for (Artist currentArtist : artists) {
                     setupArtistUI(currentArtist);
                 }
@@ -419,7 +426,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupArtistUI(Artist currentArtist) {
-        emptyField = getString(R.string.not_applicable);
+        ArtistInfoUtils.setupArtistUi(currentArtist,artistCard, artistName, artistHomeTown,
+                hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
+                artistNationalityLabel, artistBio, artistBioLabel);
 
         // Get the name of the artist
         artistNameString = currentArtist.getName();
@@ -429,69 +438,11 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
             artistNameButton.setText(artistNameString);
             artistNameButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ArtworkDetailActivity.this, ArtistDetailActivity.class);
-                // Send the name of the artwork as extra
-                intent.putExtra(ARTWORK_TITLE_KEY, artworkTitle);
-                intent.putExtra(ARTIST_URL_KEY, artistUrl);
+                intent.putExtra(ARTIST_ARTWORK_URL_KEY, artistUrl);
                 startActivity(intent);
             });
         }
-        // Home town
-        if (!Utils.isNullOrEmpty(currentArtist.getHometown())) {
-            artistHomeTown.setVisibility(View.VISIBLE);
-            hometownLabel.setVisibility(View.VISIBLE);
-            artistHomeTown.setText(currentArtist.getHometown());
-        }
-        // Birth and dead date
-        if (!Utils.isNullOrEmpty(currentArtist.getBirthday()) || !Utils.isNullOrEmpty(currentArtist.getDeathday())) {
-            String artistBirthString = currentArtist.getBirthday();
-            String artistDeathString = currentArtist.getDeathday();
-
-            String lifespanConcatString = artistBirthString + " - " + artistDeathString;
-            artistLifespan.setText(lifespanConcatString);
-        }
-        // Location
-        if (!Utils.isNullOrEmpty(currentArtist.getLocation())) {
-            artistLocation.setVisibility(View.VISIBLE);
-            locationLabel.setVisibility(View.VISIBLE);
-            artistLocation.setText(currentArtist.getLocation());
-        }
-        // Nationality
-        if (!Utils.isNullOrEmpty(currentArtist.getNationality())) {
-            artistNationality.setVisibility(View.VISIBLE);
-            artistNationalityLabel.setVisibility(View.VISIBLE);
-            artistNationality.setText(currentArtist.getNationality());
-        }
-
-        // Get the list of image versions first
-        List<String> imageVersionList = currentArtist.getImageVersions();
-        // Get the first entry from this list, which corresponds to "large"
-        String largeVersion = "large";
-        String versionString = ArtistDetailsUtils.getVersionImage(imageVersionList, largeVersion);
-
-        ImageLinks imageLinksObject = currentArtist.getLinks();
-        MainImage mainImageObject = imageLinksObject.getImage();
-        // Get the link for the current artist,
-        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-        String artistImgLinkString = mainImageObject.getHref();
-        // Replace the {image_version} from the artworkImgLinkString with
-        // the wanted version, e.g. "large"
-        String newArtistLinkString = artistImgLinkString
-                .replaceAll("\\{.*?\\}", versionString);
-        // TODO: We are not doing anything with this image link
-        Log.d(TAG, "temp, newArtistLinkString: " + newArtistLinkString);
-
-        if (currentArtist.getBiography() != null) {
-            artistBiography = currentArtist.getBiography();
-            artistBio.setText(artistBiography);
-
-            if (currentArtist.getBiography().isEmpty()) {
-                artistBio.setVisibility(View.GONE);
-                artistBioLabel.setVisibility(View.GONE);
-            }
-        } else {
-            artistBio.setVisibility(View.GONE);
-            artistBioLabel.setVisibility(View.GONE);
-        }
+        artistBiography = currentArtist.getBiography();
 
         ImageLinks imageLinks = currentArtist.getLinks();
         ArtworksLink artworksLink = imageLinks.getArtworksLink();

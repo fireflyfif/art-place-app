@@ -46,10 +46,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
-import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
 public class ArtistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -62,10 +62,12 @@ public class ArtistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private NetworkState mNetworkState;
 
     private List<Artist> artistList;
+    private OnArtistClickHandler clickHandler;
     private OnRefreshListener mRefreshHandler;
 
-    public ArtistListAdapter(List<Artist> artistList, OnRefreshListener refreshListener) {
+    public ArtistListAdapter(List<Artist> artistList, OnRefreshListener refreshListener, OnArtistClickHandler clickHandler) {
         this.artistList = artistList;
+        this.clickHandler = clickHandler;
         mRefreshHandler = refreshListener;
     }
 
@@ -78,7 +80,7 @@ public class ArtistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return new NetworkStateItemViewHolder(view, mRefreshHandler);
         } else {
             View view = layoutInflater.inflate(R.layout.artwork_by_artist_item, parent, false);
-            return new ArtistViewHolder(view);
+            return new ArtistViewHolder(view, clickHandler);
         }
     }
 

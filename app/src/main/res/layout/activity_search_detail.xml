@@ -152,7 +152,7 @@
                         android:fontFamily="@font/work_sans_semibold"
                         android:textColor="?colorControlNormal"
                         android:textSize="18sp"
-                        tools:text="Artwork" />
+                        android:text="@string/genre_name" />
 
                     <ImageView
                         android:id="@+id/content_image2"

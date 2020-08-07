@@ -13,14 +13,14 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.artists.Artist;
-import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 
 
-public class ArtistViewHolder extends RecyclerView.ViewHolder {
+public class ArtistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     @BindView(R.id.similar_artwork_thumbnail)
     ImageView similarArtworkThumbnail;
@@ -31,13 +31,20 @@ public class ArtistViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.similar_artwork_artist)
     TextView similarArtist;
 
-    public ArtistViewHolder(View itemView) {
+    private OnArtistClickHandler clickHandler;
+    private Artist currentArtist;
+
+    public ArtistViewHolder(View itemView, OnArtistClickHandler clickHandler) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        itemView.setOnClickListener(this);
+        this.clickHandler = clickHandler;
     }
 
     public void bindTo(Artist artist) {
         if (artist != null) {
+            currentArtist = artist;
+
             ImageLinks imageLinks = artist.getLinks();
             String artworkThumbnailString = null;
             try {
@@ -46,13 +53,6 @@ public class ArtistViewHolder extends RecyclerView.ViewHolder {
             } catch (Exception e) {
                 Log.e("ArtworksViewHolder", "Error obtaining thumbnail from JSON: " + e.getMessage());
             }
-
-//            String similarTitleString = artist.getTitle();
-//            similarTitle.setText(similarTitleString);
-
-//            String artistNameString = StringUtils.getArtistNameFromSlug(artist);
-//            Log.d("ArtworksViewHolder", "Name of the artist: " + artistNameString);
-//            similarArtist.setText(artistNameString);
 
             if (Utils.isNullOrEmpty(artworkThumbnailString)) {
                 // If it's empty or null -> set the placeholder
@@ -67,5 +67,10 @@ public class ArtistViewHolder extends RecyclerView.ViewHolder {
             }
 
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        clickHandler.onArtistClick(currentArtist);
     }
 }

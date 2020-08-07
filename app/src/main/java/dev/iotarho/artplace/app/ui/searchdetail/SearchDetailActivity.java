@@ -58,7 +58,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ablanco.zoomy.Zoomy;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
@@ -72,7 +71,7 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
-import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
+import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
@@ -90,23 +89,28 @@ import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Permalink;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
+import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
+import dev.iotarho.artplace.app.utils.ImageUtils;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.StringUtils;
 import dev.iotarho.artplace.app.utils.Utils;
 import io.noties.markwon.Markwon;
 
+import static dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity.ARTIST_EXTRA_KEY;
+import static dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity.ARTIST_URL_KEY;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTIST_TYPE;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTWORK_TYPE;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
 
-public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnRefreshListener {
+public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnArtistClickHandler {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
@@ -273,7 +277,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         }
         setCollapsingToolbar(titleString);
         contentTitle.setText(titleString);
-        contentType.setText(typeString);
+        contentType.setText(getString(R.string.genre_name, typeString));
 
         if (results.getLinks() == null) {
             return;
@@ -289,31 +293,28 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         Log.d(TAG, "temp, Self Link: " + selfLinkString);
 
         if (typeString.equals(SHOW_TYPE)) {
-            Log.d(TAG, "temp, card: show, selfLinkString= " + selfLinkString);
             showCardView.setVisibility(View.VISIBLE);
             initShowsContentViewModel(selfLinkString);
         }
 
         if (typeString.equals(ARTIST_TYPE)) {
-            Log.d(TAG, "temp, card: artist, selfLinkString= " + selfLinkString);
             initArtistContentViewModel(selfLinkString);
         }
 
         if (typeString.equals(ARTWORK_TYPE)) {
-            Log.d(TAG, "temp, card: artwork, selfLinkString= " + selfLinkString);
             // Initialize the ViewModel
             initArtworkViewModel(selfLinkString); // self links for artworks return most of the time "Artwork Not Found" (this was confirmed also on Postman))
             // get the artist name from the titleString
             if (titleString.contains(",")) {
                 String artistNameFromTitle = titleString.substring(0, titleString.indexOf(","));
-                makeNewSearchFroArtist(artistNameFromTitle);
+                makeNewSearchFromArtist(artistNameFromTitle);
                 String remainder = titleString.substring(titleString.indexOf(",") + 1);
                 Log.d(TAG, "temp, artistNameFromTitle= " + artistNameFromTitle + " remainder= " + remainder);
             }
         }
 
         if (typeString.equals(GENE_TYPE)) {
-            contentType.setText(R.string.genre_type);
+            contentType.setText(getString(R.string.genre_name, getString(R.string.genre_type)));
             initGenesContent(selfLinkString);
         }
 
@@ -329,16 +330,16 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         });
     }
 
-    private void makeNewSearchFroArtist(String artistNameFromTitle) {
+    private void makeNewSearchFromArtist(String artistNameFromTitle) {
         //make a new call to search only for this string + "artist" type
-        artistViewModel.initSearchArtists(artistNameFromTitle, "artist");
+        artistViewModel.initSearchArtists(artistNameFromTitle, ARTIST_TYPE);
         artistViewModel.getSearchArtistsList().observe(this, this::setupSearchArtistList);
         cardLabel.setText(getString(R.string.search_results_title, artistNameFromTitle));
         searchContentCardView.setVisibility(View.VISIBLE);
     }
 
     private void setupSearchArtistList(List<Result> artistSearch) {
-        SearchArtistListAdapter searchArtistListAdapter = new SearchArtistListAdapter(artistSearch);
+        SearchArtistListAdapter searchArtistListAdapter = new SearchArtistListAdapter(artistSearch, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         searchResultsRv.setLayoutManager(layoutManager);
@@ -371,25 +372,10 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         }
 
         ImageLinks imageLinksObject = geneResult.getLinks();
-        MainImage mainImageObject = imageLinksObject.getImage();
         List<String> imageVersionList = geneResult.getImageVersions();
-        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
-            if (s != null) {
-                Log.d(TAG, "temp, largeArtworkLink is " + s);
-                // Set the large image with Picasso
-                Picasso.get()
-                        .load(s)
-                        .placeholder(R.color.color_primary)
-                        .error(R.color.color_error)
-                        .into(secondImage);
-
-                Zoomy.Builder builder = new Zoomy.Builder(this)
-                        .target(secondImage)
-                        .enableImmersiveMode(false)
-                        .animateZooming(false);
-                builder.register();
-            }
-        });
+        MainImage mainImageObject = imageLinksObject.getImage();
+        ImageUtils.displayImage(mainImageObject, imageVersionList, secondImage);
+        ImageUtils.setupZoomyImage(this, secondImage);
 
         ArtworksLink artworksLink = imageLinksObject.getArtworksLink();
         String artworkLink = artworksLink.getHref(); // this link returns always the same result from the API (very disappointing)
@@ -430,23 +416,27 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
                 .into(contentImage, new Callback() {
                     @Override
                     public void onSuccess() {
-                        // Get the image as a bitmap
-                        Bitmap bitmap = ((BitmapDrawable) contentImage.getDrawable()).getBitmap();
-                        // Get a color from the bitmap by using the Palette library
-                        Palette palette = Palette.from(bitmap).generate();
-                        mGeneratedLightColor = palette.getLightVibrantColor(mLightMutedColor);
-                        cardView.setCardBackgroundColor(mGeneratedLightColor);
-                        // set the color of the back button
-                        colorFilter = new PorterDuffColorFilter(mGeneratedLightColor, PorterDuff.Mode.SRC_ATOP);
-                        if ((toolbar.getNavigationIcon()) != null) {
-                            toolbar.getNavigationIcon().setColorFilter(colorFilter);
-                        }
+                        setUIColorsFromImage();
                     }
 
                     @Override
                     public void onError(Exception e) {
                     }
                 });
+    }
+
+    private void setUIColorsFromImage() {
+        // Get the image as a bitmap
+        Bitmap bitmap = ((BitmapDrawable) contentImage.getDrawable()).getBitmap();
+        // Get a color from the bitmap by using the Palette library
+        Palette palette = Palette.from(bitmap).generate();
+        mGeneratedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+        cardView.setCardBackgroundColor(mGeneratedLightColor);
+        // set the color of the back button
+        colorFilter = new PorterDuffColorFilter(mGeneratedLightColor, PorterDuff.Mode.SRC_ATOP);
+        if ((toolbar.getNavigationIcon()) != null) {
+            toolbar.getNavigationIcon().setColorFilter(colorFilter);
+        }
     }
 
     private void setCollapsingToolbar(String titleString) {
@@ -514,28 +504,11 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
             showEndDateLabel.setVisibility(View.VISIBLE);
         }
 
-        // TODO: Try to not repeate this code
         LinksResult linksResult = showContent.getLinks();
         MainImage mainImageObject = linksResult.getImage();
         List<String> imageVersionList = showContent.getImageVersions();
-//        displaySecondImage();
-
-        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
-            if (s != null) {
-                // Set the large image with Picasso
-                Picasso.get()
-                        .load(s)
-                        .placeholder(R.color.color_primary)
-                        .error(R.color.color_error)
-                        .into(secondImage);
-
-                Zoomy.Builder builder = new Zoomy.Builder(this)
-                        .target(secondImage)
-                        .enableImmersiveMode(false)
-                        .animateZooming(false);
-                builder.register();
-            }
-        });
+        ImageUtils.displayImage(mainImageObject, imageVersionList, secondImage);
+        ImageUtils.setupZoomyImage(this, secondImage);
     }
 
     private void initArtistContentViewModel(String receivedArtistUrlString) {
@@ -544,56 +517,11 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtistUi(Artist currentArtist) {
-        if (currentArtist == null) {
-            Log.d(TAG, "Artist is null");
-            return;
-        }
-        String artistNameString = currentArtist.getName();
-        String hometown = currentArtist.getHometown();
-        String birthday = currentArtist.getBirthday();
-        String artistDeathString = currentArtist.getDeathday();
-        String location = currentArtist.getLocation();
-        String nationality = currentArtist.getNationality();
-        artistBiography = currentArtist.getBiography();
-
-        ImageLinks imageLinksObject = currentArtist.getLinks();
-        // Get the list of image versions first
-        List<String> imageVersionList = currentArtist.getImageVersions();
-        displaySecondImage(imageLinksObject, imageVersionList);
-
-        // Meet necessary criteria for showing up artist card
-        if (SearchDetailLogic.isArtistInfoInsufficient(hometown, location, nationality, birthday, artistDeathString)) {
-            Log.w(TAG, "Not enough artist info to show details.");
-            return;
-        }
-
-        artistCardView.setVisibility(View.VISIBLE);
-        emptyField = getString(R.string.not_applicable);
-
-        // Name
-        artistName.setText(Utils.isNullOrEmpty(artistNameString) ? emptyField : artistNameString);
-        // Home town
-        artistHomeTown.setVisibility(View.VISIBLE);
-        hometownLabel.setVisibility(View.VISIBLE);
-        artistHomeTown.setText(hometown);
-        // Birth and dead date
-        String lifespanConcatString = birthday + " - " + artistDeathString;
-        artistLifespan.setText(lifespanConcatString);
-        artistDivider.setVisibility(View.VISIBLE);
-        // Location
-        artistLocation.setText(location);
-        artistLocation.setVisibility(View.VISIBLE);
-        locationLabel.setVisibility(View.VISIBLE);
-        // Nationality
-        artistNationality.setText(nationality);
-        artistNationality.setVisibility(View.VISIBLE);
-        artistNationalityLabel.setVisibility(View.VISIBLE);
-        // Biography
-        if (!Utils.isNullOrEmpty(artistBiography)) {
-            artistBio.setText(artistBiography);
-            artistBio.setVisibility(View.VISIBLE);
-            artistBioLabel.setVisibility(View.VISIBLE);
-        }
+        ArtistInfoUtils.setupArtistUi(currentArtist,artistCardView, artistName, artistHomeTown,
+                hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
+                artistNationalityLabel, artistBio, artistBioLabel);
+        ArtistInfoUtils.displayArtistImage(currentArtist, secondImage);
+        ImageUtils.setupZoomyImage(this, secondImage);
 
         ImageLinks imageLinks = currentArtist.getLinks();
         ArtworksLink artworksLink = imageLinks.getArtworksLink();
@@ -620,7 +548,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtistsList(List<Artist> artistList) {
-        ArtistListAdapter artistListAdapter = new ArtistListAdapter(artistList, null);
+        ArtistListAdapter artistListAdapter = new ArtistListAdapter(artistList, null, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artistListAdapter);
@@ -675,40 +603,31 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
         ImageLinks imageLinksObject = currentArtwork.getLinks();
         List<String> imageVersionList = currentArtwork.getImageVersions();
-        displaySecondImage(imageLinksObject, imageVersionList);
+        MainImage mainImageObject = imageLinksObject.getImage();
+        ImageUtils.displayImage(mainImageObject, imageVersionList, secondImage);
+        ImageUtils.setupZoomyImage(this, secondImage);
 
         // Get the artist link
         ArtistsLink artistsLink = imageLinksObject.getArtists();
         Log.d(TAG, "artistsLink is =" + artistsLink);
     }
 
-    private void displaySecondImage(ImageLinks imageLinksObject, List<String> imageVersionList) {
-        MainImage mainImageObject = imageLinksObject.getImage();
-        showsDetailViewModel.getArtworkLargeImage(imageVersionList, mainImageObject).observe(this, s -> {
-            if (s != null) {
-                // Set the large image with Picasso
-                Picasso.get()
-                        .load(s)
-                        .placeholder(R.color.color_primary)
-                        .error(R.color.color_error)
-                        .into(secondImage);
-
-                Zoomy.Builder builder = new Zoomy.Builder(this)
-                        .target(secondImage)
-                        .enableImmersiveMode(false)
-                        .animateZooming(false);
-                builder.register();
-            }
-        });
-    }
-
     @Override
     public void onResultClick(Result result) {
-
+        Intent intent = new Intent(this, ArtistDetailActivity.class);
+        // Send the name of the artwork as extra
+        LinksResult links = result.getLinks();
+        Self self = links.getSelf();
+        String link = self.getHref();
+        Log.d(TAG, "self: " + link);
+        intent.putExtra(ARTIST_URL_KEY, link);
+        startActivity(intent);
     }
 
     @Override
-    public void onRefreshConnection() {
-
+    public void onArtistClick(Artist artist) {
+        Intent intent = new Intent(this, ArtistDetailActivity.class);
+        intent.putExtra(ARTIST_EXTRA_KEY, artist);
+        startActivity(intent);
     }
 }

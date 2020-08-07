@@ -12,12 +12,13 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.Thumbnail;
 import dev.iotarho.artplace.app.model.search.LinksResult;
 import dev.iotarho.artplace.app.model.search.Result;
 
 
-public class SearchContentViewHolder extends RecyclerView.ViewHolder {
+public class SearchContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     @BindView(R.id.similar_artwork_thumbnail)
     ImageView similarArtworkThumbnail;
@@ -28,13 +29,19 @@ public class SearchContentViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.similar_artwork_artist)
     TextView similarArtist;
 
-    public SearchContentViewHolder(View itemView) {
+    private OnResultClickListener clickHandler;
+    private Result searchArtist;
+
+    public SearchContentViewHolder(View itemView,OnResultClickListener clickHandler) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        itemView.setOnClickListener(this);
+        this.clickHandler = clickHandler;
     }
 
     public void bindTo(Result searchArtist) {
         if (searchArtist != null) {
+            this.searchArtist = searchArtist;
             String title = searchArtist.getTitle();
             similarTitle.setText(title);
             similarArtist.setText(searchArtist.getType());
@@ -47,5 +54,10 @@ public class SearchContentViewHolder extends RecyclerView.ViewHolder {
                         .error(R.color.color_error)
                         .into(similarArtworkThumbnail);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        clickHandler.onResultClick(searchArtist);
     }
 }

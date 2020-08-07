@@ -238,7 +238,6 @@ public class SearchFragment extends Fragment implements
                 case FAILED:
                     progressBar.setVisibility(View.GONE);
                     emptyScreen.setVisibility(View.GONE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection, Snackbar.LENGTH_LONG).show();
                     break;
                 case NO_RESULT:
                     progressBar.setVisibility(View.GONE);

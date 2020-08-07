@@ -60,9 +60,7 @@ import dev.iotarho.artplace.app.utils.StringUtils;
 public class ShowsDetailViewModel extends ViewModel {
 
     public static final String ARTIST_BIO_CSS_QUERY = "span[class^=\"ArtistBio\"]";
-    private static final String IMAGE_LARGE = "large";
-    private static final String IMAGE_SQUARE = "square";
-    private static final String IMAGE_LARGER = "larger";
+
 
     private LiveData<ShowContent> showContentData = new MutableLiveData<>();
     private LiveData<GeneContent> geneResultData = new MutableLiveData<>();
@@ -114,16 +112,20 @@ public class ShowsDetailViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<String> getArtworkLargeImage(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {
+    /*public MutableLiveData<String> getArtworkLargeImage(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {
         // Get the link for the current artwork,
         // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
+        if (mainImageObject.getHref() == null) {
+            return null;
+        }
         String artworkImgLinkString = mainImageObject.getHref();
         // Replace the {image_version} from the artworkImgLinkString with
         // the wanted version, e.g. "large"
         String value = StringUtils.extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);
         artworkImageData.setValue(value);
         return artworkImageData;
-    }
+    }*/
+
 
     private String getVersionImage(List<String> imageVersionList, String version) {
         if (imageVersionList.contains(version)) {

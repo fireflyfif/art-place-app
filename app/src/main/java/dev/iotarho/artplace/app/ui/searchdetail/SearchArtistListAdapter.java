@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
@@ -23,11 +24,13 @@ public class SearchArtistListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int TYPE_ITEM = 1;
 
     private NetworkState mNetworkState;
+    private OnResultClickListener clickHandler;
 
     private List<Result> artistList;
 
-    public SearchArtistListAdapter(List<Result> artistList) {
+    public SearchArtistListAdapter(List<Result> artistList, OnResultClickListener clickHandler) {
         this.artistList = artistList;
+        this.clickHandler = clickHandler;
     }
 
     @NonNull
@@ -35,7 +38,7 @@ public class SearchArtistListAdapter extends RecyclerView.Adapter<RecyclerView.V
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.similar_artwork_item, parent, false);
-        return new SearchContentViewHolder(view);
+        return new SearchContentViewHolder(view, clickHandler);
     }
 
     @Override
