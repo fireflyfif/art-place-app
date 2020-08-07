@@ -52,9 +52,9 @@ import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
-public class ArtistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ArtistForGenreListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = ArtistListAdapter.class.getSimpleName();
+    private static final String TAG = ArtistForGenreListAdapter.class.getSimpleName();
 
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
@@ -65,7 +65,7 @@ public class ArtistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private OnArtistClickHandler clickHandler;
     private OnRefreshListener mRefreshHandler;
 
-    public ArtistListAdapter(List<Artist> artistList, OnRefreshListener refreshListener, OnArtistClickHandler clickHandler) {
+    public ArtistForGenreListAdapter(List<Artist> artistList, OnRefreshListener refreshListener, OnArtistClickHandler clickHandler) {
         this.artistList = artistList;
         this.clickHandler = clickHandler;
         mRefreshHandler = refreshListener;

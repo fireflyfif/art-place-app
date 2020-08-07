@@ -91,7 +91,7 @@ import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
-import dev.iotarho.artplace.app.ui.artistdetail.ArtistListAdapter;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistForGenreListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
@@ -315,7 +315,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
         if (typeString.equals(GENE_TYPE)) {
             contentType.setText(getString(R.string.genre_name, getString(R.string.genre_type)));
-            initGenesContent(selfLinkString);
+            initGenreContent(selfLinkString);
         }
 
         Permalink permalink = linksResult.getPermalink();
@@ -347,7 +347,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         searchResultsRv.setAdapter(searchArtistListAdapter);
     }
 
-    private void initGenesContent(String selfLinkString) {
+    private void initGenreContent(String selfLinkString) {
         showsDetailViewModel.initGenesResultFromLink(selfLinkString);
         showsDetailViewModel.getGeneResultData().observe(this, this::setupGeneUi);
     }
@@ -544,14 +544,14 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
 
     private void initArtistsViewModel(String artistLink) {
         artistViewModel.initArtistDataFromArtwork(artistLink);
-        artistViewModel.getArtistDataFromArtwork().observe(this, this::setupArtistsList);
+        artistViewModel.getArtistDataFromArtwork().observe(this, this::setupArtistsForGenreList);
     }
 
-    private void setupArtistsList(List<Artist> artistList) {
-        ArtistListAdapter artistListAdapter = new ArtistListAdapter(artistList, null, this);
+    private void setupArtistsForGenreList(List<Artist> artistList) {
+        ArtistForGenreListAdapter artistForGenreListAdapter = new ArtistForGenreListAdapter(artistList, null, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
-        artworksByArtistRv.setAdapter(artistListAdapter);
+        artworksByArtistRv.setAdapter(artistForGenreListAdapter);
     }
 
     private void initArtworkViewModel(String artworkLink) {
