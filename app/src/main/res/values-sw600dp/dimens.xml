@@ -36,7 +36,7 @@
 
 <resources>
 
-    <dimen name="overlap_layout">20dp</dimen>
+    <dimen name="overlap_layout">25dp</dimen>
     <dimen name="image_height">500dp</dimen>
     <dimen name="margin_horizontal_cardview">64dp</dimen>
     <dimen name="margin_bottom_cardview">32dp</dimen>

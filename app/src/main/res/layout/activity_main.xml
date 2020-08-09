@@ -37,6 +37,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal">
@@ -45,15 +46,19 @@
         android:id="@+id/appbar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?colorOnBackground"
         android:theme="@style/Theme.AppCompat.DayNight">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:background="@color/colorPrimary"
+            android:layout_height="wrap_content"
+            style="?toolbarStyle"
+            app:titleTextColor="@color/color_primary"
+            android:background="@drawable/toolbar_background"
+            android:layout_margin="10dp"
+            app:menu="@menu/artworks_menu"
             android:elevation="@dimen/padding_10dp"
-            android:theme="@style/Theme.AppCompat.DayNight"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/PopupMenuStyle"

@@ -35,16 +35,60 @@
 
 package dev.iotarho.artplace.app.utils;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.Random;
+
 public class Utils {
 
-    // Empty private constructor for preventing creation of instances of this class
-    private Utils() {}
+    private Utils() {
+    }
 
-    public static final String BASE_ARTSY_URL = "https://api.artsy.net/";
-    public static final String HEADER_TOKEN_KEY = "X-XAPP-Token";
-    public static final int PAGE_SIZE = 80;
-    public static final int INITIAL_SIZE_HINT = 50;
-    public static final int PREFETCH_DISTANCE_HINT = 20;
     public static final String PREFS_TOKEN_KEY = "com.example.android.artplace.PREFS_TOKEN_KEY";
+
+    public static boolean isNullOrEmpty(@Nullable String string) {
+        return string == null || string.trim().isEmpty();
+    }
+
+    public static boolean isTokenExpired(@NonNull String expiresAt) {
+        if (isNullOrEmpty(expiresAt)) {
+            return false;
+        }
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("u-M-d");
+        // get only the date of the expiry string
+        // e.g. 2014-09-05T12:39:09.200Z
+        String onlyDate = expiresAt.substring(0, 10);
+        LocalDate validDate = LocalDate.parse(onlyDate, dateFormatter);
+        LocalDate currentDate = LocalDate.now();
+        Log.d("Utils", "currentDate is: " + currentDate + " validDate is: " + validDate);
+        if (currentDate.isAfter(validDate)) {
+            Log.d("Utils", "token is expired");
+            return true;
+        }
+        Log.d("Utils", "token is not expired");
+        return false;
+    }
+
+    public static String randomSearch() {
+        String[] listArtist = {
+                "Yayoi Kusama",
+                "Roy Lichtenstein",
+                "Cindy Sherman",
+                "Keith Haring",
+                "David Hockney",
+                "Katherine Bernhardt",
+                "Kehinde Wiley",
+                "Ed Ruscha",
+                "Banksy"
+        };
+        Random r = new Random();
+        return listArtist[r.nextInt(listArtist.length)];
+    }
 
 }

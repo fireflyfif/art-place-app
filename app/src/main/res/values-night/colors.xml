@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ PROJECT LICENSE
   ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
   ~
@@ -35,32 +34,32 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#373737</color>
-    <color name="colorPrimaryDark">#111111</color>
-    <color name="colorAccent">#2AB7CA</color>
-    <!--<color name="colorBackground">#5d5d5d</color>-->
-    <color name="colorBackground">@color/colorPrimary</color>
-    <color name="cardBackground">@color/colorPrimaryDarker10</color>
-    <!--<color name="cardBackground">#404040</color>-->
-    <color name="colorAccentLight">#83dbe4</color>
-    <color name="colorAccentDark">#2292a2</color>
+    <!--DARK COLOR THEME-->
+    <!--The same color values are defined for dark theme, but with values more appropriate for -->
+    <!--low-luminance UIs. These colors will be used by night/themes.xml.-->
 
-    <color name="colorPrimaryDarker20">#141414</color>
-    <color name="colorPrimaryDarker10">#212121</color>
-    <color name="colorPrimaryLighter20">#4d4d4d</color>
-    <color name="colorPrimaryLighter30">#646464</color>
+    <color name="color_primary">#2AB7CA</color>
+    <color name="color_primary_variant">#2292a2</color>
+    <color name="color_secondary">#FED766</color>
+    <color name="color_secondary_variant">#FED766</color>
 
-    <!-- Pop Art colors-->
-    <color name="colorPopRed">#FE4A49</color>
-    <color name="colorPopBlue">#2AB7CA</color>
-    <color name="colorPopYellow">#FED766</color>
+    <color name="color_red">#FE4A49</color>
 
-    <color name="colorText">#fafafa</color>
-    <color name="colorWhiteTransparent">#80FFFFFF</color>
-    <color name="colorIconsInactive">#a4a4a4</color>
-    <color name="colorCardStroke">#272727</color>
+    <color name="color_text_contrast">#ffffff</color>
+    <color name="color_text_white">#ffffff</color>
+    <color name="color_snackbar_bg">#484848</color>
+    <color name="color_bg_transparent_25">#65000000</color>
+    <color name="color_bg_transparent_90">#D9000000</color>
+    <color name="color_on_toolbar">#353535</color>
 
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#000000</color>
+    <color name="color_background">#000000</color>
+    <color name="color_surface">#292929</color>
+    <color name="color_error">#cf6679</color>
+
+    <color name="color_on_primary">#000000</color>
+    <color name="color_on_secondary">#000000</color>
+    <color name="color_on_background">#000000</color>
+    <color name="color_on_surface">#1E1E1E</color>
+    <color name="color_on_error">#000000</color>
 
 </resources>

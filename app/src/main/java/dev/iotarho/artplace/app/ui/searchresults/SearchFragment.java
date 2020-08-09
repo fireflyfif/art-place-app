@@ -38,10 +38,8 @@ package dev.iotarho.artplace.app.ui.searchresults;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,44 +48,52 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
+import dev.iotarho.artplace.app.callbacks.SnackMessageListener;
 import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.ui.searchdetail.SearchDetailActivity;
 import dev.iotarho.artplace.app.ui.searchresults.adapter.SearchListAdapter;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.PreferenceUtils;
+import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
+import dev.iotarho.artplace.app.utils.Utils;
 
-import static android.content.Context.MODE_PRIVATE;
+import static dev.iotarho.artplace.app.ui.mainactivity.MainActivity.SEARCH_WORD_EXTRA;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTIST_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ARTWORK_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.ITEM_CHECKED_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.RESULT_PARCEL_KEY;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SEARCH_QUERY_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SEARCH_TYPE_SAVE_STATE;
+import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
-public class SearchFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, OnResultClickListener {
+public class SearchFragment extends Fragment implements
+        OnResultClickListener,
+        SnackMessageListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        OnRefreshListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
-    private static final String ARG_SEARCH_TITLE = "search_title";
-
-    private static final String PREFERENCE_SEARCH_KEY = "search_prefs";
-    private static final String PREFERENCE_SEARCH_WORD= "search_word";
-
-    private static final String SEARCH_QUERY_SAVE_STATE = "search_state";
-    private static final String SEARCH_TYPE_SAVE_STATE = "search_type";
-    private static final String RESULT_PARCEL_KEY = "results_key";
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -95,42 +101,58 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     RecyclerView searchResultsRv;
     @BindView(R.id.progress_bar_search)
     ProgressBar progressBar;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.empty_screen)
+    View emptyScreen;
 
-    private SearchFragmentViewModel mViewModel;
-    private SearchListAdapter mSearchAdapter;
-    private SearchView mSearchView;
-    private String mQueryWordString;
-    private SearchFragmentViewModelFactory mViewModelFactory;
-    private String mSearchType;
+    private SearchFragmentViewModel searchFragmentViewModel;
+    private SearchListAdapter searchListAdapter;
+    private String queryString;
+    private String searchTypeString;
+    private boolean isMenuItemChecked;
+    private SearchView searchView;
 
-    private SharedPreferences mSharedPreferences;
+    private PreferenceUtils prefUtils;
 
+    public static SearchFragment newInstance() {
+        return new SearchFragment();
+    }
+
+    public static SearchFragment newInstanceWithExtra(String query) {
+        SearchFragment searchFragment = new SearchFragment();
+        Bundle args = new Bundle();
+        args.putString(SEARCH_WORD_EXTRA, query);
+        searchFragment.setArguments(args);
+        return new SearchFragment();
+    }
 
     // Required empty public constructor
-    public SearchFragment() {}
+    public SearchFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Add a menu to the current Fragment
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true); // Add a menu to the current Fragment
 
         if (savedInstanceState != null) {
-            mQueryWordString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
-            mSearchType = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
+            queryString = savedInstanceState.getString(SEARCH_QUERY_SAVE_STATE);
+            searchTypeString = savedInstanceState.getString(SEARCH_TYPE_SAVE_STATE);
+            isMenuItemChecked = savedInstanceState.getBoolean(ITEM_CHECKED_SAVE_STATE);
         }
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        prefUtils = PreferenceUtils.getInstance();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(SEARCH_QUERY_SAVE_STATE, mQueryWordString);
-        outState.putString(SEARCH_TYPE_SAVE_STATE, mSearchType);
+        outState.putString(SEARCH_QUERY_SAVE_STATE, queryString);
+        outState.putString(SEARCH_TYPE_SAVE_STATE, searchTypeString);
+        outState.putBoolean(ITEM_CHECKED_SAVE_STATE, isMenuItemChecked);
     }
 
     @Nullable
@@ -138,189 +160,156 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
-
         ButterKnife.bind(this, rootView);
 
-        mViewModelFactory = Injection.provideSearchViewModelFactory(mQueryWordString, mSearchType);
+        queryString = prefUtils.getSearchQuery();
+        SearchFragmentViewModelFactory searchFragmentViewModelFactory = Injection.provideSearchViewModelFactory();
 
-        // Set the UI
-        setupUi();
+        // Initialize the ViewModel
+        searchFragmentViewModel = new ViewModelProvider(getViewModelStore(), searchFragmentViewModelFactory).get(SearchFragmentViewModel.class);
+
+        // Get the search word from the intent
+        Bundle appData = getArguments(); //getIntent().getBundleExtra(SearchManager.APP_DATA);
+        if (appData != null) {
+            queryString = appData.getString(SEARCH_WORD_EXTRA);
+            Log.d(TAG, "onCreateView, queryString: " + queryString);
+        }
 
         return rootView;
     }
 
-    private void setupRecyclerView() {
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-        searchResultsRv.setLayoutManager(staggeredGridLayoutManager);
-
-        mSearchAdapter = new SearchListAdapter(getContext(), this);
+        setupUi(); // Set the UI onViewCreated to ensure that the view is created
     }
 
     private void setupUi() {
+        searchFragmentViewModel.getPagedList().observe(getViewLifecycleOwner(), results -> {
+            searchListAdapter.submitList(results); // submit the list to the PagedListAdapter
+            observeNetworkState();
+            observeLoadingState();
+        });
+
+        searchFragmentViewModel.getQueryLiveData().observe(getViewLifecycleOwner(), query -> {
+            queryString = query;
+        });
+
+        searchFragmentViewModel.getTypeLiveData().observe(getViewLifecycleOwner(), type -> searchTypeString = type);
+
         // Setup the RecyclerView first
         setupRecyclerView();
-
-        // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchFragmentViewModel.class);
-
-        mViewModel.getSearchResultsLiveData().observe(this, results -> {
-            if (results != null) {
-                // Submit the list to the PagedListAdapter
-                mSearchAdapter.submitList(results);
-            }
-        });
-
-        mViewModel.getNetworkState().observe(this, networkState -> {
-            if (networkState != null) {
-                mSearchAdapter.setNetworkState(networkState);
-            }
-        });
-
-        mViewModel.getInitialLoading().observe(this, networkState -> {
-            if (networkState != null) {
-                progressBar.setVisibility(View.VISIBLE);
-
-                if (networkState.getStatus() == NetworkState.Status.SUCCESS
-                        && networkState.getStatus() == NetworkState.Status.NO_RESULT) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.GONE);
-                    Snackbar.make(coordinatorLayout, "Please search for another word.",
-                            Snackbar.LENGTH_LONG).show();
-                }
-
-                if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-
-                if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                    Log.d(TAG, "Network Status: " + networkState.getStatus());
-                    progressBar.setVisibility(View.GONE);
-                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
-                            Snackbar.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(mSearchAdapter);
     }
 
-    public synchronized void requestNewCall(String queryWord, String searchType) {
+    private void setupRecyclerView() {
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        // Unable to use StaggeredGridLayoutManager because of a known bug:
+        // https://gist.github.com/fireflyfif/401e669697cb2736ff7b3ffe7dfcb76e
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 
-        // Setup the RecyclerView first
-        setupRecyclerView();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columnCount);
 
-        // TODO: Generate a method for getting the query word from shared preferences
-        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
+        searchResultsRv.setLayoutManager(gridLayoutManager);
+        searchListAdapter = new SearchListAdapter(this, this);
+        // Set the Adapter on the RecyclerView
+        searchResultsRv.setAdapter(searchListAdapter);
+    }
 
-        if (queryWord == null || queryWord.isEmpty()) {
-            queryWord = "Andy Warhol";
-        }
-
-        mQueryWordString = queryWord;
-        mSearchType = searchType;
-
-        Log.d(TAG, "requestNewCall: Query word: " + mQueryWordString + "\nBut the reference queryWord is: "
-                + queryWord);
-        Log.d(TAG, "requestNewCall: Type word: " + mSearchType + "\nBut the reference for search type is: "
-                + searchType);
-
-        // Initialize the ViewModel
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory)
-                .get(SearchFragmentViewModel.class);
-
-        mViewModel.refreshSearchLiveData(queryWord, searchType)
-                .observe(this, results -> {
-                    if (results != null) {
-                        Log.d(TAG, "Size of the result: " + results.size());
-                        // Submit the list to the PagedListAdapter
-                        mSearchAdapter.submitList(results);
+    private void observeLoadingState() {
+        searchFragmentViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
+            if (networkState == null) {
+                return;
+            }
+            switch (networkState.getStatus()) {
+                case RUNNING:
+                    progressBar.setVisibility(View.VISIBLE);
+                    break;
+                case SUCCESS:
+                    progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.GONE);
+                    if (networkState.getStatus() == NetworkState.Status.NO_RESULT) {
+                        emptyScreen.setVisibility(View.VISIBLE); // Show an empty image
                     }
-                });
-
-        // Set the Adapter on the RecyclerView
-        searchResultsRv.setAdapter(mSearchAdapter);
+                    break;
+                case FAILED:
+                    progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.GONE);
+                    break;
+                case NO_RESULT:
+                    progressBar.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE); // Show an empty image
+                    break;
+                default:
+                    progressBar.setVisibility(View.VISIBLE);
+                    emptyScreen.setVisibility(View.GONE);
+                    break;
+            }
+        });
     }
 
-    private void saveToSharedPreference(String searchQuery) {
-        mSharedPreferences = getActivity()
-                .getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_SEARCH_WORD, searchQuery);
-        editor.apply(); // use apply() instead of commit(), because it is being saved on the background
-        Log.d(TAG, "Saved into shared prefs");
+    private void observeNetworkState() {
+        searchFragmentViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> {
+            if (networkState != null) {
+                searchListAdapter.setNetworkState(networkState);
+            }
+        });
+    }
+
+    private synchronized void requestNewCall() {
+        searchFragmentViewModel.refreshSearchLiveData().observe(getViewLifecycleOwner(), results -> {
+            searchListAdapter.submitList(results);
+            observeNetworkState();
+            observeLoadingState();
+        });
+        // Setup the RecyclerView first
+        setupRecyclerView();
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_search).setVisible(true);
-        Log.d(TAG, "onPrepareOptionsMenu called");
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
         inflater.inflate(R.menu.search_menu, menu);
 
-        // TODO: Generate a method for getting the query word from shared preferences
-        mSharedPreferences = getContext().getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-        mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
-        Log.d(TAG, "onCreateOptionsMenu: Query word " + mQueryWordString);
-
-        // Make the icon with a dynamic tint
-        // source: https://stackoverflow.com/a/29916353/8132331
-        Drawable drawable = menu.findItem(R.id.action_search).getIcon();
-        drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.colorText));
-        menu.findItem(R.id.action_search).setIcon(drawable);
-
         // Set the SearchView
-        SearchManager searchManager =
-                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        if (mSearchView != null && !mQueryWordString.isEmpty()) {
-            mSearchView.onActionViewExpanded();
-            mSearchView.setQuery(mQueryWordString, true);
-            mSearchView.clearFocus();
+        SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget, expand it by default
+
+        if (searchManager == null) {
+            return;
+        }
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        if (!Utils.isNullOrEmpty(queryString)) {
+            searchView.onActionViewExpanded();
+            searchView.setQuery(queryString, true);
+            searchFragmentViewModel.setQuery(queryString);
         }
 
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
-        // Set the Submit Button
-        mSearchView.setSubmitButtonEnabled(false);
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                query = String.valueOf(mSearchView.getQuery());
-                // Save the search query into SharedPreference
-                saveToSharedPreference(query);
-                requestNewCall(query, mSearchType);
-                mQueryWordString = query;
-                Log.d(TAG, "SearchFragment: onQueryTextSubmit called, query word: " + query);
-
-                return true;
+                searchFragmentViewModel.setQuery(query); // Set the new value to the mutable data
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "SearchFragment: onQueryTextChange called");
-
                 if (newText.length() > 2) {
-                    requestNewCall(newText, mSearchType);
+                    searchFragmentViewModel.setQuery(newText); // Set the new value to the mutable data
+                    prefUtils.saveSearchQuery(newText); // Save the search query into SharedPreference
+                    requestNewCall();
                 }
-
-                return true;
+                return false;
             }
         });
+
+        searchView.clearFocus();
     }
 
     @Override
@@ -331,61 +320,31 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
             case R.id.action_search:
                 return true;
 
-            /*case R.id.action_type_article:
-                item.setChecked(true);
-                // Set the type to article
-                mSearchType = "article";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
-                return true;*/
+            case R.id.action_random:
+                queryString = Utils.randomSearch();
+                searchView.setQuery(queryString, true);
+                searchFragmentViewModel.setQuery(queryString);
+                setItemState(item, null);
+                return true;
 
             case R.id.action_type_artist:
-                item.setChecked(true);
-                // Set the type to artist
-                mSearchType = "artist";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                setItemState(item, ARTIST_TYPE);
                 return true;
 
             case R.id.action_type_artwork:
-                item.setChecked(true);
-                // Set the type to artwork
-                mSearchType = "artwork";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                setItemState(item, ARTWORK_TYPE);
                 return true;
 
             case R.id.action_type_gene:
-
-                item.setChecked(true);
-                // Set the type to gene
-                mSearchType = "gene";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                setItemState(item, GENE_TYPE);
                 return true;
 
             case R.id.action_type_show:
-                item.setChecked(true);
-                // Set the type to show
-                mSearchType = "show";
-
-                requestNewCall(mQueryWordString, mSearchType);
-
-                Log.d(TAG, "Type word: " + mSearchType);
+                setItemState(item, SHOW_TYPE);
                 return true;
 
             case R.id.action_type_none:
-                item.setChecked(true);
-                requestNewCall(mQueryWordString, null);
-
+                setItemState(item, null);
                 return true;
 
             default:
@@ -393,45 +352,17 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        if (key.equals(PREFERENCE_SEARCH_KEY)) {
-            mSharedPreferences = getActivity()
-                    .getSharedPreferences(PREFERENCE_SEARCH_KEY, MODE_PRIVATE);
-
-            if (mSharedPreferences.contains(PREFERENCE_SEARCH_WORD)) {
-                mQueryWordString = mSharedPreferences.getString(PREFERENCE_SEARCH_WORD, "");
-
-                Log.d(TAG, "onSharedPreferenceChanged: Saved search query: " + mQueryWordString);
-            }
+    private void setItemState(MenuItem item, String searchType) {
+        if (item.isChecked()) {
+            item.setChecked(false);
+            isMenuItemChecked = false;
+        } else {
+            item.setChecked(true);
+            isMenuItemChecked = true;
+            searchTypeString = searchType;
+            searchFragmentViewModel.setType(searchType);
+            requestNewCall();
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "SearchFragment: onPause called" );
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "SearchFragment: onResume called" );
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -442,5 +373,24 @@ public class SearchFragment extends Fragment implements SharedPreferences.OnShar
         Intent intent = new Intent(getActivity(), SearchDetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRefresh() {
+        requestNewCall();
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onRefreshConnection() {
+        new RetrieveNetworkConnectivity(this).execute();
+    }
+
+    @Override
+    public void showSnackMessage(String resultMessage) {
+        Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
+        requestNewCall();
     }
 }

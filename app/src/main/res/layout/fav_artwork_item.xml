@@ -32,123 +32,53 @@
   ~
   ~
   -->
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
-    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginRight="@dimen/card_view_margin"
-    android:layout_marginEnd="@dimen/card_view_margin"
-    android:layout_marginStart="@dimen/card_view_margin"
-    android:layout_marginLeft="@dimen/card_view_margin"
-    android:layout_marginBottom="@dimen/card_view_vertical_margin"
-    android:layout_marginTop="@dimen/card_view_vertical_margin"
+    android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/cardBackground"
+    app:cardBackgroundColor="?colorOnSurface"
     app:cardCornerRadius="@dimen/fav_cardview_corners"
-    app:cardElevation="3dp"
+    app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="180dp">
 
         <ImageView
             android:id="@+id/fav_artwork_thumbnail"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?colorOnSurface"
             android:contentDescription="@string/image_thumbnail_description"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/background"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorAccentLight"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_medium" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/pop_art_placeholder" />
 
         <TextView
             android:id="@+id/fav_artwork_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:background="@color/color_bg_transparent_25"
             android:ellipsize="end"
+            android:fontFamily="@font/work_sans"
+            android:lineSpacingExtra="2dp"
             android:maxLines="2"
-            android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:padding="16dp"
+            android:textColor="@color/color_text_white"
             android:textSize="16sp"
-            android:textStyle="bold"
-            app:fontFamily="@font/amethysta"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_thumbnail"
             tools:text="Artwork Title with a Very Long Title Very Long Title" />
-
-        <TextView
-            android:id="@+id/fav_artwork_category"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:paddingTop="@dimen/padding_10dp"
-            android:paddingBottom="@dimen/padding_10dp"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:fontFamily="@font/amethysta"
-            app:layout_constraintBottom_toBottomOf="@+id/background"
-            app:layout_constraintEnd_toStartOf="@+id/fav_artwork_year"
-            app:layout_constraintStart_toStartOf="@+id/fav_artwork_medium"
-            app:layout_constraintTop_toTopOf="@+id/background"
-            tools:text="Artwork Category Could be long " />
-
-        <TextView
-            android:id="@+id/fav_artwork_medium"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            app:fontFamily="@font/amethysta"
-            app:layout_constraintEnd_toEndOf="@+id/fav_artwork_title"
-            app:layout_constraintStart_toStartOf="@+id/fav_artwork_title"
-            app:layout_constraintTop_toBottomOf="@+id/fav_artwork_title"
-            tools:text="Artwork Medium Artwork Medium Artwork Medium" />
-
-        <TextView
-            android:id="@+id/fav_artwork_year"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:paddingTop="@dimen/padding_10dp"
-            android:paddingBottom="@dimen/padding_10dp"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:fontFamily="@font/amethysta"
-            app:layout_constraintBottom_toBottomOf="@+id/background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/background"
-            tools:text="Artwork Year" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

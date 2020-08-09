@@ -36,14 +36,12 @@
 package dev.iotarho.artplace.app;
 
 import android.app.Application;
-import android.content.Context;
-
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import dev.iotarho.artplace.app.repository.ArtsyRepository;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
-import dev.iotarho.artplace.app.utils.ThemeUtils;
 
 // Singleton class that extends the Application.
 // Singleton pattern, explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -52,12 +50,6 @@ public class ArtPlaceApp extends Application {
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
     private static volatile ArtPlaceApp sInstance;
-    private static PreferenceUtils sPrefsUtils;
-
-    // Set the theme to the whole app
-   /* static {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-    }*/
 
 
     @Override
@@ -67,6 +59,9 @@ public class ArtPlaceApp extends Application {
         sInstance = this;
         FirebaseAnalytics.getInstance(getApplicationContext());
         PreferenceUtils.createInstance(getApplicationContext());
+        ArtsyRepository.createInstance();
+
+        AndroidThreeTen.init(this);
     }
 
     public static ArtPlaceApp getInstance() {
@@ -83,20 +78,4 @@ public class ArtPlaceApp extends Application {
 
         return sInstance;
     }
-
-    /**
-     * Helper method that gets the context of the application
-     */
-    private static ArtPlaceApp get(Context context) {
-        return (ArtPlaceApp) context.getApplicationContext();
-    }
-
-    /**
-     * Method that is used for initializing  the ViewModel,
-     * because the ViewModel class has a parameter of ArtPlaceApp
-     */
-    public static ArtPlaceApp create(Context context) {
-        return ArtPlaceApp.get(context);
-    }
-
 }

@@ -35,9 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.artistdetail;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,10 +44,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.squareup.picasso.Picasso;
+import com.google.android.material.card.MaterialCardView;
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.List;
 
@@ -60,15 +58,20 @@ import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
-import dev.iotarho.artplace.app.utils.TokenManager;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
+import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
+import dev.iotarho.artplace.app.utils.ImageUtils;
+import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
 
 public class ArtistDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
-    private static final String ARTWORK_TITLE_KEY = "artwork_title";
-    private static final String ARTIST_URL_KEY = "artist_url";
+    public static final String ARTIST_URL_KEY = "artist_url";
+    public static final String ARTIST_ARTWORK_URL_KEY = "artist_and_artwork_url";
+    public static final String ARTIST_EXTRA_KEY = "artist_extra";
 
     @BindView(R.id.coordinator_artist)
     CoordinatorLayout coordinatorLayout;
@@ -76,6 +79,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar_artist)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.artist_cardview)
+    MaterialCardView artistCard;
     @BindView(R.id.artist_name)
     TextView artistName;
     @BindView(R.id.artist_home)
@@ -89,51 +94,61 @@ public class ArtistDetailActivity extends AppCompatActivity {
     @BindView(R.id.artist_nationality)
     TextView artistNationality;
     @BindView(R.id.artist_bio)
-    TextView artistBio;
+    ExpandableTextView artistBio;
     @BindView(R.id.artist_bio_label)
     TextView artistBioLabel;
+    @BindView(R.id.divider_2)
+    View artistDivider;
+    @BindView(R.id.hometown_label)
+    TextView hometownLabel;
+    @BindView(R.id.artist_location_label)
+    TextView locationLabel;
+    @BindView(R.id.artist_nationality_label)
+    TextView artistNationalityLabel;
 
-    private ArtistsDetailViewModel mArtistViewModel;
-//    private ArtistDetailViewModelFactory mViewModelFactory;
-//    private TokenManager mTokenManager;
-
+    private String artistBiography;
+    private ArtistsDetailViewModel artistViewModel;
+    private ShowsDetailViewModel showsDetailViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_detail);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
+        artistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
+        ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
+        showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
+
         // Get the ID from the clicked artwork from the received Intent
         if (getIntent().getExtras() != null) {
+            if (getIntent().hasExtra(ARTIST_EXTRA_KEY)) {
+                Artist artistFromIntent = getIntent().getParcelableExtra(ARTIST_EXTRA_KEY);
+                Log.d(TAG, "Received artist extra from the intent: " + artistFromIntent.getName());
+                setupUi(artistFromIntent);
+            }
+
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {
+                String artistUrlExtra = getIntent().getStringExtra(ARTIST_URL_KEY);
+                if (!Utils.isNullOrEmpty(artistUrlExtra)) {
+                    Log.d(TAG, "Received artist url from the intent: " + artistUrlExtra);
+                    initArtistContentViewModel(artistUrlExtra);
+                }
+            }
 
-                String receivedArtworkTitle = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
-                String receivedArtistUrlString = getIntent().getStringExtra(ARTIST_URL_KEY);
+            if (getIntent().hasExtra(ARTIST_ARTWORK_URL_KEY)) {
+                String receivedArtistUrlString = getIntent().getStringExtra(ARTIST_ARTWORK_URL_KEY);
+                Log.d(TAG, "Received artist and artwork url from the intent: " + receivedArtistUrlString);
 
-                Log.d(TAG, "Received artist url from the intent: " + receivedArtistUrlString);
-
-                collapsingToolbarLayout.setTitle(receivedArtworkTitle);
-
-                SharedPreferences preferences = getSharedPreferences(Utils.PREFS_TOKEN_KEY, Context.MODE_PRIVATE);
-                // Initialize the TokenManager
-//                mTokenManager = TokenManager.getInstance(this);
-
-                // Initialize the ViewModel
-//                mViewModelFactory = new ArtistDetailViewModelFactory(mTokenManager);
-                mArtistViewModel = ViewModelProviders.of(this).get(ArtistsDetailViewModel.class);
-                mArtistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
-
-                mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
+                artistViewModel.initArtistDataFromArtwork(receivedArtistUrlString);
+                artistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
                     if (artists != null) {
-
                         for (int i = 0; i < artists.size(); i++) {
                             Artist artistCurrent = artists.get(i);
                             setupUi(artistCurrent);
@@ -144,93 +159,35 @@ public class ArtistDetailActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void initArtistContentViewModel(String receivedArtistUrlString) {
+        artistViewModel.initArtistData(receivedArtistUrlString);
+        artistViewModel.getArtistData().observe(this, this::setupUi);
     }
 
     private void setupUi(Artist currentArtist) {
-
+        ArtistInfoUtils.setupArtistUi(currentArtist, artistCard, artistName, artistHomeTown,
+                hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
+                artistNationalityLabel, artistBio, artistBioLabel);
         // Get the name of the artist
-        if (currentArtist.getName() != null) {
-            String artistNameString = currentArtist.getName();
-            artistName.setText(artistNameString);
-
-            //collapsingToolbarLayout.setTitle(artistNameString);
-        } else {
-            artistName.setText(getString(R.string.not_applicable));
+        String artistNameString = currentArtist.getName();
+        if (!Utils.isNullOrEmpty(artistNameString)) {
+            collapsingToolbarLayout.setTitle(artistNameString);
         }
+        ArtistInfoUtils.displayArtistImage(currentArtist, artistImage);
+        ImageUtils.setupZoomyImage(this, artistImage);
+    }
 
-        // Get the Home town of the artist
-        if (currentArtist.getHometown() != null) {
-            String artistHomeTownString = currentArtist.getHometown();
-            artistHomeTown.setText(artistHomeTownString);
-        } else {
-            artistHomeTown.setText(getString(R.string.not_applicable));
-        }
-
-        // Get the date of the birth and dead of the artist
-        String artistBirthString;
-        String artistDeathString;
-        if (currentArtist.getBirthday() != null || currentArtist.getDeathday() != null) {
-            artistBirthString = currentArtist.getBirthday();
-            artistDeathString = currentArtist.getDeathday();
-
-            String lifespanConcatString = artistBirthString + " - " + artistDeathString;
-            artistLifespan.setText(lifespanConcatString);
-        } else {
-            artistLifespan.setText(getString(R.string.not_applicable));
-        }
-
-        // Get the location of the artist
-        if (currentArtist.getLocation() != null) {
-            String artistLocationString = currentArtist.getLocation();
-            artistLocation.setText(artistLocationString);
-        } else {
-            artistLocation.setText(getString(R.string.not_applicable));
-        }
-
-        if (currentArtist.getNationality() != null) {
-            String artistNationalityString = currentArtist.getNationality();
-            artistNationality.setText(artistNationalityString);
-        } else {
-            artistNationality.setText(getString(R.string.not_applicable));
-        }
-
-        // Get the list of image versions first
-        List<String> imageVersionList = currentArtist.getImageVersions();
-        // Get the first entry from this list, which corresponds to "large"
-        String versionString = imageVersionList.get(0);
-
-        ImageLinks imageLinksObject = currentArtist.getLinks();
-        MainImage mainImageObject = imageLinksObject.getImage();
-        // Get the link for the current artist,
-        // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-        String artistImgLinkString = mainImageObject.getHref();
-        // Replace the {image_version} from the artworkImgLinkString with
-        // the wanted version, e.g. "large"
-        String newArtistLinkString = artistImgLinkString
-                .replaceAll("\\{.*?\\}", versionString);
-
-        // Handle no image cases with placeholders
-        Picasso.get()
-                .load(Uri.parse(newArtistLinkString))
-                .placeholder(R.color.colorPrimary)
-                .error(R.color.colorPrimary)
-                .into(artistImage);
-
-        if (currentArtist.getBiography() != null) {
-            String artistBioString = currentArtist.getBiography();
-            artistBio.setText(artistBioString);
-
-            if (currentArtist.getBiography().isEmpty()) {
-                artistBio.setVisibility(View.GONE);
-                artistBioLabel.setVisibility(View.GONE);
-            }
-        } else {
-            artistBio.setVisibility(View.GONE);
-            artistBioLabel.setVisibility(View.GONE);
-        }
-
+    // Scrape the Artsy website for additional information
+    // TODO: Find out if we can get the Permalink here
+    private void getBioFromReadMoreLink(String readMoreLink) {
+        showsDetailViewModel.initBioFromWeb(readMoreLink);
+        showsDetailViewModel.getBioFromWeb().observe(this, bio -> {
+                    if (!Utils.isNullOrEmpty(bio)) {
+                        artistBio.setText(bio);
+                        artistBio.setVisibility(View.VISIBLE);
+                        artistBioLabel.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
     }
 }

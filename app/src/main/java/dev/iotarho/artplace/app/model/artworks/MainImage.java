@@ -38,26 +38,19 @@ package dev.iotarho.artplace.app.model.artworks;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class MainImage implements Parcelable {
 
     /*
     Link to the image
-    TODO: needs {image_versions} always to be "large"
      */
     @SerializedName("href")
-    @Expose
     private String href;
 
 
     public String getHref() {
         return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
     }
 
 

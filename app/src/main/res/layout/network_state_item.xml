@@ -32,25 +32,27 @@
   ~
   ~
   -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/network_state_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="@dimen/padding_16dp">
+    android:padding="@dimen/padding_16dp"
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <TextView
         android:id="@+id/network_state_error_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/amethysta"
+        android:fontFamily="@font/work_sans"
         android:gravity="center"
         android:padding="@dimen/padding_10dp"
         android:text="@string/error_msg"
-        android:textColor="@color/colorText" />
+        android:textColor="?colorControlNormal" />
 
     <ImageButton
         android:id="@+id/network_state_refresh_bt"

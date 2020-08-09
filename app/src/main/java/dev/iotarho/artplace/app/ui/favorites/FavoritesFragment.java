@@ -54,7 +54,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,8 +90,8 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
     @BindView(R.id.fav_artworks_rv)
     RecyclerView favArtworksRv;
-    @BindView(R.id.fav_empty_text)
-    TextView emptyText;
+    @BindView(R.id.empty_screen)
+    View emptyScreen;
     @BindView(R.id.fav_progress_bar)
     ProgressBar favProgressBar;
     @BindView(R.id.fav_coordinator_layout)
@@ -102,8 +102,13 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     private FavArtworksViewModel mFavArtworksViewModel;
     private String mTitle;
 
+    public static FavoritesFragment newInstance() {
+        return new FavoritesFragment();
+    }
+
     // Required empty public constructor
-    public FavoritesFragment() {}
+    public FavoritesFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,13 +120,11 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         if (savedInstanceState != null) {
             mTitle = savedInstanceState.getString(ARG_FAV_TITLE);
         }
-
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putString(ARG_FAV_TITLE, mTitle);
     }
 
@@ -131,13 +134,12 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, rootView);
 
-        mFavArtworksViewModel = ViewModelProviders.of(this).get(FavArtworksViewModel.class);
+        mFavArtworksViewModel = new ViewModelProvider(this).get(FavArtworksViewModel.class);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        favArtworksRv.setLayoutManager(layoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
+        favArtworksRv.setLayoutManager(linearLayoutManager);
 
-        mAdapter = new FavArtworkListAdapter(getContext(), this);
-        emptyText.setVisibility(View.INVISIBLE);
+        mAdapter = new FavArtworkListAdapter(this);
 
         // Show the whole list of Favorite Artworks via the ViewModel
         getFavArtworks();
@@ -166,13 +168,13 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
                 if (favoriteArtworks != null && favoriteArtworks.size() > 0) {
                     // Hide the Progress Bar and the Empty Text View
                     favProgressBar.setVisibility(View.INVISIBLE);
-                    emptyText.setVisibility(View.INVISIBLE);
+                    emptyScreen.setVisibility(View.GONE);
 
                     Log.d(TAG, "Submit artworks to the db " + favoriteArtworks.size());
                     mAdapter.submitList(favoriteArtworks);
                 } else {
                     // Show the empty message when there is no items added to favorites
-                    emptyText.setVisibility(View.VISIBLE);
+                    emptyScreen.setVisibility(View.VISIBLE);
 
                     // Hide the Progress Bar
                     favProgressBar.setVisibility(View.INVISIBLE);
@@ -210,7 +212,7 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
     private void refreshFavList() {
 
-        mFavArtworksViewModel.refreshFavArtworkList(Objects.requireNonNull(getActivity()).getApplication()).observe(this, new Observer<PagedList<FavoriteArtworks>>() {
+        mFavArtworksViewModel.refreshFavArtworkList(requireActivity().getApplication()).observe(this, new Observer<PagedList<FavoriteArtworks>>() {
             @Override
             public void onChanged(@Nullable PagedList<FavoriteArtworks> favoriteArtworks) {
                 mAdapter.submitList(favoriteArtworks);
@@ -242,7 +244,7 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
         if (mFavoriteArtworksList.size() > 0) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(R.string.delete_all_message);
             builder.setTitle(R.string.delete_all_title);
             builder.setIcon(R.drawable.ic_delete_24dp);
@@ -281,25 +283,11 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_delete_all:
-                // Show warning dialog to the user before deleting all data from the db
-                deleteItemsWithConfirmation();
-                return true;
-
-            default:
-                break;
+        if (item.getItemId() == R.id.action_delete_all) {// Show warning dialog to the user before deleting all data from the db
+            deleteItemsWithConfirmation();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        Log.d(TAG, "FavoritesFragment: onPause called");
-    }
-
-
 }

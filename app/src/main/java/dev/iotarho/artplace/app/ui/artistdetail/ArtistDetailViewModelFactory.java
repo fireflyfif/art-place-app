@@ -39,14 +39,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import dev.iotarho.artplace.app.utils.TokenManager;
+import dev.iotarho.artplace.app.repository.ArtsyRepository;
 
-/*public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
+public class ArtistDetailViewModelFactory implements ViewModelProvider.Factory {
 
-    private TokenManager mTokenManager;
+    private ArtsyRepository artsyRepository;
 
-    public ArtistDetailViewModelFactory(TokenManager tokenManager) {
-        mTokenManager = tokenManager;
+    public ArtistDetailViewModelFactory(ArtsyRepository artsyRepository) {
+        this.artsyRepository = artsyRepository;
     }
 
     @SuppressWarnings("unchecked")
@@ -54,8 +54,8 @@ import dev.iotarho.artplace.app.utils.TokenManager;
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ArtistsDetailViewModel.class)) {
-            return (T) new ArtistsDetailViewModel(mTokenManager);
+            return (T) new ArtistsDetailViewModel(artsyRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }
-}*/
+}

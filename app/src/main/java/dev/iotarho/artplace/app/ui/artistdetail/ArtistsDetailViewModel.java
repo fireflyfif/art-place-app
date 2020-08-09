@@ -42,37 +42,53 @@ import java.util.List;
 
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
+import dev.iotarho.artplace.app.model.search.Result;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
-import dev.iotarho.artplace.app.utils.TokenManager;
 
 public class ArtistsDetailViewModel extends ViewModel {
 
     private LiveData<List<Artist>> mArtistListData;
     private LiveData<Artist> mArtistData;
     private LiveData<List<Artwork>> mSimilarArtworkLink;
+    private LiveData<List<Artwork>> artworksByArtistData;
+    private LiveData<List<Result>> searchArtistList;
 
-    public ArtistsDetailViewModel() {
+    private ArtsyRepository artsyRepository;
+
+    public ArtistsDetailViewModel(ArtsyRepository artsyRepository) {
+        this.artsyRepository = artsyRepository;
     }
 
     public void initArtistDataFromArtwork(String artistUrl) {
         if (mArtistListData != null) {
             return;
         }
-        mArtistListData = ArtsyRepository.getInstance().getArtistFromLink(artistUrl);
+        mArtistListData = artsyRepository.getArtistFromLink(artistUrl);
     }
 
     public void initArtistData(String artistUrl) {
         if (mArtistData != null) {
             return;
         }
-        mArtistData = ArtsyRepository.getInstance().getArtistInfoFromLink(artistUrl);
+        mArtistData = artsyRepository.getArtistInfoFromLink(artistUrl);
     }
 
     public void initSimilarArtworksData(String similarArtUrl) {
         if (mSimilarArtworkLink != null) {
             return;
         }
-        mSimilarArtworkLink = ArtsyRepository.getInstance().getSimilarArtFromLink(similarArtUrl);
+        mSimilarArtworkLink = artsyRepository.getSimilarArtFromLink(similarArtUrl);
+    }
+
+    public void initArtworksByArtistData(String artworksLink) {
+        if (artworksByArtistData != null) {
+            return;
+        }
+        artworksByArtistData = artsyRepository.getArtworksFromLink(artworksLink);
+    }
+
+    public void initSearchArtists(String artistName, String searchType) {
+        searchArtistList = artsyRepository.getNewSearchResults(artistName, searchType);
     }
 
     public LiveData<List<Artist>> getArtistDataFromArtwork() {
@@ -87,4 +103,11 @@ public class ArtistsDetailViewModel extends ViewModel {
         return mSimilarArtworkLink;
     }
 
+    public LiveData<List<Artwork>> getArtworksByArtistsData() {
+        return artworksByArtistData;
+    }
+
+    public LiveData<List<Result>> getSearchArtistsList() {
+        return searchArtistList;
+    }
 }

@@ -35,6 +35,7 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fav_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,17 +45,8 @@
         android:id="@+id/fav_artworks_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <TextView
-        android:id="@+id/fav_empty_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/work_sans"
-        android:gravity="center"
-        android:text="@string/empty_msg"
-        app:fontFamily="sans-serif-condensed" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/fav_artwork_item" />
 
     <ProgressBar
         android:id="@+id/fav_progress_bar"
@@ -62,6 +54,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
         android:padding="@dimen/padding_10dp" />
+
+    <FrameLayout
+        android:id="@+id/empty_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_blue_dot_big" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/work_sans_medium"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/empty_msg"
+            android:textColor="@color/color_error"
+            android:textSize="16sp" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

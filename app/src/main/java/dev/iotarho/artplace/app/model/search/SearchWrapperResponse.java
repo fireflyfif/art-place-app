@@ -35,31 +35,25 @@
 
 package dev.iotarho.artplace.app.model.search;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 
 public class SearchWrapperResponse {
 
     @SerializedName("total_count")
-    @Expose
     private Integer totalCount;
 
     @SerializedName("offset")
-    @Expose
     private Integer offset;
 
     @SerializedName("q")
-    @Expose
     private String q;
 
     @SerializedName("_links")
-    @Expose
-    private Links links;
+    private PageLinks pageLinks;
 
     @SerializedName("_embedded")
-    @Expose
     private EmbeddedResults embedded;
 
     public Integer getTotalCount() {
@@ -86,12 +80,12 @@ public class SearchWrapperResponse {
         this.q = q;
     }
 
-    public Links getLinks() {
-        return links;
+    public PageLinks getPageLinks() {
+        return pageLinks;
     }
 
-    public void setLinks(Links links) {
-        this.links = links;
+    public void setPageLinks(PageLinks pageLinks) {
+        this.pageLinks = pageLinks;
     }
 
     public EmbeddedResults getEmbedded() {

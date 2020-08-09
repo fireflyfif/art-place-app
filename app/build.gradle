@@ -2,9 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
+
     defaultConfig {
         applicationId "dev.iotarho.artplace.app"
         minSdkVersion 16
@@ -14,13 +16,12 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        def clientId = project.hasProperty('clientId') ? clientId :
-                (System.getenv('CLIENT_ID') ?: "\"\"")
-        buildConfigField "String", "CLIENT_ID", clientId
+        def apikeyPropertiesFile = rootProject.file("apikey.properties")
+        def apikeyProperties = new Properties()
+        apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
-        def clientSecret = project.hasProperty('clientSecret') ? clientSecret :
-                (System.getenv('CLIENT_SECRET') ?: "\"\"")
-        buildConfigField "String", "CLIENT_SECRET", clientSecret
+        buildConfigField('String', "CLIENT_ID", apikeyProperties["CLIENT_ID"]) ?: '"Define your personal client id"'
+        buildConfigField('String', "CLIENT_SECRET", apikeyProperties["CLIENT_SECRET"]) ?: '"Define your personal client secret"'
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -32,6 +33,7 @@ android {
             storePassword 'udacity'
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -56,8 +58,12 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$rootProject.androidXAppCompatVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation "androidx.preference:preference:1.1.0"
+    implementation 'androidx.preference:preference:1.1.1'
+
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
+    testImplementation 'org.threeten:threetenbp:1.4.4'
 
     // Retrofit library dependencies
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
@@ -82,11 +88,11 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     // Room Library Dependencies
-    implementation 'androidx.room:room-runtime:2.2.3'
-    annotationProcessor 'androidx.room:room-compiler:2.2.3'
+    implementation 'androidx.room:room-runtime:2.2.5'
+    annotationProcessor 'androidx.room:room-compiler:2.2.5'
 
     // Firebase Analytics Dependency
-    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
     // Firebase Crashlytics dependency.
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
@@ -100,14 +106,21 @@ dependencies {
     // Bottom Navigation Library Dependency
     implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
 
-    // Library for formatting Markdown text
-    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
-
     // Photoview for zooming
     implementation 'com.commit451:PhotoView:1.2.4'
+    implementation 'com.ablanco.zoomy:zoomy:1.1.0'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+
+    implementation 'org.jsoup:jsoup:1.13.1'
+
+    // Library for formatting Markdown text
+    implementation 'io.noties.markwon:core:4.4.0'
+
+    implementation 'com.ms-square:expandableTextView:0.1.4'
 
     // Test dependencies
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

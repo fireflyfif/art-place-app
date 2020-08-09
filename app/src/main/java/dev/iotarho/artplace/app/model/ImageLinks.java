@@ -38,11 +38,11 @@ package dev.iotarho.artplace.app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.artworks.ArtistsLink;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.model.genes.Genes;
 import dev.iotarho.artplace.app.model.search.Permalink;
 
 public class ImageLinks implements Parcelable {
@@ -52,14 +52,12 @@ public class ImageLinks implements Parcelable {
     Doesn't need a size, it's always set to "medium"
      */
     @SerializedName("thumbnail")
-    @Expose
     private Thumbnail thumbnail;
 
     /*
     Curied image location.
      */
     @SerializedName("image")
-    @Expose
     private MainImage image;
 
     /*
@@ -67,51 +65,37 @@ public class ImageLinks implements Parcelable {
     Used for sharing outside the app
      */
     @SerializedName("permalink")
-    @Expose
     private Permalink permalink;
+
+    @SerializedName("artworks")
+    private ArtworksLink artworksLink;
 
     /*
     Genes are like genres in the Artsy API
      */
     @SerializedName("genes")
-    @Expose
     private Genes genes;
 
     @SerializedName("similar_artworks")
-    @Expose
     private SimilarArtworksLink similarArtworks;
 
-    /*@SerializedName("partner")
-    @Expose
-    private PartnerLink partnerLink;*/
-
     @SerializedName("artists")
-    @Expose
     private ArtistsLink artists;
 
+    public ArtworksLink getArtworksLink() {
+        return artworksLink;
+    }
 
     public Thumbnail getThumbnail() {
         return thumbnail;
-    }
-
-    public void setThumbnail(Thumbnail thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public MainImage getImage() {
         return image;
     }
 
-    public void setImage(MainImage image) {
-        this.image = image;
-    }
-
     public ArtistsLink getArtists() {
         return artists;
-    }
-
-    public void setArtists(ArtistsLink artists) {
-        this.artists = artists;
     }
 
     public Permalink getPermalink() {
@@ -126,6 +110,9 @@ public class ImageLinks implements Parcelable {
         return similarArtworks;
     }
 
+    public ImageLinks() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -136,18 +123,17 @@ public class ImageLinks implements Parcelable {
         dest.writeParcelable(this.thumbnail, flags);
         dest.writeParcelable(this.image, flags);
         dest.writeParcelable(this.permalink, flags);
+        dest.writeParcelable(this.artworksLink, flags);
         dest.writeParcelable(this.genes, flags);
         dest.writeParcelable(this.similarArtworks, flags);
         dest.writeParcelable(this.artists, flags);
-    }
-
-    public ImageLinks() {
     }
 
     protected ImageLinks(Parcel in) {
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
         this.image = in.readParcelable(MainImage.class.getClassLoader());
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
+        this.artworksLink = in.readParcelable(ArtworksLink.class.getClassLoader());
         this.genes = in.readParcelable(Genes.class.getClassLoader());
         this.similarArtworks = in.readParcelable(SimilarArtworksLink.class.getClassLoader());
         this.artists = in.readParcelable(ArtistsLink.class.getClassLoader());

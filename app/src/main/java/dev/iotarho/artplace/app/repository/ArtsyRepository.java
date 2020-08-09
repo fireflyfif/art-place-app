@@ -41,7 +41,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dev.iotarho.artplace.app.model.artists.Artist;
@@ -50,6 +49,10 @@ import dev.iotarho.artplace.app.model.artists.EmbeddedArtists;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
 import dev.iotarho.artplace.app.model.artworks.EmbeddedArtworks;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
+import dev.iotarho.artplace.app.model.search.EmbeddedResults;
+import dev.iotarho.artplace.app.model.search.Result;
+import dev.iotarho.artplace.app.model.search.SearchWrapperResponse;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import dev.iotarho.artplace.app.remote.ArtsyApiInterface;
 import dev.iotarho.artplace.app.remote.ArtsyApiManager;
@@ -61,6 +64,7 @@ import retrofit2.Response;
 
 // Singleton pattern for the Repository class,
 // best explained here: https://medium.com/exploring-code/how-to-make-the-perfect-singleton-de6b951dfdb0
+// TODO: Split this class into several services for different calls
 public class ArtsyRepository {
 
     private static final String TAG = ArtsyRepository.class.getSimpleName();
@@ -68,6 +72,7 @@ public class ArtsyRepository {
     // With volatile variable all the write will happen on volatile sInstance
     // before any read of sInstance variable
     private static volatile ArtsyRepository INSTANCE;
+    private static final Object mutex = new Object();
 
     private TokenManager mTokenManager;
     private PreferenceUtils mPreferenceUtils;
@@ -82,16 +87,21 @@ public class ArtsyRepository {
         mPreferenceUtils = PreferenceUtils.getInstance();
     }
 
-    public static ArtsyRepository getInstance() {
-        // Double check locking pattern
+    public synchronized static void createInstance() {
         if (INSTANCE == null) {
-
             // if there is no instance available, create a new one
-            synchronized (ArtsyRepository.class) {
+            synchronized (mutex) {
                 if (INSTANCE == null) {
                     INSTANCE = new ArtsyRepository();
                 }
             }
+        }
+    }
+
+    public static ArtsyRepository getInstance() {
+        // Double check locking pattern
+        if (INSTANCE == null) {
+            throw new IllegalStateException("Artsy repository instance not initialized");
         }
         return INSTANCE;
     }
@@ -107,6 +117,35 @@ public class ArtsyRepository {
         return loadSimilarArtworks(similarArtUrl);
     }
 
+    public LiveData<Artwork> getArtworkFromLink(String artworkLink) {
+        return loadArtworkInfo(artworkLink);
+    }
+
+    private LiveData<Artwork> loadArtworkInfo(String artworkLink) {
+        MutableLiveData<Artwork> artworkMutableData = new MutableLiveData<>();
+        getArtsyApi().getArtworkFromLink(artworkLink).enqueue(new Callback<Artwork>() {
+            @Override
+            public void onResponse(@NonNull Call<Artwork> call, @NonNull Response<Artwork> response) {
+                if (response.isSuccessful()) {
+                    Artwork artwork = response.body();
+                    if (artwork != null) {
+                        artworkMutableData.setValue(artwork);
+                    }
+                    Log.d(TAG, "Artwork loaded successfully! " + response.message());
+                } else {
+                    artworkMutableData.setValue(null);
+                    Log.w(TAG, "Artwork load failed! " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Artwork> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+        return artworkMutableData;
+    }
+
     /**
      * Method for accessing the Similar artworks endpoint from the Artsy API
      *
@@ -114,40 +153,29 @@ public class ArtsyRepository {
      * @return loaded results from the Artsy response
      */
     private LiveData<List<Artwork>> loadSimilarArtworks(String similarArtUrl) {
-
         MutableLiveData<List<Artwork>> similarArtData = new MutableLiveData<>();
-
-        getArtsyApi().getSimilarArtLink(similarArtUrl)
-                .enqueue(new Callback<ArtworkWrapperResponse>() {
-
-                    ArtworkWrapperResponse artworkWrapper = new ArtworkWrapperResponse();
-                    EmbeddedArtworks embeddedArtworks = new EmbeddedArtworks();
-                    List<Artwork> similarArtList = new ArrayList<>();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ArtworkWrapperResponse> call,
-                                           @NonNull Response<ArtworkWrapperResponse> response) {
-
-                        if (response.isSuccessful()) {
-                            artworkWrapper = response.body();
-                            if (artworkWrapper != null) {
-                                embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
-
-                                similarArtList = embeddedArtworks.getArtworks();
-                                similarArtData.setValue(similarArtList);
-                            }
-                            Log.d(TAG, "Similar artworks loaded successfully! " + response.code());
-                        } else {
-                            similarArtData.setValue(null);
-                            Log.d(TAG, "Similar artworks loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getSimilarArtLink(similarArtUrl).enqueue(new Callback<ArtworkWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtworkWrapperResponse artworkWrapper = response.body();
+                    if (artworkWrapper != null) {
+                        EmbeddedArtworks embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
+                        List<Artwork> similarArtList = embeddedArtworks.getArtworks();
+                        similarArtData.setValue(similarArtList);
                     }
+                    Log.d(TAG, "Similar artworks loaded successfully! " + response.message());
+                } else {
+                    similarArtData.setValue(null);
+                    Log.w(TAG, "Similar artworks load failed! " + response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return similarArtData;
     }
@@ -157,45 +185,62 @@ public class ArtsyRepository {
     }
 
     private LiveData<List<Artist>> loadArtistFromLink(String artistUrl) {
-
         MutableLiveData<List<Artist>> artistLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getArtistLink(artistUrl)
-                .enqueue(new Callback<ArtistWrapperResponse>() {
-                    ArtistWrapperResponse artistWrapperResponse = new ArtistWrapperResponse();
-                    EmbeddedArtists embeddedArtists = new EmbeddedArtists();
-                    List<Artist> artistList = new ArrayList<>();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ArtistWrapperResponse> call,
-                                           @NonNull Response<ArtistWrapperResponse> response) {
-                        if (response.isSuccessful()) {
-
-                            artistWrapperResponse = response.body();
-
-                            if (artistWrapperResponse != null) {
-                                embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
-
-                                if (embeddedArtists != null) {
-                                    artistList = embeddedArtists.getArtists();
-
-                                    artistLiveData.setValue(artistList);
-                                }
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            artistLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
+        getArtsyApi().getArtistLink(artistUrl).enqueue(new Callback<ArtistWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtistWrapperResponse> call, @NonNull Response<ArtistWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtistWrapperResponse artistWrapperResponse = response.body();
+                    if (artistWrapperResponse != null) {
+                        EmbeddedArtists embeddedArtists = artistWrapperResponse.getEmbeddedArtist();
+                        if (embeddedArtists != null) {
+                            List<Artist> artistList = embeddedArtists.getArtists();
+                            artistLiveData.setValue(artistList);
                         }
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.message());
+                } else {
+                    artistLiveData.setValue(null);
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ArtistWrapperResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return artistLiveData;
+    }
+
+    public LiveData<List<Artwork>> getArtworksFromLink(String artworksUrl) {
+        return loadArtworksFromLink(artworksUrl);
+    }
+
+    private LiveData<List<Artwork>> loadArtworksFromLink(String artworksUrl) {
+        MutableLiveData<List<Artwork>> artworkListData = new MutableLiveData<>();
+        getArtsyApi().getArtworksByArtistData(artworksUrl).enqueue(new Callback<ArtworkWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    ArtworkWrapperResponse artworkWrapper = response.body();
+                    if (artworkWrapper != null) {
+                        EmbeddedArtworks embeddedArtworks = artworkWrapper.getEmbeddedArtworks();
+                        List<Artwork> artworksList = embeddedArtworks.getArtworks();
+                        artworkListData.setValue(artworksList);
+                    }
+                } else {
+                    artworkListData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
+        return artworkListData;
     }
 
     public LiveData<Artist> getArtistInfoFromLink(String artistUrl) {
@@ -207,34 +252,27 @@ public class ArtsyRepository {
      * consisted of the id of the artist
      */
     private LiveData<Artist> loadArtistInfoFromLink(String artistUrl) {
-
         MutableLiveData<Artist> artistLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getArtistInfoFromLink(artistUrl)
-                .enqueue(new Callback<Artist>() {
-                    Artist artistData = new Artist();
-
-                    @Override
-                    public void onResponse(@NonNull Call<Artist> call,
-                                           @NonNull Response<Artist> response) {
-                        if (response.isSuccessful()) {
-                            artistData = response.body();
-
-                            if (artistData != null) {
-                                artistLiveData.setValue(artistData);
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            artistLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getArtistInfoFromLink(artistUrl).enqueue(new Callback<Artist>() {
+            @Override
+            public void onResponse(@NonNull Call<Artist> call, @NonNull Response<Artist> response) {
+                if (response.isSuccessful()) {
+                    Artist artistData = response.body();
+                    if (artistData != null) {
+                        artistLiveData.setValue(artistData);
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.message());
+                } else {
+                    artistLiveData.setValue(null);
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<Artist> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return artistLiveData;
     }
@@ -244,37 +282,87 @@ public class ArtsyRepository {
     }
 
     private LiveData<ShowContent> loadSearchContentLink(String selfLink) {
-
         MutableLiveData<ShowContent> searchLiveData = new MutableLiveData<>();
-
-        getArtsyApi().getDetailContentFromSearchLink(selfLink)
-                .enqueue(new Callback<ShowContent>() {
-
-                    ShowContent showContent = new ShowContent();
-
-                    @Override
-                    public void onResponse(@NonNull Call<ShowContent> call,
-                                           @NonNull Response<ShowContent> response) {
-                        if (response.isSuccessful()) {
-
-                            showContent = response.body();
-                            if (showContent != null) {
-                                searchLiveData.setValue(showContent);
-                            }
-                            Log.d(TAG, "Loaded successfully! " + response.code());
-                        } else {
-                            searchLiveData.setValue(null);
-                            Log.d(TAG, "Loaded NOT successfully! " + response.code());
-                        }
+        getArtsyApi().getDetailContentFromSearchLink(selfLink).enqueue(new Callback<ShowContent>() {
+            @Override
+            public void onResponse(@NonNull Call<ShowContent> call, @NonNull Response<ShowContent> response) {
+                if (response.isSuccessful()) {
+                    ShowContent showContent = response.body();
+                    if (showContent != null) {
+                        searchLiveData.setValue(showContent);
                     }
+                    Log.d(TAG, "Loaded successfully! " + response.message());
+                } else {
+                    searchLiveData.setValue(null);
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
-                        Log.d(TAG, "OnFailure! " + t.getMessage());
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<ShowContent> call, @NonNull Throwable t) {
+                Log.e(TAG, "OnFailure! " + t.getMessage());
+            }
+        });
 
         return searchLiveData;
     }
 
+    public LiveData<GeneContent> getGenesContent(String selfLink) {
+        return loadGenesContentFromLink(selfLink);
+    }
+
+    private LiveData<GeneContent> loadGenesContentFromLink(String selfLink) {
+        MutableLiveData<GeneContent> genesLiveData = new MutableLiveData<>();
+        getArtsyApi().getDetailContentForGenes(selfLink).enqueue(new Callback<GeneContent>() {
+            @Override
+            public void onResponse(@NonNull Call<GeneContent> call, @NonNull Response<GeneContent> response) {
+                if (response.isSuccessful()) {
+                    GeneContent geneResult = response.body();
+                    if (geneResult != null) {
+                        genesLiveData.setValue(geneResult);
+                    }
+                    Log.d(TAG, "Loaded successfully! " + response.message());
+                } else {
+                    genesLiveData.setValue(null);
+                    Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GeneContent> call, @NonNull Throwable t) {
+                Log.e(TAG, "Failed to get search results. " + t.getMessage());
+            }
+        });
+
+        return genesLiveData;
+    }
+
+    public LiveData<List<Result>> getNewSearchResults(String queryString, String typeString) {
+        return makeNewSearch(queryString, typeString);
+    }
+
+    private LiveData<List<Result>> makeNewSearch(String queryString, String typeString) {
+        MutableLiveData<List<Result>> searchLiveData = new MutableLiveData<>();
+        getArtsyApi().getSearchResults(queryString, 10, typeString).enqueue(new Callback<SearchWrapperResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
+                if (response.isSuccessful()) {
+                    SearchWrapperResponse searchResponse = response.body();
+                    if (searchResponse != null) {
+                        EmbeddedResults embeddedResults = searchResponse.getEmbedded();
+                        List<Result> resultList = embeddedResults.getResults();
+                        searchLiveData.postValue(resultList);
+                    } else {
+                        Log.w(TAG, "Loaded NOT successfully! " + response.message());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "Failed to get search results. " + t.getMessage());
+            }
+        });
+        return searchLiveData;
+    }
 }

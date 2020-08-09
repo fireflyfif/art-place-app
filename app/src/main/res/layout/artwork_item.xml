@@ -33,23 +33,21 @@
   ~
   -->
 
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/artwork_cardview"
-    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/card_view_margin"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/cardBackground"
-    app:cardCornerRadius="5dp"
+    app:cardCornerRadius="@dimen/fav_cardview_corners"
     app:cardElevation="6dp"
     app:cardPreventCornerOverlap="true"
-    app:strokeColor="@color/colorCardStroke"
-    app:strokeWidth="1dp">
+    app:cardBackgroundColor="?colorOnSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,9 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_8dp"
             android:adjustViewBounds="true"
-            android:background="@color/colorPrimary"
             android:contentDescription="@string/current_artwork_description"
             android:gravity="center_horizontal"
+            android:background="?colorOnSurface"
             android:scaleType="fitStart"
             tools:src="@drawable/pop_art_placeholder" />
 
@@ -82,8 +80,8 @@
             android:paddingEnd="@dimen/padding_10dp"
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_8dp"
-            android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:textAllCaps="false"
+            android:textColor="?colorControlNormal"
             android:textSize="16sp"
             tools:text="Title of Artwork with a Very Long Name Very Long Name Very Long Name" />
 
@@ -100,7 +98,7 @@
             android:paddingRight="@dimen/padding_10dp"
             android:paddingBottom="@dimen/padding_16dp"
             android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:textColor="?colorControlNormal"
             android:textSize="14sp"
             tools:text="Artist name" />
 

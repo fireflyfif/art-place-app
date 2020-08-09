@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ PROJECT LICENSE
+  ~ This project was submitted by Iva Ivanova as part of the Nanodegree at Udacity.
+  ~
+  ~ According to Udacity Honor Code we agree that we will not plagiarize (a form of cheating) the work of others. :
+  ~ Plagiarism at Udacity can range from submitting a project you didn’t create to copying code into a program without
+  ~ citation. Any action in which you misleadingly claim an idea or piece of work as your own when it is not constitutes
+  ~ plagiarism.
+  ~ Read more here: https://udacity.zendesk.com/hc/en-us/articles/360001451091-What-is-plagiarism-
+  ~
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Iva Ivanova
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  ~
+  ~
+  -->
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/artist_cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/margin_horizontal_cardview"
+    android:layout_marginLeft="@dimen/margin_horizontal_cardview"
+    android:layout_marginEnd="@dimen/margin_horizontal_cardview"
+    android:layout_marginRight="@dimen/margin_horizontal_cardview"
+    android:layout_marginBottom="30dp"
+    android:visibility="gone"
+    app:cardBackgroundColor="?colorOnSurface"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="6dp"
+    app:cardPreventCornerOverlap="true"
+    tools:visibility="visible">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp">
+
+        <View
+            android:id="@+id/background_2"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:alpha="1.0"
+            android:background="@drawable/ic_blue_dot_big"
+            android:scaleX="1.8"
+            android:scaleY="1.5"
+            android:translationY="-80dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/artist_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/work_sans_medium"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/padding_10dp"
+                android:textColor="@color/color_surface"
+                android:textIsSelectable="true"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Gustav Klimt" />
+
+            <TextView
+                android:id="@+id/artist_lifespan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textIsSelectable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artist_name"
+                tools:text="1862 - 1918" />
+
+            <View
+                android:id="@+id/divider_2"
+                android:layout_width="80dp"
+                android:layout_height="@dimen/divider_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/color_primary_variant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artist_lifespan" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/artist_description_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/artist_title_layout">
+
+            <TextView
+                android:id="@+id/hometown_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/hometown_label"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/artist_home"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_home"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_32dp"
+                android:layout_marginLeft="@dimen/margin_32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="@font/work_sans"
+                android:textIsSelectable="true"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/hometown_label"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Baumgarten, Austria"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_nationality_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/nationality_label"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/artist_nationality"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artist_home"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_nationality"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="@font/work_sans"
+                android:textIsSelectable="true"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/artist_home"
+                app:layout_constraintTop_toTopOf="@+id/artist_nationality_label"
+                tools:text="Austrian"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_location_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/location_label"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/artist_location"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artist_nationality"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="@font/work_sans"
+                android:textIsSelectable="true"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/artist_nationality"
+                app:layout_constraintTop_toTopOf="@+id/artist_location_label"
+                tools:text="Vienna, Austria"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/artist_bio_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="@dimen/margin_8dp"
+                android:layout_marginRight="@dimen/margin_8dp"
+                android:fontFamily="@font/work_sans_light"
+                android:text="@string/biography_label"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/artist_bio"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artist_location"
+                tools:visibility="visible" />
+
+            <com.ms.square.android.expandabletextview.ExpandableTextView
+                android:id="@+id/artist_bio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginBottom="@dimen/margin_16dp"
+                app:animDuration="200"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/artist_location"
+                app:layout_constraintTop_toTopOf="@+id/artist_bio_label"
+                app:maxCollapsedLines="5">
+
+                <TextView
+                    android:id="@id/expandable_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
+                    android:lineSpacingExtra="6dp"
+                    android:textIsSelectable="true"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@id/expand_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:background="@android:color/transparent"
+                    android:padding="16dp" />
+            </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include layout="@layout/artworks_recycler_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

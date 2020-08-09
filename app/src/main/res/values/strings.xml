@@ -3,7 +3,7 @@
     <string name="error_msg">No Internet connection.  \nPlease try again.</string>
     <string name="artist_name">Artist</string>
     <string name="favorites">Favorites</string>
-    <string name="empty_msg">No favorite items found. \nAdd your favorite artworks!</string>
+    <string name="empty_msg">No favorite \nitems added yet.</string>
     <string name="delete_all">Delete All</string>
     <string name="favorites_title">Favorites</string>
     <string name="appwidget_text">No favorite artworks saved. \nFind yours by clicking on: </string>
@@ -40,10 +40,13 @@
     <!-- Menu items -->
     <string name="search">Search</string>
     <string name="search_hint">Search artist or genre</string>
-    <string name="action_article">Article</string>
+    <string name="action_random">Random Search</string>
     <string name="action_artist">Artist</string>
     <string name="action_artwork">Artwork</string>
-    <string name="loading_results_message">Loading results...</string>
+    <string name="action_genre">Genre</string>
+    <string name="action_show">Show</string>
+    <string name="action_all">All</string>
+    <string name="loading_results_message">Loading results&#8230;</string>
     <string name="no_data_found">No data found</string>
     <string name="title_artworks">Artworks</string>
     <string name="title_search">Search the Art World</string>
@@ -53,7 +56,7 @@
     <string name="menu_share">Share</string>
     <string name="artist_label">Artist</string>
     <string name="similar_artworks_label">Similar Artworks</string>
-    <string name="read_more_button">Read more on Artsy</string>
+    <string name="read_more_button">Read more on artsy.net</string>
     <string name="biography_label">Biography</string>
     <string name="start_at">Start at</string>
     <string name="end_at">End at</string>
@@ -61,4 +64,10 @@
     <string name="description">Description</string>
     <string name="full_title">Full Title</string>
     <string name="menu_search_artworks">Search Artworks</string>
+    <string name="menu_title_dark">Go dark</string>
+    <string name="menu_title_light">Go light</string>
+    <string name="empty_text_search_result">Oops, \nno results found.</string>
+    <string name="genre_type">genre</string>
+    <string name="search_results_title">More results for \n%1$s</string>
+    <string name="genre_name">[ %1$s ]</string>
 </resources>
