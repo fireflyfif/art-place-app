@@ -35,14 +35,20 @@
 
 package dev.iotarho.artplace.app.ui.mainactivity;
 
+import android.app.SearchManager;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String POSITION_KEY = "position";
+    public static final String SEARCH_WORD_EXTRA = "search_word_from_intent";
 
     @BindView(R.id.appbar_main)
     AppBarLayout appBarLayout;
@@ -81,10 +88,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     private BottomNavAdapter mPagerAdapter;
     private String mTitle;
     private int mPosition;
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.color_on_background));
+        }
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
@@ -113,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.setCurrentItem(mPosition);
 
         bottomNavigation.setOnTabSelectedListener((position, wasSelected) -> {
-
             bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
             viewPager.setCurrentItem(position);
 
@@ -121,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             // Set the title on the toolbar according to
             // the position of the clicked Fragment
             setToolbarTitle(position);
-
             return true;
         });
     }
@@ -131,6 +143,30 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         super.onSaveInstanceState(outState);
         // Save the position of the selected Fragment
         outState.putInt(POSITION_KEY, mPosition);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // intent saved by the activity is updated in case you call getIntent() in the future
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d(TAG, "handleIntent, queryString: " + query);
+            SearchFragment.newInstanceWithExtra(query);
+        }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        Bundle appData = new Bundle();
+        appData.putString("search_word_from_intent", "query");
+        Log.d(TAG, "onSearchRequested called");
+        startSearch(null, false, appData, false);
+        return true;
     }
 
     /**
@@ -147,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             case 1:
                 mTitle = getString(R.string.title_search);
                 toolbar.setTitle(mTitle);
+//                toolbar.inflateMenu(R.menu.search_menu);
                 break;
             case 2:
                 mTitle = getString(R.string.title_favorites);
@@ -158,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     }
 
     private void addBottomNavigationItems() {
-
         AHBottomNavigationItem artworksItem = new AHBottomNavigationItem(
                 getString(R.string.title_artworks), R.drawable.ic_red_dot);
         AHBottomNavigationItem artistsItem = new AHBottomNavigationItem(
@@ -169,22 +205,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         bottomNavigation.addItem(artworksItem);
         bottomNavigation.addItem(artistsItem);
         bottomNavigation.addItem(favoritesItem);
-    }
-
-    private Fragment createArtworksFragment() {
-        Fragment artworksFragment = new ArtworksFragment();
-        // Set arguments here
-        Bundle bundle = new Bundle();
-        artworksFragment.setArguments(bundle);
-        return artworksFragment;
-    }
-
-    private FavoritesFragment createFavFragment() {
-        return new FavoritesFragment();
-    }
-
-    private SearchFragment createSearchFragment() {
-        return new SearchFragment();
     }
 
     private void setupBottomNavStyle() {
@@ -212,9 +232,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         viewPager.setOffscreenPageLimit(3);
         mPagerAdapter = new BottomNavAdapter(getSupportFragmentManager());
 
-        mPagerAdapter.addFragments(createArtworksFragment());
-        mPagerAdapter.addFragments(createSearchFragment());
-        mPagerAdapter.addFragments(createFavFragment());
+        mPagerAdapter.addFragments(ArtworksFragment.newInstance());
+        mPagerAdapter.addFragments(SearchFragment.newInstance());
+        mPagerAdapter.addFragments(FavoritesFragment.newInstance());
 
         viewPager.setAdapter(mPagerAdapter);
     }

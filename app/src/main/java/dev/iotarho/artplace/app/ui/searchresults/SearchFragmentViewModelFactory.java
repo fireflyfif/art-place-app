@@ -39,16 +39,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-// TODO: Check if I can skip this Factory implementation
+import dev.iotarho.artplace.app.repository.ArtsyRepository;
+
 public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory {
 
-    private String mQueryWord;
-    private String mTypeWord;
+    private ArtsyRepository artsyRepository;
 
-    public SearchFragmentViewModelFactory(String queryWord,
-                                          String typeWord) {
-        mQueryWord = queryWord;
-        mTypeWord = typeWord;
+    public SearchFragmentViewModelFactory(ArtsyRepository artsyRepository) {
+        this.artsyRepository = artsyRepository;
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +54,7 @@ public class SearchFragmentViewModelFactory implements ViewModelProvider.Factory
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(SearchFragmentViewModel.class)) {
-            return (T) new SearchFragmentViewModel(mQueryWord, mTypeWord);
+            return (T) new SearchFragmentViewModel(artsyRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class.");
     }

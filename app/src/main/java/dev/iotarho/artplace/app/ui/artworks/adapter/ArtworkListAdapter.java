@@ -35,7 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.artworks.adapter;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +57,7 @@ import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.ui.NetworkStateItemViewHolder;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.Utils;
 
 // Help from tutorial: https://proandroiddev.com/8-steps-to-implement-paging-library-in-android-d02500f7fffe
 public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.ViewHolder> implements Filterable {
@@ -101,7 +101,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
             // This gets the Item from the PagedList
             if (getItem(position) != null) {
                 Artwork currentArtwork = mArtworkList.get(position);
-                ((ArtworkItemViewHolder) holder).bindTo(currentArtwork);
+                ((ArtworkItemViewHolder) holder).bindTo(currentArtwork, position);
             }
         } else {
             ((NetworkStateItemViewHolder) holder).bindView(mNetworkState);
@@ -125,10 +125,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     // Implement this method, as without the filtered list is producing an error
     @Override
     public int getItemCount() {
-        if (mArtworkList != null) {
-            return mArtworkList.size();
-        }
-        return super.getItemCount();
+        return mArtworkList != null ? mArtworkList.size() : 0;
     }
 
     public void setNetworkState(NetworkState newNetworkState) {
@@ -149,8 +146,8 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
     }
 
     @Override
-    public void onCurrentListChanged(@Nullable PagedList<Artwork> currentList) {
-        super.onCurrentListChanged(currentList);
+    public void onCurrentListChanged(@Nullable PagedList<Artwork> previousList, @Nullable PagedList<Artwork> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
 
         mArtworkList = currentList;
         notifyDataSetChanged();
@@ -166,7 +163,7 @@ public class ArtworkListAdapter extends PagedListAdapter<Artwork, RecyclerView.V
 
                 FilterResults filterResults = new FilterResults();
 
-                if (TextUtils.isEmpty(queryWord)) {
+                if (Utils.isNullOrEmpty(queryWord)) {
                     mArtworkList = getCurrentList();
                     filterResults.values = mArtworkList;
                     if (mArtworkList != null) {

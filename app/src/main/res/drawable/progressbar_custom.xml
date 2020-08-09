@@ -36,8 +36,10 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/progress"
-        android:top="16dp"
-        android:bottom="16dp">
+        android:top="6dp"
+        android:left="6dp"
+        android:right="6dp"
+        android:bottom="6dp">
         <layer-list>
             <item>
                 <rotate
@@ -48,7 +50,7 @@
                     <shape android:shape="rectangle">
                         <size
                             android:width="80dp"
-                            android:height="90dp"/>
+                            android:height="80dp"/>
                         <stroke
                             android:width="6dp"
                             android:color="@color/color_primary"/>
@@ -64,10 +66,10 @@
                     <shape android:shape="rectangle">
                         <size
                             android:width="80dp"
-                            android:height="90dp"/>
+                            android:height="80dp"/>
                         <stroke
                             android:width="6dp"
-                            android:color="@color/color_background"/>
+                            android:color="@color/color_secondary"/>
                     </shape>
                 </rotate>
             </item>

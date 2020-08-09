@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -54,7 +53,7 @@ public class ArtworkItemViewHolder extends RecyclerView.ViewHolder implements Vi
         itemView.setOnClickListener(this);
     }
 
-    public void bindTo(Artwork artwork) {
+    public void bindTo(Artwork artwork, int position) {
 
         // Important point from this SO post: https://stackoverflow.com/a/40749134/8132331
         mCurrentItem = artwork; // Keeps a reference to the current item
@@ -138,7 +137,7 @@ public class ArtworkItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                 artworkThumbnail.setImageBitmap(bitmap);
 
                                 // Set the item animator here
-                                //setItemAnimator(itemView, position);
+                                setItemAnimator(itemView, position);
                             }
 
                             @Override

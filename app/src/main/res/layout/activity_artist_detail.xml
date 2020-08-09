@@ -35,6 +35,7 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_artist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -99,7 +100,8 @@
         <include
             android:id="@+id/artist_cardview"
             layout="@layout/artist_detail_cardview"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

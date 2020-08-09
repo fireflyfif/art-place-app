@@ -35,21 +35,17 @@
 
 package dev.iotarho.artplace.app.model.token;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class TypeToken {
 
     @SerializedName("type")
-    @Expose
     private String type;
 
     @SerializedName("token")
-    @Expose
     private String token;
 
     @SerializedName("expires_at")
-    @Expose
     private String expiresAt;
 
     public String getType() {
@@ -64,17 +60,6 @@ public class TypeToken {
         return expiresAt;
     }
 
-    public TypeToken() { }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setExpiresAt(String expiresAt) {
-        this.expiresAt = expiresAt;
+    public TypeToken() {
     }
 }

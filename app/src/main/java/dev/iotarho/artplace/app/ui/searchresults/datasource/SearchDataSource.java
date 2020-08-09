@@ -41,10 +41,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 import dev.iotarho.artplace.app.model.Next;
 import dev.iotarho.artplace.app.model.search.EmbeddedResults;
 import dev.iotarho.artplace.app.model.search.Result;
@@ -58,118 +57,107 @@ import retrofit2.Response;
 public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     private static final String LOG_TAG = SearchDataSource.class.getSimpleName();
-    private ArtsyRepository mRepository;
+    private ArtsyRepository repository;
 
-    private final MutableLiveData<NetworkState> mNetworkState;
-    private final MutableLiveData<NetworkState> mInitialLoading;
+    private final MutableLiveData<NetworkState> networkState;
+    private final MutableLiveData<NetworkState> initialLoading;
 
-    private String mQueryString;
-    private String mTypeString;
-    private String mNextUrl;
+    private String queryString;
+    private String typeString;
+    private String nextUrl;
 
 
     public SearchDataSource(ArtsyRepository repository, String queryWord, String typeWord) {
-        mQueryString = queryWord;
-        mTypeString = typeWord;
-        mRepository = repository;
+        queryString = queryWord;
+        typeString = typeWord;
+        this.repository = repository;
 
-        mNetworkState = new MutableLiveData<>();
-        mInitialLoading = new MutableLiveData<>();
+        networkState = new MutableLiveData<>();
+        initialLoading = new MutableLiveData<>();
     }
 
-    public MutableLiveData getNetworkState() {
-        return mNetworkState;
+    public MutableLiveData<NetworkState> getNetworkState() {
+        return networkState;
     }
 
-    public MutableLiveData getLoadingState() {
-        return mInitialLoading;
+    public MutableLiveData<NetworkState> getLoadingState() {
+        return initialLoading;
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Result> callback) {
         // Update NetworkState
-        mInitialLoading.postValue(NetworkState.LOADING);
-        mNetworkState.postValue(NetworkState.LOADING);
-
-        Log.d(LOG_TAG, "search loadInitial: query word: " + mQueryString);
-        Log.d(LOG_TAG, "search loadInitial: type word: " + mTypeString);
-
-        if (mQueryString == null || mQueryString.isEmpty()) {
-            mQueryString = "Andy Warhol";
-        }
-
-        mRepository.getArtsyApi().getSearchResults(mQueryString, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        initialLoading.postValue(NetworkState.LOADING);
+        networkState.postValue(NetworkState.LOADING);
+        repository.getArtsyApi().getSearchResults(queryString, params.requestedLoadSize, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
                     SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
-
                         // Get the next link for paging the results
-                        Links links = searchResponse.getLinks();
-                        if (links != null) {
-                            Next next = links.getNext();
-                            if (next != null) {
-                                mNextUrl = next.getHref();
-                            }
-
-                            Log.d(LOG_TAG, "loadInitial: Next page link: " + mNextUrl);
-                        }
+                        nextUrl = getNextPage(searchResponse);
 
                         String receivedQuery = searchResponse.getQ();
                         Log.d(LOG_TAG, "Query word: " + receivedQuery);
 
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
-                        List<Result> resultList = embeddedResults.getResults();
 
-                        Log.d(LOG_TAG, "List of results: " + resultList.size());
-
-                        // The response code is 200, but because of a typo, the API returns an empty list
-                        if (resultList.size() == 0) {
-                            // TODO: Show a message there is no data for this query
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                        int totalCount = searchResponse.getTotalCount();
+                        if (totalCount != 0) {
+                            nextUrl = getNextPage(searchResponse);
                         }
 
-                        callback.onResult(resultList, null, 2L);
+                        List<Result> resultList = embeddedResults.getResults();
+                        // The response code is 200, but because of a typo, the API returns an empty list
+                        if (resultList.size() == 0) {
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                        } else {
+                            List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
+                            if (filteredList != null) {
+                                callback.onResult(filteredList, null, 2L);
+                            }
+
+                            networkState.postValue(NetworkState.LOADED);
+                            initialLoading.postValue(NetworkState.LOADED);
+                        }
                     }
-
-                    Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
-
                 } else {
-
+                    Log.e(LOG_TAG, "loadInitial: response is not successful, code is: " + response.code());
                     switch (response.code()) {
                         case 400:
-                            //TODO: Make display the following error message:
-                            // "Invalid type article,artist,artwork,city,fair,feature,gene,show,profile,sale,tag,page"
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
-
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
                             break;
                         case 404:
-                            // TODO: Not found results
-                            mNetworkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
+                        default:
+                            initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            networkState.postValue(new NetworkState(NetworkState.Status.NO_RESULT));
                             break;
                     }
-
-                    //mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    //mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
-
-                    Log.d(LOG_TAG, "Response code from initial load: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
+                initialLoading.postValue(NetworkState.LOADED);
+                networkState.postValue(NetworkState.LOADED);
+                Log.e(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
+    }
 
+    private String getNextPage(SearchWrapperResponse searchResponse) {
+        PageLinks pageLinks = searchResponse.getPageLinks();
+        if (pageLinks != null) {
+            Next next = pageLinks.getNext();
+            if (next != null) {
+                return next.getHref();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -179,91 +167,54 @@ public class SearchDataSource extends PageKeyedDataSource<Long, Result> {
 
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Result> callback) {
-
-        Log.i(LOG_TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
-        Log.d(LOG_TAG, "loadAfter: query word: " + mQueryString);
-        Log.d(LOG_TAG, "loadAfter: type word: " + mTypeString);
-
         // Set Network State to Loading
-        mNetworkState.postValue(NetworkState.LOADING);
-        mRepository.getArtsyApi().getNextLinkForSearch(mNextUrl, params.requestedLoadSize, mTypeString).enqueue(new Callback<SearchWrapperResponse>() {
+        initialLoading.postValue(NetworkState.LOADING);
+        networkState.postValue(NetworkState.LOADING);
+
+        repository.getArtsyApi().getNextLinkForSearch(nextUrl, typeString).enqueue(new Callback<SearchWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchWrapperResponse> call, @NonNull Response<SearchWrapperResponse> response) {
                 if (response.isSuccessful()) {
                     SearchWrapperResponse searchResponse = response.body();
                     if (searchResponse != null) {
                         EmbeddedResults embeddedResults = searchResponse.getEmbedded();
-
                         int totalCount = searchResponse.getTotalCount();
-                        Log.d(LOG_TAG, "loadAfter: Total count: " + totalCount);
-
                         if (totalCount != 0) {
-                            Links links = searchResponse.getLinks();
-                            if (links != null) {
-                                Next next = links.getNext();
-
-                                // Try and catch block doesn't crash the app,
-                                // and stops when there is no more next urls for next page
-                                try {
-                                    mNextUrl = next.getHref();
-                                } catch (NullPointerException e) {
-                                    Log.e(LOG_TAG, "The next.getHref() is null: " + e);
-                                    // Return so that it stops repeating the same call
-                                    return;
-                                } catch (Exception e) {
-                                    Log.e(LOG_TAG, "The general exception is: " + e);
-                                    // Return so that it stops repeating the same call
-                                    return;
-                                }
-
-                                Log.d(LOG_TAG, "loadAfter: Next page link: " + mNextUrl);
-                            }
-                        } else {
-                            mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                            nextUrl = getNextPage(searchResponse);
                         }
-
-                        String receivedQuery = searchResponse.getQ();
-                        Log.d(LOG_TAG, "Query word: " + receivedQuery);
 
                         if (embeddedResults.getResults() != null) {
                             long nextKey;
-
                             if (params.key == embeddedResults.getResults().size()) {
                                 nextKey = 0;
                             } else {
                                 nextKey = params.key + 100;
                             }
-
                             Log.d(LOG_TAG, "Next key : " + nextKey);
 
                             List<Result> resultList = embeddedResults.getResults();
+                            List<Result> filteredList = SearchResultsLogic.getFilteredResults(resultList);
+                            if (filteredList != null) {
+                                callback.onResult(filteredList, nextKey);
+                            }
 
-                            callback.onResult(resultList, nextKey);
-
-                            Log.d(LOG_TAG, "List of Search Result loadAfter : " + resultList.size());
+                            networkState.postValue(NetworkState.LOADED);
+                            initialLoading.postValue(NetworkState.LOADED);
                         }
-
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
                     }
-
-                    Log.d(LOG_TAG, "Response code from initial load, onSuccess: " + response.code());
-
                 } else {
-
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-
-                    Log.d(LOG_TAG, "Response code from initial load: " + response.code());
+                    Log.e(LOG_TAG, "loadAfter: response is not successful, code is: " + response.code());
+                    initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<SearchWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
-                Log.d(LOG_TAG, "Response code from initial load, onFailure: " + t.getMessage());
+                initialLoading.postValue(NetworkState.LOADED);
+                networkState.postValue(NetworkState.LOADED);
+                Log.e(LOG_TAG, "Response code from loadAfter, onFailure: " + t.getMessage());
             }
         });
-
     }
 }

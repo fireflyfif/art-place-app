@@ -15,7 +15,7 @@ import dev.iotarho.artplace.app.model.artworks.Artwork;
 
 public class SimilarArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = ArtworksByArtistAdapter.class.getSimpleName();
+    private static final String TAG = SimilarArtworksAdapter.class.getSimpleName();
 
     private List<Artwork> mArtworkList;
 

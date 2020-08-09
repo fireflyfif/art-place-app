@@ -38,40 +38,32 @@ package dev.iotarho.artplace.app.model.search;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.Self;
 import dev.iotarho.artplace.app.model.Thumbnail;
+import dev.iotarho.artplace.app.model.artworks.MainImage;
 
 public class LinksResult implements Parcelable {
 
     @SerializedName("self")
-    @Expose
     private Self self;
 
     @SerializedName("permalink")
-    @Expose
     private Permalink permalink;
 
     @SerializedName("thumbnail")
-    @Expose
     private Thumbnail thumbnail;
+
+    @SerializedName("image")
+    private MainImage image; // TODO: Check if there is ever such image
 
     public Self getSelf() {
         return self;
     }
 
-    public void setSelf(Self self) {
-        this.self = self;
-    }
-
     public Permalink getPermalink() {
         return permalink;
-    }
-
-    public void setPermalink(Permalink permalink) {
-        this.permalink = permalink;
     }
 
     public Thumbnail getThumbnail() {
@@ -81,7 +73,6 @@ public class LinksResult implements Parcelable {
     public void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }
-
 
     @Override
     public int describeContents() {
@@ -93,6 +84,7 @@ public class LinksResult implements Parcelable {
         dest.writeParcelable(this.self, flags);
         dest.writeParcelable(this.permalink, flags);
         dest.writeParcelable(this.thumbnail, flags);
+        dest.writeParcelable(this.image, flags);
     }
 
     public LinksResult() {
@@ -102,6 +94,7 @@ public class LinksResult implements Parcelable {
         this.self = in.readParcelable(Self.class.getClassLoader());
         this.permalink = in.readParcelable(Permalink.class.getClassLoader());
         this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
+        this.image = in.readParcelable(MainImage.class.getClassLoader());
     }
 
     public static final Creator<LinksResult> CREATOR = new Creator<LinksResult>() {
@@ -115,4 +108,8 @@ public class LinksResult implements Parcelable {
             return new LinksResult[size];
         }
     };
+
+    public MainImage getImage() {
+        return image;
+    }
 }

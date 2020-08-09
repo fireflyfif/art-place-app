@@ -39,6 +39,11 @@
         <item name="android:background">?colorSurface</item>
     </style>
 
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
+    <!-- Gets rid of the "underline" in the mic button-->
+    <item name="submitBackground">@null</item>
+    </style>
+
     <style name="details_label" parent="Theme.MaterialComponents">
         <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">@dimen/margin_8dp</item>
         <item name="android:layout_marginLeft">@dimen/margin_16dp</item>
@@ -52,7 +57,7 @@
     <style name="MyProgressBarRectangle" parent="@style/Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateDrawable">@drawable/progressbar_circles</item>
         <item name="android:minHeight">80dp</item>
-        <item name="android:minWidth">200dp</item>
+        <item name="android:minWidth">80dp</item>
     </style>
 
     <!--Bottom Sheets-->

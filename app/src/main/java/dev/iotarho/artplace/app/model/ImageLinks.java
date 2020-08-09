@@ -42,6 +42,7 @@ import com.google.gson.annotations.SerializedName;
 
 import dev.iotarho.artplace.app.model.artworks.ArtistsLink;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.model.genes.Genes;
 import dev.iotarho.artplace.app.model.search.Permalink;
 
 public class ImageLinks implements Parcelable {
@@ -78,10 +79,6 @@ public class ImageLinks implements Parcelable {
     @SerializedName("similar_artworks")
     private SimilarArtworksLink similarArtworks;
 
-    /*@SerializedName("partner")
-    @Expose
-    private PartnerLink partnerLink;*/
-
     @SerializedName("artists")
     private ArtistsLink artists;
 
@@ -89,32 +86,16 @@ public class ImageLinks implements Parcelable {
         return artworksLink;
     }
 
-    public void setArtworksLink(ArtworksLink artworksLink) {
-        this.artworksLink = artworksLink;
-    }
-
     public Thumbnail getThumbnail() {
         return thumbnail;
-    }
-
-    public void setThumbnail(Thumbnail thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public MainImage getImage() {
         return image;
     }
 
-    public void setImage(MainImage image) {
-        this.image = image;
-    }
-
     public ArtistsLink getArtists() {
         return artists;
-    }
-
-    public void setArtists(ArtistsLink artists) {
-        this.artists = artists;
     }
 
     public Permalink getPermalink() {

@@ -105,6 +105,9 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     private SearchView mSearchView;
 
+    public static ArtworksFragment newInstance() {
+        return new ArtworksFragment();
+    }
 
     public ArtworksFragment() {
         // Required empty public constructor
@@ -179,6 +182,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         mViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
+
                 // When the NetworkStatus is Successful
                 // hide both the Progress Bar and the error message
                 if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
@@ -187,7 +191,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
                 // When the NetworkStatus is Failed
                 // show the error message and hide the Progress Bar
                 if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
                             Snackbar.LENGTH_LONG).show();
                 }
@@ -202,9 +206,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         // Setup the RecyclerView
         setRecyclerView();
-
-        // Initialize the ViewModel
-        mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
 
         mViewModel.refreshArtworkLiveData().observe(requireActivity(), artworks -> {
             if (artworks != null) {
@@ -234,8 +235,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @Override
     public void onRefreshConnection() {
         Log.d(TAG, "onRefreshConnection is now triggered");
-
-        new RetrieveNetworkConnectivity(this, this).execute();
+        new RetrieveNetworkConnectivity(this).execute();
     }
 
     @Override
@@ -273,24 +273,16 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // TODO:
-                //query = String.valueOf(mSearchView.getQuery());
-                if (getAdapter() != null) {
-                    getAdapter().getFilter().filter(query);
-                    mPagedListAdapter.swapCatalogue(mArtworksList);
-
-                    Log.d(TAG, "Current query: " + query);
-                }
+                mPagedListAdapter.getFilter().filter(query);
+                mPagedListAdapter.swapCatalogue(mArtworksList);
+                Log.d(TAG, "Current query: " + query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
-                if (getAdapter() != null) {
-                    getAdapter().getFilter().filter(newText);
-                    Log.d(TAG, "Current query: " + newText);
-                }
+                mPagedListAdapter.getFilter().filter(newText);
+                Log.d(TAG, "Current query: " + newText);
                 return false;
             }
         });

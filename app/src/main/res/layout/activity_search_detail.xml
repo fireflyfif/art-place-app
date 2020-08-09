@@ -51,9 +51,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="250dp"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorOnSurface"
+            app:collapsedTitleGravity="start"
+            app:contentScrim="?colorOnSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -65,9 +66,16 @@
                 <ImageView
                     android:id="@+id/content_image"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="250dp"
+                    android:contentDescription="TODO"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/pop_art_placeholder" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bg_protect_height"
+                    android:background="@drawable/photo_background_protection"
+                    android:fitsSystemWindows="true" />
 
                 <View
                     android:layout_width="match_parent"
@@ -85,7 +93,7 @@
                 android:background="@null"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -119,6 +127,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
@@ -126,52 +137,32 @@
                         android:id="@+id/content_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:layout_marginLeft="@dimen/margin_8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/work_sans_medium"
                         android:gravity="center_horizontal"
                         android:textColor="?colorControlNormal"
-                        android:textSize="22sp"
-                        tools:text="Andy Warhol, $ (1981)" />
+                        android:textSize="26sp"
+                        tools:text="Andy Warhol, (1981)" />
 
                     <TextView
                         android:id="@+id/content_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:layout_marginLeft="@dimen/margin_8dp"
-                        android:layout_marginTop="@dimen/margin_8dp"
-                        android:layout_marginEnd="@dimen/margin_8dp"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:layout_marginBottom="@dimen/margin_8dp"
-                        android:background="@android:color/transparent"
-                        android:fontFamily="@font/work_sans"
-                        android:textSize="18sp"
-                        android:paddingStart="@dimen/padding_6dp"
-                        android:paddingLeft="@dimen/padding_6dp"
-                        android:paddingEnd="@dimen/padding_6dp"
-                        android:paddingRight="@dimen/padding_6dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/work_sans_semibold"
                         android:textColor="?colorControlNormal"
-                        tools:text="Artwork" />
+                        android:textSize="18sp"
+                        android:text="@string/genre_name" />
 
                     <ImageView
                         android:id="@+id/content_image2"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:scaleType="fitCenter"
-                        tools:src="@drawable/pop_art_placeholder"/>
-
-                    <ImageButton
-                        android:id="@+id/read_more_button"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:background="@android:color/transparent"
-                        android:fontFamily="@font/work_sans"
-                        android:text="@string/read_more_button" />
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="TODO"
+                        android:scaleType="fitCenter"
+                        tools:src="@drawable/pop_art_placeholder" />
 
                     <TextView
                         android:id="@+id/content_description"
@@ -179,19 +170,33 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_8dp"
                         android:fontFamily="@font/work_sans"
+                        android:gravity="center"
                         android:paddingBottom="@dimen/padding_8dp"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/color_on_secondary"
+                        android:textColor="?colorControlNormal"
                         tools:text="Description here" />
+
+                    <TextView
+                        android:id="@+id/read_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="24dp"
+                        android:fontFamily="@font/work_sans"
+                        android:gravity="center"
+                        android:text="@string/read_more_button"
+                        android:textColor="?colorControlActivated" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
+            <include layout="@layout/artwork_detail_cardview" />
+
             <include layout="@layout/show_detail_cardview" />
 
             <include layout="@layout/artist_detail_cardview" />
+
+            <include layout="@layout/similar_artworks_cardview" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

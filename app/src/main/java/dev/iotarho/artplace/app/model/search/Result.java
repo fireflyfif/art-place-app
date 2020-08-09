@@ -40,7 +40,6 @@ import android.os.Parcelable;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Result implements Parcelable {
@@ -68,23 +67,18 @@ public class Result implements Parcelable {
     }
 
     @SerializedName("type")
-    @Expose
     private String type;
 
     @SerializedName("title")
-    @Expose
     private String title;
 
     @SerializedName("description")
-    @Expose
     private String description;
 
     @SerializedName("og_type")
-    @Expose
     private String ogType;
 
     @SerializedName("_links")
-    @Expose
     private LinksResult links;
 
     public String getType() {
@@ -107,16 +101,8 @@ public class Result implements Parcelable {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getOgType() {
         return ogType;
-    }
-
-    public void setOgType(String ogType) {
-        this.ogType = ogType;
     }
 
     public LinksResult getLinks() {
@@ -142,8 +128,7 @@ public class Result implements Parcelable {
         dest.writeParcelable(this.links, flags);
     }
 
-    public Result() {
-    }
+    public Result() {}
 
     protected Result(Parcel in) {
         this.type = in.readString();

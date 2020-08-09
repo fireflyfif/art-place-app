@@ -38,50 +38,33 @@ package dev.iotarho.artplace.app.model.artworks;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 
 // Model class for the response of the Artsy API
 public class ArtworkWrapperResponse implements Parcelable {
 
     @SerializedName("total_count")
-    @Expose
     private Integer totalCount;
 
     @SerializedName("_links")
-    @Expose
-    private Links links;
+    private PageLinks pageLinks;
 
     @SerializedName("_embedded")
-    @Expose
     private EmbeddedArtworks embeddedArtworks;
 
     public Integer getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public void setLinks(Links links) {
-        this.links = links;
+    public PageLinks getPageLinks() {
+        return pageLinks;
     }
 
     public EmbeddedArtworks getEmbeddedArtworks() {
         return embeddedArtworks;
     }
-
-    public void setEmbeddedArtworks(EmbeddedArtworks embeddedArtworks) {
-        this.embeddedArtworks = embeddedArtworks;
-    }
-
 
     @Override
     public int describeContents() {
@@ -91,7 +74,7 @@ public class ArtworkWrapperResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.totalCount);
-        dest.writeParcelable(this.links, flags);
+        dest.writeParcelable(this.pageLinks, flags);
         dest.writeParcelable(this.embeddedArtworks, flags);
     }
 
@@ -100,7 +83,7 @@ public class ArtworkWrapperResponse implements Parcelable {
 
     protected ArtworkWrapperResponse(Parcel in) {
         this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.links = in.readParcelable(Links.class.getClassLoader());
+        this.pageLinks = in.readParcelable(PageLinks.class.getClassLoader());
         this.embeddedArtworks = in.readParcelable(EmbeddedArtworks.class.getClassLoader());
     }
 

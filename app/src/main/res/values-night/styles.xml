@@ -37,7 +37,7 @@
 
     <style name="PopupMenuStyle" parent="ThemeOverlay.MaterialComponents">
         <item name="android:background">?attr/colorSurface</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">?colorSurface</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">?colorOnBackground</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">?colorSurface</item>
     </style>

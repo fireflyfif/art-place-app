@@ -97,7 +97,7 @@ public class ArtworksByArtistAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (mArtworkList == null) {
             return 0;
         }
-        Log.d(TAG, "Size of the Similar Artworks list: " + mArtworkList);
+        Log.d(TAG, "Size of the Similar Artworks list: " + mArtworkList.size());
         return mArtworkList.size();
     }
 

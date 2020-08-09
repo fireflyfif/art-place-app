@@ -35,13 +35,22 @@
 
 package dev.iotarho.artplace.app.utils;
 
+import dev.iotarho.artplace.app.repository.ArtsyRepository;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
+import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModelFactory;
 
 public class Injection {
 
-    public static SearchFragmentViewModelFactory provideSearchViewModelFactory(
-            String queryWord,
-            String typeWord) {
-        return new SearchFragmentViewModelFactory(queryWord, typeWord);
+    public static SearchFragmentViewModelFactory provideSearchViewModelFactory() {
+        return new SearchFragmentViewModelFactory(ArtsyRepository.getInstance());
+    }
+
+    public static ShowDetailViewModelFactory provideShowDetailViewModel() {
+        return new ShowDetailViewModelFactory(ArtsyRepository.getInstance());
+    }
+
+    public static ArtistDetailViewModelFactory provideArtistDetailViewModel() {
+        return new ArtistDetailViewModelFactory(ArtsyRepository.getInstance());
     }
 }

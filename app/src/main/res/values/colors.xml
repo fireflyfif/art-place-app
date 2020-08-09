@@ -55,16 +55,18 @@
     <color name="color_surface">#DDDDDD</color>
     <color name="color_error">#FED766</color>
 
+    <color name="color_text_contrast">#000000</color>
     <color name="color_text_white">#ffffff</color>
     <color name="color_snackbar_bg">#ffffff</color>
     <color name="color_bg_transparent_25">#65000000</color>
     <color name="color_bg_transparent_90">#D9FFFFFF</color>
+    <color name="color_on_toolbar">#ffffff</color>
 
     <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
     <!--on which they appear.-->
     <color name="color_on_primary">#ffffff</color>
     <color name="color_on_secondary">#000000</color>
-    <color name="color_on_background">#000000</color>
+    <color name="color_on_background">#ffffff</color>
     <color name="color_on_surface">#ffffff</color>
     <color name="color_on_error">#ffffff</color>
 

@@ -37,7 +37,9 @@ package dev.iotarho.artplace.app.remote;
 
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artists.ArtistWrapperResponse;
+import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.ArtworkWrapperResponse;
+import dev.iotarho.artplace.app.model.genes.GeneContent;
 import dev.iotarho.artplace.app.model.search.SearchWrapperResponse;
 import dev.iotarho.artplace.app.model.search.ShowContent;
 import retrofit2.Call;
@@ -72,7 +74,6 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtworkWrapperResponse> getNextLink(@Url String nextUrl, @Query("size") int itemSize);
 
-
     /**
      * Make call according to the url that is received from the json response
      * Endpoint for fetching Artist of the current Artwork
@@ -95,7 +96,7 @@ public interface ArtsyApiInterface {
     Call<Artist> getArtistInfoFromLink(@Url String artistLink);
 
     @GET
-    Call<Artist> getArtworksOfArtistFromLink(@Url String artworksLink);
+    Call<Artwork> getArtworkFromLink(@Url String artworkLink);
 
     /**
      * Make call according to the url that is received from the JSON
@@ -106,7 +107,6 @@ public interface ArtsyApiInterface {
     @GET
     Call<ArtworkWrapperResponse> getSimilarArtLink(@Url String similarArtLink);
 
-
     /**
      * Endpoint for Search results
      */
@@ -114,8 +114,11 @@ public interface ArtsyApiInterface {
     Call<SearchWrapperResponse> getSearchResults(@Query("q") String queryWord, @Query("size") int itemSize, @Query("type") String type);
 
     @GET
-    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("size") int itemSize, @Query("type") String type);
+    Call<SearchWrapperResponse> getNextLinkForSearch(@Url String nextUrl, @Query("type") String type);
 
     @GET
     Call<ShowContent> getDetailContentFromSearchLink(@Url String selfLink);
+
+    @GET
+    Call<GeneContent> getDetailContentForGenes(@Url String selfLink);
 }

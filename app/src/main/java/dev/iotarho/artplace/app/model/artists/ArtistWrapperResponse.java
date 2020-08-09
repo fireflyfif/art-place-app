@@ -41,7 +41,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import dev.iotarho.artplace.app.model.Links;
+import dev.iotarho.artplace.app.model.PageLinks;
 
 public class ArtistWrapperResponse implements Parcelable {
 
@@ -51,7 +51,7 @@ public class ArtistWrapperResponse implements Parcelable {
 
     @SerializedName("_links")
     @Expose
-    private Links links;
+    private PageLinks pageLinks;
 
     @SerializedName("_embedded")
     @Expose
@@ -65,12 +65,12 @@ public class ArtistWrapperResponse implements Parcelable {
         this.totalCount = totalCount;
     }
 
-    public Links getLinks() {
-        return links;
+    public PageLinks getLinks() {
+        return pageLinks;
     }
 
-    public void setLinks(Links links) {
-        this.links = links;
+    public void setLinks(PageLinks pageLinks) {
+        this.pageLinks = pageLinks;
     }
 
     public EmbeddedArtists getEmbeddedArtist() {
@@ -90,7 +90,7 @@ public class ArtistWrapperResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.totalCount);
-        dest.writeParcelable(this.links, flags);
+        dest.writeParcelable(this.pageLinks, flags);
         dest.writeParcelable(this.embeddedArtist, flags);
     }
 
@@ -99,7 +99,7 @@ public class ArtistWrapperResponse implements Parcelable {
 
     protected ArtistWrapperResponse(Parcel in) {
         this.totalCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.links = in.readParcelable(Links.class.getClassLoader());
+        this.pageLinks = in.readParcelable(PageLinks.class.getClassLoader());
         this.embeddedArtist = in.readParcelable(EmbeddedArtists.class.getClassLoader());
     }
 
