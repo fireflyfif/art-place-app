@@ -37,7 +37,7 @@ public class ImageUtils {
     public static String getLargeImageUrl(@NonNull List<String> imageVersionList, @NonNull MainImage mainImageObject) {
         // Get the link for the current artwork,
         // e.g.: "https://d32dm0rphc51dk.cloudfront.net/rqoQ0ln0TqFAf7GcVwBtTw/{image_version}.jpg"
-        String artworkImgLinkString = mainImageObject.getHref();
+        String artworkImgLinkString = StringUtils.getImageUrl(mainImageObject.getHref());
         // Replace the {image_version} from the artworkImgLinkString with
         // the wanted version, e.g. "large"
         return extractImageLink(getVersionImage(imageVersionList, IMAGE_LARGE), artworkImgLinkString);

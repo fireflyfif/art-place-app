@@ -95,6 +95,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistForGenreListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
+import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchResultsLogic;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
 import dev.iotarho.artplace.app.utils.ImageUtils;
 import dev.iotarho.artplace.app.utils.Injection;
@@ -339,7 +340,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupSearchArtistList(List<Result> artistSearch) {
-        SearchArtistListAdapter searchArtistListAdapter = new SearchArtistListAdapter(artistSearch, this);
+        List<Result> filteredList = SearchResultsLogic.getFilteredResults(artistSearch);
+        SearchArtistListAdapter searchArtistListAdapter = new SearchArtistListAdapter(filteredList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         searchResultsRv.setLayoutManager(layoutManager);
