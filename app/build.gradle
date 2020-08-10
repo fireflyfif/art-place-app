@@ -55,7 +55,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$rootProject.androidXAppCompatVersion"
-    implementation "androidx.recyclerview:recyclerview:$rootProject.androidXAppCompatVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
