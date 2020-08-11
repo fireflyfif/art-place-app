@@ -240,7 +240,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     @Override
     public void showSnackMessage(String resultMessage) {
-
         // TODO: Show the AppBar so that the Refresh icon be visible!!
         Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
         refreshArtworks();
@@ -253,7 +252,6 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
         inflater.inflate(R.menu.artworks_menu, menu);
         // Make the icon with a dynamic tint
         // source: https://stackoverflow.com/a/29916353/8132331

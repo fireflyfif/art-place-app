@@ -63,14 +63,21 @@ public class FavArtRepository {
         mFavArtworksDao = artworksDatabase.favArtworksDao();
     }
 
-    public static FavArtRepository getInstance(Application application) {
+    public synchronized static void createInstance(Application application) {
         if (INSTANCE == null) {
-
+            // if there is no instance available, create a new one
             synchronized (LOCK) {
                 if (INSTANCE == null) {
                     INSTANCE = new FavArtRepository(application);
                 }
             }
+        }
+    }
+
+    public static FavArtRepository getInstance() {
+        // Double check locking pattern
+        if (INSTANCE == null) {
+            throw new IllegalStateException("FavArtRepository instance not initialized");
         }
         return INSTANCE;
     }
@@ -86,34 +93,23 @@ public class FavArtRepository {
 
     // Delete a single item from the database
     public void deleteItem(final String artworkId) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Item is deleted from the db!");
-                mFavArtworksDao.deleteArtwork(artworkId);
-            }
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            Log.d(TAG, "Item is deleted from the db!");
+            mFavArtworksDao.deleteArtwork(artworkId);
         });
     }
 
     // Delete all list of favorite artworks
     // Create a warning dialog for the user before allowing them to delete all data
     public void deleteAllItems() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mFavArtworksDao.deleteAllData();
-            }
-        });
+        AppExecutors.getInstance().diskIO().execute(() -> mFavArtworksDao.deleteAllData());
     }
 
     // Insert a new item into the database
     public void insertItem(FavoriteArtworks favArtwork) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Item is added to the db!");
-                mFavArtworksDao.insertArtwork(favArtwork);
-            }
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            Log.d(TAG, "Item is added to the db!");
+            mFavArtworksDao.insertArtwork(favArtwork);
         });
     }
 

@@ -40,6 +40,7 @@ import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
@@ -49,35 +50,32 @@ import dev.iotarho.artplace.app.callbacks.ResultFromDbCallback;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
 import dev.iotarho.artplace.app.repository.FavArtRepository;
 
-public class FavArtworksViewModel extends AndroidViewModel {
+public class FavArtworksViewModel extends ViewModel {
 
     private static final String TAG = FavArtworksViewModel.class.getSimpleName();
     private static final int PAGE_SIZE = 20;
 
     private LiveData<PagedList<FavoriteArtworks>> mFavArtworkList;
-    private FavArtRepository mRepository;
+    private FavArtRepository favArtRepository;
 
 
-    public FavArtworksViewModel(Application application) {
-        super(application);
-
-        mRepository = FavArtRepository.getInstance(application);
-
-        init(application);
+    public FavArtworksViewModel(FavArtRepository favArtRepository) {
+        this.favArtRepository = favArtRepository;
+        init();
         Log.d(TAG, "FavArtworksViewModel called");
     }
 
     /*
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init(Application application) {
+    private void init() {
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
                 .setPrefetchDistance(PAGE_SIZE)
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application)
+        mFavArtworkList = new LivePagedListBuilder<>(favArtRepository
                 .getAllFavArtworks(),
                 pagedListConfig).build();
     }
@@ -87,7 +85,7 @@ public class FavArtworksViewModel extends AndroidViewModel {
     }
 
     public List<FavoriteArtworks> getFavListForWidget() {
-        return mRepository.getFavArtworksList();
+        return favArtRepository.getFavArtworksList();
     }
 
     public LiveData<PagedList<FavoriteArtworks>> refreshFavArtworkList(Application application) {
@@ -98,7 +96,7 @@ public class FavArtworksViewModel extends AndroidViewModel {
                 .setPageSize(PAGE_SIZE)
                 .build();
 
-        mFavArtworkList = new LivePagedListBuilder<>(FavArtRepository.getInstance(application)
+        mFavArtworkList = new LivePagedListBuilder<>(favArtRepository
                 .getAllFavArtworks(),
                 pagedListConfig).build();
 
@@ -108,20 +106,20 @@ public class FavArtworksViewModel extends AndroidViewModel {
 
     // TODO: Remove this method, because we don't need to call it from here
     public void insertItem(FavoriteArtworks favArtwork) {
-        mRepository.insertItem(favArtwork);
+        favArtRepository.insertItem(favArtwork);
     }
 
     // TODO: Remove this method, because we don't need to call it from here
     public void getItemById(String artworkId, ResultFromDbCallback resultFromDbCallback) {
-        mRepository.executeGetItemById(artworkId, resultFromDbCallback);
+        favArtRepository.executeGetItemById(artworkId, resultFromDbCallback);
     }
 
     public void deleteItem(String artworkId) {
-        mRepository.deleteItem(artworkId);
+        favArtRepository.deleteItem(artworkId);
     }
 
     public void deleteAllItems() {
-        mRepository.deleteAllItems();
+        favArtRepository.deleteAllItems();
     }
 
     @Override

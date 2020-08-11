@@ -36,7 +36,9 @@
 package dev.iotarho.artplace.app.utils;
 
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
+import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
+import dev.iotarho.artplace.app.ui.favorites.FavArtworksViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchresults.SearchFragmentViewModelFactory;
 
@@ -52,5 +54,9 @@ public class Injection {
 
     public static ArtistDetailViewModelFactory provideArtistDetailViewModel() {
         return new ArtistDetailViewModelFactory(ArtsyRepository.getInstance());
+    }
+
+    public static FavArtworksViewModelFactory provideFavViewModelFactory() {
+        return new FavArtworksViewModelFactory(FavArtRepository.getInstance());
     }
 }

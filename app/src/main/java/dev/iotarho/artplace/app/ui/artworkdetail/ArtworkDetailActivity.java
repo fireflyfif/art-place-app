@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -76,6 +77,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
+import dev.iotarho.artplace.app.callbacks.ResultFromDbCallback;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
@@ -89,13 +91,14 @@ import dev.iotarho.artplace.app.model.artworks.Dimensions;
 import dev.iotarho.artplace.app.model.artworks.InSize;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
 import dev.iotarho.artplace.app.model.search.Permalink;
-import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.ui.LargeArtworkActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.SimilarArtworksAdapter;
+import dev.iotarho.artplace.app.ui.favorites.FavArtworksViewModel;
+import dev.iotarho.artplace.app.ui.favorites.FavArtworksViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
@@ -107,7 +110,7 @@ import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 import static dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity.ARTIST_ARTWORK_URL_KEY;
 
-public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener {
+public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener, ResultFromDbCallback {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
@@ -191,7 +194,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     RecyclerView artworksByArtistRv;
 
     @BindView(R.id.fav_button)
-    FloatingActionButton mFavButton;
+    FloatingActionButton favButton;
 
     private Artwork mArtworkObject;
     private String emptyField;
@@ -210,9 +213,10 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     private String largeArtworkLink;
     private String artistBiography;
 
-    private ArtistsDetailViewModel mArtistViewModel;
+    private ArtistsDetailViewModel artistViewModel;
     private ShowsDetailViewModel showsDetailViewModel;
-    private boolean mIsFavorite;
+    private FavArtworksViewModel favArtworksViewModel;
+    private boolean isFavorite;
 
     // Variables for Fresco Library
     private Postprocessor mPostprocessor;
@@ -222,8 +226,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize Fresco
-        Fresco.initialize(this);
         setContentView(R.layout.activity_artwork_detail);
         ButterKnife.bind(this);
         // Set the Up Button Navigation to another color
@@ -241,14 +243,16 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         }
 
         if (savedInstanceState != null) {
-            mIsFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
+            isFavorite = savedInstanceState.getBoolean(IS_FAV_SAVED_STATE);
         }
 
         // Initialize the ViewModels
         ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
-        mArtistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
+        artistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
         ShowDetailViewModelFactory showDetailViewModelFactory = Injection.provideShowDetailViewModel();
         showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
+        FavArtworksViewModelFactory favArtworksViewModelFactory = Injection.provideFavViewModelFactory();
+        favArtworksViewModel = new ViewModelProvider(this, favArtworksViewModelFactory).get(FavArtworksViewModel.class);
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
@@ -261,34 +265,16 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
                 artworkId = mArtworkObject.getId();
                 Log.d(TAG, "Received artwork id: " + artworkId);
-
-                // Check if the item exists in the db already or not!!!
-                // TODO: Remove Repository instance from Activity!
-                FavArtRepository.getInstance(getApplication()).executeGetItemById(artworkId, isFav -> {
-                    if (isFav) {
-                        mIsFavorite = true;
-                        mFavButton.setTag(FAV_TAG);
-                        // Set the button to display it's already added
-                        Log.d(TAG, "Item already exists in the db.");
-                        mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
-                    } else {
-                        // Add to the db
-                        mIsFavorite = false;
-                        mFavButton.setTag(NON_FAV_TAG);
-                        Log.d(TAG, "Insert a new item into the db");
-                        mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
-                    }
-                });
+                favArtworksViewModel.getItemById(artworkId, this);
             }
         }
-
         clickFab();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(IS_FAV_SAVED_STATE, mIsFavorite);
+        outState.putBoolean(IS_FAV_SAVED_STATE, isFavorite);
     }
 
     private void setupArtworkInfoUi(Artwork currentArtwork, String emptyField) {
@@ -407,15 +393,14 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         // Load the blurred image
         blurryImage.setController(mController);
     }
-
     /**
      * Method for initializing the ViewModel of the Artist
      *
      * @param artistLink is the given link to the artist
      */
     private void initArtistViewModel(String artistLink) {
-        mArtistViewModel.initArtistDataFromArtwork(artistLink);
-        mArtistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
+        artistViewModel.initArtistDataFromArtwork(artistLink);
+        artistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
             if (artists != null && artists.size() != 0) {
                 artistLabel.setVisibility(View.VISIBLE);
                 for (Artist currentArtist : artists) {
@@ -457,8 +442,8 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
      * @param similarArtLink is the given link to the similar artworks
      */
     private void initSimilarViewModel(String similarArtLink) {
-        mArtistViewModel.initSimilarArtworksData(similarArtLink);
-        mArtistViewModel.getSimilarArtworksData().observe(this, artworkList -> {
+        artistViewModel.initSimilarArtworksData(similarArtLink);
+        artistViewModel.getSimilarArtworksData().observe(this, artworkList -> {
             if (artworkList != null) {
                 setupSimilarArtworksUI(artworkList);
             }
@@ -475,12 +460,12 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void clickFab() {
-        mFavButton.setOnClickListener(this::setIconOnFab);
+        favButton.setOnClickListener(this::setIconOnFab);
     }
 
     private void initArtworksByArtistsViewModel(String artworksLink) {
-        mArtistViewModel.initArtworksByArtistData(artworksLink);
-        mArtistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
+        artistViewModel.initArtworksByArtistData(artworksLink);
+        artistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
@@ -497,23 +482,22 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
      */
     private void setIconOnFab(View view) {
         int tagValue = (int) view.getTag();
-
         switch (tagValue) {
             case (FAV_TAG):
                 // Delete from the db
                 deleteItemFromFav(artworkId);
-                mFavButton.setTag(NON_FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
+                favButton.setTag(NON_FAV_TAG);
+                favButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
             case (NON_FAV_TAG):
                 // Add an item to the db
                 addArtworkToFavorites();
-                mFavButton.setTag(FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_favorite_24dp);
+                favButton.setTag(FAV_TAG);
+                favButton.setImageResource(R.drawable.ic_favorite_24dp);
                 break;
             default:
-                mFavButton.setTag(NON_FAV_TAG);
-                mFavButton.setImageResource(R.drawable.ic_favorite_border_24dp);
+                favButton.setTag(NON_FAV_TAG);
+                favButton.setImageResource(R.drawable.ic_favorite_border_24dp);
                 break;
         }
     }
@@ -522,7 +506,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
      * Method for deleting an item from the database
      */
     private void deleteItemFromFav(String artworkId) {
-        FavArtRepository.getInstance(getApplication()).deleteItem(artworkId);
+        favArtworksViewModel.deleteItem(artworkId);
         Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_removed, Snackbar.LENGTH_LONG);
         View view = snack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
@@ -538,7 +522,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         FavoriteArtworks favArtwork = new FavoriteArtworks(artworkId, artworkTitle, artistNameString,
                 category, medium, date, museum, artworkThumbnail, largeArtworkLink, dimensInString, dimensCmString);
 
-        FavArtRepository.getInstance(getApplication()).insertItem(favArtwork);
+        favArtworksViewModel.insertItem(favArtwork);
         Snackbar snack = Snackbar.make(coordinatorLayout, R.string.snackbar_item_added, Snackbar.LENGTH_LONG);
         View view = snack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
@@ -587,6 +571,23 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                     }
                 }
         );
+    }
+
+    @Override
+    public void setResult(boolean isFav) {
+        if (isFav) {
+            isFavorite = true;
+            favButton.setTag(FAV_TAG);
+            // Set the button to display it's already added
+            Log.d(TAG, "Item already exists in the db.");
+            favButton.setImageResource(R.drawable.ic_favorite_24dp);
+        } else {
+            // Add to the db
+            isFavorite = false;
+            favButton.setTag(NON_FAV_TAG);
+            Log.d(TAG, "Insert a new item into the db");
+            favButton.setImageResource(R.drawable.ic_favorite_border_24dp);
+        }
     }
 }
 
