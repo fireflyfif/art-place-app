@@ -16,7 +16,7 @@ public class PreferenceUtils {
     private static final Object LOCK = new Object();
     private SharedPreferences mPrefs;
 
-    public PreferenceUtils(Context context) {
+    private PreferenceUtils(Context context) {
         this.mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
