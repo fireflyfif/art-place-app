@@ -67,7 +67,8 @@ public interface ArtsyApiInterface {
 
     /**
      * Make call according to the url that is received from the json response
-     * @param nextUrl is dynamic link for next page with items
+     *
+     * @param nextUrl  is dynamic link for next page with items
      * @param itemSize is the size of requested items at once
      * @return the response for the next page
      */
@@ -87,7 +88,7 @@ public interface ArtsyApiInterface {
 
     /**
      * Make call to the artist endpoint that looks like that:
-     *  https://api.artsy.net/api/artists/4d8b92b34eb68a1b2c0003f4
+     * https://api.artsy.net/api/artists/4d8b92b34eb68a1b2c0003f4
      *
      * @param artistLink is the link taken from previous call
      * @return
@@ -121,4 +122,10 @@ public interface ArtsyApiInterface {
 
     @GET
     Call<GeneContent> getDetailContentForGenes(@Url String selfLink);
+
+    @GET("/api/artists") // https://api.artsy.net/api/artists?artworks=true&sort=-trending&offset=1&size=10&page=1
+    Call<ArtistWrapperResponse> getTrendingArtists(@Query("artworks") boolean hasArtworks, @Query("sort") String sort, @Query("offset") int offset);
+
+    @GET
+    Call<ArtistWrapperResponse> getNextLinkForArtists(@Url String nextUrl);
 }
