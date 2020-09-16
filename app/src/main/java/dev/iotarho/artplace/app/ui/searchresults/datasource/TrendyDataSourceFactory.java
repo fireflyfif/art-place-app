@@ -10,11 +10,11 @@ import dev.iotarho.artplace.app.repository.ArtsyRepository;
 public class TrendyDataSourceFactory extends DataSource.Factory<Long, Artist> {
 
     private final MutableLiveData<TrendyArtistsDataSource> trendyDataSource;
-//    private final String searchKey;
+    private final int offset;
     private final ArtsyRepository repository;
 
-    public TrendyDataSourceFactory(String searchKey, ArtsyRepository repository) {
-//        this.searchKey = searchKey;
+    public TrendyDataSourceFactory(int offset, ArtsyRepository repository) {
+        this.offset = offset;
         this.repository = repository;
         trendyDataSource = new MutableLiveData<>();
     }
@@ -22,8 +22,12 @@ public class TrendyDataSourceFactory extends DataSource.Factory<Long, Artist> {
     @NonNull
     @Override
     public DataSource<Long, Artist> create() {
-        TrendyArtistsDataSource trendyArtistsDataSource = new TrendyArtistsDataSource(repository);
+        TrendyArtistsDataSource trendyArtistsDataSource = new TrendyArtistsDataSource(repository, offset);
         trendyDataSource.postValue(trendyArtistsDataSource);
         return trendyArtistsDataSource;
+    }
+
+    public MutableLiveData<TrendyArtistsDataSource> getTrendyDataSource() {
+        return trendyDataSource;
     }
 }

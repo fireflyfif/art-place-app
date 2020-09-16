@@ -3,6 +3,7 @@ package dev.iotarho.artplace.app.ui.searchresults.datasource;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
@@ -26,9 +27,11 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
     private final MutableLiveData<NetworkState> networkState;
     private final MutableLiveData<NetworkState> initialLoading;
     private String nextUrl;
+    private int offset;
 
-    public TrendyArtistsDataSource(ArtsyRepository repository) {
+    public TrendyArtistsDataSource(ArtsyRepository repository, int offset) {
         this.repository = repository;
+        this.offset = offset;
         networkState = new MutableLiveData<>();
         initialLoading = new MutableLiveData<>();
     }
@@ -39,7 +42,7 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
         initialLoading.postValue(NetworkState.LOADING);
         networkState.postValue(NetworkState.LOADING);
 
-        repository.getArtsyApi().getTrendingArtists(true, "-trending", 1)
+        repository.getArtsyApi().getTrendingArtists(true, "-trending", offset)
                 .enqueue(new Callback<ArtistWrapperResponse>() {
                     @Override
                     public void onResponse(Call<ArtistWrapperResponse> call, Response<ArtistWrapperResponse> response) {
@@ -114,5 +117,13 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
                 Log.e(LOG_TAG, "Response code from loadAfter, onFailure: " + t.getMessage());
             }
         });
+    }
+
+    public LiveData<NetworkState> getNetworkState() {
+        return networkState;
+    }
+
+    public LiveData<NetworkState> getInitialLoading() {
+        return initialLoading;
     }
 }
