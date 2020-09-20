@@ -8,11 +8,11 @@ import androidx.paging.PagedList;
 
 import dev.iotarho.artplace.app.AppExecutors;
 import dev.iotarho.artplace.app.model.artists.Artist;
-import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.TrendyArtistsDataSource;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.TrendyDataSourceFactory;
 import dev.iotarho.artplace.app.utils.NetworkState;
+import dev.iotarho.artplace.app.utils.Utils;
 
 import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.INITIAL_SIZE_HINT;
 import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.PAGE_SIZE;
@@ -35,7 +35,7 @@ public class TrendyArtistsViewModel extends ViewModel {
     private void init() {
 
         // Get an instance of the DataSourceFactory class
-        trendyDataSourceFactory = new TrendyDataSourceFactory(1, repo);
+        trendyDataSourceFactory = new TrendyDataSourceFactory(repo, Utils.randomOffset());
 
         // Initialize the network state liveData
         networkState = Transformations.switchMap(trendyDataSourceFactory.getTrendyDataSource(), TrendyArtistsDataSource::getNetworkState);
@@ -55,7 +55,6 @@ public class TrendyArtistsViewModel extends ViewModel {
                 .build();
 
         artistPagedListLiveData = new LivePagedListBuilder<>(trendyDataSourceFactory, pagedListConfig)
-                //.setInitialLoadKey()
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
     }
@@ -72,4 +71,21 @@ public class TrendyArtistsViewModel extends ViewModel {
         return artistPagedListLiveData;
     }
 
+    public LiveData<PagedList<Artist>> refreshTrendyArtistsLiveData() {
+        PagedList.Config pagedListConfig = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(INITIAL_SIZE_HINT)
+                // If not set, defaults to page size.
+                //A value of 0 indicates that no list items
+                // will be loaded until they are specifically requested
+                .setPrefetchDistance(PREFETCH_DISTANCE_HINT)
+                .setPageSize(PAGE_SIZE)
+                .build();
+
+        artistPagedListLiveData = new LivePagedListBuilder<>(trendyDataSourceFactory, pagedListConfig)
+                .setFetchExecutor(AppExecutors.getInstance().networkIO())
+                .build();
+
+        return artistPagedListLiveData;
+    }
 }

@@ -13,7 +13,7 @@ public class TrendyDataSourceFactory extends DataSource.Factory<Long, Artist> {
     private final int offset;
     private final ArtsyRepository repository;
 
-    public TrendyDataSourceFactory(int offset, ArtsyRepository repository) {
+    public TrendyDataSourceFactory(ArtsyRepository repository, int offset) {
         this.offset = offset;
         this.repository = repository;
         trendyDataSource = new MutableLiveData<>();

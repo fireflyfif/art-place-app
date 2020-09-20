@@ -20,6 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.INITIAL_SIZE_HINT;
+import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.PAGE_SIZE;
+
 public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
 
     private static final String LOG_TAG = TrendyArtistsDataSource.class.getSimpleName();
@@ -42,7 +45,7 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
         initialLoading.postValue(NetworkState.LOADING);
         networkState.postValue(NetworkState.LOADING);
 
-        repository.getArtsyApi().getTrendingArtists(true, "-trending", offset)
+        repository.getArtsyApi().getTrendingArtists(true, "-trending", offset, INITIAL_SIZE_HINT, PAGE_SIZE)
                 .enqueue(new Callback<ArtistWrapperResponse>() {
                     @Override
                     public void onResponse(Call<ArtistWrapperResponse> call, Response<ArtistWrapperResponse> response) {
@@ -50,8 +53,10 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
                             ArtistWrapperResponse wrapperResponse = response.body();
                             if (wrapperResponse != null) {
                                 EmbeddedArtists embedded = wrapperResponse.getEmbeddedArtist();
+                                nextUrl = getNextPage(wrapperResponse);
+                                Log.d(LOG_TAG, "temp, loadInitial nextUrl: " + nextUrl);
                                 List<Artist> artists = embedded.getArtists();
-                                callback.onResult(artists, null, 2L);
+                                callback.onResult(artists, null, 1L);
 
                                 networkState.postValue(NetworkState.LOADED);
                                 initialLoading.postValue(NetworkState.LOADED);
@@ -94,6 +99,7 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
                     if (body != null) {
                         EmbeddedArtists embeddedArtist = body.getEmbeddedArtist();
                         nextUrl = getNextPage(body);
+                        Log.d(LOG_TAG, "temp, loadAfter nextUrl: " + nextUrl);
                         long nextKey;
                         if (params.key == embeddedArtist.getArtists().size()) {
                             nextKey = 0;
@@ -108,6 +114,7 @@ public class TrendyArtistsDataSource extends PageKeyedDataSource<Long, Artist> {
                         initialLoading.postValue(NetworkState.LOADED);
                     }
                 }
+                Log.d(LOG_TAG, "temp, nextUrl: " + nextUrl);
             }
 
             @Override

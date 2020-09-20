@@ -46,8 +46,6 @@ import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
 import dev.iotarho.artplace.app.ui.artworks.datasource.ArtworkDataSource;
 import dev.iotarho.artplace.app.ui.artworks.datasource.ArtworkDataSourceFactory;
-import dev.iotarho.artplace.app.ui.searchresults.datasource.TrendyArtistsDataSource;
-import dev.iotarho.artplace.app.ui.searchresults.datasource.TrendyDataSourceFactory;
 import dev.iotarho.artplace.app.utils.NetworkState;
 
 import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.INITIAL_SIZE_HINT;

@@ -44,8 +44,11 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
+
+    private static Random rand = new Random();
 
     private Utils() {
     }
@@ -87,8 +90,13 @@ public class Utils {
                 "Ed Ruscha",
                 "Banksy"
         };
-        Random r = new Random();
-        return listArtist[r.nextInt(listArtist.length)];
+        return listArtist[rand.nextInt(listArtist.length)];
+    }
+
+    public static int randomOffset() {
+        int min = 1;
+        int max = 100;
+        return rand.nextInt((max - min) + 1) + min;
     }
 
 }

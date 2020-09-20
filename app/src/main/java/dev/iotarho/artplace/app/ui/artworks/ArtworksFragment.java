@@ -104,6 +104,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     private ArtworkListAdapter pagedListAdapter;
     private TrendyArtistsAdapter trendyArtistsAdapter;
     private ArtworksViewModel artworksViewModel;
+    private TrendyArtistsViewModel trendyArtistsViewModel;
     private PreferenceUtils preferenceUtils;
 
     private PagedList<Artwork> artworksList;
@@ -161,19 +162,40 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         artworksRv.setLayoutManager(staggeredGridLayoutManager);
 
         // Set the PagedListAdapter
-        pagedListAdapter = new ArtworkListAdapter(this, this);
-        trendyArtistsAdapter = new TrendyArtistsAdapter(this);
+//        pagedListAdapter = new ArtworkListAdapter(this, this);
+        trendyArtistsAdapter = new TrendyArtistsAdapter(this, this);
     }
 
     private void setupUi(boolean isArtist) {
         setRecyclerView();
 
         TrendyArtistViewModelFactory trendyArtistViewModelFactory = Injection.provideTrendyViewModelFactory();
-        TrendyArtistsViewModel trendyArtistsViewModel = new ViewModelProvider(getViewModelStore(), trendyArtistViewModelFactory).get(TrendyArtistsViewModel.class);
+        trendyArtistsViewModel = new ViewModelProvider(getViewModelStore(), trendyArtistViewModelFactory).get(TrendyArtistsViewModel.class);
 
         trendyArtistsViewModel.getTrendyArtistLiveData().observe(getViewLifecycleOwner(), artist -> {
             trendyArtistsAdapter.submitList(artist);
             trendyArtistsAdapter.swapCatalogue(artist);
+        });
+
+        trendyArtistsViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> trendyArtistsAdapter.setNetworkState(networkState));
+
+        trendyArtistsViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
+            if (networkState != null) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                // When the NetworkStatus is Successful
+                // hide both the Progress Bar and the error message
+                if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                // When the NetworkStatus is Failed
+                // show the error message and hide the Progress Bar
+                if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
+                }
+            }
         });
 
         artworksRv.setAdapter(trendyArtistsAdapter);
@@ -223,13 +245,21 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         artworksRv.setAdapter(pagedListAdapter);
     }
 
+    public synchronized void refreshTrendyArtists() {
+        setRecyclerView();
+        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(getViewLifecycleOwner(), artists -> {
+            trendyArtistsAdapter.submitList(artists);
+            trendyArtistsAdapter.swapCatalogue(artists);
+        });
+        artworksRv.setAdapter(trendyArtistsAdapter);
+    }
 
     public synchronized void refreshArtworks() {
 
         // Setup the RecyclerView
         setRecyclerView();
 
-        artworksViewModel.refreshArtworkLiveData().observe(requireActivity(), artworks -> {
+        artworksViewModel.refreshArtworkLiveData().observe(getViewLifecycleOwner(), artworks -> {
             if (artworks != null) {
                 pagedListAdapter.submitList(null);
                 // When a new page is available, call submitList() method of the PagedListAdapter
@@ -264,7 +294,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public void showSnackMessage(String resultMessage) {
         // TODO: Show the AppBar so that the Refresh icon be visible!!
         Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
-        refreshArtworks();
+//        refreshArtworks();
+        refreshTrendyArtists();
     }
 
     private ArtworkListAdapter getAdapter() {
@@ -334,7 +365,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     @Override
     public void onRefresh() {
-        refreshArtworks();
+//        refreshArtworks();
+        refreshTrendyArtists();
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }

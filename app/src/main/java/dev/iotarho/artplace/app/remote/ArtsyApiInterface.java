@@ -123,8 +123,13 @@ public interface ArtsyApiInterface {
     @GET
     Call<GeneContent> getDetailContentForGenes(@Url String selfLink);
 
-    @GET("/api/artists") // https://api.artsy.net/api/artists?artworks=true&sort=-trending&offset=1&size=10&page=1
-    Call<ArtistWrapperResponse> getTrendingArtists(@Query("artworks") boolean hasArtworks, @Query("sort") String sort, @Query("offset") int offset);
+    @GET("/api/artists")
+        // https://api.artsy.net/api/artists?artworks=true&sort=-trending&offset=3&size=20&page=1
+    Call<ArtistWrapperResponse> getTrendingArtists(@Query("artworks") boolean hasArtworks,
+                                                   @Query("sort") String sort,
+                                                   @Query("offset") int offset,
+                                                   @Query("size") int size,
+                                                   @Query("page") int page);
 
     @GET
     Call<ArtistWrapperResponse> getNextLinkForArtists(@Url String nextUrl);
