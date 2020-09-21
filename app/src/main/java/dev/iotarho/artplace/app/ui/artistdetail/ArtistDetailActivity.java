@@ -35,6 +35,7 @@
 
 package dev.iotarho.artplace.app.ui.artistdetail;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
@@ -55,9 +58,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
+import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
+import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
@@ -65,13 +74,15 @@ import dev.iotarho.artplace.app.utils.ImageUtils;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
 
-public class ArtistDetailActivity extends AppCompatActivity {
+public class ArtistDetailActivity extends AppCompatActivity implements OnRefreshListener, OnArtworkClickListener {
 
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
     public static final String ARTIST_URL_KEY = "artist_url";
+    private static final String ARTIST_PARCEL_KEY = "artist_key";
     public static final String ARTIST_ARTWORK_URL_KEY = "artist_and_artwork_url";
     public static final String ARTIST_EXTRA_KEY = "artist_extra";
+    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.coordinator_artist)
     CoordinatorLayout coordinatorLayout;
@@ -105,6 +116,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView locationLabel;
     @BindView(R.id.artist_nationality_label)
     TextView artistNationalityLabel;
+    @BindView(R.id.artworks_by_artist_rv)
+    RecyclerView artworksByArtistRv;
 
     private String artistBiography;
     private ArtistsDetailViewModel artistViewModel;
@@ -130,8 +143,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTIST_EXTRA_KEY)) {
                 Artist artistFromIntent = getIntent().getParcelableExtra(ARTIST_EXTRA_KEY);
-                Log.d(TAG, "Received artist extra from the intent: " + artistFromIntent.getName());
                 setupUi(artistFromIntent);
+            }
+
+            if (getIntent().hasExtra(ARTIST_PARCEL_KEY)) {
+                Artist artist = getIntent().getParcelableExtra(ARTIST_PARCEL_KEY);
+                setupUi(artist);
             }
 
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {
@@ -175,6 +192,24 @@ public class ArtistDetailActivity extends AppCompatActivity {
         }
         ArtistInfoUtils.displayArtistImage(currentArtist, artistImage);
         ImageUtils.setupZoomyImage(this, artistImage);
+
+        ImageLinks imageLinks = currentArtist.getLinks();
+        ArtworksLink artworksLink = imageLinks.getArtworksLink();
+        String href = artworksLink.getHref();
+        Log.d(TAG, "temp, href of artworks: " + href);
+        initArtworksByArtistsViewModel(href);
+    }
+
+    private void initArtworksByArtistsViewModel(String artworksLink) {
+        artistViewModel.initArtworksByArtistData(artworksLink);
+        artistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
+    }
+
+    private void setupArtworksByArtist(List<Artwork> artworksList) {
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this, this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
+        artworksByArtistRv.setAdapter(artworksByArtist);
     }
 
     // Scrape the Artsy website for additional information
@@ -189,5 +224,20 @@ public class ArtistDetailActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    @Override
+    public void onRefreshConnection() {
+        // TODO: implement how to behave on refresh
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
+
+        Intent intent = new Intent(this, ArtworkDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

@@ -51,9 +51,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_artist"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:collapsedTitleGravity="start"
+            app:contentScrim="?colorOnSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
@@ -97,11 +98,17 @@
         app:behavior_overlapTop="@dimen/overlap_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include
-            android:id="@+id/artist_cardview"
-            layout="@layout/artist_detail_cardview"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/artist_cardview"
+                layout="@layout/artist_detail_cardview"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

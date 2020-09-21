@@ -72,6 +72,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
@@ -111,7 +112,7 @@ import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
 
-public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnArtistClickHandler {
+public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnArtistClickHandler, OnArtworkClickListener {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
@@ -538,7 +539,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, null);
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, null, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
@@ -631,5 +632,10 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         Intent intent = new Intent(this, ArtistDetailActivity.class);
         intent.putExtra(ARTIST_EXTRA_KEY, artist);
         startActivity(intent);
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork, int position) {
+
     }
 }

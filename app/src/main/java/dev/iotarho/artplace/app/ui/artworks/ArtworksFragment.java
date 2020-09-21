@@ -73,6 +73,7 @@ import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.SnackMessageListener;
 import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity;
 import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
 import dev.iotarho.artplace.app.ui.artworks.adapter.TrendyArtistsAdapter;
@@ -89,7 +90,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         SwipeRefreshLayout.OnRefreshListener, OnArtistClickHandler {
 
     private static final String TAG = ArtworksFragment.class.getSimpleName();
-    private static final String ARG_ARTWORKS_TITLE = "artworks_title";
+    private static final String ARTIST_PARCEL_KEY = "artist_key";
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.coordinator_layout)
@@ -344,7 +345,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                refreshArtworks();
+//                refreshArtworks();
+                refreshTrendyArtists();
                 return true;
 
             case R.id.action_dark_mode:
@@ -374,6 +376,11 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     @Override
     public void onArtistClick(Artist artist) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTIST_PARCEL_KEY, artist);
 
+        Intent intent = new Intent(getContext(), ArtistDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

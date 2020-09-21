@@ -76,6 +76,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.ResultFromDbCallback;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
@@ -110,10 +111,11 @@ import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 import static dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity.ARTIST_ARTWORK_URL_KEY;
 
-public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener, ResultFromDbCallback {
+public class ArtworkDetailActivity extends AppCompatActivity implements OnRefreshListener, ResultFromDbCallback, OnArtworkClickListener {
 
     private static final String TAG = ArtworkDetailActivity.class.getSimpleName();
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
+    private static final String ARTIST_PARCEL_KEY = "artist_key";
     private static final String ARTWORK_LARGER_IMAGE_KEY = "artwork_larger_link";
     private static final String IS_FAV_SAVED_STATE = "is_fav";
     private static final int FAV_TAG = 0;
@@ -157,8 +159,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     TextView artworkInfoLabel;
 
     // Views of the artist
-    @BindView(R.id.artist_label)
-    TextView artistLabel;
     @BindView(R.id.artist_cardview)
     MaterialCardView artistCard;
     @BindView(R.id.artist_name)
@@ -197,6 +197,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     FloatingActionButton favButton;
 
     private Artwork mArtworkObject;
+    private Artist artistObject;
     private String emptyField;
     private String artworkTitle;
     private String artworkId;
@@ -257,6 +258,11 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
+            artistObject = bundle.getParcelable(ARTIST_PARCEL_KEY);
+
+            if (artistObject != null) {
+                setupArtistUI(artistObject);
+            }
 
             if (mArtworkObject != null) {
                 artworkCardView.setVisibility(View.VISIBLE);
@@ -402,7 +408,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         artistViewModel.initArtistDataFromArtwork(artistLink);
         artistViewModel.getArtistDataFromArtwork().observe(this, artists -> {
             if (artists != null && artists.size() != 0) {
-                artistLabel.setVisibility(View.VISIBLE);
                 for (Artist currentArtist : artists) {
                     setupArtistUI(currentArtist);
                 }
@@ -452,7 +457,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
 
     private void setupSimilarArtworksUI(List<Artwork> artworkList) {
         similarArtworksCardView.setVisibility(View.VISIBLE);
-        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(artworkList);
+        SimilarArtworksAdapter similarArtworksAdapter = new SimilarArtworksAdapter(artworkList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         similarArtworksRv.setLayoutManager(layoutManager);
@@ -469,7 +474,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this);
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
@@ -588,6 +593,11 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
             Log.d(TAG, "Insert a new item into the db");
             favButton.setImageResource(R.drawable.ic_favorite_border_24dp);
         }
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork, int position) {
+
     }
 }
 
