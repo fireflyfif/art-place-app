@@ -219,10 +219,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     private FavArtworksViewModel favArtworksViewModel;
     private boolean isFavorite;
 
-    // Variables for Fresco Library
-    private Postprocessor mPostprocessor;
-    private ImageRequest mImageRequest;
-    private PipelineDraweeController mController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,9 +256,9 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
             mArtworkObject = bundle.getParcelable(ARTWORK_PARCEL_KEY);
             artistObject = bundle.getParcelable(ARTIST_PARCEL_KEY);
 
-            if (artistObject != null) {
+            /*if (artistObject != null) {
                 setupArtistUI(artistObject);
-            }
+            }*/
 
             if (mArtworkObject != null) {
                 artworkCardView.setVisibility(View.VISIBLE);
@@ -321,15 +317,15 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         }
 
         ImageLinks imageLinksObject = getImageLinks(currentArtwork);
-        if (imageLinksObject.getArtists() != null) {
-            ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
-            artistUrl = artistsLinkObject.getHref();
-            Log.d(TAG, "artistUrl = " + artistUrl);
-
-            // Initialize the artist ViewModel
-            initArtistViewModel(artistUrl);
-            String artworkId = currentArtwork.getId();
-        }
+//        if (imageLinksObject.getArtists() != null) {
+//            ArtistsLink artistsLinkObject = imageLinksObject.getArtists();
+//            artistUrl = artistsLinkObject.getHref();
+//            Log.d(TAG, "artistUrl = " + artistUrl);
+//
+//            // Initialize the artist ViewModel
+//            initArtistViewModel(artistUrl);
+//            String artworkId = currentArtwork.getId();
+//        }
 
         // Get the Permalink for sharing it outside the app
         Permalink permalinkForShare = imageLinksObject.getPermalink();
@@ -362,7 +358,10 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
                 .into(artworkImage);
 
         String squareImage = ImageUtils.getSquareImageUrl(currentArtwork, imageLinksObject);
-        makeImageBlurry(squareImage);
+
+        // Initialize Blur Post Processor
+        Postprocessor postProcessor = new BlurPostprocessor(this, 20);
+        ImageUtils.makeImageBlurry(postProcessor, blurryImage, squareImage);
         // Set a click listener on the image
         openArtworkFullScreen();
         return imageLinksObject;
@@ -377,28 +376,6 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
         });
     }
 
-    /**
-     * Make the image blurry with the help of SimpleDraweeView View
-     * Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
-     */
-    private void makeImageBlurry(String linkString) {
-        // Initialize Blur Post Processor
-        mPostprocessor = new BlurPostprocessor(this, 20);
-
-        // Instantiate Image Request using Post Processor as parameter
-        mImageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(linkString))
-                .setPostprocessor(mPostprocessor)
-                .build();
-
-        // Instantiate Controller
-        mController = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
-                .setImageRequest(mImageRequest)
-                .setOldController(blurryImage.getController())
-                .build();
-
-        // Load the blurred image
-        blurryImage.setController(mController);
-    }
     /**
      * Method for initializing the ViewModel of the Artist
      *
@@ -416,7 +393,7 @@ public class ArtworkDetailActivity extends AppCompatActivity implements OnRefres
     }
 
     private void setupArtistUI(Artist currentArtist) {
-        ArtistInfoUtils.setupArtistUi(currentArtist,artistCard, artistName, artistHomeTown,
+        ArtistInfoUtils.setupArtistUi(currentArtist, artistCard, artistName, artistHomeTown,
                 hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
                 artistNationalityLabel, artistBio, artistBioLabel);
 

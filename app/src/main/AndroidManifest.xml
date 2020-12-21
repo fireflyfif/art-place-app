@@ -35,17 +35,18 @@
         <activity
             android:name="dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity"
             android:launchMode="singleTop"
+            android:parentActivityName="dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity" />
+        </activity>
+        <activity
+            android:name="dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity"
+            android:launchMode="singleTop"
             android:parentActivityName="dev.iotarho.artplace.app.ui.mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dev.iotarho.artplace.app.ui.mainactivity.MainActivity" />
-        </activity>
-        <activity
-            android:name="dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity"
-            android:parentActivityName="dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity" />
         </activity>
         <activity
             android:name="dev.iotarho.artplace.app.ui.FavDetailActivity"

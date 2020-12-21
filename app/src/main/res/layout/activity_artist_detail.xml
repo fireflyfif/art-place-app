@@ -60,16 +60,29 @@
             <FrameLayout
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:fitsSystemWindows="true">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/blurry_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/pop_art_placeholder" />
 
                 <ImageView
                     android:id="@+id/artist_image"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/image_height"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/detail_image_artist_description"
                     android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitStart"
                     android:src="@color/color_on_primary" />
 
                 <View

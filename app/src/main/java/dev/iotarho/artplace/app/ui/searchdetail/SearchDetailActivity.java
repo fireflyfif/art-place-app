@@ -96,6 +96,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistForGenreListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
+import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchResultsLogic;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
 import dev.iotarho.artplace.app.utils.ImageUtils;
@@ -255,7 +256,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
         ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
         artistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
-        artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
+        ArtworksViewModelFactory artworksViewModelFactory = Injection.provideArtworksViewModelFactory();
+        artworksViewModel = new ViewModelProvider(getViewModelStore(), artworksViewModelFactory).get(ArtworksViewModel.class);
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {
@@ -277,7 +279,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         if (Utils.isNullOrEmpty(descriptionString)) {
             contentDescription.setVisibility(View.GONE);
         }
-        setCollapsingToolbar(titleString);
+        Utils.setCollapsingToolbar(titleString, appBarLayout, collapsingToolbarLayout, mGeneratedLightColor);
         contentTitle.setText(titleString);
         contentType.setText(getString(R.string.genre_name, typeString));
 
@@ -442,28 +444,6 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         }
     }
 
-    private void setCollapsingToolbar(String titleString) {
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(titleString);
-                    collapsingToolbarLayout.setCollapsedTitleTextColor(mGeneratedLightColor);
-                    isShow = true;
-                } else if (isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
-                    isShow = false;
-                }
-            }
-        });
-    }
-
     /**
      * Method for initialising the views from the show search View Model
      *
@@ -520,7 +500,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtistUi(Artist currentArtist) {
-        ArtistInfoUtils.setupArtistUi(currentArtist,artistCardView, artistName, artistHomeTown,
+        ArtistInfoUtils.setupArtistUi(currentArtist, artistCardView, artistName, artistHomeTown,
                 hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
                 artistNationalityLabel, artistBio, artistBioLabel);
         ArtistInfoUtils.displayArtistImage(currentArtist, secondImage);

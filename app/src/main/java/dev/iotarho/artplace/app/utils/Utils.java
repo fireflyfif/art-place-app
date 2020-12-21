@@ -40,6 +40,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
@@ -97,6 +100,29 @@ public class Utils {
         int min = 1;
         int max = 100;
         return rand.nextInt((max - min) + 1) + min;
+    }
+
+    public static void setCollapsingToolbar(String titleString, AppBarLayout appBarLayout, CollapsingToolbarLayout collapsingToolbarLayout, int titleColor) {
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShown = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(titleString);
+                    collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+                    isShown = true;
+                } else if (isShown) {
+                    collapsingToolbarLayout.setTitle(titleString);//careful there should a space between double quote otherwise it wont work
+                    collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+                    isShown = false;
+                }
+            }
+        });
     }
 
 }
