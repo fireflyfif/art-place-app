@@ -81,7 +81,7 @@ public class FavListRemoteViewsFactory implements RemoteViewsService.RemoteViews
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mFavList = FavArtRepository.getInstance(mApplication).getFavArtworksList();
+                mFavList = FavArtRepository.getInstance().getFavArtworksList();
 
                 Log.d(TAG, "Widget: Get the fav list: " + mFavList.size());
             }

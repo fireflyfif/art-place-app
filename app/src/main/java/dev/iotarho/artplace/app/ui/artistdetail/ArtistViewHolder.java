@@ -68,7 +68,6 @@ public class ArtistViewHolder extends RecyclerView.ViewHolder implements View.On
 
             similarTitle.setText(artist.getName());
             similarArtist.setText(artist.getHometown());
-
         }
     }
 

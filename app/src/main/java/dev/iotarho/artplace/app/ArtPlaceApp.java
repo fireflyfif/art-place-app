@@ -37,10 +37,12 @@ package dev.iotarho.artplace.app;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import dev.iotarho.artplace.app.repository.ArtsyRepository;
+import dev.iotarho.artplace.app.repository.FavArtRepository;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
 
 // Singleton class that extends the Application.
@@ -57,9 +59,12 @@ public class ArtPlaceApp extends Application {
         super.onCreate();
 
         sInstance = this;
+        // Initialize Fresco
+        Fresco.initialize(this);
         FirebaseAnalytics.getInstance(getApplicationContext());
         PreferenceUtils.createInstance(getApplicationContext());
         ArtsyRepository.createInstance();
+        FavArtRepository.createInstance(this);
 
         AndroidThreeTen.init(this);
     }

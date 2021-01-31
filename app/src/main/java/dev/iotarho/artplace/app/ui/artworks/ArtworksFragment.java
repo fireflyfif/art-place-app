@@ -67,12 +67,17 @@ import com.google.android.material.snackbar.Snackbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
 import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
 import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
 import dev.iotarho.artplace.app.callbacks.SnackMessageListener;
+import dev.iotarho.artplace.app.model.artists.Artist;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
+import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity;
 import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity;
 import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter;
+import dev.iotarho.artplace.app.ui.artworks.adapter.TrendyArtistsAdapter;
+import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.NetworkState;
 import dev.iotarho.artplace.app.utils.PreferenceUtils;
 import dev.iotarho.artplace.app.utils.RetrieveNetworkConnectivity;
@@ -82,10 +87,10 @@ import dev.iotarho.artplace.app.utils.ThemeUtils;
 public class ArtworksFragment extends Fragment implements OnArtworkClickListener,
         OnRefreshListener,
         SnackMessageListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, OnArtistClickHandler {
 
     private static final String TAG = ArtworksFragment.class.getSimpleName();
-    private static final String ARG_ARTWORKS_TITLE = "artworks_title";
+    private static final String ARTIST_PARCEL_KEY = "artist_key";
     private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.coordinator_layout)
@@ -97,13 +102,15 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private ArtworkListAdapter mPagedListAdapter;
-    private ArtworksViewModel mViewModel;
-    private PreferenceUtils mPreferenceUtils;
+    private ArtworkListAdapter pagedListAdapter;
+    private TrendyArtistsAdapter trendyArtistsAdapter;
+    private ArtworksViewModel artworksViewModel;
+    private TrendyArtistsViewModel trendyArtistsViewModel;
+    private PreferenceUtils preferenceUtils;
 
-    private PagedList<Artwork> mArtworksList;
+    private PagedList<Artwork> artworksList;
 
-    private SearchView mSearchView;
+    private SearchView searchView;
 
     public static ArtworksFragment newInstance() {
         return new ArtworksFragment();
@@ -117,7 +124,7 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPreferenceUtils = PreferenceUtils.getInstance();
+        preferenceUtils = PreferenceUtils.getInstance();
 
         // Add a menu to the current Fragment
         setHasOptionsMenu(true);
@@ -133,7 +140,8 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         ButterKnife.bind(this, rootView);
 
         // Set up the UI
-        setupUi();
+//        setupUi();
+        setupUi(true);
 
         return rootView;
     }
@@ -155,31 +163,24 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         artworksRv.setLayoutManager(staggeredGridLayoutManager);
 
         // Set the PagedListAdapter
-        mPagedListAdapter = new ArtworkListAdapter(this, this);
+//        pagedListAdapter = new ArtworkListAdapter(this, this);
+        trendyArtistsAdapter = new TrendyArtistsAdapter(this, this);
     }
 
-    private void setupUi() {
-        // Setup the RecyclerView
+    private void setupUi(boolean isArtist) {
         setRecyclerView();
 
-        // Initialize the ViewModel
-        mViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
+        TrendyArtistViewModelFactory trendyArtistViewModelFactory = Injection.provideTrendyViewModelFactory();
+        trendyArtistsViewModel = new ViewModelProvider(getViewModelStore(), trendyArtistViewModelFactory).get(TrendyArtistsViewModel.class);
 
-        // Call submitList() method of the PagedListAdapter when a new page is available
-        mViewModel.getArtworkLiveData().observe(requireActivity(), artworks -> {
-            if (artworks != null) {
-                // When a new page is available, call submitList() method of the PagedListAdapter
-                mPagedListAdapter.submitList(artworks);
-                mPagedListAdapter.swapCatalogue(artworks);
-
-                mArtworksList = artworks;
-            }
+        trendyArtistsViewModel.getTrendyArtistLiveData().observe(getViewLifecycleOwner(), artist -> {
+            trendyArtistsAdapter.submitList(artist);
+            trendyArtistsAdapter.swapCatalogue(artist);
         });
 
-        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
-        mViewModel.getNetworkState().observe(requireActivity(), networkState -> mPagedListAdapter.setNetworkState(networkState));
+        trendyArtistsViewModel.getNetworkState().observe(getViewLifecycleOwner(), networkState -> trendyArtistsAdapter.setNetworkState(networkState));
 
-        mViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
+        trendyArtistsViewModel.getInitialLoading().observe(getViewLifecycleOwner(), networkState -> {
             if (networkState != null) {
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -198,26 +199,78 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
             }
         });
 
-        artworksRv.setAdapter(mPagedListAdapter);
+        artworksRv.setAdapter(trendyArtistsAdapter);
     }
 
+    private void setupUi() {
+        // Setup the RecyclerView
+        setRecyclerView();
+
+        // Initialize the ViewModel
+        ArtworksViewModelFactory artworksViewModelFactory = Injection.provideArtworksViewModelFactory();
+        artworksViewModel = new ViewModelProvider(getViewModelStore(), artworksViewModelFactory).get(ArtworksViewModel.class);
+
+        // Call submitList() method of the PagedListAdapter when a new page is available
+        artworksViewModel.getArtworkLiveData().observe(getViewLifecycleOwner(), artworks -> {
+            if (artworks != null) {
+                // When a new page is available, call submitList() method of the PagedListAdapter
+                pagedListAdapter.submitList(artworks);
+                pagedListAdapter.swapCatalogue(artworks);
+
+                artworksList = artworks;
+            }
+        });
+
+        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
+        artworksViewModel.getNetworkState().observe(requireActivity(), networkState -> pagedListAdapter.setNetworkState(networkState));
+
+        artworksViewModel.getInitialLoading().observe(requireActivity(), networkState -> {
+            if (networkState != null) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                // When the NetworkStatus is Successful
+                // hide both the Progress Bar and the error message
+                if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                // When the NetworkStatus is Failed
+                // show the error message and hide the Progress Bar
+                if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Snackbar.make(coordinatorLayout, R.string.snackbar_no_network_connection,
+                            Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        artworksRv.setAdapter(pagedListAdapter);
+    }
+
+    public synchronized void refreshTrendyArtists() {
+        setRecyclerView();
+        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(getViewLifecycleOwner(), artists -> {
+            trendyArtistsAdapter.submitList(artists);
+            trendyArtistsAdapter.swapCatalogue(artists);
+        });
+        artworksRv.setAdapter(trendyArtistsAdapter);
+    }
 
     public synchronized void refreshArtworks() {
 
         // Setup the RecyclerView
         setRecyclerView();
 
-        mViewModel.refreshArtworkLiveData().observe(requireActivity(), artworks -> {
+        artworksViewModel.refreshArtworkLiveData().observe(getViewLifecycleOwner(), artworks -> {
             if (artworks != null) {
-                mPagedListAdapter.submitList(null);
+                pagedListAdapter.submitList(null);
                 // When a new page is available, call submitList() method of the PagedListAdapter
-                mPagedListAdapter.submitList(artworks);
-                mArtworksList = artworks;
+                pagedListAdapter.submitList(artworks);
+                artworksList = artworks;
             }
         });
 
         // Setup the Adapter on the RecyclerView
-        artworksRv.setAdapter(mPagedListAdapter);
+        artworksRv.setAdapter(pagedListAdapter);
     }
 
     @Override
@@ -240,20 +293,19 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     @Override
     public void showSnackMessage(String resultMessage) {
-
         // TODO: Show the AppBar so that the Refresh icon be visible!!
         Snackbar.make(coordinatorLayout, resultMessage, Snackbar.LENGTH_LONG).show();
-        refreshArtworks();
+//        refreshArtworks();
+        refreshTrendyArtists();
     }
 
     private ArtworkListAdapter getAdapter() {
-        return mPagedListAdapter;
+        return pagedListAdapter;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
         inflater.inflate(R.menu.artworks_menu, menu);
         // Make the icon with a dynamic tint
         // source: https://stackoverflow.com/a/29916353/8132331
@@ -265,23 +317,23 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
         // Set the Search View
         SearchManager searchManager =
                 (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         if (searchManager != null) {
-            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
         }
-        mSearchView.setSubmitButtonEnabled(false);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mPagedListAdapter.getFilter().filter(query);
-                mPagedListAdapter.swapCatalogue(mArtworksList);
+                pagedListAdapter.getFilter().filter(query);
+                pagedListAdapter.swapCatalogue(artworksList);
                 Log.d(TAG, "Current query: " + query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mPagedListAdapter.getFilter().filter(newText);
+                pagedListAdapter.getFilter().filter(newText);
                 Log.d(TAG, "Current query: " + newText);
                 return false;
             }
@@ -293,17 +345,18 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                refreshArtworks();
+//                refreshArtworks();
+                refreshTrendyArtists();
                 return true;
 
             case R.id.action_dark_mode:
-                mPreferenceUtils.saveThemePrefs(1);
-                ThemeUtils.applyTheme(mPreferenceUtils.getThemeFromPrefs());
+                preferenceUtils.saveThemePrefs(1);
+                ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
                 return true;
 
             case R.id.action_light_mode:
-                mPreferenceUtils.saveThemePrefs(0);
-                ThemeUtils.applyTheme(mPreferenceUtils.getThemeFromPrefs());
+                preferenceUtils.saveThemePrefs(0);
+                ThemeUtils.applyTheme(preferenceUtils.getThemeFromPrefs());
                 return true;
             default:
                 break;
@@ -314,9 +367,20 @@ public class ArtworksFragment extends Fragment implements OnArtworkClickListener
 
     @Override
     public void onRefresh() {
-        refreshArtworks();
+//        refreshArtworks();
+        refreshTrendyArtists();
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void onArtistClick(Artist artist) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTIST_PARCEL_KEY, artist);
+
+        Intent intent = new Intent(getContext(), ArtistDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
