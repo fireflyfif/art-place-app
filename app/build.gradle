@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '29.0.1'
 
     defaultConfig {
         applicationId "dev.iotarho.artplace.app"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -92,9 +92,18 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
 
     // Firebase Analytics Dependency
-    implementation 'com.google.firebase:firebase-analytics:17.4.4'
-    // Firebase Crashlytics dependency.
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+//    implementation 'com.google.firebase:firebase-analytics:17.4.4'
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+//    api 'com.google.firebase:firebase-perf'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation "com.google.firebase:firebase-core"
+    implementation "com.google.firebase:firebase-config"
+//    api "com.google.firebase:firebase-messaging"
+//    api 'com.google.firebase:firebase-inappmessaging-display'
+//    api 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-crashlytics'
+
 
     // Palette Library dependency
     implementation 'androidx.palette:palette:1.0.0'
