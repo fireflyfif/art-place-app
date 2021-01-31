@@ -38,14 +38,39 @@ package dev.iotarho.artplace.app.model.artists;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.recyclerview.widget.DiffUtil;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 import dev.iotarho.artplace.app.model.ImageLinks;
+import dev.iotarho.artplace.app.model.artworks.Artwork;
 
 public class Artist implements Parcelable {
+
+    public static DiffUtil.ItemCallback<Artist> DIFF_CALLBACK = new DiffUtil.ItemCallback<Artist>() {
+        @Override
+        public boolean areItemsTheSame(Artist oldItem, Artist newItem) {
+            return oldItem.id.equals(newItem.id);
+        }
+
+        @Override
+        public boolean areContentsTheSame(Artist oldItem, Artist newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == getClass()) {
+            return true;
+        }
+
+        Artist artist = (Artist) obj;
+        return artist.id.equals(this.id);
+    }
 
     @SerializedName("id")
     @Expose

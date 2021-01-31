@@ -71,6 +71,7 @@ import dev.iotarho.artplace.app.callbacks.OnFavItemClickListener;
 import dev.iotarho.artplace.app.database.entity.FavoriteArtworks;
 import dev.iotarho.artplace.app.ui.FavDetailActivity;
 import dev.iotarho.artplace.app.ui.favorites.adapter.FavArtworkListAdapter;
+import dev.iotarho.artplace.app.utils.Injection;
 
 public class FavoritesFragment extends Fragment implements OnFavItemClickListener {
 
@@ -134,7 +135,8 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, rootView);
 
-        mFavArtworksViewModel = new ViewModelProvider(this).get(FavArtworksViewModel.class);
+        FavArtworksViewModelFactory favArtworksViewModelFactory = Injection.provideFavViewModelFactory();
+        mFavArtworksViewModel = new ViewModelProvider(this, favArtworksViewModelFactory).get(FavArtworksViewModel.class);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         favArtworksRv.setLayoutManager(linearLayoutManager);
@@ -160,30 +162,26 @@ public class FavoritesFragment extends Fragment implements OnFavItemClickListene
     }
 
     private void getFavArtworks() {
-        mFavArtworksViewModel.getFavArtworkList().observe(this, new Observer<PagedList<FavoriteArtworks>>() {
+        mFavArtworksViewModel.getFavArtworkList().observe(getViewLifecycleOwner(), favoriteArtworks -> {
 
-            @Override
-            public void onChanged(@Nullable PagedList<FavoriteArtworks> favoriteArtworks) {
+            if (favoriteArtworks != null && favoriteArtworks.size() > 0) {
+                // Hide the Progress Bar and the Empty Text View
+                favProgressBar.setVisibility(View.INVISIBLE);
+                emptyScreen.setVisibility(View.GONE);
 
-                if (favoriteArtworks != null && favoriteArtworks.size() > 0) {
-                    // Hide the Progress Bar and the Empty Text View
-                    favProgressBar.setVisibility(View.INVISIBLE);
-                    emptyScreen.setVisibility(View.GONE);
+                Log.d(TAG, "Submit artworks to the db " + favoriteArtworks.size());
+                mAdapter.submitList(favoriteArtworks);
+            } else {
+                // Show the empty message when there is no items added to favorites
+                emptyScreen.setVisibility(View.VISIBLE);
 
-                    Log.d(TAG, "Submit artworks to the db " + favoriteArtworks.size());
-                    mAdapter.submitList(favoriteArtworks);
-                } else {
-                    // Show the empty message when there is no items added to favorites
-                    emptyScreen.setVisibility(View.VISIBLE);
-
-                    // Hide the Progress Bar
-                    favProgressBar.setVisibility(View.INVISIBLE);
-                    Log.e(TAG, "No artworks added to the database");
-                }
-
-                mFavoriteArtworksList = favoriteArtworks;
-                Log.d(TAG, "Number of fav artworks: " + favoriteArtworks);
+                // Hide the Progress Bar
+                favProgressBar.setVisibility(View.INVISIBLE);
+                Log.e(TAG, "No artworks added to the database");
             }
+
+            mFavoriteArtworksList = favoriteArtworks;
+            Log.d(TAG, "Number of fav artworks: " + favoriteArtworks);
         });
     }
 

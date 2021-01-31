@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 
 public class SimilarArtworksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -18,9 +19,11 @@ public class SimilarArtworksAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private static final String TAG = SimilarArtworksAdapter.class.getSimpleName();
 
     private List<Artwork> mArtworkList;
+    private OnArtworkClickListener onArtworkClickListener;
 
-    public SimilarArtworksAdapter(List<Artwork> artworkList) {
+    public SimilarArtworksAdapter(List<Artwork> artworkList, OnArtworkClickListener onArtworkClickListener) {
         mArtworkList = artworkList;
+        this.onArtworkClickListener = onArtworkClickListener;
     }
 
     @NonNull
@@ -28,7 +31,7 @@ public class SimilarArtworksAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.similar_artwork_item, parent, false);
-        return new ArtworksViewHolder(view);
+        return new ArtworksViewHolder(view, onArtworkClickListener);
     }
 
     @Override

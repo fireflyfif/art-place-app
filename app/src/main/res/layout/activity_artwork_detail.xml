@@ -118,37 +118,9 @@
 
             <include layout="@layout/artwork_detail_cardview" />
 
-            <TextView
-                android:id="@+id/artist_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_16dp"
-                android:layout_marginTop="@dimen/margin_24dp"
-                android:layout_marginEnd="@dimen/margin_16dp"
-                android:layout_marginBottom="@dimen/margin_8dp"
-                android:fontFamily="@font/work_sans_light"
-                android:text="@string/artist_label"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:textColor="?colorControlNormal"
-                android:textSize="14sp" />
-
             <include
                 android:id="@+id/artist_cardview"
                 layout="@layout/artist_detail_cardview" />
-
-            <TextView
-                android:id="@+id/similar_artworks_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_16dp"
-                android:layout_marginTop="@dimen/margin_24dp"
-                android:layout_marginEnd="@dimen/margin_16dp"
-                android:layout_marginBottom="@dimen/margin_8dp"
-                android:fontFamily="@font/work_sans_light"
-                android:text="@string/similar_artworks_label"
-                android:textColor="?colorControlNormal"
-                android:textSize="14sp" />
 
             <include layout="@layout/similar_artworks_cardview" />
 

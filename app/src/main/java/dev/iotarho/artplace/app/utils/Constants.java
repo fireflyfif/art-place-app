@@ -22,8 +22,8 @@ public class Constants {
     }
 
     public static class ArtworksFragment {
-        public static final int PAGE_SIZE = 80;
-        public static final int INITIAL_SIZE_HINT = 50;
-        public static final int PREFETCH_DISTANCE_HINT = 20;
+        public static final int PAGE_SIZE = 10;
+        public static final int INITIAL_SIZE_HINT = 20;
+        public static final int PREFETCH_DISTANCE_HINT = 15;
     }
 }

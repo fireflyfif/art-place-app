@@ -98,9 +98,11 @@ public class ShowsDetailViewModel extends ViewModel {
                 Document doc = Jsoup.connect(webLink).get();
                 Elements bioText = doc.select(ARTIST_BIO_CSS_QUERY);
                 List<String> bioStrings = bioText.eachText();
-                Log.d("ShowsDetailViewModel", "temp, bioText= " + bioStrings.get(0));
-                // use postValue() instead of the setValue() for posting on a background thread
-                artistBiographyData.postValue(bioStrings.get(0));
+                if (bioStrings != null && bioStrings.size() != 0) {
+                    Log.d("ShowsDetailViewModel", "temp, bioText= " + bioStrings.get(0));
+                    // use postValue() instead of the setValue() for posting on a background thread
+                    artistBiographyData.postValue(bioStrings.get(0));
+                }
             } catch (IOException e) {
                 Log.e("ShowsDetailViewModel", "error when connecting to web link");
             }
