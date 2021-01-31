@@ -1,7 +1,7 @@
 # Art Place App
 ## Capstone project, Part of the Android Developer Nanodegree Program by Udacity
 
-![text](https://github.com/fireflyfif/art-place-app/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
+![text](https://github.com/fireflyfif/art-place-app/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png)
 
 ## App Description
 Art Place is an app for art lovers, artists or people who just enjoy seeing a piece of artwork. Browse through famous artworks and see their location and other details. Find out who are their artists and see more details about them too.
