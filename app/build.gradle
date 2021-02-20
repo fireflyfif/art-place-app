@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -50,17 +51,24 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "androidx.appcompat:appcompat:$rootProject.androidXAppCompatVersion"
-    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
-    implementation "com.google.android.material:material:$rootProject.materialVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
+    implementation "androidx.appcompat:appcompat:$androidXAppCompatVersion"
+    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintVersion"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
     //temp fix for crashlytics error, ref: https://github.com/firebase/firebase-android-sdk/issues/1662
     implementation 'com.google.android.gms:play-services-basement:17.6.0'
@@ -78,37 +86,37 @@ dependencies {
     testImplementation 'org.threeten:threetenbp:1.4.4'
 
     // Retrofit library dependencies
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
-    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Logging for Retrofit
-    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpInterseptorVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpInterseptorVersion"
 
     // Picasso Library dependency
-    implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
 
     // Lifecycle AAC dependencies
-    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidLifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$rootProject.androidLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$androidLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidLifecycleVersion"
 
     // Paging library dependency
-    implementation "androidx.paging:paging-runtime:$rootProject.androidPagingVersion"
+    implementation "androidx.paging:paging-runtime-ktx:$androidPagingVersion"
 
     // ButterKnife Dependency
-    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // Room Library Dependencies
     implementation 'androidx.room:room-runtime:2.2.5'
-    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+    kapt 'androidx.room:room-compiler:2.2.5'
 
     // Palette Library dependency
-    implementation 'androidx.palette:palette:1.0.0'
+    implementation 'androidx.palette:palette-ktx:1.0.0'
 
     // Fresco Library for blurring images Dependencies
-    implementation "com.facebook.fresco:fresco:$rootProject.frescoVersion"
-    implementation "jp.wasabeef:fresco-processors:$rootProject.frescoProcessorsVersion"
+    implementation "com.facebook.fresco:fresco:$frescoVersion"
+    implementation "jp.wasabeef:fresco-processors:$frescoProcessorsVersion"
 
     // Bottom Navigation Library Dependency
     implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
