@@ -69,7 +69,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     private lateinit var trendyArtistsAdapter: TrendyArtistsAdapter
     private lateinit var artworksViewModel: ArtworksViewModel
     private lateinit var trendyArtistsViewModel: TrendyArtistsViewModel
-    private var preferenceUtils: PreferenceUtils? = null
+    private lateinit var preferenceUtils: PreferenceUtils
     private var artworksList: PagedList<Artwork>? = null
     private var searchView: SearchView? = null
 
@@ -146,14 +146,14 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         artworksViewModel = ViewModelProvider(viewModelStore, artworksViewModelFactory).get(ArtworksViewModel::class.java)
 
         // Call submitList() method of the PagedListAdapter when a new page is available
-        artworksViewModel.artworkLiveData.observe(viewLifecycleOwner, { artworks: PagedList<Artwork>? ->
+        artworksViewModel.artworkLiveData.observe(viewLifecycleOwner) { artworks: PagedList<Artwork>? ->
             if (artworks != null) {
                 // When a new page is available, call submitList() method of the PagedListAdapter
                 adapter.submitList(artworks)
                 adapter.swapCatalogue(artworks)
                 artworksList = artworks
             }
-        })
+        }
 
         // Call setNetworkState() method of the PagedListAdapter for setting the Network state
         artworksViewModel.networkState.observe(requireActivity(), { networkState: NetworkState? -> adapter.setNetworkState(networkState) })
@@ -192,7 +192,6 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
 
     @Synchronized
     fun refreshArtworks() {
-
         // Setup the RecyclerView
         setRecyclerView()
         artworksViewModel.refreshArtworkLiveData().observe(viewLifecycleOwner, { artworks: PagedList<Artwork>? ->
@@ -268,13 +267,13 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
                 return true
             }
             R.id.action_dark_mode -> {
-                preferenceUtils!!.saveThemePrefs(1)
-                ThemeUtils.applyTheme(preferenceUtils!!.themeFromPrefs)
+                preferenceUtils.saveThemePrefs(1)
+                ThemeUtils.applyTheme(preferenceUtils.themeFromPrefs)
                 return true
             }
             R.id.action_light_mode -> {
-                preferenceUtils!!.saveThemePrefs(0)
-                ThemeUtils.applyTheme(preferenceUtils!!.themeFromPrefs)
+                preferenceUtils.saveThemePrefs(0)
+                ThemeUtils.applyTheme(preferenceUtils.themeFromPrefs)
                 return true
             }
             else -> {
