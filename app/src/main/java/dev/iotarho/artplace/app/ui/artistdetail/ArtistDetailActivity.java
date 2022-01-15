@@ -35,6 +35,9 @@
 
 package dev.iotarho.artplace.app.ui.artistdetail;
 
+import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,38 +48,55 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.Postprocessor;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.List;
+import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
+import dev.iotarho.artplace.app.callbacks.OnRefreshListener;
+import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artists.Artist;
+import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity;
+import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowDetailViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchdetail.ShowsDetailViewModel;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
 import dev.iotarho.artplace.app.utils.ImageUtils;
 import dev.iotarho.artplace.app.utils.Injection;
 import dev.iotarho.artplace.app.utils.Utils;
+import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
-public class ArtistDetailActivity extends AppCompatActivity {
+public class ArtistDetailActivity extends AppCompatActivity implements OnRefreshListener, OnArtworkClickListener {
 
     private static final String TAG = ArtistDetailActivity.class.getSimpleName();
 
     public static final String ARTIST_URL_KEY = "artist_url";
+    private static final String ARTIST_PARCEL_KEY = "artist_key";
     public static final String ARTIST_ARTWORK_URL_KEY = "artist_and_artwork_url";
     public static final String ARTIST_EXTRA_KEY = "artist_extra";
+    private static final String ARTWORK_PARCEL_KEY = "artwork_key";
 
     @BindView(R.id.coordinator_artist)
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.toolbar_artist)
     Toolbar toolbar;
+    @BindView(R.id.appbar_artist)
+    AppBarLayout appBarLayout;
     @BindView(R.id.collapsing_toolbar_artist)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.artist_cardview)
@@ -87,6 +107,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView artistHomeTown;
     @BindView(R.id.artist_image)
     ImageView artistImage;
+    @BindView(R.id.blurry_image)
+    SimpleDraweeView blurryImage;
     @BindView(R.id.artist_lifespan)
     TextView artistLifespan;
     @BindView(R.id.artist_location)
@@ -105,6 +127,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
     TextView locationLabel;
     @BindView(R.id.artist_nationality_label)
     TextView artistNationalityLabel;
+    @BindView(R.id.artworks_by_artist_rv)
+    RecyclerView artworksByArtistRv;
 
     private String artistBiography;
     private ArtistsDetailViewModel artistViewModel;
@@ -116,9 +140,17 @@ public class ArtistDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artist_detail);
         ButterKnife.bind(this);
 
+        // Set the Up Button Navigation to another color
+        // source: https://stackoverflow.com/a/26837072/8132331
+        PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(getResources().getColor(R.color.color_primary),
+                PorterDuff.Mode.SRC_ATOP);
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if ((toolbar.getNavigationIcon()) != null) {
+            toolbar.getNavigationIcon().setColorFilter(colorFilter);
         }
 
         ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
@@ -130,8 +162,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(ARTIST_EXTRA_KEY)) {
                 Artist artistFromIntent = getIntent().getParcelableExtra(ARTIST_EXTRA_KEY);
-                Log.d(TAG, "Received artist extra from the intent: " + artistFromIntent.getName());
                 setupUi(artistFromIntent);
+            }
+
+            if (getIntent().hasExtra(ARTIST_PARCEL_KEY)) {
+                Artist artist = getIntent().getParcelableExtra(ARTIST_PARCEL_KEY);
+                setupUi(artist);
             }
 
             if (getIntent().hasExtra(ARTIST_URL_KEY)) {
@@ -165,16 +201,44 @@ public class ArtistDetailActivity extends AppCompatActivity {
     }
 
     private void setupUi(Artist currentArtist) {
+
         ArtistInfoUtils.setupArtistUi(currentArtist, artistCard, artistName, artistHomeTown,
                 hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
                 artistNationalityLabel, artistBio, artistBioLabel);
         // Get the name of the artist
         String artistNameString = currentArtist.getName();
+
         if (!Utils.isNullOrEmpty(artistNameString)) {
-            collapsingToolbarLayout.setTitle(artistNameString);
+            Utils.setCollapsingToolbar(artistNameString, appBarLayout, collapsingToolbarLayout, getResources().getColor(R.color.color_primary));
         }
         ArtistInfoUtils.displayArtistImage(currentArtist, artistImage);
         ImageUtils.setupZoomyImage(this, artistImage);
+
+        ImageLinks imageLinks = currentArtist.getLinks();
+        MainImage mainImage = imageLinks.getImage();
+        List<String> imageVersionList = currentArtist.getImageVersions();
+        String largeArtworkLink = ImageUtils.getLargeImageUrl(imageVersionList, mainImage);
+
+        // Initialize Blur Post Processor
+        Postprocessor postProcessor = new BlurPostprocessor(this, 20);
+        ImageUtils.makeImageBlurry(postProcessor, blurryImage, largeArtworkLink);
+
+        ArtworksLink artworksLink = imageLinks.getArtworksLink();
+        String href = artworksLink.getHref();
+        Log.d(TAG, "temp, href of artworks: " + href);
+        initArtworksByArtistsViewModel(href);
+    }
+
+    private void initArtworksByArtistsViewModel(String artworksLink) {
+        artistViewModel.initArtworksByArtistData(artworksLink);
+        artistViewModel.getArtworksByArtistsData().observe(this, this::setupArtworksByArtist);
+    }
+
+    private void setupArtworksByArtist(List<Artwork> artworksList) {
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, this, this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        artworksByArtistRv.setLayoutManager(gridLayoutManager);
+        artworksByArtistRv.setAdapter(artworksByArtist);
     }
 
     // Scrape the Artsy website for additional information
@@ -189,5 +253,34 @@ public class ArtistDetailActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    /*private void setUIColorsFromImage() {
+        // Get the image as a bitmap
+        Bitmap bitmap = ((BitmapDrawable) artistImage.getDrawable()).getBitmap();
+        // Get a color from the bitmap by using the Palette library
+        Palette palette = Palette.from(bitmap).generate();
+        mGeneratedLightColor = palette.getLightVibrantColor(mLightMutedColor);
+//        cardView.setCardBackgroundColor(mGeneratedLightColor);
+        // set the color of the back button
+        colorFilter = new PorterDuffColorFilter(mGeneratedLightColor, PorterDuff.Mode.SRC_ATOP);
+        if ((toolbar.getNavigationIcon()) != null) {
+            toolbar.getNavigationIcon().setColorFilter(colorFilter);
+        }
+    }*/
+
+    @Override
+    public void onRefreshConnection() {
+        // TODO: implement how to behave on refresh
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork);
+
+        Intent intent = new Intent(this, ArtworkDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

@@ -38,6 +38,7 @@ package dev.iotarho.artplace.app.ui.artworks.datasource;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
@@ -59,36 +60,36 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
     private static final String TAG = ArtworkDataSource.class.getSimpleName();
 
-    private ArtsyRepository mRepository;
+    private ArtsyRepository repository;
 
-    private final MutableLiveData<NetworkState> mNetworkState;
-    private final MutableLiveData<NetworkState> mInitialLoading;
+    private final MutableLiveData<NetworkState> networkState;
+    private final MutableLiveData<NetworkState> initialLoading;
 
     private String mNextUrl;
 
 
     public ArtworkDataSource(ArtsyRepository repository) {
-        mRepository = repository;
+        this.repository = repository;
 
-        mNetworkState = new MutableLiveData<>();
-        mInitialLoading = new MutableLiveData<>();
+        networkState = new MutableLiveData<>();
+        initialLoading = new MutableLiveData<>();
     }
 
-    public MutableLiveData getNetworkState() {
-        return mNetworkState;
+    public LiveData<NetworkState> getNetworkState() {
+        return networkState;
     }
 
-    public MutableLiveData getInitialLoading() {
-        return mInitialLoading;
+    public LiveData<NetworkState> getInitialLoading() {
+        return initialLoading;
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Artwork> callback) {
         // Update NetworkState
-        mInitialLoading.postValue(NetworkState.LOADING);
-        mNetworkState.postValue(NetworkState.LOADING);
+        initialLoading.postValue(NetworkState.LOADING);
+        networkState.postValue(NetworkState.LOADING);
 
-        mRepository.getArtsyApi().getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+        repository.getArtsyApi().getArtworksData(params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
                 if (response.isSuccessful()) {
@@ -101,8 +102,8 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                         callback.onResult(artworkList, null, 2L);
                         Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
 
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
+                        networkState.postValue(NetworkState.LOADED);
+                        initialLoading.postValue(NetworkState.LOADED);
                     }
 
                     Log.d(TAG, "Response code from initial load, onSuccess: " + response.code());
@@ -110,19 +111,19 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
                     Log.d(TAG, "Error from the server message " + response.message());
 
                 } else if (response.code() == 504) { // todo: handle the timeout properly
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                     Log.d(TAG, "Response code from initial load: " + response.code());
                 } else {
-                    mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
-                    mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED));
+                    networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                     Log.d(TAG, "Response code from initial load: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });
@@ -150,9 +151,9 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
         Log.i(TAG, "Loading: " + params.key + " Count: " + params.requestedLoadSize);
 
         // Set Network State to Loading
-        mNetworkState.postValue(NetworkState.LOADING);
+        networkState.postValue(NetworkState.LOADING);
 
-        mRepository.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
+        repository.getArtsyApi().getNextLink(mNextUrl, params.requestedLoadSize).enqueue(new Callback<ArtworkWrapperResponse>() {
             @Override
             public void onResponse(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Response<ArtworkWrapperResponse> response) {
                 if (response.isSuccessful()) {
@@ -183,15 +184,15 @@ public class ArtworkDataSource extends PageKeyedDataSource<Long, Artwork> {
 
                         Log.d(TAG, "List of Artworks loadInitial : " + artworkList.size());
 
-                        mNetworkState.postValue(NetworkState.LOADED);
-                        mInitialLoading.postValue(NetworkState.LOADED);
+                        networkState.postValue(NetworkState.LOADED);
+                        initialLoading.postValue(NetworkState.LOADED);
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ArtworkWrapperResponse> call, @NonNull Throwable t) {
-                mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED));
+                networkState.postValue(new NetworkState(NetworkState.Status.FAILED));
                 Log.d(TAG, "Response code from initial load, onFailure: " + t.getMessage());
             }
         });

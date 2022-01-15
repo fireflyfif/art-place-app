@@ -113,15 +113,9 @@ public class FavDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Fresco
-        Fresco.initialize(this);
         setContentView(R.layout.activity_fav_detail);
-
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -132,7 +126,6 @@ public class FavDetailActivity extends AppCompatActivity {
         }
 
         if (getIntent().getExtras() != null) {
-
             String favIdString = getIntent().getStringExtra(ARTWORK_ID_KEY);
             String favTitleString = getIntent().getStringExtra(ARTWORK_TITLE_KEY);
             String favArtistString = getIntent().getStringExtra(ARTWORK_ARTIST_KEY);

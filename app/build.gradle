@@ -5,7 +5,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '29.0.1'
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "dev.iotarho.artplace.app"
@@ -55,12 +55,27 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$rootProject.androidXAppCompatVersion"
-    implementation "androidx.recyclerview:recyclerview:$rootProject.androidXAppCompatVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintVersion"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
+
+    //temp fix for crashlytics error, ref: https://github.com/firebase/firebase-android-sdk/issues/1662
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    implementation 'com.google.firebase:firebase-perf'
+    implementation "com.google.firebase:firebase-core"
+    implementation "com.google.firebase:firebase-config"
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+
+    // Firebase Analytics Dependency
+    // todo: add it to all Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
     testImplementation 'org.threeten:threetenbp:1.4.4'
@@ -90,20 +105,6 @@ dependencies {
     // Room Library Dependencies
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
-
-    // Firebase Analytics Dependency
-//    implementation 'com.google.firebase:firebase-analytics:17.4.4'
-    // Firebase
-    implementation platform('com.google.firebase:firebase-bom:26.1.0')
-//    api 'com.google.firebase:firebase-perf'
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation "com.google.firebase:firebase-core"
-    implementation "com.google.firebase:firebase-config"
-//    api "com.google.firebase:firebase-messaging"
-//    api 'com.google.firebase:firebase-inappmessaging-display'
-//    api 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-crashlytics'
-
 
     // Palette Library dependency
     implementation 'androidx.palette:palette:1.0.0'

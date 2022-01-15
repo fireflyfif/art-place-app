@@ -1,11 +1,19 @@
 package dev.iotarho.artplace.app.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.Uri;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
 import com.ablanco.zoomy.Zoomy;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.imagepipeline.request.Postprocessor;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -14,6 +22,7 @@ import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.model.ImageLinks;
 import dev.iotarho.artplace.app.model.artworks.Artwork;
 import dev.iotarho.artplace.app.model.artworks.MainImage;
+import jp.wasabeef.fresco.processors.BlurPostprocessor;
 
 public class ImageUtils {
 
@@ -71,5 +80,27 @@ public class ImageUtils {
                 .enableImmersiveMode(false)
                 .animateZooming(false);
         builder.register();
+    }
+
+    /**
+     * Make the image blurry with the help of SimpleDraweeView View
+     * Tutorial:https://android.jlelse.eu/android-image-blur-using-fresco-vs-picasso-ea095264abbf
+     */
+    public static void makeImageBlurry(Postprocessor postProcessor,
+                                       SimpleDraweeView blurryImage,
+                                       String linkString) {
+        // Instantiate Image Request using Post Processor as parameter
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(linkString))
+                .setPostprocessor(postProcessor)
+                .build();
+
+        // Instantiate Controller
+        PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setOldController(blurryImage.getController())
+                .build();
+
+        // Load the blurred image
+        blurryImage.setController(controller);
     }
 }

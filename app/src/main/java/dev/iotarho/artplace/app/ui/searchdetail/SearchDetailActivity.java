@@ -72,6 +72,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.iotarho.artplace.app.R;
 import dev.iotarho.artplace.app.callbacks.OnArtistClickHandler;
+import dev.iotarho.artplace.app.callbacks.OnArtworkClickListener;
 import dev.iotarho.artplace.app.callbacks.OnResultClickListener;
 import dev.iotarho.artplace.app.model.ArtworksLink;
 import dev.iotarho.artplace.app.model.ImageLinks;
@@ -95,6 +96,7 @@ import dev.iotarho.artplace.app.ui.artistdetail.ArtistForGenreListAdapter;
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistsDetailViewModel;
 import dev.iotarho.artplace.app.ui.artworkdetail.adapter.ArtworksByArtistAdapter;
 import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModel;
+import dev.iotarho.artplace.app.ui.artworks.ArtworksViewModelFactory;
 import dev.iotarho.artplace.app.ui.searchresults.datasource.SearchResultsLogic;
 import dev.iotarho.artplace.app.utils.ArtistInfoUtils;
 import dev.iotarho.artplace.app.utils.ImageUtils;
@@ -111,7 +113,7 @@ import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.GENE_TYPE;
 import static dev.iotarho.artplace.app.utils.Constants.SearchFragment.SHOW_TYPE;
 
 
-public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnArtistClickHandler {
+public class SearchDetailActivity extends AppCompatActivity implements OnResultClickListener, OnArtistClickHandler, OnArtworkClickListener {
 
     private static final String RESULT_PARCEL_KEY = "results_key";
     private static final String TAG = SearchDetailActivity.class.getSimpleName();
@@ -254,7 +256,8 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         showsDetailViewModel = new ViewModelProvider(getViewModelStore(), showDetailViewModelFactory).get(ShowsDetailViewModel.class);
         ArtistDetailViewModelFactory artistDetailViewModelFactory = Injection.provideArtistDetailViewModel();
         artistViewModel = new ViewModelProvider(getViewModelStore(), artistDetailViewModelFactory).get(ArtistsDetailViewModel.class);
-        artworksViewModel = new ViewModelProvider(this).get(ArtworksViewModel.class);
+        ArtworksViewModelFactory artworksViewModelFactory = Injection.provideArtworksViewModelFactory();
+        artworksViewModel = new ViewModelProvider(getViewModelStore(), artworksViewModelFactory).get(ArtworksViewModel.class);
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(RESULT_PARCEL_KEY)) {
@@ -276,7 +279,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         if (Utils.isNullOrEmpty(descriptionString)) {
             contentDescription.setVisibility(View.GONE);
         }
-        setCollapsingToolbar(titleString);
+        Utils.setCollapsingToolbar(titleString, appBarLayout, collapsingToolbarLayout, mGeneratedLightColor);
         contentTitle.setText(titleString);
         contentType.setText(getString(R.string.genre_name, typeString));
 
@@ -441,28 +444,6 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         }
     }
 
-    private void setCollapsingToolbar(String titleString) {
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(titleString);
-                    collapsingToolbarLayout.setCollapsedTitleTextColor(mGeneratedLightColor);
-                    isShow = true;
-                } else if (isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
-                    isShow = false;
-                }
-            }
-        });
-    }
-
     /**
      * Method for initialising the views from the show search View Model
      *
@@ -519,7 +500,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtistUi(Artist currentArtist) {
-        ArtistInfoUtils.setupArtistUi(currentArtist,artistCardView, artistName, artistHomeTown,
+        ArtistInfoUtils.setupArtistUi(currentArtist, artistCardView, artistName, artistHomeTown,
                 hometownLabel, artistLifespan, artistDivider, artistLocation, locationLabel, artistNationality,
                 artistNationalityLabel, artistBio, artistBioLabel);
         ArtistInfoUtils.displayArtistImage(currentArtist, secondImage);
@@ -538,7 +519,7 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
     }
 
     private void setupArtworksByArtist(List<Artwork> artworksList) {
-        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, null);
+        ArtworksByArtistAdapter artworksByArtist = new ArtworksByArtistAdapter(artworksList, null, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         artworksByArtistRv.setLayoutManager(gridLayoutManager);
         artworksByArtistRv.setAdapter(artworksByArtist);
@@ -631,5 +612,10 @@ public class SearchDetailActivity extends AppCompatActivity implements OnResultC
         Intent intent = new Intent(this, ArtistDetailActivity.class);
         intent.putExtra(ARTIST_EXTRA_KEY, artist);
         startActivity(intent);
+    }
+
+    @Override
+    public void onArtworkClick(Artwork artwork, int position) {
+
     }
 }

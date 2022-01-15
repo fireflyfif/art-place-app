@@ -35,7 +35,6 @@
 
 package dev.iotarho.artplace.app.ui.artworks;
 
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -55,37 +54,34 @@ import static dev.iotarho.artplace.app.utils.Constants.ArtworksFragment.PREFETCH
 
 public class ArtworksViewModel extends ViewModel {
 
-    private LiveData<NetworkState> mNetworkState;
-    private LiveData<NetworkState> mInitialLoading;
+    private LiveData<NetworkState> networkState;
+    private LiveData<NetworkState> initialLoading;
 
-    private LiveData<PagedList<Artwork>> mArtworkLiveData;
+    private LiveData<PagedList<Artwork>> artworksPagedListLiveData;
     private LiveData<Artwork> artworkLiveData;
 
-    private ArtworkDataSourceFactory mArtworkDataSourceFactory;
+    private ArtworkDataSourceFactory artworkDataSourceFactory;
 
-    private ArtsyRepository mRepo;
+    private ArtsyRepository repo;
 
-
-    public ArtworksViewModel() {
-        mRepo = ArtsyRepository.getInstance();
-        init(mRepo);
+    public ArtworksViewModel(ArtsyRepository repo) {
+        this.repo = repo;
+        init();
     }
 
     /**
      Method for initializing the DataSourceFactory and for building the LiveData
     */
-    private void init(ArtsyRepository repository) {
+    private void init() {
 
         // Get an instance of the DataSourceFactory class
-        mArtworkDataSourceFactory = new ArtworkDataSourceFactory(repository);
+        artworkDataSourceFactory = new ArtworkDataSourceFactory(repo);
 
         // Initialize the network state liveData
-        mNetworkState = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                (Function<ArtworkDataSource, LiveData<NetworkState>>) ArtworkDataSource::getNetworkState);
+        networkState = Transformations.switchMap(artworkDataSourceFactory.getArtworksDataSourceLiveData(), ArtworkDataSource::getNetworkState);
 
         // Initialize the Loading state liveData
-        mInitialLoading = Transformations.switchMap(mArtworkDataSourceFactory.getArtworksDataSourceLiveData(),
-                (Function<ArtworkDataSource, LiveData<NetworkState>>) ArtworkDataSource::getInitialLoading);
+        initialLoading = Transformations.switchMap(artworkDataSourceFactory.getArtworksDataSourceLiveData(), ArtworkDataSource::getInitialLoading);
 
         // Configure the PagedList.Config
         PagedList.Config pagedListConfig = new PagedList.Config.Builder()
@@ -98,22 +94,22 @@ public class ArtworksViewModel extends ViewModel {
                         .setPageSize(PAGE_SIZE)
                         .build();
 
-        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
+        artworksPagedListLiveData = new LivePagedListBuilder<>(artworkDataSourceFactory, pagedListConfig)
                 //.setInitialLoadKey()
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
     }
 
     public LiveData<NetworkState> getNetworkState() {
-        return mNetworkState;
+        return networkState;
     }
 
     public LiveData<NetworkState> getInitialLoading() {
-        return mInitialLoading;
+        return initialLoading;
     }
 
     public LiveData<PagedList<Artwork>> getArtworkLiveData() {
-        return mArtworkLiveData;
+        return artworksPagedListLiveData;
     }
 
     public LiveData<Artwork> getArtworkFromLink() {
@@ -124,7 +120,7 @@ public class ArtworksViewModel extends ViewModel {
         if (artworkLiveData != null) {
             return;
         }
-        artworkLiveData = mRepo.getArtworkFromLink(artworkLink);
+        artworkLiveData = repo.getArtworkFromLink(artworkLink);
     }
 
     public LiveData<PagedList<Artwork>> refreshArtworkLiveData() {
@@ -139,11 +135,11 @@ public class ArtworksViewModel extends ViewModel {
                 .build();
 
 
-        mArtworkLiveData = new LivePagedListBuilder<>(mArtworkDataSourceFactory, pagedListConfig)
+        artworksPagedListLiveData = new LivePagedListBuilder<>(artworkDataSourceFactory, pagedListConfig)
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
                 .build();
 
-        return mArtworkLiveData;
+        return artworksPagedListLiveData;
     }
 
 }
