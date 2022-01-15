@@ -70,7 +70,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     private lateinit var artworksViewModel: ArtworksViewModel
     private lateinit var trendyArtistsViewModel: TrendyArtistsViewModel
     private lateinit var preferenceUtils: PreferenceUtils
-    private var artworksList: PagedList<Artwork>? = null
+    private var artworksList: PagedList<Artwork?>? = null
     private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +109,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         setRecyclerView()
         val trendyArtistViewModelFactory = Injection.provideTrendyViewModelFactory()
         trendyArtistsViewModel = ViewModelProvider(viewModelStore, trendyArtistViewModelFactory).get(TrendyArtistsViewModel::class.java)
-        trendyArtistsViewModel.trendyArtistLiveData.observe(viewLifecycleOwner, { artist: PagedList<Artist?> ->
+        trendyArtistsViewModel.trendyArtistLiveData.observe(viewLifecycleOwner, { artist: PagedList<Artist>? ->
             trendyArtistsAdapter.submitList(artist)
             trendyArtistsAdapter.swapCatalogue(artist)
         })
@@ -137,7 +137,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         binding?.artworksRv?.adapter = trendyArtistsAdapter
     }
 
-    private fun setupUi() {
+    /*private fun setupUi() {
         // Setup the RecyclerView
         setRecyclerView()
 
@@ -146,7 +146,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         artworksViewModel = ViewModelProvider(viewModelStore, artworksViewModelFactory).get(ArtworksViewModel::class.java)
 
         // Call submitList() method of the PagedListAdapter when a new page is available
-        artworksViewModel.artworkLiveData.observe(viewLifecycleOwner) { artworks: PagedList<Artwork>? ->
+        artworksViewModel.artworkLiveData.observe(viewLifecycleOwner) { artworks: PagedList<Artwork?>? ->
             if (artworks != null) {
                 // When a new page is available, call submitList() method of the PagedListAdapter
                 adapter.submitList(artworks)
@@ -178,12 +178,12 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
             }
         })
         binding?.artworksRv?.adapter = adapter
-    }
+    }*/
 
     @Synchronized
     fun refreshTrendyArtists() {
         setRecyclerView()
-        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(viewLifecycleOwner, { artists: PagedList<Artist?> ->
+        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(viewLifecycleOwner, { artists: PagedList<Artist>? ->
             trendyArtistsAdapter.submitList(artists)
             trendyArtistsAdapter.swapCatalogue(artists)
         })
@@ -194,7 +194,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     fun refreshArtworks() {
         // Setup the RecyclerView
         setRecyclerView()
-        artworksViewModel.refreshArtworkLiveData().observe(viewLifecycleOwner, { artworks: PagedList<Artwork>? ->
+        artworksViewModel.refreshArtworkLiveData().observe(viewLifecycleOwner, { artworks: PagedList<Artwork?>? ->
             if (artworks != null) {
                 adapter.submitList(null)
                 // When a new page is available, call submitList() method of the PagedListAdapter
@@ -210,7 +210,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     override fun onArtworkClick(artwork: Artwork, position: Int) {
         val bundle = Bundle()
         bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork)
-        Log.d(TAG, "Get current list: " + adapter.currentList!!.size)
+//        Log.d(TAG, "Get current list: " + adapter.currentList!!.size)
         val intent = Intent(context, ArtworkDetailActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
@@ -238,25 +238,25 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.color_on_surface))
         menu.findItem(R.id.action_refresh).icon = drawable
 
-        // Set the Search View
-        val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
-        searchView?.isSubmitButtonEnabled = false
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                adapter.filter.filter(query)
-                adapter.swapCatalogue(artworksList)
-                Log.d(TAG, "Current query: $query")
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                adapter.filter.filter(newText)
-                Log.d(TAG, "Current query: $newText")
-                return false
-            }
-        })
+//        // Set the Search View
+//        val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        searchView = menu.findItem(R.id.action_search).actionView as SearchView
+//        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+//        searchView?.isSubmitButtonEnabled = false
+//        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                adapter.filter.filter(query)
+//                adapter.swapCatalogue(artworksList)
+//                Log.d(TAG, "Current query: $query")
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                adapter.filter.filter(newText)
+//                Log.d(TAG, "Current query: $newText")
+//                return false
+//            }
+//        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

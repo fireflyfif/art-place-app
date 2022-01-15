@@ -57,8 +57,7 @@ class ArtworksViewModel(private val repo: ArtsyRepository) : ViewModel() {
     // Initialize the Loading state liveData
     val initialLoading: LiveData<NetworkState> = Transformations.switchMap(artworkDataSourceFactory.artworksDataSourceLiveData) { obj: ArtworkDataSource -> obj.initialLoading }
 
-    private val artworksPagedListLiveData = MutableLiveData<PagedList<Artwork>>()
-    val artworkLiveData: LiveData<PagedList<Artwork>> = artworksPagedListLiveData
+    var artworkLiveData: LiveData<PagedList<Artwork?>> = MutableLiveData()
 
     private val artworkFromLinkMutable: MutableLiveData<Artwork> = MutableLiveData()
     val artworkFromLink: LiveData<Artwork> = artworkFromLinkMutable
@@ -73,9 +72,6 @@ class ArtworksViewModel(private val repo: ArtsyRepository) : ViewModel() {
      */
     private fun initDataSourceFactory() {
 
-        // Initialize the Loading state liveData
-//        initialLoading = Transformations.switchMap(artworkDataSourceFactory.artworksDataSourceLiveData) { obj: ArtworkDataSource -> obj.initialLoading }
-
         // Configure the PagedList.Config
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -86,9 +82,9 @@ class ArtworksViewModel(private val repo: ArtsyRepository) : ViewModel() {
                 .setPageSize(Constants.ArtworksFragment.PAGE_SIZE)
                 .build()
 
-        artworksPagedListLiveData.value = LivePagedListBuilder(artworkDataSourceFactory, pagedListConfig) //.setInitialLoadKey()
+        artworkLiveData = LivePagedListBuilder(artworkDataSourceFactory, pagedListConfig) //.setInitialLoadKey()
                 .setFetchExecutor(AppExecutors.getInstance().networkIO())
-                .build().value
+                .build()
     }
 
     fun initArtworkData(artworkLink: String?) {
@@ -98,7 +94,7 @@ class ArtworksViewModel(private val repo: ArtsyRepository) : ViewModel() {
         artworkFromLinkMutable.value = repo.getArtworkFromLink(artworkLink).value
     }
 
-    fun refreshArtworkLiveData(): LiveData<PagedList<Artwork>> {
+    fun refreshArtworkLiveData(): LiveData<PagedList<Artwork?>> {
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setInitialLoadSizeHint(Constants.ArtworksFragment.INITIAL_SIZE_HINT) // If not set, defaults to page size.
@@ -107,9 +103,9 @@ class ArtworksViewModel(private val repo: ArtsyRepository) : ViewModel() {
                 .setPrefetchDistance(Constants.ArtworksFragment.PREFETCH_DISTANCE_HINT)
                 .setPageSize(Constants.ArtworksFragment.PAGE_SIZE)
                 .build()
-        artworksPagedListLiveData.value = LivePagedListBuilder(artworkDataSourceFactory, pagedListConfig)
+        artworkLiveData = LivePagedListBuilder(artworkDataSourceFactory, pagedListConfig)
             .setFetchExecutor(AppExecutors.getInstance().networkIO())
-            .build().value
-        return artworksPagedListLiveData
+            .build()
+        return artworkLiveData
     }
 }

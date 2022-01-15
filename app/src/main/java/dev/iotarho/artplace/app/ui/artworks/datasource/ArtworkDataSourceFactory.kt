@@ -32,36 +32,23 @@
  *
  *
  */
+package dev.iotarho.artplace.app.ui.artworks.datasource
 
-package dev.iotarho.artplace.app.ui.artworks.datasource;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.DataSource
+import dev.iotarho.artplace.app.model.artworks.Artwork
+import dev.iotarho.artplace.app.repository.ArtsyRepository
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.paging.DataSource;
+class ArtworkDataSourceFactory(private val mRepository: ArtsyRepository) : DataSource.Factory<Long, Artwork?>() {
 
-import dev.iotarho.artplace.app.model.artworks.Artwork;
-import dev.iotarho.artplace.app.repository.ArtsyRepository;
+    private val artworksDataSourceLiveDataMutable: MutableLiveData<ArtworkDataSource> = MutableLiveData()
+    val artworksDataSourceLiveData: LiveData<ArtworkDataSource> = artworksDataSourceLiveDataMutable
 
-public class ArtworkDataSourceFactory extends DataSource.Factory<Long, Artwork> {
-
-    private MutableLiveData<ArtworkDataSource> mArtworksDataSourceLiveData;
-    private ArtworkDataSource mDataSource;
-    private ArtsyRepository mRepository;
-
-
-    public ArtworkDataSourceFactory(ArtsyRepository repository) {
-        mRepository = repository;
-        mArtworksDataSourceLiveData = new MutableLiveData<>();
+    override fun create(): DataSource<Long, Artwork?> {
+        val dataSource = ArtworkDataSource(mRepository)
+        artworksDataSourceLiveDataMutable.postValue(dataSource)
+        return dataSource
     }
 
-    @Override
-    public DataSource<Long, Artwork> create() {
-        mDataSource = new ArtworkDataSource(mRepository);
-        mArtworksDataSourceLiveData.postValue(mDataSource);
-
-        return mDataSource;
-    }
-
-    public MutableLiveData<ArtworkDataSource> getArtworksDataSourceLiveData() {
-        return mArtworksDataSourceLiveData;
-    }
 }
