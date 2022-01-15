@@ -18,7 +18,8 @@
         android:configChanges="uiMode">
         <activity
             android:name="dev.iotarho.artplace.app.ui.mainactivity.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -71,7 +72,8 @@
 
         </activity>
 
-        <receiver android:name="dev.iotarho.artplace.app.widget.ArtPlaceWidget">
+        <receiver android:name="dev.iotarho.artplace.app.widget.ArtPlaceWidget"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
