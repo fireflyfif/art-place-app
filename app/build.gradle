@@ -5,13 +5,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "dev.iotarho.artplace.app"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -56,7 +56,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding  true
     }
 }
 
@@ -98,7 +98,7 @@ dependencies {
 
     // Lifecycle AAC dependencies
     implementation "androidx.lifecycle:lifecycle-extensions:$androidLifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
 
     // Paging library dependency
     implementation "androidx.paging:paging-runtime-ktx:$androidPagingVersion"
@@ -130,7 +130,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.13.1'
 
     // Library for formatting Markdown text
-    implementation 'io.noties.markwon:core:4.4.0'
+    implementation 'io.noties.markwon:core:4.6.0'
 
     implementation 'com.ms-square:expandableTextView:0.1.4'
 
