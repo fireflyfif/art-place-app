@@ -34,13 +34,10 @@
  */
 package dev.iotarho.artplace.app.ui.artworks
 
-import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -59,19 +56,14 @@ import dev.iotarho.artplace.app.model.artists.Artist
 import dev.iotarho.artplace.app.model.artworks.Artwork
 import dev.iotarho.artplace.app.ui.artistdetail.ArtistDetailActivity
 import dev.iotarho.artplace.app.ui.artworkdetail.ArtworkDetailActivity
-import dev.iotarho.artplace.app.ui.artworks.adapter.ArtworkListAdapter
 import dev.iotarho.artplace.app.ui.artworks.adapter.TrendyArtistsAdapter
 import dev.iotarho.artplace.app.utils.*
 
 class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, SnackMessageListener, SwipeRefreshLayout.OnRefreshListener, OnArtistClickHandler {
     private var binding: FragmentArtworksBinding? = null
-    private lateinit var adapter: ArtworkListAdapter
     private lateinit var trendyArtistsAdapter: TrendyArtistsAdapter
-    private lateinit var artworksViewModel: ArtworksViewModel
     private lateinit var trendyArtistsViewModel: TrendyArtistsViewModel
     private lateinit var preferenceUtils: PreferenceUtils
-    private var artworksList: PagedList<Artwork?>? = null
-    private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +78,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
 
         // Inflate the layout for this fragment
         binding = FragmentArtworksBinding.inflate(layoutInflater, container, false)
-        setupUi(true)
+        setupUi()
         return binding?.root
     }
 
@@ -101,11 +93,10 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         binding?.artworksRv?.layoutManager = staggeredGridLayoutManager
 
         // Set the PagedListAdapter
-//        pagedListAdapter = new ArtworkListAdapter(this, this);
         trendyArtistsAdapter = TrendyArtistsAdapter(this, this)
     }
 
-    private fun setupUi(isArtist: Boolean) {
+    private fun setupUi() {
         setRecyclerView()
         val trendyArtistViewModelFactory = Injection.provideTrendyViewModelFactory()
         trendyArtistsViewModel = ViewModelProvider(viewModelStore, trendyArtistViewModelFactory).get(TrendyArtistsViewModel::class.java)
@@ -137,49 +128,6 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         binding?.artworksRv?.adapter = trendyArtistsAdapter
     }
 
-    /*private fun setupUi() {
-        // Setup the RecyclerView
-        setRecyclerView()
-
-        // Initialize the ViewModel
-        val artworksViewModelFactory = Injection.provideArtworksViewModelFactory()
-        artworksViewModel = ViewModelProvider(viewModelStore, artworksViewModelFactory).get(ArtworksViewModel::class.java)
-
-        // Call submitList() method of the PagedListAdapter when a new page is available
-        artworksViewModel.artworkLiveData.observe(viewLifecycleOwner) { artworks: PagedList<Artwork?>? ->
-            if (artworks != null) {
-                // When a new page is available, call submitList() method of the PagedListAdapter
-                adapter.submitList(artworks)
-                adapter.swapCatalogue(artworks)
-                artworksList = artworks
-            }
-        }
-
-        // Call setNetworkState() method of the PagedListAdapter for setting the Network state
-        artworksViewModel.networkState.observe(requireActivity(), { networkState: NetworkState? -> adapter.setNetworkState(networkState) })
-        artworksViewModel.initialLoading.observe(requireActivity(), { networkState: NetworkState? ->
-            if (networkState != null) {
-                binding?.progressBar?.visibility = View.VISIBLE
-
-                // When the NetworkStatus is Successful
-                // hide both the Progress Bar and the error message
-                if (networkState.status == NetworkState.Status.SUCCESS) {
-                    binding?.progressBar?.visibility = View.INVISIBLE
-                }
-                // When the NetworkStatus is Failed
-                // show the error message and hide the Progress Bar
-                if (networkState.status == NetworkState.Status.FAILED) {
-                    binding?.progressBar?.visibility = View.INVISIBLE
-                    binding?.coordinatorLayout?.let {
-                        Snackbar.make(it, R.string.snackbar_no_network_connection,
-                                Snackbar.LENGTH_LONG).show()
-                    }
-                }
-            }
-        })
-        binding?.artworksRv?.adapter = adapter
-    }*/
-
     @Synchronized
     fun refreshTrendyArtists() {
         setRecyclerView()
@@ -190,27 +138,9 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         binding?.artworksRv?.adapter = trendyArtistsAdapter
     }
 
-    @Synchronized
-    fun refreshArtworks() {
-        // Setup the RecyclerView
-        setRecyclerView()
-        artworksViewModel.refreshArtworkLiveData().observe(viewLifecycleOwner, { artworks: PagedList<Artwork?>? ->
-            if (artworks != null) {
-                adapter.submitList(null)
-                // When a new page is available, call submitList() method of the PagedListAdapter
-                adapter.submitList(artworks)
-                artworksList = artworks
-            }
-        })
-
-        // Setup the Adapter on the RecyclerView
-        binding?.artworksRv?.adapter = adapter
-    }
-
     override fun onArtworkClick(artwork: Artwork, position: Int) {
         val bundle = Bundle()
         bundle.putParcelable(ARTWORK_PARCEL_KEY, artwork)
-//        Log.d(TAG, "Get current list: " + adapter.currentList!!.size)
         val intent = Intent(context, ArtworkDetailActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
@@ -224,7 +154,6 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     override fun showSnackMessage(resultMessage: String) {
         // TODO: Show the AppBar so that the Refresh icon be visible!!
         binding?.coordinatorLayout?.let { Snackbar.make(it, resultMessage, Snackbar.LENGTH_LONG).show() }
-        //        refreshArtworks();
         refreshTrendyArtists()
     }
 
@@ -234,35 +163,14 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         // Make the icon with a dynamic tint
         // source: https://stackoverflow.com/a/29916353/8132331
         var drawable = menu.findItem(R.id.action_refresh).icon
-        drawable = DrawableCompat.wrap(drawable!!)
+        drawable = DrawableCompat.wrap(drawable)
         DrawableCompat.setTint(drawable, ContextCompat.getColor(requireActivity(), R.color.color_on_surface))
         menu.findItem(R.id.action_refresh).icon = drawable
-
-//        // Set the Search View
-//        val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        searchView = menu.findItem(R.id.action_search).actionView as SearchView
-//        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
-//        searchView?.isSubmitButtonEnabled = false
-//        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                adapter.filter.filter(query)
-//                adapter.swapCatalogue(artworksList)
-//                Log.d(TAG, "Current query: $query")
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                adapter.filter.filter(newText)
-//                Log.d(TAG, "Current query: $newText")
-//                return false
-//            }
-//        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_refresh -> {
-                //                refreshArtworks();
                 refreshTrendyArtists()
                 return true
             }
@@ -283,7 +191,6 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     }
 
     override fun onRefresh() {
-//        refreshArtworks();
         refreshTrendyArtists()
         if (binding?.refreshLayout?.isRefreshing == true) {
             binding?.refreshLayout?.isRefreshing = false
