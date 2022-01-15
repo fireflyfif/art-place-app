@@ -24,7 +24,7 @@ class TrendyArtistsViewModel(repo: ArtsyRepository) : ViewModel() {
     // Initialize the Loading state liveData
     val initialLoading: LiveData<NetworkState> = Transformations.switchMap(trendyDataSourceFactory.trendyDataSource) { obj: TrendyArtistsDataSource -> obj.initialLoading }
 
-    var trendyArtistLiveData: LiveData<PagedList<Artist>> = MutableLiveData()
+    var trendyArtistLiveData: LiveData<PagedList<Artist?>?> = MutableLiveData()
 
     init {
         // Configure the PagedList.Config
@@ -41,7 +41,7 @@ class TrendyArtistsViewModel(repo: ArtsyRepository) : ViewModel() {
                 .build()
     }
 
-    fun refreshTrendyArtistsLiveData(): LiveData<PagedList<Artist>> {
+    fun refreshTrendyArtistsLiveData(): LiveData<PagedList<Artist?>?> {
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setInitialLoadSizeHint(Constants.ArtworksFragment.INITIAL_SIZE_HINT) // If not set, defaults to page size.

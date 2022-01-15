@@ -99,12 +99,12 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     private fun setupUi() {
         setRecyclerView()
         val trendyArtistViewModelFactory = Injection.provideTrendyViewModelFactory()
-        trendyArtistsViewModel = ViewModelProvider(viewModelStore, trendyArtistViewModelFactory).get(TrendyArtistsViewModel::class.java)
-        trendyArtistsViewModel.trendyArtistLiveData.observe(viewLifecycleOwner, { artist: PagedList<Artist>? ->
+        trendyArtistsViewModel = ViewModelProvider(viewModelStore, trendyArtistViewModelFactory)[TrendyArtistsViewModel::class.java]
+        trendyArtistsViewModel.trendyArtistLiveData.observe(viewLifecycleOwner, { artist ->
             trendyArtistsAdapter.submitList(artist)
             trendyArtistsAdapter.swapCatalogue(artist)
         })
-        trendyArtistsViewModel.networkState.observe(viewLifecycleOwner, { networkState: NetworkState? -> trendyArtistsAdapter.setNetworkState(networkState) })
+        trendyArtistsViewModel.networkState.observe(viewLifecycleOwner, { networkState: NetworkState? -> networkState?.let { trendyArtistsAdapter.setNetworkState(it) } })
         trendyArtistsViewModel.initialLoading.observe(viewLifecycleOwner, { networkState: NetworkState? ->
             if (networkState != null) {
                 binding?.progressBar?.visibility = View.VISIBLE
@@ -131,7 +131,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
     @Synchronized
     fun refreshTrendyArtists() {
         setRecyclerView()
-        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(viewLifecycleOwner, { artists: PagedList<Artist>? ->
+        trendyArtistsViewModel.refreshTrendyArtistsLiveData().observe(viewLifecycleOwner, { artists ->
             trendyArtistsAdapter.submitList(artists)
             trendyArtistsAdapter.swapCatalogue(artists)
         })
@@ -209,6 +209,7 @@ class ArtworksFragment : Fragment(), OnArtworkClickListener, OnRefreshListener, 
         private val TAG = ArtworksFragment::class.java.simpleName
         private const val ARTIST_PARCEL_KEY = "artist_key"
         private const val ARTWORK_PARCEL_KEY = "artwork_key"
+
         fun newInstance(): ArtworksFragment {
             return ArtworksFragment()
         }
